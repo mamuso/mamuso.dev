@@ -2,8 +2,8 @@ FROM node:10.15-jessie
 
 WORKDIR /workspace
 
-COPY entrypoint.sh .
+COPY entrypoint.sh /
 
-RUN chmod +x ./entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
