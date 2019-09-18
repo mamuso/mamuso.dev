@@ -12,6 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@master
       - name: Generate branch and PR
-        uses: ./.github/workflows/daily-post-template/
+        run: ./.github/workflows/daily-post-template/entrypoint.sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
