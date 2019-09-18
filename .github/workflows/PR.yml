@@ -9,6 +9,7 @@ jobs:
   pr:
     runs-on: ubuntu-latest
     steps:
-      - name: Generate branch and PR
+      - name: Checkout code
         uses: actions/checkout@master
+      - name: Generate branch and PR
         run: npm run pr
