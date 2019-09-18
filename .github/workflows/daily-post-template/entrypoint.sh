@@ -3,15 +3,17 @@
 # Variables
 POST_DATE=$(date '+%Y-%m-%d')
 POST_BRANCH_NAME="post-$POST_DATE"
-POST_FILE="./src/pages/$POST_DATE/index.md"
+POST_FILE="./src/pages/$POST_DATE"
 PULLS_URI="https://api.github.com/repos/$GITHUB_REPOSITORY/pulls"
 API_HEADER="Accept: application/vnd.github.shadow-cat-preview"
 AUTH_HEADER="Authorization: token $GITHUB_TOKEN"
 PULL_REQUEST_TITLE="Share something on $POST_DATE"
 
+mkdir $POST_FILE
+
 # Create POST notes
 echo "Create POST frontmatter"
-cat <<-EOM > "$POST_FILE"
+cat <<-EOM > "$POST_FILE/index.md"
 ---
 title: 
 path: /$POST_DATE
