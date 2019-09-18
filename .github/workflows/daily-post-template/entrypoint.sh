@@ -10,8 +10,6 @@ API_HEADER="Accept: application/vnd.github.shadow-cat-preview"
 AUTH_HEADER="Authorization: token $GITHUB_TOKEN"
 PULL_REQUEST_TITLE="Share something on $POST_DATE"
 
-cd "$GITHUB_WORKSPACE" || exit 1
-
 # Create POST notes
 echo "Create POST frontmatter"
 cat <<-EOM > "$POST_FILE"
