@@ -10,6 +10,8 @@ API_HEADER="Accept: application/vnd.github.shadow-cat-preview"
 AUTH_HEADER="Authorization: token $GITHUB_TOKEN"
 PULL_REQUEST_TITLE="Share something on $POST_DATE"
 
+cd "$GITHUB_WORKSPACE" || exit 1
+
 # Create POST notes
 echo "Create POST frontmatter"
 cat <<-EOM > "$POST_FILE"
@@ -25,7 +27,6 @@ echo "Created POST index in $POST_BRANCH_NAME"
 
 # Commit and push to POST_date branch
 echo "Commit and push POST notes…"
-cd "$GITHUB_WORKSPACE" || exit 1
 git config user.name "${GITHUB_ACTOR}"
 git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 git remote add origin "${REPO}"
