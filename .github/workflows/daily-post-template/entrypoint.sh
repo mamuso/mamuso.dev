@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Variables
-POST_DATE=$(date -d +%Y-%m-%d)
+POST_DATE=$(date '+%Y-%m-%d')
 POST_BRANCH_NAME="post-$POST_DATE"
 POST_FILE="src/pages/$POST_DATE/index.md"
 PULLS_URI="https://api.github.com/repos/$GITHUB_REPOSITORY/pulls"
@@ -25,8 +25,8 @@ echo "Created POST index in $POST_BRANCH_NAME"
 # Commit and push to POST_date branch
 echo "Commit and push POST notes…"
 cd "$GITHUB_WORKSPACE" || exit 1
-git config user.name "$GITHUB_ACTOR"
-git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+git config user.name "${GITHUB_ACTOR}"
+git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 git checkout -b "$POST_BRANCH_NAME"
 git add .
 git commit -m "Adds POST scaffold for $POST_DATE"
