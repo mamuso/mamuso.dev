@@ -12,3 +12,5 @@ jobs:
         uses: actions/checkout@master
       - name: Generate branch and PR
         uses: ./.github/daily-post-template/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
