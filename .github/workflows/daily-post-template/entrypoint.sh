@@ -15,6 +15,7 @@ cat <<-EOM > "$POST_FILE"
 ---
 title: 
 path: /$POST_DATE
+category: 
 date: $POST_DATE
 image: 
 ---

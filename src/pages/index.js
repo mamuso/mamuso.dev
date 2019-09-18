@@ -36,6 +36,7 @@ export const query = graphql`
         node {
           frontmatter {
             title
+            category
             path
             date(formatString: "MMMM Do YYYY")
             image {
