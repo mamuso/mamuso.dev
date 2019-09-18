@@ -1,0 +1,14 @@
+name: PR me, baby, one more time
+
+on:
+  schedule:
+    - cron: "0 8 * * *"
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Generate branch and PR
+        uses: ./.github/daily-post-template/
