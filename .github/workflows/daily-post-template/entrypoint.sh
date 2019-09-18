@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ -z "${GITHUB_TOKEN}" ]; then
+    echo "error: not found GITHUB_TOKEN"
+    exit 1
+fi
+
 # Variables
 POST_DATE=$(date '+%Y-%m-%d')
 POST_BRANCH_NAME="post-$POST_DATE"
