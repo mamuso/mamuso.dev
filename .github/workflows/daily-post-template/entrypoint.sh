@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # Variables
+REPO="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 POST_DATE=$(date '+%Y-%m-%d')
 POST_BRANCH_NAME="post-$POST_DATE"
 POST_FILE="src/pages/$POST_DATE/index.md"
@@ -27,6 +28,7 @@ echo "Commit and push POST notes…"
 cd "$GITHUB_WORKSPACE" || exit 1
 git config user.name "${GITHUB_ACTOR}"
 git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+git remote add origin "${REPO}"
 git checkout -b "$POST_BRANCH_NAME"
 git add .
 git commit -m "Adds POST scaffold for $POST_DATE"
