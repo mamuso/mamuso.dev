@@ -13,3 +13,5 @@ jobs:
         uses: actions/checkout@master
       - name: Generate branch and PR
         run: npm run pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
