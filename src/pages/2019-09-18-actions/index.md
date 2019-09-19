@@ -2,7 +2,7 @@
 title: Actions
 path: /2019-09-18-actions
 category: code
-date: 2019-09-17
+date: 2019-09-18
 image: ./screen_shot_2019-09-18_at_11_54_47_pm.png
 ---
 
