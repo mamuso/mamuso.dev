@@ -12,6 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@master
       - name: Generate branch and PR
-        run: npm run pr
+        uses: ./daily-template
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
