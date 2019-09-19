@@ -1,0 +1,8 @@
+name: Daily Template
+runs:
+  using: docker
+  image: Dockerfile
+inputs:
+  filename:
+    description: The name of the file to use as the issue template
+    default: .github/daily-template.md
