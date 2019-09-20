@@ -15,29 +15,37 @@ const templateVariables = {
   date: date
 };
 
-console.log(`SHA1: ${context.sha}`);
-
-const process = octokit.git
-  .createRef({
+octokit.repos
+  .get({
     ...context.owner,
-    ...context.repo,
-    sha: context.sha,
-    ref: `refs/heads/${date}`
+    ...context.repo
   })
-  .then(() => {
-    io.mkdirP(`src/pages/${date}`);
-    fs.readFile(template, "utf8", function(err, data) {
-      data = env.renderString(data, templateVariables);
-      fs.writeFile(`src/pages/${date}/index.md`, data, function(err, result) {
-        if (err) console.log("error", err);
-      });
-    });
-  })
-  .then(() => {
-    console.log("done!");
-  })
-  .catch(err => {
-    console.log(err);
+  .then(res => {
+    console.log(res);
+    //.data.default_branch;
   });
 
-process;
+// octokit.git
+//   .createRef({
+//     ...context.owner,
+//     ...context.repo,
+//     sha: context.sha,
+//     ref: `refs/heads/${date}`
+//   })
+//   .then(a => {
+
+//     io.mkdirP(`src/pages/${date}`);
+//     fs.readFile(template, "utf8", function(err, data) {
+//       data = env.renderString(data, templateVariables);
+//       console.log(data);
+//       fs.writeFile(`src/pages/${date}/index.md`, data, function(err, result) {
+//         if (err) console.log("error", err);
+//       });
+//     });
+//   })
+//   .then(b => {
+//     console.log("done!");
+//   })
+//   .catch(err => {
+//     console.log(err);
+//   });
