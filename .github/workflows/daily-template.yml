@@ -15,3 +15,4 @@ jobs:
         uses: ./.github/workflows/daily-template
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USER:
