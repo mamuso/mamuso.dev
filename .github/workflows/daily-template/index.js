@@ -15,13 +15,14 @@ const templateVariables = {
   date: date
 };
 
-octokit.repos
-  .get({
+octokit.git
+  .getRef({
     ...context.owner,
-    ...context.repo
+    ...context.repo,
+    ...context.ref
   })
   .then(res => {
-    console.log(res);
+    console.log(res.data);
     //.data.default_branch;
   });
 
