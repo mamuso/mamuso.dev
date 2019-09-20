@@ -8,11 +8,16 @@ console.log(myToken);
 const octokit = new github.GitHub(myToken);
 console.log(octokit);
 
-const master = octokit.git.getRef({
-  ...context.owner,
-  ...context.repo,
-  ref: "heads/master"
-});
-
-console.log("---");
-console.log(master);
+const master = octokit.git
+  .getRef({
+    ...context.owner,
+    ...context.repo,
+    ref: "heads/master"
+  })
+  .then(result => {
+    console.log("------");
+    console.log(result);
+  })
+  .catch(err => {
+    console.log(err);
+  });
