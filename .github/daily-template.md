@@ -1,7 +1,7 @@
 ---
 title:
-path: /{{ date | date('yyyy-MM-dd') }}
+path: /{{ date }}
 category:
-date: { { date | date('yyyy-MM-dd') } }
+date: { { date } }
 image:
 ---
