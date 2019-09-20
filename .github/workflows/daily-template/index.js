@@ -1,5 +1,14 @@
+const github = require("@actions/github");
 const core = require("@actions/core");
-const { Toolkit } = require("actions-toolkit");
-const fm = require("front-matter");
-const nunjucks = require("nunjucks");
-const dateFilter = require("nunjucks-date-filter");
+
+const myToken = core.getInput("GITHUB_TOKEN");
+const octokit = new github.GitHub(myToken);
+
+const master = octokit.git.getRef({
+  ...context.owner,
+  ...context.repo,
+  ref: "heads/master"
+});
+
+console.log("---");
+console.log(master);
