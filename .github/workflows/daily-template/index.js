@@ -22,4 +22,4 @@ const process = octokit.git
     console.log(err);
   });
 
-console.log(process.env.GITHUB_SHA);
+process;

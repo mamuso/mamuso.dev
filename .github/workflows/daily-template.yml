@@ -15,4 +15,3 @@ jobs:
         uses: ./.github/workflows/daily-template
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_SHA: ${GITHUB_SHA}
