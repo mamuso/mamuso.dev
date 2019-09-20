@@ -18,3 +18,5 @@ const master = octokit.git
   .catch(err => {
     console.log(err);
   });
+
+console.log(process.env.GITHUB_SHA);
