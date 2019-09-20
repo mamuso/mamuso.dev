@@ -15,12 +15,14 @@ const templateVariables = {
   date: date
 };
 
+console.log(`SHA1: ${...context.sha}`)
+
 const process = octokit.git
   .createRef({
     ...context.owner,
     ...context.repo,
-    ref: `heads/${date}`,
-    ...context.sha
+    ...context.sha,
+    ref: `heads/${date}`
   })
   .then(() => {
     io.mkdirP(`src/pages/${date}`);
