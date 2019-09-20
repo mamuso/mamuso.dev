@@ -15,7 +15,7 @@ const templateVariables = {
   date: date
 };
 const renderedTemplate = env.renderString(
-  fs.readFile(template),
+  fs.readFile(template, "utf8"),
   templateVariables
 );
 
