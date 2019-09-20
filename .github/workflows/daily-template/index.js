@@ -21,7 +21,7 @@ const process = octokit.git
   .createRef({
     ...context.owner,
     ...context.repo,
-    ...context.sha,
+    sha: context.sha,
     ref: `heads/${date}`
   })
   .then(() => {
