@@ -29,6 +29,9 @@ octokit.git
     let latestCommitSha = res.data[0].sha;
     const treeSha = res.data[0].commit.tree.sha;
     //.data.default_branch;
+  })
+  .catch(err => {
+    console.log(err);
   });
 
 // octokit.git
