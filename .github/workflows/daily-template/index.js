@@ -5,14 +5,17 @@ const context = github.context;
 const myToken = core.getInput("GITHUB_TOKEN");
 const octokit = new github.GitHub(myToken);
 
-const master = octokit.git
-  .getRef({
+const date = new Date().toISOString().split("T")[0];
+
+const process = octokit.git
+  .createRef({
     ...context.owner,
     ...context.repo,
-    ref: "heads/master"
+    ref: `heads/${date}`,
+    ...context.sha
   })
   .then(result => {
-    console.log("------");
+    console.log(`------ ${date}`);
     console.log(result);
   })
   .catch(err => {
