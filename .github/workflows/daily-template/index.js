@@ -22,7 +22,7 @@ const process = octokit.git
     ...context.owner,
     ...context.repo,
     sha: context.sha,
-    ref: `refs/${date}`
+    ref: `refs/heads/${date}`
   })
   .then(() => {
     io.mkdirP(`src/pages/${date}`);
