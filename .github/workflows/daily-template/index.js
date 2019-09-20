@@ -15,7 +15,7 @@ const templateVariables = {
   date: date
 };
 
-console.log(`SHA1: ${...context.sha}`)
+console.log(`SHA1: ${context.sha}`);
 
 const process = octokit.git
   .createRef({
