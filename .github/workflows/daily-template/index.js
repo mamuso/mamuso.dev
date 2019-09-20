@@ -15,15 +15,19 @@ const templateVariables = {
   date: date
 };
 
-console.log(context);
+// console.log(context);
+
 octokit.git
   .getRef({
     ...context.owner,
     ...context.repo,
-    ...context.ref
+    ref: context.ref
   })
   .then(res => {
     console.log(res.data);
+    console.log("------");
+    let latestCommitSha = res.data[0].sha;
+    const treeSha = res.data[0].commit.tree.sha;
     //.data.default_branch;
   });
 
