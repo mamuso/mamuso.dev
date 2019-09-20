@@ -15,6 +15,7 @@ const templateVariables = {
   date: date
 };
 
+console.log(context);
 octokit.git
   .getRef({
     ...context.owner,
