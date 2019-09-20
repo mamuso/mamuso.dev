@@ -14,10 +14,6 @@ const env = nunjucks.configure({ autoescape: false });
 const templateVariables = {
   date: date
 };
-const renderedTemplate = env.renderString(
-  fs.readFile(template, "utf8"),
-  templateVariables
-);
 
 console.log(renderedTemplate);
 
@@ -30,8 +26,16 @@ const process = octokit.git
   })
   .then(() => {
     io.mkdirP(`src/pages/${date}`);
+    fs.readFile(template, "utf8", function(err, data) {
+      data = env.renderString(data, templateVariables);
+      fs.writeFile(`src/pages/${date}/index.md`, data, function(err, result) {
+        if (err) console.log("error", err);
+      });
+    });
   })
-  .then(() => {})
+  .then(() => {
+    console.log("done!");
+  })
   .catch(err => {
     console.log(err);
   });
