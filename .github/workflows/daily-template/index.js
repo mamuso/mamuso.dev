@@ -31,15 +31,28 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     return blob;
   })
   .then(blob => {
-    console.log("- blob");
-    console.log(blob);
+    const path = `src/pages/${date}/index.md`;
+    octokit.git.createTree({
+      ...context.repo,
+      base_tree: context.payload.head_commit.tree_id,
+      tree: [
+        {
+          path,
+          mode: "100644",
+          type: "blob",
+          sha: blob
+        }
+      ]
+    });
+  })
+  .then(tree => {
+    console.log("- tree");
+    console.log(tree);
     console.log("---");
     console.log(content);
 
     console.log("end");
   });
-
-const path = `src/pages/${date}/index.md`;
 
 // process()
 //   .then(content => {
