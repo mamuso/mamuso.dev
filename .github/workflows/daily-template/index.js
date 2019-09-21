@@ -17,22 +17,37 @@ const templateVariables = {
 
 // console.log(context);
 console.log("1. ------");
-console.log(context.ref);
-octokit.git
-  .getRef({
+console.log(context);
+
+octokit.repos
+  .listCommits({
     ...context.repo,
-    ref: context.ref.replace("refs/", "")
+    sha: context.sha,
+    per_page: 1
   })
   .then(res => {
     console.log("2. ------");
     console.log(res.data);
-    // let latestCommitSha = res.data[0].sha;
-    // const treeSha = res.data[0].commit.tree.sha;
-    //.data.default_branch;
   })
   .catch(err => {
     console.log(err);
   });
+
+// octokit.git
+//   .getRef({
+//     ...context.repo,
+//     ref: context.ref.replace("refs/", "")
+//   })
+//   .then(res => {
+//     console.log("2. ------");
+//     console.log(res.data);
+//     // let latestCommitSha = res.data[0].sha;
+//     // const treeSha = res.data[0].commit.tree.sha;
+//     //.data.default_branch;
+//   })
+//   .catch(err => {
+//     console.log(err);
+//   });
 
 // octokit.git
 //   .createRef({
