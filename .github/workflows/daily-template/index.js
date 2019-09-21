@@ -15,10 +15,12 @@ const templateVariables = {
   date: date
 };
 
+console.log("1. Render template");
 const content = fs.readFile(template, "utf8", function(err, data) {
   return env.renderString(data, templateVariables);
 });
 
+console.log("2. Create tree");
 octokit.git
   .createTree({
     ...context.repo,
@@ -30,6 +32,7 @@ octokit.git
     }
   })
   .then(res => {
+    console.log("3. Create commit");
     octokit.git.createCommit({
       ...context.repo,
       message: `${date}`,
@@ -38,6 +41,7 @@ octokit.git
     });
   })
   .then(res => {
+    console.log("4. Create ref");
     octokit.git.createRef({
       ...context.repo,
       sha: res.data.sha,
@@ -45,6 +49,7 @@ octokit.git
     });
   })
   .then(res => {
+    console.log("5. Create pull request");
     octokit.pulls.create({
       ...context.repo,
       head: `${context.repo.owner}:${context.ref.replace("refs/heads/", "")}`,
@@ -55,6 +60,7 @@ octokit.git
   })
   .catch(err => {
     console.log(err);
+    context.ref.replace("refs/heads/", "");
   });
 
 // octokit.git
