@@ -54,9 +54,7 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     let quote = "";
 
     request("http://quotes.rest/qod.json", function(error, response, body) {
-      if (!error && response.statusCode == 200) {
-        quote = JSON.parse(body);
-      }
+      quote = body;
     });
 
     console.log(quote);
