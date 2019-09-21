@@ -31,7 +31,9 @@ process()
       content: content
     });
     console.log(`blob: ${blob}`);
-
+    return content, blob;
+  })
+  .then(content, blob => {
     console.log("2. Create tree");
     octokit.git.createTree({
       ...context.repo,
