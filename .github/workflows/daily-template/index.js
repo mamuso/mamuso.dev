@@ -16,18 +16,18 @@ const templateVariables = {
 };
 
 // console.log(context);
-
+console.log("1. ------");
 octokit.git
   .getRef({
-    ...context.owner,
-    ...context.repo,
+    owner: context.owner,
+    repo: context.repo,
     ref: context.ref
   })
   .then(res => {
+    console.log("2. ------");
     console.log(res.data);
-    console.log("------");
-    let latestCommitSha = res.data[0].sha;
-    const treeSha = res.data[0].commit.tree.sha;
+    // let latestCommitSha = res.data[0].sha;
+    // const treeSha = res.data[0].commit.tree.sha;
     //.data.default_branch;
   })
   .catch(err => {
