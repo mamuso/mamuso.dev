@@ -17,31 +17,31 @@ const templateVariables = {
 const path = `src/pages/${date}/index.md`;
 
 console.log("1. Render template");
-const content = fs.readFile(template, "utf8", function(err, data) {
+fs.readFile(template, "utf8", function(err, data) {
   return env.renderString(data, templateVariables);
-});
+})
+  .then(content => {
+    const blob = octokit.git.createBlob({
+      ...context.repo,
+      encoding: "utf-8",
+      content: content
+    });
+    console.log(`blob: ${blob}`);
 
-const blob = octokit.git.createBlob({
-  ...context.repo,
-  encoding: "utf-8",
-  content: content
-});
-console.log(`blob: ${blob}`);
-
-console.log("2. Create tree");
-octokit.git
-  .createTree({
-    ...context.repo,
-    base_tree: context.payload.head_commit.tree_id,
-    tree: [
-      {
-        path,
-        mode: "100644",
-        type: "blob",
-        sha: blob,
-        content: content
-      }
-    ]
+    console.log("2. Create tree");
+    octokit.git.createTree({
+      ...context.repo,
+      base_tree: context.payload.head_commit.tree_id,
+      tree: [
+        {
+          path,
+          mode: "100644",
+          type: "blob",
+          sha: blob,
+          content: content
+        }
+      ]
+    });
   })
   .then(res => {
     console.log("3. Create commit");
