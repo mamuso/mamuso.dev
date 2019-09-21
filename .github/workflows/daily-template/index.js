@@ -25,11 +25,13 @@ octokit.git
   .createTree({
     ...context.repo,
     base_tree: context.payload.head_commit.tree_id,
-    tree: {
-      path: `src/pages/${date}/index.md`,
-      mode: "100644",
-      content: content
-    }
+    tree: [
+      {
+        path: `src/pages/${date}/index.md`,
+        mode: "100644",
+        content: content
+      }
+    ]
   })
   .then(res => {
     console.log("3. Create commit");
@@ -62,44 +64,3 @@ octokit.git
     console.log(err);
     context.ref.replace("refs/heads/", "");
   });
-
-// octokit.git
-//   .getRef({
-//     ...context.repo,
-//     ref: context.ref.replace("refs/", "")
-//   })
-//   .then(res => {
-//     console.log("2. ------");
-//     console.log(res.data);
-//     // let latestCommitSha = res.data[0].sha;
-//     // const treeSha = res.data[0].commit.tree.sha;
-//     //.data.default_branch;
-//   })
-//   .catch(err => {
-//     console.log(err);
-//   });
-
-// octokit.git
-//   .createRef({
-//     ...context.owner,
-//     ...context.repo,
-//     sha: context.sha,
-//     ref: `refs/heads/${date}`
-//   })
-//   .then(a => {
-
-//     io.mkdirP(`src/pages/${date}`);
-//     fs.readFile(template, "utf8", function(err, data) {
-//       data = env.renderString(data, templateVariables);
-//       console.log(data);
-//       fs.writeFile(`src/pages/${date}/index.md`, data, function(err, result) {
-//         if (err) console.log("error", err);
-//       });
-//     });
-//   })
-//   .then(b => {
-//     console.log("done!");
-//   })
-//   .catch(err => {
-//     console.log(err);
-//   });
