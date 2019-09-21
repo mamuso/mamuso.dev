@@ -15,46 +15,44 @@ const templateVariables = {
   date: date
 };
 
-// console.log(context);
-console.log("1. ------");
-// console.log(context);
-
-console.log("content");
-
-let content = "";
-fs.readFile(template, "utf8", function(err, data) {
-  console.log(`data: ${data}`);
-  console.log(`template: ${env.renderString(data, templateVariables)}`);
-  content = env.renderString(data, templateVariables);
+const content = fs.readFile(template, "utf8", function(err, data) {
+  return env.renderString(data, templateVariables);
 });
 
-console.log(`content: ${content}`);
-
-octokit.repos
-  .listCommits({
+octokit.git
+  .createTree({
     ...context.repo,
-    sha: context.sha,
-    per_page: 1
+    base_tree: context.payload.head_commit.tree_id,
+    tree: {
+      path: `src/pages/${date}/index.md`,
+      mode: "100644",
+      content: content
+    }
   })
   .then(res => {
-    console.log("2. ------");
-    console.log(res.data);
-    console.log("SHA");
-    console.log(context.sha);
-    console.log(context.payload.head_commit.tree_id);
+    octokit.git.createCommit({
+      ...context.repo,
+      message: `${date}`,
+      tree: res.data.sha,
+      parents: [context.sha]
+    });
   })
-  .then(
-    console.log("ooo")
-    // octokit.git.createTree({
-    //   ...context.repo,
-    //   base_tree: context.payload.head_commit.tree_id,
-    //   tree: {
-    //     path: `src/pages/${date}/index.md`,
-    //     mode: "100644",
-    //     content: changes.files[path]
-    //   }
-    // })
-  )
+  .then(res => {
+    octokit.git.createRef({
+      ...context.repo,
+      sha: res.data.sha,
+      ref: `refs/heads/${date}`
+    });
+  })
+  .then(res => {
+    octokit.pulls.create({
+      ...context.repo,
+      head: `${context.repo.owner}:${context.ref.replace("refs/heads/", "")}`,
+      base: context.ref.replace("refs/", ""),
+      title: "test",
+      body: "tost"
+    });
+  })
   .catch(err => {
     console.log(err);
   });
