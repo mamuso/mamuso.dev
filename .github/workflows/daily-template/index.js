@@ -15,11 +15,10 @@ const ref = "heads/master";
 // 1. Compose the template
 fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
   console.log(date);
-  const templatedata = { date: date };
-  data = njenv.renderString(data, templatedata);
-  return data;
 })
   .then(content => {
+    const templatedata = { date: date };
+    content = njenv.renderString(content, templatedata);
     console.log(content);
     octokit.git.createBlob({
       ...context.repo,
