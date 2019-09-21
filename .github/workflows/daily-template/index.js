@@ -18,20 +18,12 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
   console.log(date);
 })
   .then(content => {
+    const path = `src/pages/${date}/index.md`;
+
     // 2. Add the date to the template
     const templatedata = { date: date };
     content = njenv.renderString(content, templatedata);
 
-    // let's create a blob
-    const blob = octokit.git.createBlob({
-      ...context.repo,
-      encoding: "utf-8",
-      content: content
-    });
-    return blob;
-  })
-  .then(blob => {
-    const path = `src/pages/${date}/index.md`;
     octokit.git.createTree({
       ...context.repo,
       base_tree: context.payload.head_commit.tree_id,
@@ -39,8 +31,7 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
         {
           path,
           mode: "100644",
-          type: "blob",
-          sha: blob
+          content: content
         }
       ]
     });
