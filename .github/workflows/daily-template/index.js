@@ -12,22 +12,28 @@ const njenv = nunjucks.configure({ autoescape: false });
 const date = new Date().toISOString().split("T")[0];
 const ref = "heads/master";
 
-// 1. Compose the template
+// 1. Read the template
 fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
   console.log(date);
 })
   .then(content => {
+    // 2. Add the date to the template
     const templatedata = { date: date };
     content = njenv.renderString(content, templatedata);
-    console.log(content);
-    octokit.git.createBlob({
+
+    // let's create a blob
+    const blob = octokit.git.createBlob({
       ...context.repo,
       encoding: "utf-8",
       content: content
     });
+
+    return content, blob;
   })
-  .then(blob => {
+  .then((content, blob) => {
+    console.log(content);
     console.log(blob);
+    console.log("---");
     console.log("end");
   });
 
