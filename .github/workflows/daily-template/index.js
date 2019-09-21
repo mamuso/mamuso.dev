@@ -24,11 +24,11 @@ console.log("content");
 let content = "";
 fs.readFile(template, "utf8", function(err, data) {
   content = env.renderString(data, templateVariables);
-  console.log(content);
   fs.writeFile(`src/pages/${date}/index.md`, data, function(err, result) {
     if (err) console.log("error", err);
   });
 });
+console.log(`content: ${content}`);
 
 octokit.repos
   .listCommits({
@@ -44,15 +44,16 @@ octokit.repos
     console.log(context.payload.head_commit.tree_id);
   })
   .then(
-    octokit.git.createTree({
-      ...context.repo,
-      base_tree: context.payload.head_commit.tree_id,
-      tree: {
-        path: `src/pages/${date}/index.md`,
-        mode: "100644",
-        content: changes.files[path]
-      }
-    })
+    console.log("ooo")
+    // octokit.git.createTree({
+    //   ...context.repo,
+    //   base_tree: context.payload.head_commit.tree_id,
+    //   tree: {
+    //     path: `src/pages/${date}/index.md`,
+    //     mode: "100644",
+    //     content: changes.files[path]
+    //   }
+    // })
   )
   .catch(err => {
     console.log(err);
