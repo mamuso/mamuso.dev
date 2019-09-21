@@ -55,8 +55,17 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     return ref;
   })
   .then(ref => {
-    console.log("- ref");
-    console.log(ref);
+    const pull = octokit.pulls.create({
+      ...context.repo,
+      head: `${context.repo.owner}:${date}`,
+      base: context.ref.replace("refs/", ""),
+      title: "test",
+      body: "tost"
+    });
+  })
+  .then(pull => {
+    console.log("- pull");
+    console.log(pull);
     console.log("---");
     console.log("end");
   })
