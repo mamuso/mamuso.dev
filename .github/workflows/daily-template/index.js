@@ -14,7 +14,8 @@ const ref = "heads/master";
 
 // 1. Compose the template
 fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
-  return njenv.renderString(data, { date: date });
+  const templatedata = { date: date };
+  return njenv.renderString(data, templatedata);
 })
   .then(content => {
     console.log(content);
