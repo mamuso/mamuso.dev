@@ -27,8 +27,9 @@ octokit.git
     base_tree: context.payload.head_commit.tree_id,
     tree: [
       {
-        path: `src/pages/${date}/index.md`,
+        `src/pages/${date}/index.md`,
         mode: "100644",
+        type: "blob",
         content: content
       }
     ]
