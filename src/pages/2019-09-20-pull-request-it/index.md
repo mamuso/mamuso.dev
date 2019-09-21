@@ -1,8 +1,8 @@
 ---
 title: PR-it!
-path: /2019-09-21-pull-request-it
+path: /2019-09-20-pull-request-it
 category: code
-date: 2019-09-21
+date: 2019-09-20
 image: ./screen_shot_2019-09-20_at_10_55_18_pm.png
 ---
 
