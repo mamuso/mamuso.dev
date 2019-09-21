@@ -21,7 +21,7 @@ console.log(context.ref);
 octokit.git
   .getRef({
     ...context.repo,
-    ref: context.ref
+    ref: context.ref.replace("refs/", "")
   })
   .then(res => {
     console.log("2. ------");
