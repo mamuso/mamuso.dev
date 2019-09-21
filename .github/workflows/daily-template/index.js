@@ -17,9 +17,13 @@ const templateVariables = {
 const path = `src/pages/${date}/index.md`;
 
 console.log("1. Render template");
-fs.readFile(template, "utf8", function(err, data) {
-  return env.renderString(data, templateVariables);
-})
+var process = () => {
+  return await fs.readFile(template, "utf8", function(err, data) {
+    return env.renderString(data, templateVariables);
+  });
+};
+
+process()
   .then(content => {
     const blob = octokit.git.createBlob({
       ...context.repo,
