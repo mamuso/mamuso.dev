@@ -51,13 +51,11 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     return ref;
   })
   .then(ref => {
-    const quote = request("http://quotes.rest/qod.json", function(
-      error,
-      response,
-      body
-    ) {
+    const quote = "";
+
+    request("http://quotes.rest/qod.json", function(error, response, body) {
       if (!error && response.statusCode == 200) {
-        return JSON.parse(body);
+        quote = JSON.parse(body);
       }
     });
 
