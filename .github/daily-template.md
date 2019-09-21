@@ -2,6 +2,6 @@
 title:
 path: /{{ date }}
 category:
-date: { { date } }
+date: {{ date }}
 image:
 ---

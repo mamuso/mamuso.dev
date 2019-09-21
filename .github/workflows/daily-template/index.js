@@ -1,57 +1,79 @@
-const fs = require("fs");
+const fs = require("fs").promises;
+const request = require("request");
 const core = require("@actions/core");
 const github = require("@actions/github");
-const io = require("@actions/io");
 const nunjucks = require("nunjucks");
+
+const githubtoken = core.getInput("GITHUB_TOKEN");
+const octokit = new github.GitHub(githubtoken);
 const context = github.context;
-
-const myToken = core.getInput("GITHUB_TOKEN");
-const octokit = new github.GitHub(myToken);
-
+const njenv = nunjucks.configure({ autoescape: false });
 const date = new Date().toISOString().split("T")[0];
-const template = core.getInput("filename") || ".github/daily-template.md";
-const env = nunjucks.configure({ autoescape: false });
-const templateVariables = {
-  date: date
-};
 
-// console.log(context);
+fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
+  console.log(date);
+})
+  .then(content => {
+    const path = `src/pages/${date}/index.md`;
 
-octokit.git
-  .getRef({
-    ...context.owner,
-    ...context.repo,
-    ref: context.ref
+    // 2. Add the date to the template
+    const templatedata = { date: date };
+    content = njenv.renderString(content, templatedata);
+
+    const tree = octokit.git.createTree({
+      ...context.repo,
+      base_tree: context.payload.head_commit.tree_id,
+      tree: [
+        {
+          path,
+          mode: "100644",
+          content: content
+        }
+      ]
+    });
+    return tree;
   })
-  .then(res => {
-    console.log(res.data);
-    console.log("------");
-    let latestCommitSha = res.data[0].sha;
-    const treeSha = res.data[0].commit.tree.sha;
-    //.data.default_branch;
+  .then(tree => {
+    const commit = octokit.git.createCommit({
+      ...context.repo,
+      message: `${date}`,
+      tree: tree.data.sha,
+      parents: [context.sha]
+    });
+    return commit;
+  })
+  .then(commit => {
+    const ref = octokit.git.createRef({
+      ...context.repo,
+      sha: commit.data.sha,
+      ref: `refs/heads/${date}`
+    });
+    return ref;
+  })
+  .then(ref => {
+    let quote = "";
+
+    request("http://quotes.rest/qod.json", function(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        quote = JSON.parse(body);
+      }
+    });
+
+    console.log(quote);
+    console.log("...");
+
+    const pull = octokit.pulls.create({
+      ...context.repo,
+      head: `${context.repo.owner}:${date}`,
+      base: "master",
+      title: "test",
+      body: "tost"
+    });
+    return pull;
+  })
+  .then(pull => {
+    console.log("Pull request created 🎉");
+  })
+  .catch(err => {
+    console.log(err);
   });
-
-// octokit.git
-//   .createRef({
-//     ...context.owner,
-//     ...context.repo,
-//     sha: context.sha,
-//     ref: `refs/heads/${date}`
-//   })
-//   .then(a => {
-
-//     io.mkdirP(`src/pages/${date}`);
-//     fs.readFile(template, "utf8", function(err, data) {
-//       data = env.renderString(data, templateVariables);
-//       console.log(data);
-//       fs.writeFile(`src/pages/${date}/index.md`, data, function(err, result) {
-//         if (err) console.log("error", err);
-//       });
-//     });
-//   })
-//   .then(b => {
-//     console.log("done!");
-//   })
-//   .catch(err => {
-//     console.log(err);
-//   });
