@@ -15,18 +15,19 @@ const ref = "heads/master";
 // 1. Compose the template
 fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
   return njenv.renderString(data, { date: date });
-}).then(content => {
-  console.log(content);
-  octokit.git.createBlob({
-    ...context.repo,
-    encoding: "utf-8",
-    content: content
+})
+  .then(content => {
+    console.log(content);
+    octokit.git.createBlob({
+      ...context.repo,
+      encoding: "utf-8",
+      content: content
+    });
+  })
+  .then(blob => {
+    console.log(blob);
+    console.log("end");
   });
-});
-then(blob => {
-  console.log(blob);
-  console.log("end");
-});
 
 const path = `src/pages/${date}/index.md`;
 
