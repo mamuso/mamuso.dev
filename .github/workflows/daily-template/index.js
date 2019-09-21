@@ -17,6 +17,9 @@ const templateVariables = {
 
 // console.log(context);
 console.log("1. ------");
+console.log(context.owner);
+console.log(context.repo);
+console.log(context.ref);
 octokit.git
   .getRef({
     owner: context.owner,
