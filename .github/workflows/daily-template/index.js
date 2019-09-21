@@ -14,6 +14,7 @@ const env = nunjucks.configure({ autoescape: false });
 const templateVariables = {
   date: date
 };
+const path = `src/pages/${date}/index.md`;
 
 console.log("1. Render template");
 const content = fs.readFile(template, "utf8", function(err, data) {
@@ -27,7 +28,7 @@ octokit.git
     base_tree: context.payload.head_commit.tree_id,
     tree: [
       {
-        `src/pages/${date}/index.md`,
+        path,
         mode: "100644",
         type: "blob",
         content: content
