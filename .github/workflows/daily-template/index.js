@@ -53,7 +53,9 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
 
     console.log("end");
   });
-
+  .catch(err => {
+    console.log(err);
+  });
 // process()
 //   .then(content => {
 //     return content, blob;
