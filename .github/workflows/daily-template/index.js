@@ -31,7 +31,9 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     return content, blob;
   })
   .then((content, blob) => {
+    console.log("- content");
     console.log(content);
+    console.log("- blob");
     console.log(blob);
     console.log("---");
     console.log("end");
