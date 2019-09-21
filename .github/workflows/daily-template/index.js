@@ -23,6 +23,9 @@ console.log("content");
 
 let content = "";
 fs.readFile(template, "utf8", function(err, data) {
+  console.log(`data: ${data}`);
+  console.log(`template: ${env.renderString(data, templateVariables)}`);
+
   content = env.renderString(data, templateVariables);
   fs.writeFile(`src/pages/${date}/index.md`, data, function(err, result) {
     if (err) console.log("error", err);
