@@ -10,6 +10,7 @@ const octokit = new github.GitHub(githubtoken);
 const context = github.context;
 const njenv = nunjucks.configure({ autoescape: false });
 const date = new Date().toISOString().split("T")[0];
+const content = "";
 const ref = "heads/master";
 
 // 1. Read the template
@@ -27,12 +28,8 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
       encoding: "utf-8",
       content: content
     });
-
-    return content, blob;
   })
-  .then((content, blob) => {
-    console.log("- content");
-    console.log(content);
+  .then(blob => {
     console.log("- blob");
     console.log(blob);
     console.log("---");
