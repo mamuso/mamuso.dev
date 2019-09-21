@@ -35,7 +35,7 @@ process()
   })
   .then((content, blob) => {
     console.log("2. Create tree");
-    octokit.git.createTree({
+    const res = octokit.git.createTree({
       ...context.repo,
       base_tree: context.payload.head_commit.tree_id,
       tree: [
@@ -48,6 +48,9 @@ process()
         }
       ]
     });
+    console.log("pre-res");
+    console.log(res);
+    return res;
   })
   .then(res => {
     console.log("3. Create commit");
