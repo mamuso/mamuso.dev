@@ -47,8 +47,16 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     return commit;
   })
   .then(commit => {
-    console.log("- commit");
-    console.log(commit);
+    const ref = octokit.git.createRef({
+      ...context.repo,
+      sha: commit.data.sha,
+      ref: `refs/heads/${date}`
+    });
+    return ref;
+  })
+  .then(ref => {
+    console.log("- ref");
+    console.log(ref);
     console.log("---");
     console.log("end");
   })
