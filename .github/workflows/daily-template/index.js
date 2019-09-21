@@ -51,7 +51,7 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     return ref;
   })
   .then(ref => {
-    const quote = "";
+    let quote = "";
 
     request("http://quotes.rest/qod.json", function(error, response, body) {
       if (!error && response.statusCode == 200) {
