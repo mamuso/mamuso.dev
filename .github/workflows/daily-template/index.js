@@ -13,24 +13,25 @@ const date = new Date().toISOString().split("T")[0];
 const ref = "heads/master";
 
 // 1. Compose the template
-const content = fs.readFile(".github/daily-template.md", "utf8", function(
-  err,
-  data
-) {
+fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
   return njenv.renderString(data, { date: date });
+}).then(content => {
+  console.log(content);
+  octokit.git.createBlob({
+    ...context.repo,
+    encoding: "utf-8",
+    content: content
+  });
 });
-
-console.log(content);
+then(blob => {
+  console.log(blob);
+  console.log("end");
+});
 
 const path = `src/pages/${date}/index.md`;
 
 process()
   .then(content => {
-    const blob = octokit.git.createBlob({
-      ...context.repo,
-      encoding: "utf-8",
-      content: content
-    });
     return content, blob;
   })
   .then((content, blob) => {
