@@ -18,7 +18,7 @@ const path = `src/pages/${date}/index.md`;
 const blob = octokit.git.createBlob({
   ...context.repo,
   encoding: "utf-8",
-  content
+  content: content
 });
 console.log(`blob: ${blob}`);
 
