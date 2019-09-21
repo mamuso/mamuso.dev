@@ -1,5 +1,4 @@
 const fs = require("fs").promises;
-const request = require("request");
 const core = require("@actions/core");
 const github = require("@actions/github");
 const nunjucks = require("nunjucks");
@@ -51,21 +50,11 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     return ref;
   })
   .then(ref => {
-    let quote = "";
-
-    request("http://quotes.rest/qod.json", function(error, response, body) {
-      quote = body;
-    });
-
-    console.log(quote);
-    console.log("....");
-
     const pull = octokit.pulls.create({
       ...context.repo,
       head: `${context.repo.owner}:${date}`,
       base: "master",
-      title: "test",
-      body: "tost"
+      title: `${date} - Let's post something awesome`
     });
     return pull;
   })
