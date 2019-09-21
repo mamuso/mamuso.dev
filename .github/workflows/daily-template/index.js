@@ -66,7 +66,6 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
   .then(pull => {
     console.log("- pull");
     console.log(pull);
-    console.log("---");
     console.log("end");
   })
   .catch(err => {
