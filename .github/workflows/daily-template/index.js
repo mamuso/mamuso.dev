@@ -30,11 +30,12 @@ process()
       encoding: "utf-8",
       content: content
     });
-    console.log(`blob: ${blob}`);
     return content, blob;
   })
   .then((content, blob) => {
     console.log("2. Create tree");
+    console.log(`content: ${content}`);
+    console.log(`blob: ${blob}`);
     const res = octokit.git.createTree({
       ...context.repo,
       base_tree: context.payload.head_commit.tree_id,
