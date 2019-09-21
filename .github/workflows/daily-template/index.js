@@ -38,19 +38,18 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     return tree;
   })
   .then(tree => {
-    octokit.git.createCommit({
+    const commit = octokit.git.createCommit({
       ...context.repo,
       message: `${date}`,
       tree: tree.data.sha,
       parents: [context.sha]
     });
+    return commit;
   })
-  .then(tree => {
-    console.log("- tree");
-    console.log(tree);
+  .then(commit => {
+    console.log("- commit");
+    console.log(commit);
     console.log("---");
-    console.log(content);
-
     console.log("end");
   })
   .catch(err => {
