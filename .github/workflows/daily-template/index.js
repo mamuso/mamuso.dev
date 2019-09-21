@@ -15,34 +15,34 @@ const templateVariables = {
   date: date
 };
 
-let content = "";
-
 // console.log(context);
 console.log("1. ------");
-console.log(context);
+// console.log(context);
 
+console.log("content");
+
+let content = "";
 fs.readFile(template, "utf8", function(err, data) {
   content = env.renderString(data, templateVariables);
   console.log(content);
   fs.writeFile(`src/pages/${date}/index.md`, data, function(err, result) {
     if (err) console.log("error", err);
   });
-})
-  .then(
-    octokit.repos
-      .listCommits({
-        ...context.repo,
-        sha: context.sha,
-        per_page: 1
-      })
-      .then(res => {
-        console.log("2. ------");
-        console.log(res.data);
-        console.log("SHA");
-        console.log(context.sha);
-        console.log(context.payload.head_commit.tree_id);
-      })
-  )
+});
+
+octokit.repos
+  .listCommits({
+    ...context.repo,
+    sha: context.sha,
+    per_page: 1
+  })
+  .then(res => {
+    console.log("2. ------");
+    console.log(res.data);
+    console.log("SHA");
+    console.log(context.sha);
+    console.log(context.payload.head_commit.tree_id);
+  })
   .then(
     octokit.git.createTree({
       ...context.repo,
