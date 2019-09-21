@@ -28,6 +28,8 @@ octokit.repos
   .then(res => {
     console.log("2. ------");
     console.log(res.data);
+    console.log(context.sha);
+    console.log(res.data[0].commit.tree.sha);
   })
   .catch(err => {
     console.log(err);
