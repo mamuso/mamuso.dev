@@ -10,7 +10,6 @@ const octokit = new github.GitHub(githubtoken);
 const context = github.context;
 const njenv = nunjucks.configure({ autoescape: false });
 const date = new Date().toISOString().split("T")[0];
-const ref = "heads/master";
 let content = "";
 
 // 1. Read the template
@@ -58,10 +57,11 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     const pull = octokit.pulls.create({
       ...context.repo,
       head: `${context.repo.owner}:${date}`,
-      base: context.ref.replace("refs/", ""),
+      base: "master",
       title: "test",
       body: "tost"
     });
+    return pull;
   })
   .then(pull => {
     console.log("- pull");
