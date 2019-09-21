@@ -29,7 +29,7 @@ octokit.repos
     console.log("2. ------");
     console.log(res.data);
     console.log(context.sha);
-    console.log(context.payload);
+    console.log(context.payload.head_commit.tree_id);
     console.log(res.data[0].commit.tree.sha);
   })
   .catch(err => {
