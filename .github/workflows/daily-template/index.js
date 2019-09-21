@@ -52,7 +52,7 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     console.log(content);
 
     console.log("end");
-  });
+  })
   .catch(err => {
     console.log(err);
   });
