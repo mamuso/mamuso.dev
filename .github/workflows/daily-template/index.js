@@ -15,17 +15,18 @@ const templateVariables = {
   date: date
 };
 const path = `src/pages/${date}/index.md`;
+
+console.log("1. Render template");
+const content = fs.readFile(template, "utf8", function(err, data) {
+  return env.renderString(data, templateVariables);
+});
+
 const blob = octokit.git.createBlob({
   ...context.repo,
   encoding: "utf-8",
   content: content
 });
 console.log(`blob: ${blob}`);
-
-console.log("1. Render template");
-const content = fs.readFile(template, "utf8", function(err, data) {
-  return env.renderString(data, templateVariables);
-});
 
 console.log("2. Create tree");
 octokit.git
