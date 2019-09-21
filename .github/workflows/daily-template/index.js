@@ -72,7 +72,7 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     return pull;
   })
   .then(pull => {
-    console.log("Pull request created!");
+    console.log("Pull request created 🎉");
   })
   .catch(err => {
     console.log(err);
