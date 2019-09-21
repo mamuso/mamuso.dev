@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const core = require("@actions/core");
 const github = require("@actions/github");
 const io = require("@actions/io");
@@ -17,11 +17,11 @@ const templateVariables = {
 const path = `src/pages/${date}/index.md`;
 
 console.log("1. Render template");
-var process = () => {
-  return await fs.readFile(template, "utf8", function(err, data) {
+async function process() {
+  return fs.readFile(template, "utf8", function(err, data) {
     return env.renderString(data, templateVariables);
   });
-};
+}
 
 process()
   .then(content => {
