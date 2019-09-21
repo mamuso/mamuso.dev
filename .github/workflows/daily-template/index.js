@@ -38,7 +38,8 @@ octokit.git
         path,
         mode: "100644",
         type: "blob",
-        sha: blob
+        sha: blob,
+        content: content
       }
     ]
   })
