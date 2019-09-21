@@ -60,7 +60,7 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     });
 
     console.log(quote);
-    console.log("...");
+    console.log("....");
 
     const pull = octokit.pulls.create({
       ...context.repo,
