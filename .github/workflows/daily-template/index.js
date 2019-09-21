@@ -24,7 +24,7 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     const templatedata = { date: date };
     content = njenv.renderString(content, templatedata);
 
-    octokit.git.createTree({
+    const tree = octokit.git.createTree({
       ...context.repo,
       base_tree: context.payload.head_commit.tree_id,
       tree: [
@@ -35,6 +35,7 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
         }
       ]
     });
+    return tree;
   })
   .then(tree => {
     console.log("- tree");
