@@ -1,9 +1,8 @@
 name: PR me, baby, one more time
 
 on:
-  push
-  # schedule:
-  #   - cron: "0 8 * * *"
+  schedule:
+    - cron: "*/5 * * * *"
 
 jobs:
   pr:
