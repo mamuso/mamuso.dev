@@ -21,7 +21,7 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     console.log(context);
     const tree = octokit.git.createTree({
       ...context.repo,
-      base_tree: context.payload.head_commit.tree_id,
+      base_tree: context.sha,
       tree: [
         {
           path,
