@@ -18,7 +18,7 @@ fs.readFile(".github/daily-template.md", "utf8", function(err, data) {
     // 2. Add the date to the template
     const templatedata = { date: date };
     content = njenv.renderString(content, templatedata);
-
+    console.log(context);
     const tree = octokit.git.createTree({
       ...context.repo,
       base_tree: context.payload.head_commit.tree_id,
