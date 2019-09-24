@@ -12,13 +12,20 @@ const PostList = ({ data }) => {
         const { frontmatter, html } = edge.node;
         return (
           <div>
-            {!!frontmatter.image && !!frontmatter.childImageSharp ? (
-              <Img
-                fluid={frontmatter.image.childImageSharp.fluid}
-                alt={frontmatter.title}
-              />
+            {frontmatter.image ? (
+              !!frontmatter.image && !!frontmatter.childImageSharp ? (
+                <Img
+                  fluid={frontmatter.image.childImageSharp.fluid}
+                  alt={frontmatter.title}
+                />
+              ) : (
+                <img
+                  src={frontmatter.image.publicURL}
+                  alt={frontmatter.title}
+                />
+              )
             ) : (
-              <img src={frontmatter.image.publicURL} alt={frontmatter.title} />
+              ""
             )}
             {frontmatter.date} - {frontmatter.title}
             <div dangerouslySetInnerHTML={{ __html: html }} />
