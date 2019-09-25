@@ -2,7 +2,7 @@ name: PR me, baby, one more time
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "0 20 * * *"
 
 jobs:
   pr:
