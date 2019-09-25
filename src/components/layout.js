@@ -6,6 +6,7 @@
  */
 
 import React from "react";
+import { Helmet } from "react-helmet";
 import PropTypes from "prop-types";
 import { useStaticQuery, graphql } from "gatsby";
 
@@ -18,6 +19,7 @@ const Layout = ({ children }) => {
       site {
         siteMetadata {
           title
+          description
         }
       }
     }
@@ -25,15 +27,18 @@ const Layout = ({ children }) => {
 
   return (
     <>
+      <Helmet>
+        <html lang="en" />
+        <title>{data.site.siteMetadata.title}</title>
+        <meta name="description" content={data.site.siteMetadata.description} />
+        <meta name="theme-color" content="#D90E5D" />
+        <meta property="og:type" content="business.business" />
+        <meta property="og:title" content={data.site.siteMetadata.title} />
+        <meta property="og:url" content="/" />
+        <meta property="og:image" content={`img/og-image.jpg`} />
+      </Helmet>
       <Header siteTitle={data.site.siteMetadata.title} />
-      <div
-        style={{
-          margin: `0 auto`,
-          maxWidth: 960,
-          padding: `0px 1.0875rem 1.45rem`,
-          paddingTop: 0
-        }}
-      >
+      <div>
         <main>{children}</main>
         <footer>don't forget to eat your veggies</footer>
       </div>

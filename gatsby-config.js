@@ -1,8 +1,10 @@
 module.exports = {
   siteMetadata: {
-    title: `feed.mamuso.net`,
+    title: `mamuso's feed`,
+    titleTemplate: "%s @ mamuso's feed",
     description: `Why does it hurt so much to hit your funny bone?`,
-    author: `@mamuso`
+    author: `@mamuso`,
+    twitterUsername: "@mamuso"
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
