@@ -1,13 +1,69 @@
+// -------------------------
+// Defaults
+// -------------------------
+$base-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+  "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+  sans-serif !default;
+$base-font-size: 1.8rem !default;
+$base-font-weight: 400 !default;
+$base-line-height: 1 !default;
+$base-max-width: 120rem !default;
+$base-radius: 0.3rem !default;
+
+$text-color: #333 !default;
+$brand-color: #4c82d7 !default;
+$brand-alt: #b60b4d !default;
+$secondary-color: #d4dede !default;
+$background-color: #f6f8f8 !default;
+$background-alt: #edf1f1 !default;
+$background-nav: #fff !default;
+
+$font-size-xxxl: 5.8rem !default;
+$font-size-xxl: 4.4rem !default;
+$font-size-xl: 2.8rem !default;
+$font-size-l: 2.4rem !default;
+$font-size-m: 1.6rem !default;
+$font-size-s: 1.2rem !default;
+
+$animation: 0.3s ease;
+
+// -------------------------
+// Reset
+// -------------------------
+
 html {
-  font-family: sans-serif;
+  font-family: $base-font-family;
+  font-size: 62.5%; 
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
 }
 body {
+  font-family: $base-font-family;
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #f6f8f8;
+  padding: 6rem 4rem 4rem;
+  min-height:100vh;
+  font: $base-font-weight $base-font-size $base-font-family;
+  font-kerning: normal;
+  color: $text-color;
+  border: 1.2rem solid $background-nav;
+  background: -moz-linear-gradient(126deg, $background-color 0%, $background-alt 100%); /* ff3.6+ */
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, $background-color), color-stop(100%, $background-alt)); /* safari4+,chrome */
+  background: -webkit-linear-gradient(126deg, $background-color 0%, $background-alt 100%); /* safari5.1+,chrome10+ */
+  background: -o-linear-gradient(126deg, $background-color 0%, $background-alt 100%); /* opera 11.10+ */
+  background: -ms-linear-gradient(126deg, $background-color 0%, $background-alt 100%); /* ie10+ */
+  background: linear-gradient(126deg, $background-color 0%, $background-alt 100%); /* w3c */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$background-color', endColorstr='$background-alt',GradientType=1 ); /* ie6-9 */
+  transition: background 0.5s ease;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-feature-settings:  "kern" 1;
+      -moz-font-feature-settings: "kern" 1;
+        -o-font-feature-settings: "kern" 1;
+          font-feature-settings:  "kern" 1;
+  scroll-behavior: smooth;
 }
 article,
 aside,
@@ -185,11 +241,6 @@ textarea {
   -webkit-appearance: button;
   font: inherit;
 }
-html {
-  font: 112.5%/1.45em georgia, serif;
-  box-sizing: border-box;
-  overflow-y: scroll;
-}
 * {
   box-sizing: inherit;
 }
@@ -199,17 +250,28 @@ html {
 *:after {
   box-sizing: inherit;
 }
-body {
-  color: hsla(0, 0%, 0%, 0.8);
-  font-family: georgia, serif;
-  font-weight: normal;
-  word-wrap: break-word;
-  font-kerning: normal;
-  -moz-font-feature-settings: "kern", "liga", "clig", "calt";
-  -ms-font-feature-settings: "kern", "liga", "clig", "calt";
-  -webkit-font-feature-settings: "kern", "liga", "clig", "calt";
-  font-feature-settings: "kern", "liga", "clig", "calt";
+
+// -------------------------
+// Styles
+// -------------------------
+
+p {
+  margin: 1.6rem 0;
+  line-height: 1.6;
 }
+
+h2 {
+  margin-bottom: 3rem;
+  font-family: "Playfair Display", serif;
+  font-size: $font-size-xxxl;
+}
+
+h3 {
+  margin-bottom: 1rem;
+  font-family: "Playfair Display", serif;
+  font-size: $font-size-xxl;
+}
+
 img {
   max-width: 100%;
   margin-left: 0;
