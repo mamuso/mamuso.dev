@@ -678,6 +678,23 @@ pre tt:before,
 pre tt:after {
   content: "";
 }
+
+
+.site-header {
+  path {
+    transition: transform $animation;
+  }
+  .logo {
+    padding: 0.5rem;
+  }
+  .logo:hover .pt {
+    transform: translateY(.6rem);
+  }
+  .logo:hover .pb {
+    transform: translateY(-.6rem);
+  }
+}
+
 @media only screen and (max-width: 480px) {
   html {
     font-size: 100%;
