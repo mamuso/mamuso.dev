@@ -2,7 +2,7 @@ import React from "react";
 import { graphql } from "gatsby";
 
 import Layout from "../components/layout";
-import Img from "gatsby-image";
+import Post from "../components/post";
 
 const PostList = ({ data }) => {
   const { edges } = data.allMarkdownRemark;
@@ -12,23 +12,7 @@ const PostList = ({ data }) => {
         const { frontmatter, html } = edge.node;
         return (
           <div>
-            {frontmatter.image ? (
-              !!frontmatter.image && !!frontmatter.childImageSharp ? (
-                <Img
-                  fluid={frontmatter.image.childImageSharp.fluid}
-                  alt={frontmatter.title}
-                />
-              ) : (
-                <img
-                  src={frontmatter.image.publicURL}
-                  alt={frontmatter.title}
-                />
-              )
-            ) : (
-              ""
-            )}
-            {frontmatter.date} - {frontmatter.title}
-            <div dangerouslySetInnerHTML={{ __html: html }} />
+            <Post data={edge.node} />
           </div>
         );
       })}
