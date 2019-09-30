@@ -55,5 +55,10 @@ export const GlobalStyle = createGlobalStyle`
     font-size: ${props => props.theme.fontSizes.xsmall};
     color: ${props => props.theme.colors.secondary}
   }
+  @media only screen and (max-width: 767px) {
+    body {
+      padding: 3.2rem;
+    }
+  }
 `
 export default GlobalStyle;

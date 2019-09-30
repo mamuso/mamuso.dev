@@ -35,10 +35,41 @@ const Post = data => {
       color: ${props => props.theme.colors.brand};
       background-position: 0% 70%;
     }
+    @media only screen and (max-width: 968px) {
+      & {
+        margin-left: -3.2rem;
+        margin-right: -3.2rem;
+        grid-template-columns: auto;
+        grid-template-areas:
+        'content'
+        'image';
+      }
+    }
+    @media only screen and (max-width: 767px) {
+      & {
+        margin-left: -1.2rem;
+        margin-right: -1.2rem;
+      }
+    }
+
+  
   `;
 
   const Content = styled.div`
     grid-area: content;
+    margin-bottom: .8rem;
+    @media only screen and (max-width: 968px) {
+      & {
+        padding-left: 3.2rem;
+        padding-right: 3.2rem;
+      }
+    }
+    @media only screen and (max-width: 767px) {
+      & {
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+    }
   `;
 
   const Image = styled.div`
