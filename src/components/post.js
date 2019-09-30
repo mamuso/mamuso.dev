@@ -47,8 +47,8 @@ const Post = data => {
     }
     @media only screen and (max-width: 767px) {
       & {
-        margin-left: -1.2rem;
-        margin-right: -1.2rem;
+        margin-left: -1.6rem;
+        margin-right: -1.6rem;
       }
     }
 
@@ -66,8 +66,8 @@ const Post = data => {
     }
     @media only screen and (max-width: 767px) {
       & {
-        padding-left: 2rem;
-        padding-right: 2rem;
+        padding-left: 1.2rem;
+        padding-right: 1.2rem;
       }
     }
   `;
