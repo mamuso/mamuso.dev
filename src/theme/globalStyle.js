@@ -15,7 +15,6 @@ export const GlobalStyle = createGlobalStyle`
     min-height:100vh;
     font: 400 ${props => props.theme.fontSizes.medium} ${props => props.theme.fonts.body};
     font-kerning: normal;
-    line-heigh: 1rem;
     color: ${props => props.theme.colors.text};
     border: 1.2rem solid ${props => props.theme.colors.backgroundLight};
     background: -moz-linear-gradient(126deg, ${props => props.theme.colors.background} 0%, ${props => props.theme.colors.backgroundAlt} 100%); /* ff3.6+ */

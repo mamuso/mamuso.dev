@@ -9,7 +9,6 @@ const PostList = ({ data }) => {
   return (
     <Layout>
       {edges.map(edge => {
-        const { frontmatter, html } = edge.node;
         return (
           <div>
             <Post data={edge.node} />

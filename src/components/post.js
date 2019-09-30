@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { transparentize } from 'polished';
+import { transparentize } from "polished";
 
 import Img from "gatsby-image";
 
@@ -15,16 +15,23 @@ const Post = data => {
       line-height: 1.6;
     }
     & .content a {
-      border-bottom: 2px solid ${props => transparentize(0.8, props.theme.colors.text)};
+      border-bottom: 2px solid
+        ${props => transparentize(0.8, props.theme.colors.text)};
       text-decoration: none;
       color: ${props => props.theme.colors.text};
       transition: all ${props => props.theme.animation};
-      background: linear-gradient(12deg, ${props => props.theme.colors.backgroundLight} 0%, ${props => props.theme.colors.backgroundLight} 40%, ${props => transparentize(1, props.theme.colors.brand)} 41%);
+      background: linear-gradient(
+        12deg,
+        ${props => props.theme.colors.backgroundLight} 0%,
+        ${props => props.theme.colors.backgroundLight} 40%,
+        ${props => transparentize(1, props.theme.colors.brand)} 41%
+      );
       background-position: 50% 0%;
       background-size: 400% 400%;
     }
     & .content a:hover {
-      border-bottom: 2px solid ${props => transparentize(0.8, props.theme.colors.brand)};
+      border-bottom: 2px solid
+        ${props => transparentize(0.8, props.theme.colors.brand)};
       color: ${props => props.theme.colors.brand};
       background-position: 0% 70%;
     }
@@ -36,6 +43,11 @@ const Post = data => {
 
   const Image = styled.div`
     grid-area: image;
+    & img, & picture, & .gatsby-image-wrapper {
+      border-radius: ${props => props.theme.radii};
+      box-shadow: 0 1px 2px rgba(51,51,51,.2);
+        max-width: 100%;
+    }
   `;
 
   const Meta = styled.div`
@@ -56,7 +68,7 @@ const Post = data => {
         <Meta>
           <time pubdate datetime="datePublished" value={frontmatter.date}>
             {frontmatter.date}
-          </time> 
+          </time>
           {frontmatter.category ? ` in ${frontmatter.category}` : ``}
         </Meta>
         <H2>{frontmatter.title}</H2>
@@ -65,7 +77,13 @@ const Post = data => {
         </div>
       </Content>
       <Image>
-        <Img fluid={frontmatter.image.childImageSharp.fluid} alt={frontmatter.title} />
+      {frontmatter.image ? (
+          frontmatter.image.childImageSharp != null ? (
+            <Img fluid={frontmatter.image.childImageSharp.fluid} alt={frontmatter.title} />
+          ) : (
+            <img src={frontmatter.image.publicURL} alt={frontmatter.title} />
+          )
+        ) : ("")}      
       </Image>
     </Article>
   );
