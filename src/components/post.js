@@ -1,16 +1,33 @@
 import React from "react";
 import styled from "styled-components";
+import { transparentize } from 'polished';
 
 import Img from "gatsby-image";
 
 const Post = data => {
-  console.log(data);
   const { frontmatter, html } = data.data;
 
   const Article = styled.article`
     display: grid;
     grid-template-columns: [content] 30rem 9rem [image] auto;
     margin-bottom: 10rem;
+    .content {
+      line-height: 1.6;
+    }
+    & .content a {
+      border-bottom: 2px solid ${props => transparentize(0.8, props.theme.colors.text)};
+      text-decoration: none;
+      color: ${props => props.theme.colors.text};
+      transition: all ${props => props.theme.animation};
+      background: linear-gradient(12deg, ${props => props.theme.colors.backgroundLight} 0%, ${props => props.theme.colors.backgroundLight} 40%, ${props => transparentize(1, props.theme.colors.brand)} 41%);
+      background-position: 50% 0%;
+      background-size: 400% 400%;
+    }
+    & .content a:hover {
+      border-bottom: 2px solid ${props => transparentize(0.8, props.theme.colors.brand)};
+      color: ${props => props.theme.colors.brand};
+      background-position: 0% 70%;
+    }
   `;
 
   const Content = styled.div`
@@ -21,28 +38,34 @@ const Post = data => {
     grid-area: image;
   `;
 
+  const Meta = styled.div`
+    font-family: ${props => props.theme.fonts.mono};
+    font-size: ${props => props.theme.fontSizes.xsmall};
+    color: ${props => props.theme.colors.secondary};
+  `;
+
+  const H2 = styled.h2`
+    font-family: ${props => props.theme.fonts.heading};
+    font-size: ${props => props.theme.fontSizes.large};
+    margin: 0;
+  `;
+
   return (
     <Article>
       <Content>
-        <time pubdate datetime="datePublished" value={frontmatter.date}>
-          {frontmatter.date}
-        </time>
-        <h2>{frontmatter.title}</h2>
-        <div dangerouslySetInnerHTML={{ __html: html }} />
+        <Meta>
+          <time pubdate datetime="datePublished" value={frontmatter.date}>
+            {frontmatter.date}
+          </time> 
+          {frontmatter.category ? ` in ${frontmatter.category}` : ``}
+        </Meta>
+        <H2>{frontmatter.title}</H2>
+        <div class="content">
+          <div dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
       </Content>
       <Image>
-        {frontmatter.image ? (
-          !!frontmatter.image && !!frontmatter.childImageSharp ? (
-            <Img
-              fluid={frontmatter.image.childImageSharp.fluid}
-              alt={frontmatter.title}
-            />
-          ) : (
-            <img src={frontmatter.image.publicURL} alt={frontmatter.title} />
-          )
-        ) : (
-          ""
-        )}
+        <Img fluid={frontmatter.image.childImageSharp.fluid} alt={frontmatter.title} />
       </Image>
     </Article>
   );
