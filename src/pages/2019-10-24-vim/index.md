@@ -1,5 +1,5 @@
 ---
-title: Vim and Blick
+title: Vim and Blink
 path: /2019-10-24-vim
 category: Code
 date: 2019-10-24
