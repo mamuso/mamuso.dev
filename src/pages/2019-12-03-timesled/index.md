@@ -1,7 +1,7 @@
 ---
 title: Building a time machine
 path: /2019-12-03-timesled
-category: code
+category: Code
 date: 2019-12-03
 image: ./screen_shot_2019-12-04_at_1_02_33_am.png
 ---
