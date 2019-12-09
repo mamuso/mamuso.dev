@@ -1,5 +1,5 @@
 ---
-title:
+title: Build your own public folder
 path: /2019-12-08-your-own-public-folder
 category: Inspiration
 date: 2019-12-08
