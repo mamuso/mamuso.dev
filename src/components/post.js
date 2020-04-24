@@ -4,7 +4,7 @@ import { transparentize } from "polished";
 
 import Img from "gatsby-image";
 
-const Post = data => {
+const Post = (data) => {
   const { frontmatter, html } = data.data;
 
   const Article = styled.article`
@@ -16,24 +16,27 @@ const Post = data => {
     }
     & .content a {
       border-bottom: 2px solid
-        ${props => transparentize(0.8, props.theme.colors.text)};
+        ${(props) => transparentize(0.8, props.theme.colors.text)};
       text-decoration: none;
-      color: ${props => props.theme.colors.text};
-      transition: all ${props => props.theme.animation};
+      color: ${(props) => props.theme.colors.text};
+      transition: all ${(props) => props.theme.animation};
       background: linear-gradient(
         12deg,
-        ${props => props.theme.colors.backgroundLight} 0%,
-        ${props => props.theme.colors.backgroundLight} 40%,
-        ${props => transparentize(1, props.theme.colors.brand)} 41%
+        ${(props) => props.theme.colors.backgroundLight} 0%,
+        ${(props) => props.theme.colors.backgroundLight} 40%,
+        ${(props) => transparentize(1, props.theme.colors.brand)} 41%
       );
       background-position: 50% 0%;
       background-size: 400% 400%;
     }
     & .content a:hover {
       border-bottom: 2px solid
-        ${props => transparentize(0.8, props.theme.colors.brand)};
-      color: ${props => props.theme.colors.brand};
+        ${(props) => transparentize(0.8, props.theme.colors.brand)};
+      color: ${(props) => props.theme.colors.brand};
       background-position: 0% 70%;
+    }
+    & .content ul {
+      list-style: disc;
     }
     @media only screen and (max-width: 968px) {
       & {
@@ -41,8 +44,8 @@ const Post = data => {
         margin-right: -3.2rem;
         grid-template-columns: auto;
         grid-template-areas:
-        'content'
-        'image';
+          "content"
+          "image";
       }
     }
     @media only screen and (max-width: 767px) {
@@ -51,13 +54,11 @@ const Post = data => {
         margin-right: -1.6rem;
       }
     }
-
-  
   `;
 
   const Content = styled.div`
     grid-area: content;
-    margin-bottom: .8rem;
+    margin-bottom: 0.8rem;
     @media only screen and (max-width: 968px) {
       & {
         padding-left: 3.2rem;
@@ -74,22 +75,24 @@ const Post = data => {
 
   const Image = styled.div`
     grid-area: image;
-    & img, & picture, & .gatsby-image-wrapper {
-      border-radius: ${props => props.theme.radii};
-      box-shadow: 0 1px 2px rgba(51,51,51,.2);
-        max-width: 100%;
+    & img,
+    & picture,
+    & .gatsby-image-wrapper {
+      border-radius: ${(props) => props.theme.radii};
+      box-shadow: 0 1px 2px rgba(51, 51, 51, 0.2);
+      max-width: 100%;
     }
   `;
 
   const Meta = styled.div`
-    font-family: ${props => props.theme.fonts.mono};
-    font-size: ${props => props.theme.fontSizes.xsmall};
-    color: ${props => props.theme.colors.secondary};
+    font-family: ${(props) => props.theme.fonts.mono};
+    font-size: ${(props) => props.theme.fontSizes.xsmall};
+    color: ${(props) => props.theme.colors.secondary};
   `;
 
   const H2 = styled.h2`
-    font-family: ${props => props.theme.fonts.heading};
-    font-size: ${props => props.theme.fontSizes.large};
+    font-family: ${(props) => props.theme.fonts.heading};
+    font-size: ${(props) => props.theme.fontSizes.large};
     margin: 0;
   `;
 
@@ -108,13 +111,18 @@ const Post = data => {
         </div>
       </Content>
       <Image>
-      {frontmatter.image ? (
+        {frontmatter.image ? (
           frontmatter.image.childImageSharp != null ? (
-            <Img fluid={frontmatter.image.childImageSharp.fluid} alt={frontmatter.title} />
+            <Img
+              fluid={frontmatter.image.childImageSharp.fluid}
+              alt={frontmatter.title}
+            />
           ) : (
             <img src={frontmatter.image.publicURL} alt={frontmatter.title} />
           )
-        ) : ("")}      
+        ) : (
+          ""
+        )}
       </Image>
     </Article>
   );
