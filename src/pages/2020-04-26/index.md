@@ -1,7 +1,0 @@
----
-title:
-path: /2020-04-26
-category:
-date: 2020-04-26
-image: ./
----
