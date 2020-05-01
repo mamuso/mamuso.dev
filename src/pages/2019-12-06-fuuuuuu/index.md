@@ -1,7 +1,7 @@
 ---
 title: Stuck!
 path: /2019-12-06-fuuuuuu
-category: Code
+category: code
 date: 2019-12-06
 image: ./screen_shot_2019-12-07_at_12_59_34_am.png
 ---

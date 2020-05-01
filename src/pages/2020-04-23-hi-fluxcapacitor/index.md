@@ -1,7 +1,7 @@
 ---
 title: Hi, fluxcapacitor!
 path: /2020-04-23-hi-fluxcapacitor
-category: Code
+category: code
 date: 2020-04-23
 image: ./screen_shot_2020-04-24_at_12_06_23_am.png
 ---

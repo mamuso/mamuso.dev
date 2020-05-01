@@ -1,7 +1,7 @@
 ---
 title: Capture and minify
 path: /2019-12-05-capture-minify
-category: Code
+category: code
 date: 2019-12-05
 image: ./screen_shot_2019-12-05_at_10_49_55_pm.png
 ---
