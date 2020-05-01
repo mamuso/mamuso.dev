@@ -1,11 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import { transparentize } from "polished";
+import { Link } from "gatsby";
 
 import Img from "gatsby-image";
 
 const Post = (data) => {
-  const { frontmatter, html } = data.data;
+  const { frontmatter, html, blogpost } = data.data;
 
   const Article = styled.article`
     display: grid;
@@ -94,6 +95,24 @@ const Post = (data) => {
     font-family: ${(props) => props.theme.fonts.heading};
     font-size: ${(props) => props.theme.fontSizes.large};
     margin: 0;
+    & a {
+      text-decoration: none;
+      color: ${(props) => props.theme.colors.text};
+      transition: all ${(props) => props.theme.animation};
+      background: linear-gradient(
+        12deg,
+        ${(props) => props.theme.colors.backgroundLight} 0%,
+        ${(props) => props.theme.colors.backgroundLight} 40%,
+        ${(props) => transparentize(1, props.theme.colors.brand)} 41%
+      );
+      background-position: 50% 0%;
+      background-size: 400% 400%;
+    }
+    & a:hover {
+      border-bottom: 2px solid
+        ${(props) => transparentize(0.8, props.theme.colors.text)};
+      background-position: 0% 70%;
+    }
   `;
 
   return (
@@ -105,7 +124,10 @@ const Post = (data) => {
           </time>
           {frontmatter.category ? ` in ${frontmatter.category}` : ``}
         </Meta>
-        <H2>{frontmatter.title}</H2>
+        <H2>
+          {!blogpost && <Link to={frontmatter.path}>{frontmatter.title}</Link>}
+          {blogpost === true && frontmatter.title}
+        </H2>
         <div class="content">
           <div dangerouslySetInnerHTML={{ __html: html }} />
         </div>
