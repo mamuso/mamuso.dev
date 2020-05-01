@@ -1,7 +1,7 @@
 ---
 title: Vim and Blink
 path: /2019-10-24-vim
-category: Code
+category: code
 date: 2019-10-24
 image: ./EE858C2C-5B78-4222-BCBF-0C8901F783A8.png
 ---

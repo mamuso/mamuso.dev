@@ -1,7 +1,7 @@
 ---
 title: Timesled deploy is ready to go
 path: /2019-12-11-deploy
-category: Code
+category: code
 date: 2019-12-11
 image: ./screen_shot_2019-12-11_at_10_26_11_pm.png
 ---

@@ -1,7 +1,7 @@
 ---
 title: Do your own work feed
 path: /2019-12-10-peeking
-category: Code
+category: code
 date: 2019-12-10
 image: ./screen_shot_2019-12-10_at_11_26_51_pm.png
 ---

@@ -1,7 +1,7 @@
 ---
 title: Managing dotfiles
 path: /2019-11-14-dotfiles
-category: Code
+category: code
 date: 2019-11-14
 image: ./screen_shot_2019-11-14_at_9_27_27_pm.png
 ---

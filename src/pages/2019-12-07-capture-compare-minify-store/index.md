@@ -1,7 +1,7 @@
 ---
 title: Capture, compare, minify, store
 path: /2019-12-07-capture-compare-minify-store
-category: Code
+category: code
 date: 2019-12-07
 image: ./screen_shot_2019-12-07_at_9_48_48_pm.png
 ---
