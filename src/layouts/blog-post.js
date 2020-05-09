@@ -19,7 +19,7 @@ const BlogPost = ({ data }) => {
           description: `${post.excerpt}`,
           images: [
             {
-              url: `${post.frontmatter.image.publicURL}`,
+              url: `https://feed.mamuso.net${post.frontmatter.image.publicURL}`,
             },
           ],
           site_name: "mamuso's feed",
