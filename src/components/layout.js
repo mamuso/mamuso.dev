@@ -11,7 +11,7 @@ import PropTypes from "prop-types";
 import { useStaticQuery, graphql } from "gatsby";
 
 import SiteHeader from "./header";
-import styled, { ThemeProvider } from "styled-components";
+import { ThemeProvider } from "styled-components";
 import { GlobalStyle } from "../theme/globalStyle";
 import theme from "../theme/theme";
 
@@ -33,11 +33,6 @@ const Layout = ({ children }) => {
         <GlobalStyle />
         <Helmet>
           <html lang="en" />
-          <title>{data.site.siteMetadata.title}</title>
-          <meta
-            name="description"
-            content={data.site.siteMetadata.description}
-          />
         </Helmet>
         <SiteHeader siteTitle={data.site.siteMetadata.title} />
         <div>

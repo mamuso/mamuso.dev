@@ -51,7 +51,7 @@ module.exports = {
           type: "website",
           locale: "en_US",
           url: "https://feed.mamuso.net/",
-          site_name: "mamuso's fee",
+          site_name: "mamuso's feed",
         },
         twitter: {
           handle: "@mamuso",

@@ -10,8 +10,27 @@ const PostList = ({ data }) => {
   return (
     <Layout>
       <GatsbySeo
-        title="Using More of Config"
-        description="This example uses more of the available config options."
+        title={"Sweet home – " + data.site.siteMetadata.title}
+        description={data.site.siteMetadata.description}
+        canonical="https://feed.mamuso.net/"
+        openGraph={{
+          url: "https://feed.mamuso.net/",
+          title: `Sweet home – ${data.site.siteMetadata.title}`,
+          description: `${data.site.siteMetadata.description}`,
+          images: [
+            {
+              url: "https://feed.mamuso.net/img/og-image.png",
+              width: 800,
+              height: 800,
+              alt: "mamuso's feed",
+            },
+          ],
+          site_name: "mamuso's feed",
+        }}
+        twitter={{
+          handle: "@mamuso",
+          cardType: "summary_large_image",
+        }}
       />
       {edges.map((edge) => {
         return (
@@ -26,6 +45,12 @@ const PostList = ({ data }) => {
 
 export const query = graphql`
   query HomepageQuery {
+    site {
+      siteMetadata {
+        title
+        description
+      }
+    }
     allMarkdownRemark(sort: { order: DESC, fields: [frontmatter___date] }) {
       edges {
         node {
