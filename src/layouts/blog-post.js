@@ -7,6 +7,10 @@ import { GatsbySeo } from "gatsby-plugin-next-seo";
 
 const BlogPost = ({ data }) => {
   const { markdownRemark: post } = data;
+  const ogimage = post.frontmatter.poster
+    ? post.frontmatter.poster.publicURL
+    : post.frontmatter.image.publicURL;
+
   return (
     <Layout>
       <GatsbySeo
@@ -19,7 +23,7 @@ const BlogPost = ({ data }) => {
           description: `${post.excerpt}`,
           images: [
             {
-              url: `https://feed.mamuso.net${post.frontmatter.image.publicURL}`,
+              url: `https://feed.mamuso.net${ogimage}`,
             },
           ],
           site_name: "mamuso's feed",
@@ -58,6 +62,9 @@ export const pageQuery = graphql`
               ...GatsbyImageSharpFluid
             }
           }
+          publicURL
+        }
+        poster {
           publicURL
         }
       }
