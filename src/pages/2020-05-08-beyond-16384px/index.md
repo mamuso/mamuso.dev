@@ -13,6 +13,6 @@ It turns out [chromium has a hard time processing images over 16384px](https://g
 
 This approach brings other fun problems to the table:
 
-- Avoiding sticky headers and footers (solved!)
+- Capturing sticky headers and footers (solved!)
 - Fixed sidebar repetition (no clue how to work around this problem sustainably)
 - Animations loops in the seams of captures (🤷🏼‍♂️)
