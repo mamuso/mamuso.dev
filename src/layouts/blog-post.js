@@ -3,11 +3,32 @@ import { graphql } from "gatsby";
 
 import Layout from "../components/layout";
 import Post from "../components/post";
+import { GatsbySeo } from "gatsby-plugin-next-seo";
 
 const BlogPost = ({ data }) => {
   const { markdownRemark: post } = data;
   return (
     <Layout>
+      <GatsbySeo
+        title={post.frontmatter.title + " – " + data.site.siteMetadata.title}
+        description={post.excerpt}
+        canonical="https://feed.mamuso.net/"
+        openGraph={{
+          url: "https://feed.mamuso.net/",
+          title: `${post.frontmatter.title} – ${data.site.siteMetadata.title}`,
+          description: `${post.excerpt}`,
+          images: [
+            {
+              url: `https://feed.mamuso.net${post.frontmatter.image.publicURL}`,
+            },
+          ],
+          site_name: "mamuso's feed",
+        }}
+        twitter={{
+          handle: "@mamuso",
+          cardType: "summary_large_image",
+        }}
+      />
       <div>
         <Post data={{ blogpost: true, ...post }} />
       </div>
@@ -17,8 +38,15 @@ const BlogPost = ({ data }) => {
 
 export const pageQuery = graphql`
   query BlogPostByPath($path: String!) {
+    site {
+      siteMetadata {
+        title
+        description
+      }
+    }
     markdownRemark(frontmatter: { path: { eq: $path } }) {
       html
+      excerpt(pruneLength: 280)
       frontmatter {
         title
         category
