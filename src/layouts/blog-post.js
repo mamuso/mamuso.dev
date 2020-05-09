@@ -19,7 +19,7 @@ const BlogPost = ({ data }) => {
         canonical="https://feed.mamuso.net/"
         openGraph={{
           url: "https://feed.mamuso.net/",
-          title: `${post.frontmatter.title} – ${data.site.siteMetadata.title}`,
+          title: `${post.frontmatter.title}`,
           description: `${post.excerpt}`,
           images: [
             {
