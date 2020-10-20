@@ -6,7 +6,7 @@
   "author": "Manuel Muñoz Solera <mamuso@mamuso.net>",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.4",
+    "@actions/core": "^1.2.6",
     "@actions/github": "^1.1.0",
     "nunjucks": "^3.2.1",
     "request": "^2.88.2"
