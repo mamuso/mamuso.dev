@@ -1,0 +1,13 @@
+---
+title: Do your own work feed
+path: /2019-12-10-peeking
+category: code
+date: "2019-12-10"
+image: ./screen_shot_2019-12-10_at_11_26_51_pm.png
+---
+
+Why would you want a side project if you can have two :trollface:.
+
+I'm starting to work with [Adrián](https://twitter.com/adrianmg) on transforming the concept of this work feed into a real product. I'll be writing a lot more about it while we build it.
+
+We want to have something ready to ship very fast, so we are using [Max Stoiber](https://mobile.twitter.com/mxstbr/) and [Brian Lovin](https://mobile.twitter.com/brian_lovin)'s [product boilerplate](https://github.com/nice-boys/product-boilerplate) as our initial foundation. I'm thoroughly impressed by how fast we were able to go from nothing to start working on our data model.

@@ -1,0 +1,11 @@
+---
+title: Stuck!
+path: /2019-12-06-fuuuuuu
+category: code
+date: "2019-12-06"
+image: ./screen_shot_2019-12-07_at_12_59_34_am.png
+---
+
+Got stuck in a potentially stupid thing, and wrote a bunch of spaghetti code that I'll need to throw away tomorrow.
+
+On the bright side, I think that I understand a lot better how to deal with AzStorage. 🤷🏼‍♂️
