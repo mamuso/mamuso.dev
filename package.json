@@ -22,7 +22,7 @@
     "gatsby-transformer-remark": "^2.8.3",
     "gatsby-transformer-sharp": "^2.5.0",
     "node-sass": "^4.14.1",
-    "polished": "^3.5.2",
+    "polished": "^3.7.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
