@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 
 const postsPerPage = 20;
-const allPosts = getAllPosts(["title", "date", "slug"]);
+const allPosts = getAllPosts(["title", "date", "slug", "image", "content"]);
 
 export default function Index({ pagePosts }) {
   if (pagePosts) {
@@ -14,7 +14,11 @@ export default function Index({ pagePosts }) {
         </Head>
         <div>
           {pagePosts.map((post) => (
-            <p>{post.title}</p>
+            <>
+              <h2>{post.title}</h2>
+              <p>{post.content}</p>
+              <Image src={`/_feed/${post.slug}.${post.image.format}`} quality={85} width={post.image.width} height={post.image.height} />
+            </>
           ))}
         </div>
       </>

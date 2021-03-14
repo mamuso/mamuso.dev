@@ -3,7 +3,10 @@ title: Capture, compare, minify, store
 path: /2019-12-07-capture-compare-minify-store
 category: Code
 date: "2019-12-07"
-image: ./screen_shot_2019-12-07_at_9_48_48_pm.png
+image:
+  format: png
+  width: 3360
+  height: 2100
 ---
 
 Today was cleanup time. I broke a gigantic index.js into manageable pieces and tried to tidy some of the mess that I did while I was building the concept.

@@ -3,7 +3,10 @@ title: Capture and minify
 path: /2019-12-05-capture-minify
 category: Code
 date: "2019-12-05"
-image: ./screen_shot_2019-12-05_at_10_49_55_pm.png
+image:
+  format: png
+  width: 3360
+  height: 2056
 ---
 
 The action now iterates over a few devices and a list of URLs. It is slow, but that was expected.

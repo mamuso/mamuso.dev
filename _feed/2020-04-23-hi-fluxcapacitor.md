@@ -3,7 +3,10 @@ title: Hi, fluxcapacitor!
 path: /2020-04-23-hi-fluxcapacitor
 category: Code
 date: "2020-04-23"
-image: ./screen_shot_2020-04-24_at_12_06_23_am.png
+image:
+  format: png
+  width: 3360
+  height: 2100
 ---
 
 WELL, WELL! Fluxcapacitor (formerly Timesled, I'm the worst naming projects) runs like a charm over GitHub Actions, and I rewrote a big chunk of the code for sustainability:

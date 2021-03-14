@@ -3,7 +3,10 @@ title: Keep it simple, stupid
 path: /2021-03-10-nextjs-markdown
 category: Code
 date: "2021-03-10"
-image: ./screen_shot_2019-09-17_at_8_35.png
+image:
+  format: png
+  width: 2880
+  height: 1800
 ---
 
 This feed should be about what I build, not about building the feed.

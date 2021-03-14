@@ -3,7 +3,10 @@ title: Eloquent JavaScript
 path: /2020-04-30-eloquentjavascript
 category: inspiration
 date: "2020-04-30"
-image: ./screen_shot_2020-04-30_at_11_35_24_pm.png
+image:
+  format: png
+  width: 3360
+  height: 2058
 ---
 
 Had fun reading [Eloquent JavaScript](https://eloquentjavascript.net/).
