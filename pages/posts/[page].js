@@ -6,18 +6,22 @@ const postsPerPage = 20;
 const allPosts = getAllPosts(["title", "date", "slug"]);
 
 export default function Index({ pagePosts }) {
-  return (
-    <>
-      <Head>
-        <title>mamuso.dev</title>
-      </Head>
-      <div>
-        {pagePosts.map((post) => (
-          <p>{post.title}</p>
-        ))}
-      </div>
-    </>
-  );
+  if (pagePosts) {
+    return (
+      <>
+        <Head>
+          <title>mamuso.dev</title>
+        </Head>
+        <div>
+          {pagePosts.map((post) => (
+            <p>{post.title}</p>
+          ))}
+        </div>
+      </>
+    );
+  } else {
+    return null;
+  }
 }
 
 export async function getStaticPaths() {
