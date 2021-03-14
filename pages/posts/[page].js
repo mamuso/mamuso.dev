@@ -17,7 +17,7 @@ export default function Index({ pagePosts }) {
             <>
               <h2>{post.title}</h2>
               <p>{post.content}</p>
-              <Image src={`/_feed/${post.slug}.${post.image.format}`} quality={85} width={post.image.width} height={post.image.height} />
+              <Image src={`/_feed/${post.slug}.${post.image.format}`} layout="responsive" quality={85} width={post.image.width} height={post.image.height} />
             </>
           ))}
         </div>
