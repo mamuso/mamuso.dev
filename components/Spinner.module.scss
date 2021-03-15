@@ -1,0 +1,27 @@
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 20px;
+  overflow: hidden;
+  div {
+    position: relative;
+    width: 1000px;
+    animation: spinner 0.75s steps(7) infinite;
+    span {
+      display: inline-block;
+      width: 16px;
+      height: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+  }
+}
+
+@keyframes spinner {
+  from {
+    left: 0;
+  }
+  to {
+    left: -112px;
+  }
+}

@@ -1,6 +1,6 @@
 import Layout from "../components/Layout";
 
-import "../styles/index.css";
+import "../styles/index.scss";
 
 function MyApp({ Component, pageProps }) {
   return (
