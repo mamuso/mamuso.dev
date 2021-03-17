@@ -1,16 +1,14 @@
-export const lightTheme = {
-  colors: {
-    "bg-primary": "#eff0f5",
-  },
-};
-
-export const darkTheme = {
-  colors: {
-    "bg-primary": "red",
-  },
-};
-
 export const defaultTheme = {
+  colors: {
+    light: {
+      "bg-primary": "#EDF1F1",
+      "text-primary": "#333333",
+    },
+    dark: {
+      "bg-primary": "#011627",
+      "text-primary": "#d6deeb",
+    },
+  },
   fontSizes: [
     "14px", // 0
     "16px", // 1

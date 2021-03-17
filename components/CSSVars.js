@@ -1,21 +1,27 @@
+import { defaultTheme } from "../Theme";
 import Head from "next/head";
 
-export default function CSSVars({ children }) {
+const darkTheme = Object.entries(defaultTheme.colors.dark)
+  .map(([name, value]) => `--${name}: ${value}`)
+  .join(";");
+
+const lightTheme = Object.entries(defaultTheme.colors.light)
+  .map(([name, value]) => `--${name}: ${value}`)
+  .join(";");
+
+export default function CSSVars() {
   return (
     <Head>
       <style>
         {`
         :root {
-          --bg-color: #fff;
-          --font-color: #424242;
+          ${lightTheme};
         }
         @media (prefers-color-scheme: dark) {
           :root {
-            --bg-color: #011627;
-            --font-color: #e1e1ff;
+            ${darkTheme};
           }
         }
-
         `}
       </style>
     </Head>

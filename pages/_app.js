@@ -6,7 +6,7 @@ import Layout from "../components/Layout";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <ThemeProvider theme={{ defaultTheme }}>
+    <ThemeProvider theme={defaultTheme}>
       <Layout>
         <Component {...pageProps} />
       </Layout>
