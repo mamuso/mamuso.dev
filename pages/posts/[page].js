@@ -16,7 +16,7 @@ export default function Index({ pagePosts }) {
           {pagePosts.map((post) => (
             <>
               <h2>{post.title}</h2>
-              <p>{post.content}</p>
+              <p>1 --- {post.content}</p>
               <Image src={`/_feed/${post.slug}.${post.image.format}`} layout="responsive" quality={85} width={post.image.width} height={post.image.height} />
             </>
           ))}

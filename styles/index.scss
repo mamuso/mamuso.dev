@@ -1,6 +1,18 @@
 @import "normalize.css";
 
+// Foundational styles
+
+@font-face {
+  font-family: Manrope;
+  font-stretch: 50% 150%;
+  font-weight: 100 1000;
+  src: url(/ttf/manrope-wght.ttf) format("truetype-variations");
+}
+
 body {
+  font-family: Manrope, -apple-system, BlinkMacSystemFont, Roboto, "helvetica neue", sans-serif;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
