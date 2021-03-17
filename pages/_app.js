@@ -1,12 +1,16 @@
-import Layout from "../components/Layout";
-
 import "../styles/index.scss";
+
+import { ThemeProvider } from "styled-components";
+import { defaultTheme } from "../Theme";
+import Layout from "../components/Layout";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <Layout {...pageProps}>
-      <Component {...pageProps} />
-    </Layout>
+    <ThemeProvider theme={{ defaultTheme }}>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </ThemeProvider>
   );
 }
 
