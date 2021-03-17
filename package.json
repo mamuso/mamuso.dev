@@ -1,5 +1,5 @@
 {
-  "name": "feed.mamuso.net",
+  "name": "mamuso.dev",
   "version": "1.0.0",
   "description": "One square of dark chocolate a day",
   "main": "index.js",
@@ -9,7 +9,9 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "remark": "^13.0.0",
-    "remark-html": "^13.0.1"
+    "remark-html": "^13.0.1",
+    "sass": "^1.32.8",
+    "styled-components": "^5.2.1"
   },
   "scripts": {
     "dev": "next dev",
@@ -18,12 +20,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mamuso/feed.mamuso.net.git"
+    "url": "git+https://github.com/mamuso/mamuso.dev.git"
   },
   "author": "mamuso",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mamuso/feed.mamuso.net/issues"
+    "url": "https://github.com/mamuso/mamuso.dev/issues"
   },
-  "homepage": "https://github.com/mamuso/feed.mamuso.net#readme"
+  "homepage": "https://github.com/mamuso/mamuso.dev#readme"
 }
