@@ -1,6 +1,7 @@
 import { getAllPosts } from "../../lib/api";
+import { NextSeo } from "next-seo";
 import Head from "next/head";
-import Image from "next/image";
+import Post from "../../components/Post";
 
 const postsPerPage = 20;
 const allPosts = getAllPosts(["title", "date", "slug", "image", "content"]);
@@ -10,17 +11,35 @@ export default function Index({ pagePosts }) {
     return (
       <>
         <Head>
-          <title>mamuso.dev</title>
+          <title>mamuso.dev – Why does it hurt so much to hit your funny bone?</title>
         </Head>
-        <div>
-          {pagePosts.map((post) => (
-            <>
-              <h2>{post.title}</h2>
-              <p>{post.content}</p>
-              <Image src={`/_feed/${post.slug}.${post.image.format}`} layout="responsive" quality={85} width={post.image.width} height={post.image.height} />
-            </>
-          ))}
-        </div>
+        <NextSeo
+          title="mamuso.dev"
+          description="Why does it hurt so much to hit your funny bone?"
+          canonical="https://www.mamuso.dev"
+          openGraph={{
+            url: "https://www.mamuso.dev",
+            title: "mamuso.dev",
+            description: "Why does it hurt so much to hit your funny bone?",
+            images: [
+              {
+                url: "https://mamuso.dev/img/og.png",
+                width: 1200,
+                height: 627,
+                alt: "mamuso.dev – Why does it hurt so much to hit your funny bone?",
+              },
+            ],
+            site_name: "SiteName",
+          }}
+          twitter={{
+            handle: "@mamuso",
+            site: "@mamuso",
+            cardType: "summary_large_image",
+          }}
+        />
+        {pagePosts.map((post) => (
+          <Post post={post} />
+        ))}
       </>
     );
   } else {

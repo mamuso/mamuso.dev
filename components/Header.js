@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const HeaderWrap = styled.header`
-  margin-bottom: 8rem;
+  margin-bottom: 10rem;
 `;
 
 const HeaderLink = styled.a`
