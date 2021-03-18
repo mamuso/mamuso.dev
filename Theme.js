@@ -2,10 +2,12 @@ export const defaultTheme = {
   colors: {
     light: {
       "bg-primary": "#EDF1F1",
+      "outer-border": "#FFFFFF",
       "text-primary": "#333333",
     },
     dark: {
-      "bg-primary": "#011627",
+      "bg-primary": "#182335",
+      "outer-border": "#141B2A",
       "text-primary": "#d6deeb",
     },
   },
@@ -30,4 +32,6 @@ export const defaultTheme = {
     heading: 1.3,
     code: 1.6,
   },
+  radii: "0.3rem",
+  animation: "0.3s ease",
 };
