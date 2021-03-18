@@ -32,6 +32,10 @@ export const defaultTheme = {
     heading: 1.3,
     code: 1.6,
   },
+<<<<<<< HEAD
   radii: "0.4rem",
+=======
+  radii: "0.3rem",
+>>>>>>> 9b079ae318e9b8372280e8a9c2f21e171021f3e0
   animation: "0.3s ease",
 };

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+<<<<<<< HEAD
 import Markdown from "markdown-to-jsx";
 import Image from "next/image";
 import Spinner from "../components/Spinner";
@@ -37,3 +38,5 @@ export default function Post({ post }) {
     </Article>
   );
 }
+=======
+>>>>>>> 9b079ae318e9b8372280e8a9c2f21e171021f3e0
