@@ -38,7 +38,7 @@ export default function Index({ pagePosts }) {
           }}
         />
         {pagePosts.map((post) => (
-          <Post post={post} />
+          <Post post={post} key={post.date} />
         ))}
       </>
     );

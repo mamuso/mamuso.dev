@@ -3,20 +3,37 @@ import Markdown from "markdown-to-jsx";
 import Image from "next/image";
 import Spinner from "../components/Spinner";
 
+const Article = styled.article`
+  padding-bottom: 6.4rem;
+`;
+
+const ImageWrap = styled.div`
+  position: relative;
+  margin: 1rem -2.4rem;
+  background-color: var(--outer-border);
+  border-radius: ${(props) => props.theme.radii};
+  text-align: center;
+  overflow: hidden;
+  & .spinner {
+    position: absolute;
+    top: 48%;
+  }
+`;
+
 export default function Post({ post }) {
   return (
-    <article>
+    <Article>
       <header>
         <h2>{post.title}</h2>
-        <time datetime={post.date}>{post.date}</time>
+        <time dateTime={post.date}>{post.date}</time>
       </header>
 
       <Markdown>{post.content}</Markdown>
 
-      <div style={{ backgroundColor: "red", margin: "0 -2rem", display: "block" }}>
+      <ImageWrap>
         <Spinner />
         <Image src={`/_feed/${post.slug}.${post.image.format}`} layout="responsive" quality={85} width={post.image.width} height={post.image.height} />
-      </div>
-    </article>
+      </ImageWrap>
+    </Article>
   );
 }

@@ -12,13 +12,13 @@ export const defaultTheme = {
     },
   },
   fontSizes: [
-    "14px", // 0
-    "16px", // 1
-    "18px", // 2
-    "22px", // 3
-    "26px", // 4
-    "32px", // 5
-    "40px", // 6
+    "1.4rem", // 0
+    "1.6rem", // 1
+    "1.8rem", // 2
+    "2.2rem", // 3
+    "2.6rem", // 4
+    "3.2rem", // 5
+    "4rem", // 6
   ],
   fontWeights: {
     body: 400,
@@ -32,6 +32,6 @@ export const defaultTheme = {
     heading: 1.3,
     code: 1.6,
   },
-  radii: "0.3rem",
+  radii: "0.4rem",
   animation: "0.3s ease",
 };
