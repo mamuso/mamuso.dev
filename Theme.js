@@ -7,7 +7,7 @@ export const defaultTheme = {
     },
     dark: {
       "bg-primary": "#182335",
-      "outer-border": "#0a111c",
+      "outer-border": "#141B2A",
       "text-primary": "#d6deeb",
     },
   },
