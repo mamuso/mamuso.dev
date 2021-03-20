@@ -1,6 +1,8 @@
 import fs from "fs";
+import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from "../../lib/constants";
 import { getAllPosts } from "../../lib/api";
 import { generateRss } from "../../lib/rss";
+
 import { NextSeo } from "next-seo";
 import Head from "next/head";
 import Post from "../../components/Post";
@@ -12,26 +14,23 @@ export default function Index({ pagePosts }) {
   if (pagePosts) {
     return (
       <>
-        <Head>
-          <title>mamuso.dev – Why does it hurt so much to hit your funny bone?</title>
-        </Head>
         <NextSeo
-          title="mamuso.dev"
-          description="Why does it hurt so much to hit your funny bone?"
-          canonical="https://www.mamuso.dev"
+          title={BLOG_SUBTITLE}
+          description={BLOG_SUBTITLE}
+          canonical={BLOG_URL}
           openGraph={{
-            url: "https://www.mamuso.dev",
-            title: "mamuso.dev",
-            description: "Why does it hurt so much to hit your funny bone?",
+            url: `${BLOG_URL}`,
+            title: `${BLOG_TITLE}`,
+            description: `${BLOG_SUBTITLE}`,
             images: [
               {
-                url: "https://mamuso.dev/img/og.png",
+                url: `${BLOG_URL}/img/og.png`,
                 width: 1200,
                 height: 627,
-                alt: "mamuso.dev – Why does it hurt so much to hit your funny bone?",
+                alt: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
               },
             ],
-            site_name: "SiteName",
+            site_name: `${BLOG_TITLE}`,
           }}
           twitter={{
             handle: "@mamuso",
@@ -39,6 +38,10 @@ export default function Index({ pagePosts }) {
             cardType: "summary_large_image",
           }}
         />
+        <Head>
+          <title>{`${BLOG_TITLE} – ${BLOG_SUBTITLE}`}</title>
+        </Head>
+
         {pagePosts.map((post) => (
           <Post post={post} key={post.date} />
         ))}

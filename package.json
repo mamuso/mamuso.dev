@@ -12,7 +12,6 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "sass": "^1.32.8",
-    "string-strip-html": "^8.2.5",
     "styled-components": "^5.2.1"
   },
   "scripts": {
