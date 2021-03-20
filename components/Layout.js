@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Head from "next/head";
-import { BLOG_URL, BLOG_TITLE } from "../lib/constants";
+import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from "../lib/constants";
 import CSSVars from "../components/CSSVars";
 import Header from "../components/Header";
 
@@ -13,7 +13,7 @@ export default function Layout({ children }) {
   return (
     <>
       <Head>
-        <link rel="alternate" type="application/rss+xml" title={`RSS Feed for ${BLOG_TITLE}`} href={`${BLOG_URL}/rss.xml`} />
+        <link rel="alternate" type="application/rss+xml" title={`${BLOG_TITLE} – ${BLOG_SUBTITLE}`} href={`${BLOG_URL}/rss.xml`} />
       </Head>
       <CSSVars />
       <Header />
