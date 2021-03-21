@@ -1,7 +1,7 @@
 import "../styles/index.scss";
 
 import { ThemeProvider } from "styled-components";
-import { defaultTheme } from "../Theme";
+import { defaultTheme } from "../components/Theme";
 import Layout from "../components/Layout";
 
 function MyApp({ Component, pageProps }) {

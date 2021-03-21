@@ -11,6 +11,11 @@ export const defaultTheme = {
       "text-primary": "#d6deeb",
     },
   },
+  fonts: {
+    body: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+    heading: "Manrope, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+    monospace: "'Jetbrains mono', SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace",
+  },
   fontSizes: [
     "1.4rem", // 0
     "1.6rem", // 1

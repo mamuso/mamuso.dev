@@ -1,4 +1,4 @@
-import { defaultTheme } from "../Theme";
+import { defaultTheme } from "./Theme";
 import Head from "next/head";
 
 const darkTheme = Object.entries(defaultTheme.colors.dark)
