@@ -4,6 +4,7 @@
   "description": "Why does it hurt so much to hit your funny bone?",
   "main": "index.js",
   "dependencies": {
+    "dateformat": "^4.5.1",
     "gray-matter": "^4.0.2",
     "markdown-to-jsx": "^7.1.2",
     "marked": "^2.0.1",

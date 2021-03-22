@@ -1,16 +1,17 @@
 import styled from "styled-components";
 import Markdown from "markdown-to-jsx";
+import dateFormat from "dateformat";
 import Image from "next/image";
 import Spinner from "../components/Spinner";
 
 const Article = styled.article`
   font-size: ${(props) => props.theme.fontSizes[2]};
-  padding-bottom: 7.2rem;
+  padding-bottom: 8rem;
 `;
 
 const ImageWrap = styled.div`
   position: relative;
-  margin: 1rem -2.4rem;
+  margin: 3ch -2.4ch;
   background-color: var(--outer-border);
   border-radius: ${(props) => props.theme.radii};
   text-align: center;
@@ -33,8 +34,8 @@ const H2Post = styled.h2`
     font-size: ${(props) => props.theme.fontSizes[4]};
     font-weight: ${(props) => props.theme.fontWeights.body};
     letter-spacing: normal;
-    margin: 0.3ch -2.6ch;
-    opacity: 0.15;
+    margin: 0.25ch -2.6ch;
+    opacity: ${(props) => props.theme.mdOpacity};
     content: "##";
   }
 `;
@@ -42,18 +43,46 @@ const H2Post = styled.h2`
 const TimePost = styled.time`
   font-family: ${(props) => props.theme.fonts.monospace};
   font-size: ${(props) => props.theme.fontSizes[1]};
-  opacity: 0.4;
+  opacity: 0.45;
 `;
 
 const MarkdownPost = styled.section`
   margin: 1.5rem 0;
+  a {
+    color: var(--text-link);
+  }
   & a::before {
-    opacity: 0.15;
+    margin-right: 0.3ch;
+    opacity: ${(props) => props.theme.mdOpacity};
     content: "[";
   }
   & a::after {
-    opacity: 0.15;
+    margin-left: 0.3ch;
+    opacity: ${(props) => props.theme.mdOpacity};
     content: "]";
+  }
+  & ul {
+    padding-inline-start: 1.5ch;
+  }
+  & li {
+    list-style: none;
+  }
+  & li::before {
+    display: inline-block;
+    width: 1.6ch;
+    margin-left: -1.6ch;
+    content: "-";
+    opacity: ${(props) => props.theme.mdOpacity};
+  }
+  & strong::before {
+    margin-right: 0.3ch;
+    opacity: ${(props) => props.theme.mdOpacity};
+    content: "**";
+  }
+  & strong::after {
+    margin-left: 0.3ch;
+    opacity: ${(props) => props.theme.mdOpacity};
+    content: "**";
   }
 `;
 
@@ -62,7 +91,7 @@ export default function Post({ post }) {
     <Article>
       <header>
         <H2Post>{post.title}</H2Post>
-        <TimePost dateTime={post.date}>{post.date}</TimePost>
+        <TimePost dateTime={post.date}>{dateFormat(post.date, "fullDate")}</TimePost>
       </header>
       <MarkdownPost>
         <Markdown>{post.content}</Markdown>

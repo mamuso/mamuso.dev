@@ -4,11 +4,13 @@ export const defaultTheme = {
       "bg-primary": "#EDF1F1",
       "outer-border": "#FFFFFF",
       "text-primary": "#333333",
+      "text-link": "#4c82d7",
     },
     dark: {
       "bg-primary": "#182335",
       "outer-border": "#141B2A",
       "text-primary": "#d6deeb",
+      "text-link": "#4c82d7",
     },
   },
   fonts: {
@@ -39,4 +41,5 @@ export const defaultTheme = {
   },
   radii: "0.4rem",
   animation: "0.3s ease",
+  mdOpacity: 0.3,
 };
