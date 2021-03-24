@@ -108,7 +108,7 @@ export default function Post({ post }) {
 
           {!post.link && post.title}
         </H2Post>
-        <TimePost dateTime={post.date}>{dateFormat(post.date, "fullDate")}</TimePost>
+        <TimePost dateTime={post.date}>{dateFormat(`${post.date}T00:00:00`, "fullDate")}</TimePost>
       </header>
       <MarkdownPost>
         <Markdown>{post.content}</Markdown>

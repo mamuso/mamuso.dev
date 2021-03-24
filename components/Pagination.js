@@ -4,6 +4,7 @@ import Link from "next/link";
 const PaginationSection = styled.section`
   font-size: ${(props) => props.theme.fontSizes[2]};
   padding: 4rem 0;
+  text-align: center;
   & a {
     color: var(--text-link);
     text-decoration: none;

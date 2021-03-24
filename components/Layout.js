@@ -3,6 +3,7 @@ import Head from "next/head";
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from "../lib/constants";
 import CSSVars from "../components/CSSVars";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const MainColumn = styled.main`
   max-width: 84rem;
@@ -18,6 +19,7 @@ export default function Layout({ children }) {
       <CSSVars />
       <Header />
       <MainColumn>{children}</MainColumn>
+      <Footer />
     </>
   );
 }
