@@ -6,11 +6,12 @@ import { generateRss } from "../../lib/rss";
 import { NextSeo } from "next-seo";
 import Head from "next/head";
 import Post from "../../components/Post";
+import Pagination from "../../components/Pagination";
 
 const postsPerPage = 20;
 const allPosts = getAllPosts(["title", "date", "slug", "image", "content"]);
 
-export default function Index({ pagePosts }) {
+export default function Index({ pagePosts, totalPages, page }) {
   if (pagePosts) {
     return (
       <>
@@ -41,10 +42,10 @@ export default function Index({ pagePosts }) {
         <Head>
           <title>{`${BLOG_TITLE} – ${BLOG_SUBTITLE}`}</title>
         </Head>
-
         {pagePosts.map((post) => (
           <Post post={{ link: true, ...post }} key={post.date} />
         ))}
+        <Pagination page={page} totalPages={totalPages} />
       </>
     );
   } else {
@@ -69,11 +70,12 @@ export async function getStaticPaths() {
 export async function getStaticProps(context) {
   const { page } = context.params;
   let pagePosts = allPosts.slice((page - 1) * postsPerPage, page * postsPerPage);
+  const totalPages = Math.ceil(allPosts.length / postsPerPage);
 
   const rss = await generateRss(allPosts);
   fs.writeFileSync("./public/rss.xml", rss);
 
   return {
-    props: { pagePosts },
+    props: { pagePosts: pagePosts, totalPages: totalPages, page: page },
   };
 }

@@ -10,7 +10,7 @@ export const defaultTheme = {
       "bg-primary": "#182335",
       "outer-border": "#141B2A",
       "text-primary": "#d6deeb",
-      "text-link": "#4c82d7",
+      "text-link": "#ed64a6",
     },
   },
   fonts: {
