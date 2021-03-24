@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Markdown from "markdown-to-jsx";
 import dateFormat from "dateformat";
+import Link from "next/link";
 import Image from "next/image";
 import Spinner from "../components/Spinner";
 
@@ -38,16 +39,24 @@ const H2Post = styled.h2`
     opacity: ${(props) => props.theme.mdOpacity};
     content: "##";
   }
+  & a {
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+  & a:hover {
+    text-decoration: none;
+  }
 `;
 
 const TimePost = styled.time`
   font-family: ${(props) => props.theme.fonts.monospace};
-  font-size: ${(props) => props.theme.fontSizes[1]};
+  font-size: ${(props) => props.theme.fontSizes[0]};
+  text-transform: uppercase;
   opacity: 0.45;
 `;
 
 const MarkdownPost = styled.section`
-  margin: 1.5rem 0;
+  margin: 3.2rem 0;
   a {
     color: var(--text-link);
   }
@@ -90,7 +99,15 @@ export default function Post({ post }) {
   return (
     <Article>
       <header>
-        <H2Post>{post.title}</H2Post>
+        <H2Post>
+          {post.link && (
+            <Link href={`/post/${post.slug}`}>
+              <a>{post.title}</a>
+            </Link>
+          )}
+
+          {!post.link && post.title}
+        </H2Post>
         <TimePost dateTime={post.date}>{dateFormat(post.date, "fullDate")}</TimePost>
       </header>
       <MarkdownPost>

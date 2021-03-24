@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "dateformat": "^4.5.1",
+    "fs": "^0.0.1-security",
     "gray-matter": "^4.0.2",
     "markdown-to-jsx": "^7.1.2",
     "marked": "^2.0.1",

@@ -43,7 +43,7 @@ export default function Index({ pagePosts }) {
         </Head>
 
         {pagePosts.map((post) => (
-          <Post post={post} key={post.date} />
+          <Post post={{ link: true, ...post }} key={post.date} />
         ))}
       </>
     );
