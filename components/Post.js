@@ -61,12 +61,12 @@ const MarkdownPost = styled.section`
     color: var(--text-link);
   }
   & a::before {
-    margin-right: 0.3ch;
+    margin-right: 0.25ch;
     opacity: ${(props) => props.theme.mdOpacity};
     content: "[";
   }
   & a::after {
-    margin-left: 0.3ch;
+    margin-left: 0.25ch;
     opacity: ${(props) => props.theme.mdOpacity};
     content: "]";
   }

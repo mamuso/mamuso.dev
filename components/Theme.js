@@ -41,5 +41,5 @@ export const defaultTheme = {
   },
   radii: "0.4rem",
   animation: "0.3s ease",
-  mdOpacity: 0.3,
+  mdOpacity: 0.35,
 };
