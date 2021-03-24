@@ -18,9 +18,11 @@ export default function Pagination({ page, totalPages }) {
   const pageInt = parseInt(page);
   const totalPagesInt = parseInt(totalPages);
   return (
-    <PaginationSection>
-      {pageInt - 1 > 0 && <Link href={`/posts/${pageInt - 1}`}>← Previous</Link>}
-      {pageInt + 1 <= totalPagesInt && <Link href={`/posts/${pageInt + 1}`}>Next →</Link>}
-    </PaginationSection>
+    <>
+      <PaginationSection>
+        {pageInt - 1 > 0 && <Link href={`/posts/${pageInt - 1}`}>← Previous</Link>}
+        {pageInt + 1 <= totalPagesInt && <Link href={`/posts/${pageInt + 1}`}>Next →</Link>}
+      </PaginationSection>
+    </>
   );
 }
