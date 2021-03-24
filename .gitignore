@@ -64,3 +64,4 @@ typings/
 .cache
 
 public/rss.xml
+.vercel

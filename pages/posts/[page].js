@@ -6,7 +6,7 @@ import { generateRss } from "../../lib/rss";
 import { NextSeo } from "next-seo";
 import Head from "next/head";
 import Post from "../../components/Post";
-// import Pagination from "../../components/Pagination";
+import Pagination from "../../components/Pagination";
 
 const postsPerPage = 20;
 const allPosts = getAllPosts(["title", "date", "slug", "image", "content"]);
@@ -45,7 +45,7 @@ export default function Index({ pagePosts, totalPages, page }) {
         {pagePosts.map((post) => (
           <Post post={{ link: true, ...post }} key={post.date} />
         ))}
-        {/* <Pagination page={page} totalPages={totalPages} /> */}
+        <Pagination page={page} totalPages={totalPages} />
       </>
     );
   } else {
