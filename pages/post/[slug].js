@@ -1,6 +1,7 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from "../../lib/constants";
 import { getPostBySlug, getAllPosts } from "../../lib/api";
-import { generateOgImage } from "../../lib/ogImage";
+// Problem with node-canvas, next-js, and worker threads: https://github.com/vercel/next.js/issues/21702
+// import { generateOgImage } from "../../lib/ogImage";
 
 import { NextSeo } from "next-seo";
 import Head from "next/head";
@@ -20,7 +21,10 @@ export default function PostPage({ post }) {
 }
 export async function getStaticProps({ params }) {
   const post = getPostBySlug(params.slug, ["title", "date", "slug", "image", "content"]);
-  await generateOgImage({ slug: post.slug, title: post.title });
+
+  // Problem with node-canvas, next-js, and worker threads: https://github.com/vercel/next.js/issues/21702
+  // await generateOgImage({ slug: post.slug, title: post.title });
+
   return {
     props: { post },
   };
