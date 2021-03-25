@@ -18,13 +18,13 @@ export default function PostPage({ post }) {
           openGraph={{
             url: `${BLOG_URL}/post/${post.slug}`,
             title: `${post.title}`,
-            description: `${BLOG_SUBTITLE}`,
+            description: `${post.content}`,
             images: [
               {
                 url: `${BLOG_URL}/og/${post.slug}.png`,
                 width: 1200,
                 height: 627,
-                alt: `${BLOG_TITLE} – ${post.title}`,
+                alt: `${post.title}`,
               },
             ],
             site_name: `${BLOG_TITLE}`,
@@ -38,6 +38,7 @@ export default function PostPage({ post }) {
         <Head>
           <title>{`${post.title} – ${BLOG_TITLE}`}</title>
         </Head>
+        ......
         <Post post={post} />
       </>
     );
