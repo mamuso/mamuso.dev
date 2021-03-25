@@ -20,9 +20,9 @@
     "styled-components": "^5.2.1"
   },
   "scripts": {
+    "vercel-build": "yum install libuuid-devel libmount-devel zlib && cp /lib64/{libuuid,libmount,libblkid,libz}.so.1 node_modules/canvas/build/Release/",
     "dev": "next dev",
-    "ogimages": "npx babel-node lib/ogImage.js",
-    "build": "npm run ogimages && next build",
+    "build": "next build",
     "start": "next start"
   },
   "repository": {
@@ -34,9 +34,5 @@
   "bugs": {
     "url": "https://github.com/mamuso/mamuso.dev/issues"
   },
-  "homepage": "https://github.com/mamuso/mamuso.dev#readme",
-  "devDependencies": {
-    "@babel/core": "^7.13.10",
-    "@babel/node": "^7.13.12"
-  }
+  "homepage": "https://github.com/mamuso/mamuso.dev#readme"
 }
