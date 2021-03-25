@@ -38,7 +38,6 @@ export default function PostPage({ post }) {
         <Head>
           <title>{`${post.title} – ${BLOG_TITLE}`}</title>
         </Head>
-        ......
         <Post post={post} />
       </>
     );
