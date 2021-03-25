@@ -11,6 +11,30 @@ export default function PostPage({ post }) {
   if (post) {
     return (
       <>
+        <NextSeo
+          title={post.title}
+          description={post.content}
+          canonical={BLOG_URL}
+          openGraph={{
+            url: `${BLOG_URL}/post/${post.slug}`,
+            title: `${post.title}`,
+            description: `${BLOG_SUBTITLE}`,
+            images: [
+              {
+                url: `${BLOG_URL}/og/${post.slug}.png`,
+                width: 1200,
+                height: 627,
+                alt: `${BLOG_TITLE} – ${post.title}`,
+              },
+            ],
+            site_name: `${BLOG_TITLE}`,
+          }}
+          twitter={{
+            handle: "@mamuso",
+            site: "@mamuso",
+            cardType: "summary_large_image",
+          }}
+        />
         <Head>
           <title>{`${post.title} – ${BLOG_TITLE}`}</title>
         </Head>
