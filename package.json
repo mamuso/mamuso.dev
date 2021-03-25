@@ -21,7 +21,8 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "ogimages": "npx babel-node lib/ogImage.js",
+    "build": "npm run ogimages && next build",
     "start": "next start"
   },
   "repository": {
@@ -33,5 +34,9 @@
   "bugs": {
     "url": "https://github.com/mamuso/mamuso.dev/issues"
   },
-  "homepage": "https://github.com/mamuso/mamuso.dev#readme"
+  "homepage": "https://github.com/mamuso/mamuso.dev#readme",
+  "devDependencies": {
+    "@babel/core": "^7.13.10",
+    "@babel/node": "^7.13.12"
+  }
 }
