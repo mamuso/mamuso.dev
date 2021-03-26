@@ -12,6 +12,7 @@ function App({ Component, pageProps }) {
 
   useEffect(() => {
     Fathom.load("ACIFFHWV", {
+      canonical: false,
       includedDomains: ["mamuso.dev"],
     });
 
