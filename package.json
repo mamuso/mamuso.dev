@@ -7,7 +7,6 @@
     "canvas": "^2.7.0",
     "canvas-multiline-text": "^1.0.3",
     "dateformat": "^4.5.1",
-    "fathom-client": "^3.0.0",
     "fs": "^0.0.1-security",
     "gray-matter": "^4.0.2",
     "markdown-to-jsx": "^7.1.2",
