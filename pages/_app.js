@@ -14,8 +14,8 @@ Router.events.on("routeChangeComplete", () => {
 
 function App({ Component, pageProps }) {
   useEffect(() => {
-    Fathom.load("MY_FATHOM_ID", {
-      includedDomains: ["yourwebsite.com"],
+    Fathom.load("ACIFFHWV", {
+      includedDomains: ["mamuso.dev"],
     });
   }, []);
 
