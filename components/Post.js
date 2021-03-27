@@ -21,6 +21,9 @@ const ImageWrap = styled.div`
     position: absolute;
     top: 48%;
   }
+  @media only screen and (max-width: 767px) and (min-width: 320px) {
+    margin: 3ch 0;
+  }
 `;
 
 const H2Post = styled.h2`
@@ -45,6 +48,12 @@ const H2Post = styled.h2`
   }
   & a:hover {
     text-decoration: none;
+  }
+  @media only screen and (max-width: 767px) and (min-width: 320px) {
+    &::before {
+      position: static;
+      margin: 0.2ch 0.5ch 0 0;
+    }
   }
 `;
 
