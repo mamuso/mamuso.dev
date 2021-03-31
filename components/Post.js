@@ -66,6 +66,39 @@ const TimePost = styled.time`
 
 const MarkdownPost = styled.section`
   margin: 3.2rem 0;
+  & code {
+    disply: inline-block;
+    font-size: ${(props) => props.theme.fontSizes[1]};
+    color: var(--text-link);
+    padding: 0.25ch 0.55ch;
+    background: rgba(var(--text-link-rgb), 0.1);
+    border-radius: ${(props) => props.theme.radii};
+  }
+  & pre {
+    display: block;
+    font-size: ${(props) => props.theme.fontSizes[1]};
+    color: var(--text-link);
+    padding: 2ch 3ch;
+    background: var(--outer-border);
+    border-radius: ${(props) => props.theme.radii};
+    & code {
+      background: none;
+    }
+  }
+  & hr {
+    margin: 2.5rem 0;
+    border: none;
+    &::before {
+      position: relative;
+      top: -1.2rem;
+      width: 100%;
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      opacity: 0.25;
+      content: "---";
+    }
+  }
   a {
     color: var(--text-link);
   }
@@ -101,6 +134,22 @@ const MarkdownPost = styled.section`
     margin-left: 0.3ch;
     opacity: ${(props) => props.theme.mdOpacity};
     content: "**";
+  }
+  & h3 {
+    font-size: ${(props) => props.theme.fontSizes[4]};
+    &::before {
+      position: absolute;
+      font-family: ${(props) => props.theme.fonts.body};
+      font-size: ${(props) => props.theme.fontSizes[3]};
+      font-weight: ${(props) => props.theme.fontWeights.body};
+      letter-spacing: normal;
+      margin: 0.25ch -3.7ch;
+      opacity: ${(props) => props.theme.mdOpacity};
+      content: "###";
+    }
+    & code {
+      font-size: ${(props) => props.theme.fontSizes[3]};
+    }
   }
 `;
 
