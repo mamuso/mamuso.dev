@@ -36,3 +36,7 @@ body {
     padding: 3.2rem;
   }
 }
+
+// Syntax highlighting
+@import "highlight.js/styles/github-gist.css" screen;
+@import "highlight.js/styles/tomorrow-night-blue.css" screen and (prefers-color-scheme: dark);

@@ -4,6 +4,10 @@ import dateFormat from "dateformat";
 import Link from "next/link";
 import Image from "next/image";
 import Spinner from "../components/Spinner";
+import React, { useEffect } from "react";
+import hljs from "highlight.js";
+import javascript from "highlight.js/lib/languages/javascript";
+hljs.registerLanguage("javascript", javascript);
 
 const Article = styled.article`
   font-size: ${(props) => props.theme.fontSizes[2]};
@@ -79,7 +83,7 @@ const MarkdownPost = styled.section`
     font-size: ${(props) => props.theme.fontSizes[1]};
     color: var(--text-link);
     padding: 2ch 3ch;
-    background: var(--outer-border);
+    background: var(--bg-secondary);
     border-radius: ${(props) => props.theme.radii};
     & code {
       background: none;
@@ -154,6 +158,9 @@ const MarkdownPost = styled.section`
 `;
 
 export default function Post({ post }) {
+  useEffect(() => {
+    hljs.initHighlighting();
+  }, []);
   return (
     <Article>
       <header>
