@@ -15,4 +15,4 @@ jobs:
           curl -X POST https://api.github.com/repos/mamuso/mamuso.net/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
           -u ${{ secrets.ACCESS_TOKEN }} \
-          --data '{"event_type": "pong", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+          --data '{"event_type": "New entry on mamuso.dev", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
