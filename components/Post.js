@@ -6,8 +6,6 @@ import Image from "next/image";
 import Spinner from "../components/Spinner";
 import React, { useEffect } from "react";
 import hljs from "highlight.js";
-import javascript from "highlight.js/lib/languages/javascript";
-hljs.registerLanguage("javascript", javascript);
 
 const Article = styled.article`
   font-size: ${(props) => props.theme.fontSizes[2]};
@@ -159,7 +157,7 @@ const MarkdownPost = styled.section`
 
 export default function Post({ post }) {
   useEffect(() => {
-    hljs.initHighlighting();
+    hljs.highlightAll();
   }, []);
   return (
     <Article>
