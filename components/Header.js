@@ -6,12 +6,34 @@ const HeaderWrap = styled.header`
 `;
 
 const HeaderLink = styled.div`
+  float: left;
+  position: relative;
+  z-index: 1;
+  margin-right: 2.5rem;
   &:hover .pt {
     transform: translateY(0.6rem);
   }
   &:hover .pb {
     transform: translateY(-0.6rem);
   }
+`;
+
+const HeaderColumn = styled.div`
+  display: block;
+  // max-width: 84rem;
+  margin: 0 auto;
+  padding: 1.6rem 0;
+`;
+
+const HeaderLabel = styled.div`
+  display: inline-block;
+  font-family: ${(props) => props.theme.fonts.monospace};
+  font-size: ${(props) => props.theme.fontSizes[0]};
+  background: var(--text-link);
+  color: var(--bg-secondary);
+  padding: 0.1rem 0.7rem;
+  border-radius: ${(props) => props.theme.radii};
+  opacity: 0.7;
 `;
 
 const Path = styled.path`
@@ -51,6 +73,9 @@ export default function Header() {
           </a>
         </Link>
       </HeaderLink>
+      <HeaderColumn>
+        <HeaderLabel>changelog</HeaderLabel>
+      </HeaderColumn>
     </HeaderWrap>
   );
 }
