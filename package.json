@@ -4,7 +4,7 @@
   "description": "Why does it hurt so much to hit your funny bone?",
   "main": "index.js",
   "dependencies": {
-    "canvas": "^2.7.0",
+    "canvas": "2.7.0",
     "canvas-multiline-text": "^1.0.3",
     "dateformat": "^4.5.1",
     "fathom-client": "^3.0.0",
