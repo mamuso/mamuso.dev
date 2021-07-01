@@ -1,5 +1,5 @@
 ---
-title: Light/Dark mode, the CSS variable way
+title: Light/Dark mode, the CSS-variable way
 category: Code
 date: "2021-06-30"
 image:
@@ -8,10 +8,41 @@ image:
   height: 900
 ---
 
-<p class="codepen" data-height="300" data-default-tab="css,result" data-slug-hash="jOmEjeQ" data-user="mamuso" style="height: 320px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;">
-  <span>See the Pen <a href="https://codepen.io/mamuso/pen/jOmEjeQ">
-  Light/Dark mode with CSS variables</a> by mamuso (<a href="https://codepen.io/mamuso">@mamuso</a>)
-  on <a href="https://codepen.io">CodePen</a>.</span>
-</p>
+Choosing colors is hard. Adapting the color mode of your website to your users' preferences is (it should) not.
 
-<script async src="https://cpwebassets.codepen.io/assets/embed/ei.js"></script>
+For this deceivingly short recipe, you will need a couple of ingredients: [CSS variables](https://www.w3.org/TR/css-variables-1/) and the media feature [`prefers-color-scheme`](https://www.w3.org/TR/mediaqueries-5/#prefers-color-scheme).
+
+You can define your color variables and their values for light (default) and dark modes in your CSS file:
+
+```css
+:root {
+  --background: #e9ecf7;
+  --card: #ffffff;
+  --text: #333333;
+  --link: #4c82d7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #011627;
+    --card: #5d4ac5;
+    --text: #ffffff;
+    --link: #ed64a6;
+  }
+}
+```
+
+Then you can use those variables in your CSS declarations:
+
+```css
+element {
+  color: var(--text);
+}
+```
+
+**And that's it!** Your website will react to the user's color theme preference.
+
+You can play with a simple example in [this Codepen](https://codepen.io/mamuso/pen/jOmEjeQ); fidget with your OS appearance preferences to see colors change. This foundation also works like a charm in more complex scenarios:
+
+- Check [Joshua Comeau's post](https://www.joshwcomeau.com/react/dark-mode/). He implements light/dark mode in Gatsby using CSS variables.
+- Or [this example}(https://github.com/mamuso/nextjs-simple-darkmode) using CSS variables with next.js and styled-components.
