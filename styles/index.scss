@@ -39,5 +39,5 @@ body {
 }
 
 // Syntax highlighting
-@import "highlight.js/styles/github-gist.css" screen;
-@import "highlight.js/styles/tomorrow-night-blue.css" screen and (prefers-color-scheme: dark);
+@import "highlight.js/styles/github.css" screen;
+@import "highlight.js/styles/github-dark-dimmed.css" screen and (prefers-color-scheme: dark);
