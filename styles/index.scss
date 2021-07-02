@@ -32,9 +32,14 @@ body {
   box-sizing: border-box;
 }
 
+pre {
+  white-space: pre;
+  overflow-x: scroll;
+}
+
 @media only screen and (max-width: 767px) and (min-width: 320px) {
   body {
-    padding: 3.2rem;
+    padding: 2.4rem;
   }
 }
 
