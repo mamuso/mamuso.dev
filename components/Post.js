@@ -9,7 +9,7 @@ import hljs from "highlight.js";
 
 const Article = styled.article`
   font-size: ${(props) => props.theme.fontSizes[2]};
-  padding-bottom: 8rem;
+  padding-bottom: 10rem;
 `;
 
 const ImageWrap = styled.div`
