@@ -14,6 +14,6 @@ Flickr is one of those services. Their data export was waiting in my Downloads f
 
 I rediscovered that, between 2005 to 2014, I took a good amount of pictures of urban typography.
 
-I know how it started. Back in 2003, I got a copy of America Sánchez’s Barcelona Gráfica. The book clusters lettering, typography, and signals that represent the character of the city. I liked the idea of treating the urban environment as a graphic canvas.
+I know how it started. Back in 2003, I got a copy of [America Sánchez’s Barcelona Gráfica](http://www.lexiearle.com/blog/2016/8/11/barcelona-grafica-and-25000km-de-signes). The book clusters lettering, typography, and signals that represent the character of the city. I liked the idea of treating the urban environment as a graphic canvas.
 
-I don’t know why I stopped, though.
+I don’t know why I stopped, though. I enjoyed the letter hunting and still enjoy those pictures, so I created a [silly site](http://straycharacters.mamuso.net).
