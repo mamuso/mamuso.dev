@@ -12,7 +12,7 @@
     "gray-matter": "^4.0.2",
     "highlight.js": "^11.0.1",
     "markdown-to-jsx": "^7.1.2",
-    "marked": "^2.0.1",
+    "marked": "^4.0.10",
     "next": "^11.1.0",
     "next-seo": "^4.20.0",
     "react": "^17.0.1",
