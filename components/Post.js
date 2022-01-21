@@ -1,18 +1,39 @@
-import styled from "styled-components";
-import Markdown from "markdown-to-jsx";
-import dateFormat from "dateformat";
-import Link from "next/link";
-import Image from "next/image";
-import Spinner from "../components/Spinner";
-import React, { useEffect } from "react";
-import hljs from "highlight.js";
+import styled from 'styled-components'
+import Markdown from 'markdown-to-jsx'
+import dateFormat from 'dateformat'
+import Link from 'next/link'
+import Image from 'next/image'
+import Spinner from '../components/Spinner'
+import React, { useEffect } from 'react'
+import hljs from 'highlight.js'
 
 const Article = styled.article`
   font-size: ${(props) => props.theme.fontSizes[2]};
   padding-bottom: 10rem;
-`;
+  display: grid;
+  grid-template-columns: 26rem auto;
+  grid-template-areas: 'date content';
+  grid-column-gap: 6rem;
+  @media only screen and (max-width: 1280px) {
+    & {
+      grid-template-columns: 14rem auto;
+    }
+  }
+  @media only screen and (max-width: 1024px) {
+    & {
+      margin: 0 auto;
+      max-width: 96%;
+      grid-template-columns: auto;
+      grid-row-gap: 0.4rem;
+      grid-template-areas:
+        'date date'
+        'content content';
+    }
+  }
+`
 
 const ImageWrap = styled.div`
+  grid-area: content;
   position: relative;
   margin: 3ch -2.4ch;
   background-color: var(--outer-border);
@@ -26,14 +47,15 @@ const ImageWrap = styled.div`
   @media only screen and (max-width: 767px) and (min-width: 320px) {
     margin: 3ch 0;
   }
-`;
+`
 
 const H2Post = styled.h2`
+  grid-area: content;
   font-family: ${(props) => props.theme.fonts.heading};
   font-size: ${(props) => props.theme.fontSizes[5]};
   letter-spacing: -0.02rem;
   line-height: ${(props) => props.theme.lineHeights.heading};
-  margin-bottom: 0.3rem;
+  margin: 0 0 0.3rem;
   &::before {
     position: absolute;
     font-family: ${(props) => props.theme.fonts.body};
@@ -42,7 +64,7 @@ const H2Post = styled.h2`
     letter-spacing: normal;
     margin: 0.25ch -2.6ch;
     opacity: ${(props) => props.theme.mdOpacity};
-    content: "##";
+    content: '##';
   }
   & a {
     text-decoration: none;
@@ -57,14 +79,19 @@ const H2Post = styled.h2`
       margin: 0.2ch 0.5ch 0 0;
     }
   }
-`;
+`
+
+const ArticleContent = styled.section`
+  grid-area: content;
+`
 
 const TimePost = styled.time`
+  grid-area: date;
   font-family: ${(props) => props.theme.fonts.monospace};
   font-size: ${(props) => props.theme.fontSizes[0]};
-  text-transform: uppercase;
+  margin-top: 1.6rem;
   opacity: 0.45;
-`;
+`
 
 const MarkdownPost = styled.section`
   margin: 3.2rem 0;
@@ -98,7 +125,7 @@ const MarkdownPost = styled.section`
       overflow: hidden;
       white-space: nowrap;
       opacity: 0.25;
-      content: "---";
+      content: '---';
     }
   }
   a {
@@ -107,12 +134,12 @@ const MarkdownPost = styled.section`
   & a::before {
     margin-right: 0.25ch;
     opacity: ${(props) => props.theme.mdOpacity};
-    content: "[";
+    content: '[';
   }
   & a::after {
     margin-left: 0.25ch;
     opacity: ${(props) => props.theme.mdOpacity};
-    content: "]";
+    content: ']';
   }
   & ul {
     padding-inline-start: 1.5ch;
@@ -124,18 +151,18 @@ const MarkdownPost = styled.section`
     display: inline-block;
     width: 1.6ch;
     margin-left: -1.6ch;
-    content: "-";
+    content: '-';
     opacity: ${(props) => props.theme.mdOpacity};
   }
   & strong::before {
     margin-right: 0.3ch;
     opacity: ${(props) => props.theme.mdOpacity};
-    content: "**";
+    content: '**';
   }
   & strong::after {
     margin-left: 0.3ch;
     opacity: ${(props) => props.theme.mdOpacity};
-    content: "**";
+    content: '**';
   }
   & h3 {
     font-size: ${(props) => props.theme.fontSizes[4]};
@@ -147,39 +174,41 @@ const MarkdownPost = styled.section`
       letter-spacing: normal;
       margin: 0.25ch -3.7ch;
       opacity: ${(props) => props.theme.mdOpacity};
-      content: "###";
+      content: '###';
     }
     & code {
       font-size: ${(props) => props.theme.fontSizes[3]};
     }
   }
-`;
+`
 
 export default function Post({ post }) {
   useEffect(() => {
-    hljs.highlightAll();
-  }, []);
+    hljs.highlightAll()
+  }, [])
   return (
     <Article>
-      <header>
-        <H2Post>
-          {post.link && (
-            <Link href={`/post/${post.slug}`}>
-              <a>{post.title}</a>
-            </Link>
-          )}
+      <TimePost dateTime={post.date}>{dateFormat(`${post.date}T00:00:00`, 'fullDate')}</TimePost>
+      <ArticleContent>
+        <header>
+          <H2Post>
+            {post.link && (
+              <Link href={`/post/${post.slug}`}>
+                <a>{post.title}</a>
+              </Link>
+            )}
 
-          {!post.link && post.title}
-        </H2Post>
-        <TimePost dateTime={post.date}>{dateFormat(`${post.date}T00:00:00`, "fullDate")}</TimePost>
-      </header>
-      <MarkdownPost>
-        <Markdown>{post.content}</Markdown>
-      </MarkdownPost>
-      <ImageWrap>
-        <Spinner />
-        <Image src={`/_feed/${post.slug}.${post.image.format}`} layout="responsive" quality={85} width={post.image.width} height={post.image.height} />
-      </ImageWrap>
+            {!post.link && post.title}
+          </H2Post>
+        </header>
+        <MarkdownPost>
+          <Markdown>{post.content}</Markdown>
+        </MarkdownPost>
+        <ImageWrap>
+          <Spinner />
+          <Image src={`/_feed/${post.slug}.${post.image.format}`} layout="responsive" quality={85} width={post.image.width} height={post.image.height} />
+        </ImageWrap>
+      </ArticleContent>
     </Article>
-  );
+  )
 }

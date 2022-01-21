@@ -6,8 +6,8 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 const MainColumn = styled.main`
-  max-width: 84rem;
-  margin: 0 auto;
+  max-width: 120rem;
+  margin: 0;
 `;
 
 export default function Layout({ children }) {
