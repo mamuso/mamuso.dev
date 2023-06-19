@@ -8,7 +8,7 @@
   "dependencies": {
     "@actions/core": "^1.2.4",
     "@actions/github": "^1.1.0",
-    "nunjucks": "^3.2.1",
+    "nunjucks": "^3.2.4",
     "request": "^2.88.2"
   }
 }
