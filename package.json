@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run rss && next build",
     "start": "next start",
     "lint": "next lint",
     "rss": "npx ts-node --project ./node.tsconfig.json lib/rss"
