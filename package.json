@@ -1,44 +1,33 @@
 {
   "name": "mamuso.dev",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Why does it hurt so much to hit your funny bone?",
-  "main": "index.js",
-  "dependencies": {
-    "canvas": "2.7.0",
-    "canvas-multiline-text": "^1.0.3",
-    "dateformat": "^4.5.1",
-    "fathom-client": "^3.0.0",
-    "fs": "^0.0.1-security",
-    "gray-matter": "^4.0.2",
-    "highlight.js": "^11.0.1",
-    "markdown-to-jsx": "^7.2.1",
-    "marked": "^4.0.10",
-    "next": "^13.4.6",
-    "next-seo": "^6.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-is": "^18.2.0",
-    "sass": "^1.32.8",
-    "styled-components": "^5.2.1"
-  },
+  "private": true,
   "scripts": {
     "dev": "next dev",
-    "ogimages": "npx babel-node lib/ogImage.js",
-    "build": "npm run ogimages && next build",
-    "start": "next start"
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "rss": "npx ts-node --project ./node.tsconfig.json lib/rss"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mamuso/mamuso.dev.git"
+  "dependencies": {
+    "fathom-client": "^3.5.0",
+    "gray-matter": "^4.0.3",
+    "next": "13.4.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "5.1.3"
   },
-  "author": "mamuso",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mamuso/mamuso.dev/issues"
-  },
-  "homepage": "https://github.com/mamuso/mamuso.dev#readme",
   "devDependencies": {
-    "@babel/core": "^7.13.10",
-    "@babel/node": "^7.13.12"
+    "@types/marked": "^5.0.0",
+    "@types/node": "20.3.1",
+    "@types/react": "18.2.13",
+    "@types/react-dom": "18.2.6",
+    "@types/rss": "^0.0.30",
+    "eslint": "8.43.0",
+    "eslint-config-next": "13.4.6",
+    "marked": "^5.1.0",
+    "rss": "^1.2.2",
+    "ts-node": "^10.9.1"
   }
 }
