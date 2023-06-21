@@ -12,6 +12,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href={`${BLOG_URL}/feed.xml`}></link>
+      </head>
       <body>
         <Fathom />
         {children}
