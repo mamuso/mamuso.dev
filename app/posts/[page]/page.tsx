@@ -38,17 +38,6 @@ export const metadata = {
 const postsPerPage: number = 20
 const allPosts: Post[] = getAllPosts(['title', 'date', 'slug', 'image', 'content'])
 
-export default function Posts({ params }: { params: { page: number } }) {
-  const page: number = params.page
-  const props = fetchData(page)
-  return (
-    <>
-      List of posts {params.page}
-      <Pagination page={page} totalPages={props.totalPages} />
-    </>
-  )
-}
-
 function fetchData(page: number) {
   let pagePosts = allPosts.slice((page - 1) * postsPerPage, page * postsPerPage)
   const totalPages = Math.ceil(allPosts.length / postsPerPage)
@@ -57,4 +46,17 @@ function fetchData(page: number) {
     totalPages: totalPages,
     page: page,
   }
+}
+
+export default function Posts({ params }: { params: { page: number } }) {
+  const page: number = params.page
+  const props = fetchData(page)
+  return (
+    <>
+      {props.pagePosts.map((post) => (
+        <p key={post.slug}>{post.title}</p>
+      ))}
+      <Pagination page={page} totalPages={props.totalPages} />
+    </>
+  )
 }
