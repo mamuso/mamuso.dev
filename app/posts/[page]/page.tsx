@@ -1,6 +1,7 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../../../lib/constants'
 import { getAllPosts } from '../../../lib/api'
 import { Post } from '../../../lib/types'
+import Pagination from '../../components/Pagination'
 
 export const metadata = {
   title: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
@@ -12,7 +13,7 @@ export const metadata = {
     description: `${BLOG_SUBTITLE}`,
     images: [
       {
-        url: `${BLOG_URL}/image/og.png`,
+        url: `${BLOG_URL}/images/og.png`,
         width: 1200,
         height: 627,
         alt: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
@@ -25,18 +26,30 @@ export const metadata = {
     site: '@mamuso',
     cardType: 'summary_large_image',
   },
+  icons: {
+    icon: {
+      url: '/images/favicon.png',
+      type: 'image/png',
+    },
+    shortcut: { url: '/images/favicon.png', type: 'image/png' },
+  },
 }
 
 const postsPerPage: number = 20
 const allPosts: Post[] = getAllPosts(['title', 'date', 'slug', 'image', 'content'])
 
 export default function Posts({ params }: { params: { page: number } }) {
-  const props = fetchData(params)
-  return <>dddddd</>
+  const page: number = params.page
+  const props = fetchData(page)
+  return (
+    <>
+      List of posts {params.page}
+      <Pagination page={page} totalPages={props.totalPages} />
+    </>
+  )
 }
 
-function fetchData(params: { page: number }) {
-  const page: number = params.page
+function fetchData(page: number) {
   let pagePosts = allPosts.slice((page - 1) * postsPerPage, page * postsPerPage)
   const totalPages = Math.ceil(allPosts.length / postsPerPage)
   return {
