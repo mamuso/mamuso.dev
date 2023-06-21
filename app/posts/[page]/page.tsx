@@ -30,9 +30,8 @@ export const metadata = {
 const postsPerPage: number = 20
 const allPosts: Post[] = getAllPosts(['title', 'date', 'slug', 'image', 'content'])
 
-export default function Posts({ params, allPosts }: { params: { page: number }; allPosts: Post[] }) {
+export default function Posts({ params }: { params: { page: number } }) {
   const props = fetchData(params)
-  console.log(props.pagePosts)
   return <>dddddd</>
 }
 
