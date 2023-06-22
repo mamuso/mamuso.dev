@@ -1,6 +1,6 @@
-import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../../../lib/constants'
-import { getAllPosts } from '../../../lib/api'
-import { Post } from '../../../lib/types'
+import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
+import { getAllPosts } from '@/lib/api'
+import { Post } from '@/lib/types'
 import Pagination from '@/app/components/Pagination'
 import HomePost from '@/app/components/HomePost'
 

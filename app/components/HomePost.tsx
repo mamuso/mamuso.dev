@@ -13,7 +13,9 @@ export default function HomePost({ key, post }: { key: number; post: Post }) {
         </>
       )}
       {post.category === 'note' && <Markdown>{post.content}</Markdown>}
-      <time dateTime={post.date}>{new Date(`${post.date}T00:00:00`).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}</time>
+      <time dateTime={post.date}>
+        <Link href={`/post/${post.slug}`}>{new Date(`${post.date}T00:00:00`).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}</Link>
+      </time>
     </article>
   )
 }

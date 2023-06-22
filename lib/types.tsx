@@ -4,5 +4,6 @@ export interface Post {
   slug: string
   image: string
   content: string
+  summary: string
   category: string
 }
