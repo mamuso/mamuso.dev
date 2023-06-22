@@ -4,7 +4,7 @@ import { getPostBySlug } from '@/lib/api'
 import { Post } from '@/lib/types'
 import DetailPost from '@/app/components/DetailPost'
 
-export async function generateMetadata({ params }: { params: { slug: string } }, parent?: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post: Post = getPostBySlug(params.slug, ['title', 'date', 'slug', 'image', 'summary', 'content', 'category'])
 
   return {
