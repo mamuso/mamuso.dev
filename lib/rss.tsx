@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 import RSS from 'rss'
 import path from 'path'
 import { marked } from 'marked'

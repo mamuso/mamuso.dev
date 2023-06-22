@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 import { join } from 'path'
 import { Post } from './types'
 import matter from 'gray-matter'
@@ -14,7 +14,6 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
   const fullPath = join(postsDirectory, `${realSlug}.md`)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
   const { data, content } = matter(fileContents)
-
   const items: any = {}
 
   // Ensure only the minimal needed data is exposed

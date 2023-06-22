@@ -1,5 +1,7 @@
 import Fathom from './components/Fathom'
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../lib/constants'
+import Header from './components/Header'
+import Footer from './components/Footer'
 import './globals.css'
 
 export const metadata = {
@@ -17,7 +19,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Fathom />
+        <Header />
         {children}
+        <Footer />
       </body>
     </html>
   )

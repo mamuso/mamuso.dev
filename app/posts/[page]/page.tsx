@@ -1,7 +1,8 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../../../lib/constants'
 import { getAllPosts } from '../../../lib/api'
 import { Post } from '../../../lib/types'
-import Pagination from '../../components/Pagination'
+import Pagination from '@/app/components/Pagination'
+import HomePost from '@/app/components/HomePost'
 
 export const metadata = {
   title: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
@@ -36,7 +37,7 @@ export const metadata = {
 }
 
 const postsPerPage: number = 20
-const allPosts: Post[] = getAllPosts(['title', 'date', 'slug', 'image', 'content'])
+const allPosts: Post[] = getAllPosts(['title', 'date', 'slug', 'image', 'content', 'category'])
 
 function fetchData(page: number) {
   let pagePosts = allPosts.slice((page - 1) * postsPerPage, page * postsPerPage)
@@ -53,8 +54,8 @@ export default function Posts({ params }: { params: { page: number } }) {
   const props = fetchData(page)
   return (
     <>
-      {props.pagePosts.map((post) => (
-        <p key={post.slug}>{post.title}</p>
+      {props.pagePosts.map((post, i) => (
+        <HomePost key={i} post={post} />
       ))}
       <Pagination page={page} totalPages={props.totalPages} />
     </>
