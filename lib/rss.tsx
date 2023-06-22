@@ -43,9 +43,12 @@ const main = () => {
   posts.forEach((post) => {
     const url = `${BLOG_URL}/post/${post.slug}`
 
+    let description: string = post.image ? "<img src='" + `${BLOG_URL}/assets/feed/${post.slug}.${post.image.format}` + "'/>" : ''
+    description += renderPost(post.body)
+
     feed.item({
       title: post.title,
-      description: renderPost(post.body),
+      description: description,
       date: new Date(post?.date),
       author: 'Max Leiter',
       url,
