@@ -5,9 +5,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run assets && npm run rss && next build",
+    "build": "npm run lastupdate && npm run assets && npm run rss && next build",
     "start": "next start",
     "lint": "next lint",
+    "lastupdate": "npx ts-node --project ./node.tsconfig.json lib/lastupdate",
     "rss": "npx ts-node --project ./node.tsconfig.json lib/rss",
     "assets": "npx ts-node --project ./node.tsconfig.json lib/assets"
   },

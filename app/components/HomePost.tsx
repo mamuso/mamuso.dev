@@ -2,9 +2,9 @@ import { Post } from '@/lib/types'
 import Link from 'next/link'
 import Markdown from 'markdown-to-jsx'
 
-export default function HomePost({ key, post }: { key: number; post: Post }) {
+export default function HomePost({ post }: { post: Post }) {
   return (
-    <article key={key}>
+    <article>
       {post.category != 'note' && (
         <>
           <h2>
@@ -13,9 +13,9 @@ export default function HomePost({ key, post }: { key: number; post: Post }) {
         </>
       )}
       {post.category === 'note' && <Markdown>{post.content}</Markdown>}
-      <time dateTime={post.date}>
-        <Link href={`/post/${post.slug}`}>{new Date(`${post.date}T00:00:00`).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}</Link>
-      </time>
+      <Link href={`/post/${post.slug}`}>
+        ☰ <time dateTime={post.date}>{new Date(`${post.date}T00:00:00`).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}</time>
+      </Link>
     </article>
   )
 }
