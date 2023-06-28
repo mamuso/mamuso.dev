@@ -3,14 +3,14 @@
 // Variables
 :root {
   --background: #eef1f1;
-  --background-gradient: linear-gradient(2deg, rgba(238, 241, 241, 1) 20%, rgba(238, 241, 241, 0) 80%);
-  --dots: rgba(20, 20, 20, 0.24)
+  --background-gradient: linear-gradient(3deg, rgba(238, 241, 241, 1) 20%, rgba(238, 241, 241, 0) 80%);
+  --dots: rgba(20, 20, 20, 0.16)
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #141414;
-    --background-gradient: linear-gradient(2deg, rgba(20, 20, 20, 1) 20%, rgba(20, 20, 20, 0) 80%);
+    --background-gradient: linear-gradient(3deg, rgba(20, 20, 20, 1) 20%, rgba(20, 20, 20, 0) 80%);
     --dots: rgba(238, 241, 241, 0.32);
   }
 }
@@ -54,4 +54,7 @@ body {
 .page-content {
   position: relative;
   z-index: 1;
+  width: 96%;
+  max-width: 980px;
+  margin: 0 auto;
 }

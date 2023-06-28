@@ -65,12 +65,12 @@ export default function Canvas(props: React.CanvasHTMLAttributes<HTMLCanvasEleme
       var count = 0
       var switchPoint = Math.random() * (0.85 - 0.55) + 0.55
 
-      for (var x = -10; x < vw + 10; ) {
-        var cw = regularSpacing ? 16 : branching ? Math.random() * 16 + 16 : Math.abs(randn_bm()) * 16 + 16
+      for (var x = -8; x < vw + 8; ) {
+        var cw = regularSpacing ? 14 : branching ? Math.random() * 15 + 15 : Math.abs(randn_bm()) * 15 + 15
         x += cw
 
-        for (var y = -10; y < vh + 10; ) {
-          var ch = regularSpacing ? 16 : branching ? Math.random() * 16 + 24 : Math.abs(randn_bm()) * 16 + 24
+        for (var y = -8; y < vh + 8; ) {
+          var ch = regularSpacing ? 14 : branching ? Math.random() * 15 + 24 : Math.abs(randn_bm()) * 15 + 24
           y += ch
 
           if (context && canvas) {
@@ -81,7 +81,7 @@ export default function Canvas(props: React.CanvasHTMLAttributes<HTMLCanvasEleme
           count++
 
           // Switch to irregular grid at a random point
-          if (regularSpacing && count / ((vw * vh) / (16 * 16)) >= switchPoint) {
+          if (regularSpacing && count / ((vw * vh) / (15 * 15)) >= switchPoint) {
             regularSpacing = false
             branching = true
           }
@@ -89,8 +89,8 @@ export default function Canvas(props: React.CanvasHTMLAttributes<HTMLCanvasEleme
           // Draw branches if in branching mode
           if (branching) {
             for (var i = 0; i < Math.random() * 2 + 1; i++) {
-              var bx = x + Math.random() * 32 - 24
-              var by = y + Math.random() * 32 - 24
+              var bx = x + Math.random() * 32 - 16
+              var by = y + Math.random() * 32 - 16
               if (context) {
                 context.fillRect(bx - r / 2, by - r / 2, r, r)
               }
