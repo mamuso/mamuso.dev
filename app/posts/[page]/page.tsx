@@ -5,12 +5,12 @@ import Pagination from '@/app/components/Pagination'
 import HomePost from '@/app/components/HomePost'
 
 export const metadata = {
-  title: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
+  title: `Posts – ${BLOG_TITLE}`,
   description: BLOG_SUBTITLE,
   canonical: `${BLOG_URL}`,
   openGraph: {
     url: `${BLOG_URL}`,
-    title: `${BLOG_TITLE}`,
+    title: `Posts – ${BLOG_TITLE}`,
     description: `${BLOG_SUBTITLE}`,
     images: [
       {
