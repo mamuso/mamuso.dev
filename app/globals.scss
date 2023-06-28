@@ -1,5 +1,20 @@
 @import './reset';
 
+// Variables
+:root {
+  --background: #eef1f1;
+  --background-gradient: linear-gradient(2deg, rgba(238, 241, 241, 1) 20%, rgba(238, 241, 241, 0) 80%);
+  --dots: rgba(20, 20, 20, 0.24)
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #141414;
+    --background-gradient: linear-gradient(2deg, rgba(20, 20, 20, 1) 20%, rgba(20, 20, 20, 0) 80%);
+    --dots: rgba(238, 241, 241, 0.32);
+  }
+}
+
 @font-face {
   font-family: "lekton";
   src: url("/fonts/lekton/lekton-regular.ttf") format('truetype'), url("/fonts/lekton/lekton-regular.woff") format('woff');
@@ -14,14 +29,13 @@
   font-style: bold;
 }
 
-
 html {
-  background: #EEF1F1;
+  background: var(--background);
   font-size: 14px;
 }
 
 body {
-  background: #EEF1F1;
+  background: var(--background);
   color: #2d3043;
   font-family: -apple-system,
     BlinkMacSystemFont,
@@ -35,4 +49,9 @@ body {
   height: auto;
   line-height: 1.5;
   min-height: 100%;
+}
+
+.page-content {
+  position: relative;
+  z-index: 1;
 }

@@ -34,8 +34,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-public/feed.xml
-public/og
-public/assets
+/public/feed.xml
+/public/og
+/public/assets
 
-content
+/content/

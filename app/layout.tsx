@@ -2,6 +2,7 @@ import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../lib/constants'
 import Fathom from './components/Fathom'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import Canvas from './components/Canvas'
 import './globals.scss'
 
 export const metadata = {
@@ -19,9 +20,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Fathom />
-        <Header />
-        {children}
-        <Footer />
+        <Canvas />
+        <div className="page-content">
+          <Header />
+          {children}
+          <Footer />
+        </div>
       </body>
     </html>
   )
