@@ -4,19 +4,21 @@
 :root {
   --background: #eef1f1;
   --background-gradient: linear-gradient(3deg, rgba(238, 241, 241, 1) 20%, rgba(238, 241, 241, 0) 80%);
-  --dots: rgba(20, 20, 20, 0.16);
+  --dots: rgba(20, 20, 20, 0.09);
   --text: #404040;
   --link: #D21872;
+  --logo: #404040;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #141414;
     --background-gradient: linear-gradient(3deg, rgba(20, 20, 20, 1) 20%, rgba(20, 20, 20, 0) 80%);
-    --dots: rgba(238, 241, 241, 0.24);
+    --dots: rgba(238, 241, 241, 0.07);
     --text: #ffffff;
     --link: #ED64A6;
-  }
+    --logo: #5C5C5C;
+ }
 }
 
 @font-face {
@@ -41,15 +43,20 @@ html {
 body {
   background: var(--background);
   color: var(--text);
-  font-family: -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Helvetica,
+  font-family: ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "system-ui",
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
     Arial,
+    "Noto Sans",
     sans-serif,
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol';
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    "Noto Color Emoji";
   height: auto;
   line-height: 1.5;
   min-height: 100%;
@@ -63,12 +70,57 @@ a {
   }
 }
 
-.page-content {
+#page-content {
   position: relative;
   z-index: 1;
-  width: 96%;
+  width: 90%;
   max-width: 960px;
   margin: 0 auto;
+}
+
+#header {
+  overflow: hidden;
+  padding: 55px 0 100px;
+  h1 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    float: left;
+    a {
+      color: var(--logo);
+    }
+    a:hover {
+      text-decoration: none;
+    }
+    svg {
+      display: inline-block;
+      margin-right: 12px;
+      vertical-align: middle;
+    }
+    path {
+      fill: var(--logo);
+    }
+    span {
+      opacity: 1;
+      transition: cubic-bezier(0.455, 0.03, 0.515, 0.955) 0.16s;
+    }
+  }
+  ul {
+    float: right;
+    li {
+      display: inline-block;
+      margin-left: 24px;
+      &:first-child {
+        margin-left: 0;
+      }
+      a {
+        color: var(--text);
+        font-size: 16px;
+        font-weight: 400;
+        letter-spacing: -0.2px;
+      }
+    }
+  }
 }
 
 #footer {

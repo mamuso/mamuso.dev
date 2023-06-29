@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Fathom />
         <Canvas />
-        <div className="page-content">
+        <div id="page-content">
           <Header />
           {children}
           <Footer />

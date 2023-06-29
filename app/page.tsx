@@ -1,4 +1,5 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
+import { NextPage } from 'next'
 
 export const metadata = {
   title: `${BLOG_TITLE} – Yet another journal`,
@@ -32,10 +33,13 @@ export const metadata = {
   },
 }
 
-export default function Home() {
+const Home: NextPage = () => {
   return (
     <>
+      <style>{`#header h1 span { opacity: 0;}`}</style>
       <p>Hello</p>
     </>
   )
 }
+
+export default Home
