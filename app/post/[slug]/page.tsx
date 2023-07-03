@@ -1,11 +1,11 @@
 import { BLOG_TITLE } from '@/lib/constants'
 import { Metadata, ResolvingMetadata } from 'next'
 import { getPostBySlug } from '@/lib/api'
-import { Post } from '@/lib/types'
-import DetailPost from '@/app/components/DetailPost'
+import { PostType } from '@/lib/types'
+import Post from '@/app/components/Post'
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post: Post = getPostBySlug(params.slug, ['title', 'date', 'slug', 'image', 'summary', 'content', 'category'])
+  const post: PostType = getPostBySlug(params.slug, ['title', 'date', 'slug', 'image', 'summary', 'content', 'category'])
 
   return {
     title: `${post.title ? post.title : 'Notes'} – ${BLOG_TITLE}`,
@@ -20,8 +20,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default function Post({ params }: { params: { slug: string } }) {
-  const post: Post = getPostBySlug(params.slug, ['title', 'date', 'slug', 'image', 'content', 'category'])
+export default function PostPage({ params }: { params: { slug: string } }) {
+  const post: PostType = getPostBySlug(params.slug, ['title', 'date', 'slug', 'image', 'content', 'category'])
 
-  return <DetailPost post={post} />
+  return <Post post={post} />
 }

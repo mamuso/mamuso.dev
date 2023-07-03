@@ -44,7 +44,7 @@ const processPhotos = async () => {
               `title: ''\n` +
               `date: '${dateshot}'\n` +
               `basename: '${basename}'\n` +
-              `category: photo` +
+              `category: photo\n` +
               `camera: "${exif.image.Make} ${exif.image.Model}"\n` +
               `iso: ${exif.exif.ISO}\n` +
               `fnumber: ${exif.exif.FNumber}\n` +

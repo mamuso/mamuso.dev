@@ -1,3 +1,19 @@
+$monasans: var(--monasans);
+
+// @font-face {
+//   font-family: "lekton";
+//   src: url("/fonts/lekton/lekton-regular.ttf") format('truetype'), url("/fonts/lekton/lekton-regular.woff") format('woff');
+//   font-weight: 400;
+//   font-style: normal;
+// }
+
+// @font-face {
+//   font-family: "lekton";
+//   src: url("/fonts/lekton/lekton-bold.ttf") format('truetype'), url("/fonts/lekton/lekton-bold.woff") format('woff');
+//   font-weight: 700;
+//   font-style: bold;
+// }
+
 @import './reset';
 
 // Variables
@@ -5,7 +21,8 @@
   --background: #eef1f1;
   --background-gradient: linear-gradient(3deg, rgba(238, 241, 241, 1) 20%, rgba(238, 241, 241, 0) 80%);
   --dots: rgba(20, 20, 20, 0.09);
-  --text: #404040;
+  --text: #363636;
+  --text-light: #808080;
   --link: #D21872;
   --logo: #404040;
 }
@@ -19,20 +36,6 @@
     --link: #ED64A6;
     --logo: #5C5C5C;
  }
-}
-
-@font-face {
-  font-family: "lekton";
-  src: url("/fonts/lekton/lekton-regular.ttf") format('truetype'), url("/fonts/lekton/lekton-regular.woff") format('woff');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "lekton";
-  src: url("/fonts/lekton/lekton-bold.ttf") format('truetype'), url("/fonts/lekton/lekton-bold.woff") format('woff');
-  font-weight: 700;
-  font-style: bold;
 }
 
 html {
@@ -80,7 +83,7 @@ a {
 
 #header {
   overflow: hidden;
-  padding: 55px 0 100px;
+  padding: 56px 0 100px;
   h1 {
     font-size: 16px;
     font-weight: 600;
@@ -107,7 +110,7 @@ a {
   }
   ul {
     float: right;
-    li {
+    li {  
       display: inline-block;
       margin-left: 24px;
       &:first-child {
@@ -125,4 +128,79 @@ a {
 
 #footer {
   padding: 16px 0 40px;
+}
+
+.section-title {
+  margin: 0;
+  padding: 0;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-family: $monasans;
+  font-weight: 500;
+  color: var(--text-light);
+}
+// Home
+.home-headline {
+  h2 {
+    width: 100%;
+    max-width: 520px;
+    font-family: $monasans;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    span {
+      color: var(--link);
+    }
+  }
+}
+
+.home-posts {
+  margin-top: 120px;
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    margin-top: 16px;
+    li {
+      margin-top: 8px;
+      a {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        line-height: 20px;
+        svg {
+          flex: 0 0 auto;
+          margin-right: 8px;
+        }
+        strong {
+          font-weight: 600;
+          color: var(--text);
+          flex: 0 0 auto;
+        }
+        i {
+          flex: 1 1 auto;
+          margin: 0 16px;
+          border-top: 1px dashed var(--text-light);
+          opacity: 0.4;
+        }
+        time {
+          flex: 0 0 auto;
+          color: var(--text-light);
+        }
+      }
+      a:hover {
+        text-decoration: none;
+        strong {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+  p {
+    margin-top: 12px;
+    font-size: 14px;
+  }
 }

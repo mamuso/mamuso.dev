@@ -1,10 +1,10 @@
 import { BLOG_URL } from '@/lib/constants'
-import { Post } from '@/lib/types'
+import { PostType } from '@/lib/types'
 import Link from 'next/link'
 import Image from 'next/image'
 import Markdown from 'markdown-to-jsx'
 
-export default function DetailPost({ post }: { post: Post }) {
+export default function Post({ post }: { post: PostType }) {
   return (
     <article>
       {post.image && <Image src={`/assets/feed/${post.slug}.${post.image.format}`} width={post.image.width} height={post.image.height} alt={post.title} />}
