@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import { join } from 'path'
-import { Post } from './types'
+import { PostType } from './types'
 import matter from 'gray-matter'
 
 const postsDirectory = join(process.cwd(), 'content/posts/')
@@ -33,7 +33,7 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
   return items
 }
 
-export function getAllPosts(fields: string[]): Post[] {
+export function getAllPosts(fields: string[]): PostType[] {
   const slugs = getPostSlugs()
   const posts = slugs
     .map((slug) => getPostBySlug(slug, fields))
