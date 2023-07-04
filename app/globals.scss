@@ -7,10 +7,12 @@ $monasans: var(--monasans);
   --background: #eef1f1;
   --background-gradient: linear-gradient(3deg, rgba(238, 241, 241, 1) 20%, rgba(238, 241, 241, 0) 80%);
   --dots: rgba(20, 20, 20, 0.09);
+  --dots-secondary: rgba(0, 0, 0, 0.04);
   --text: #363636;
-  --text-light: #808080;
+  --text-secondary: #808080;
   --link: #D21872;
   --logo: #404040;
+  --app-icon: #FFF;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,9 +20,12 @@ $monasans: var(--monasans);
     --background: #141414;
     --background-gradient: linear-gradient(3deg, rgba(20, 20, 20, 1) 20%, rgba(20, 20, 20, 0) 80%);
     --dots: rgba(238, 241, 241, 0.07);
+    --dots-secondary: rgba(0, 0, 0, 0.6);
     --text: #ffffff;
+    --text-secondary: #737373;
     --link: #ED64A6;
     --logo: #5C5C5C;
+    --app-icon: #333;
  }
 }
 
@@ -136,7 +141,7 @@ a {
   font-size: 14px;
   font-family: $monasans;
   font-weight: 500;
-  color: var(--text-light);
+  color: var(--text-secondary);
 }
 
 // Home
@@ -183,12 +188,12 @@ a {
         i {
           flex: 1 1 auto;
           margin: 0 16px;
-          border-top: 1px dashed var(--text-light);
+          border-top: 1px dashed var(--text-secondary);
           opacity: 0.4;
         }
         time {
           flex: 0 0 auto;
-          color: var(--text-light);
+          color: var(--text-secondary);
           font-size: 14px;
           letter-spacing: -0.5px;
         }
@@ -211,23 +216,42 @@ a {
   margin-top: 100px;
   column-count: 2;
   column-gap: 40px;
+  section {
+    break-after: column;
+  }
   ul {
     list-style: none;
       padding: 0;
       margin: 0;
       font-size: 16px;
-      margin-top: 16px;
-      break-after: column;
+      margin-top: 8px;
       li {
         line-height: 20px;
+        margin-top: -4px;
         a {
           display: flex;
           gap: 16px;
           flex-direction: row;
           align-items: center;
           justify-content: space-between;
+          padding: 12px;
+          margin-left: -12px;
+          border-radius: 12px;
+          color: var(--text-secondary);
           i {
             flex: 0 0 auto;
+            background-color: var(--app-icon);
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            overflow: hidden;
+            text-align: center;
+            svg {
+              margin: 8px;
+            }
+            path {
+              fill: var(--text);
+            }
           }
           time {
             flex: 0 0 auto;
@@ -237,6 +261,7 @@ a {
             flex: 1 1 auto;
             strong {
               display: block;
+              color: var(--text);
             }
             span {
               display: flex;
@@ -249,6 +274,10 @@ a {
               }
             }
           }
+        }
+        a:hover {
+          text-decoration: none;
+          background-color: var(--dots-secondary);
         }
       }
   }
