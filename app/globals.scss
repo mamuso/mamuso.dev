@@ -1,19 +1,5 @@
 $monasans: var(--monasans);
 
-// @font-face {
-//   font-family: "lekton";
-//   src: url("/fonts/lekton/lekton-regular.ttf") format('truetype'), url("/fonts/lekton/lekton-regular.woff") format('woff');
-//   font-weight: 400;
-//   font-style: normal;
-// }
-
-// @font-face {
-//   font-family: "lekton";
-//   src: url("/fonts/lekton/lekton-bold.ttf") format('truetype'), url("/fonts/lekton/lekton-bold.woff") format('woff');
-//   font-weight: 700;
-//   font-style: bold;
-// }
-
 @import './reset';
 
 // Variables
@@ -63,6 +49,18 @@ body {
   height: auto;
   line-height: 1.5;
   min-height: 100%;
+}
+
+time,
+.mono {
+  font-family: ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    Liberation Mono,
+    Courier New,
+    monospace;
 }
 
 a { 
@@ -127,6 +125,7 @@ a {
 }
 
 #footer {
+  margin-top: 160px;
   padding: 16px 0 40px;
 }
 
@@ -139,6 +138,7 @@ a {
   font-weight: 500;
   color: var(--text-light);
 }
+
 // Home
 .home-headline {
   h2 {
@@ -156,7 +156,7 @@ a {
 }
 
 .home-posts {
-  margin-top: 120px;
+  margin-top: 100px;
   ul {
     list-style: none;
     padding: 0;
@@ -189,6 +189,8 @@ a {
         time {
           flex: 0 0 auto;
           color: var(--text-light);
+          font-size: 14px;
+          letter-spacing: -0.5px;
         }
       }
       a:hover {
@@ -202,5 +204,52 @@ a {
   p {
     margin-top: 12px;
     font-size: 14px;
+  }
+}
+
+.home-projects {
+  margin-top: 100px;
+  column-count: 2;
+  column-gap: 40px;
+  ul {
+    list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 16px;
+      margin-top: 16px;
+      break-after: column;
+      li {
+        line-height: 20px;
+        a {
+          display: flex;
+          gap: 16px;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          i {
+            flex: 0 0 auto;
+          }
+          time {
+            flex: 0 0 auto;
+            font-size: 14px;
+          }
+          span {
+            flex: 1 1 auto;
+            strong {
+              display: block;
+            }
+            span {
+              display: flex;
+              em {
+                flex: 1 1 auto;
+                font-style: normal;
+              }
+              time {
+                flex: 0 0 auto;
+              }
+            }
+          }
+        }
+      }
   }
 }

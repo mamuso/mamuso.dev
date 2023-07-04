@@ -62,8 +62,8 @@ const Home: NextPage = () => {
         <h2 className="section-title">Journal</h2>
         <ul>
           {props.pagePosts.map((post, i) => (
-            <li>
-              <PostHome key={i} post={post} />
+            <li key={i}>
+              <PostHome post={post} />
             </li>
           ))}
         </ul>
@@ -72,7 +72,52 @@ const Home: NextPage = () => {
         </p>
       </section>
 
-      <p>Hello</p>
+      <section className="home-projects">
+        <h2 className="section-title">Side, Fun Projects</h2>
+        <ul>
+          <li>eeee</li>
+          <li>eeee</li>
+          <li>eeee</li>
+          <li>eeee</li>
+          <li>eeee</li>
+          <li>eeee</li>
+          <li>eeee</li>
+          <li>eeee</li>
+          <li>eeee</li>
+          <li>eeee</li>
+          <li>eeee</li>
+          <li>
+            <a>View more ↓</a>
+          </li>
+        </ul>
+        <h2 className="section-title">Work</h2>
+        <ul>
+          <li>
+            <Link href="https://github.com">
+              <i>L</i>
+              <span>
+                <strong>GitHub</strong>
+                <span>
+                  <em>Director of Design</em>
+                  <time>2019 – Now</time>
+                </span>
+              </span>
+            </Link>
+          </li>
+          <li>
+            <Link href="https://azure.microsoft.com/en-us/products/devops">
+              <i>L</i>
+              <span>
+                <strong>Microsoft, Developer Services</strong>
+                <span>
+                  <em>Director of Design</em>
+                  <time>2018 – 2019</time>
+                </span>
+              </span>
+            </Link>
+          </li>
+        </ul>
+      </section>
     </>
   )
 }
