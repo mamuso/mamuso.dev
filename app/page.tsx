@@ -224,7 +224,7 @@ const Home: NextPage = () => {
           </ul>
           <p className="show">
             <input type="checkbox" id="show-more" />
-            <label for="show-more">View more ↓</label>
+            <label htmlFor="show-more">View more ↓</label>
           </p>
         </section>
         <section>
