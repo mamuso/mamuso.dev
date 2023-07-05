@@ -1,6 +1,12 @@
+@import './reset';
+
 $monasans: var(--monasans);
 
-@import './reset';
+@mixin mobile {
+  @media (max-width: 1024px) {
+    @content;
+  }
+}
 
 // Variables
 :root {
@@ -26,7 +32,7 @@ $monasans: var(--monasans);
     --link: #ED64A6;
     --logo: #5C5C5C;
     --app-icon: #333;
- }
+  }
 }
 
 html {
@@ -38,19 +44,19 @@ body {
   background: var(--background);
   color: var(--text);
   font-family: ui-sans-serif,
-    system-ui,
-    -apple-system,
-    "system-ui",
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    "Noto Sans",
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Noto Color Emoji";
+  system-ui,
+  -apple-system,
+  "system-ui",
+  "Segoe UI",
+  Roboto,
+  "Helvetica Neue",
+  Arial,
+  "Noto Sans",
+  sans-serif,
+  "Apple Color Emoji",
+  "Segoe UI Emoji",
+  "Segoe UI Symbol",
+  "Noto Color Emoji";
   height: auto;
   line-height: 1.5;
   min-height: 100%;
@@ -59,13 +65,13 @@ body {
 time,
 .mono {
   font-family: ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Monaco,
-    Consolas,
-    Liberation Mono,
-    Courier New,
-    monospace;
+  SFMono-Regular,
+  Menlo,
+  Monaco,
+  Consolas,
+  Liberation Mono,
+  Courier New,
+  monospace;
 }
 
 a { 
@@ -82,6 +88,7 @@ a {
   width: 90%;
   max-width: 960px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 #header {
@@ -131,7 +138,22 @@ a {
 
 #footer {
   margin-top: 160px;
-  padding: 16px 0 40px;
+  padding: 0 0 40px;
+  i {
+    display: block;
+    border-top: 1px dashed var(--text-secondary);
+    opacity: 0.4;
+    margin-bottom: 16px;
+  }
+  div {
+    display: flex;
+    p {
+      flex: 1 1 auto;
+    }
+    span {
+      flex: 0 0 auto;
+    }
+  }
 }
 
 .section-title {
@@ -144,6 +166,9 @@ a {
   color: var(--text-secondary);
 }
 
+.hide {
+  display: none;
+}
 // Home
 .home-headline {
   h2 {
@@ -161,7 +186,8 @@ a {
 }
 
 .home-posts {
-  margin-top: 100px;
+  margin: 100px -12px 0;
+  padding: 0 12px;
   ul {
     list-style: none;
     padding: 0;
@@ -221,64 +247,101 @@ a {
   }
   ul {
     list-style: none;
-      padding: 0;
-      margin: 0;
-      font-size: 16px;
-      margin-top: 8px;
-      li {
-        line-height: 20px;
-        margin-top: -4px;
-        a {
-          display: flex;
-          gap: 16px;
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-          padding: 12px;
-          margin-left: -12px;
-          border-radius: 12px;
-          color: var(--text-secondary);
-          i {
-            flex: 0 0 auto;
-            background-color: var(--app-icon);
-            border-radius: 8px;
-            width: 40px;
-            height: 40px;
-            overflow: hidden;
-            text-align: center;
-            svg {
-              margin: 8px;
-            }
-            path {
-              fill: var(--text);
-            }
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    margin-top: 8px;
+    li {
+      line-height: 20px;
+      margin-top: -4px;
+      a {
+        display: flex;
+        gap: 16px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        margin-left: -12px;
+        border-radius: 12px;
+        color: var(--text-secondary);
+        i {
+          flex: 0 0 auto;
+          background-color: var(--app-icon);
+          border-radius: 8px;
+          width: 40px;
+          height: 40px;
+          overflow: hidden;
+          text-align: center;
+          svg {
+            margin: 8px;
           }
-          time {
-            flex: 0 0 auto;
-            font-size: 14px;
+          path {
+            fill: var(--text);
+          }
+        }
+        time {
+          flex: 0 0 auto;
+          font-size: 14px;
+        }
+        span {
+          flex: 1 1 auto;
+          strong {
+            display: block;
+            color: var(--text);
           }
           span {
-            flex: 1 1 auto;
-            strong {
-              display: block;
-              color: var(--text);
+            display: flex;
+            em {
+              flex: 1 1 auto;
+              font-style: normal;
             }
-            span {
-              display: flex;
-              em {
-                flex: 1 1 auto;
-                font-style: normal;
-              }
-              time {
-                flex: 0 0 auto;
-              }
+            time {
+              flex: 0 0 auto;
             }
           }
         }
-        a:hover {
-          text-decoration: none;
-          background-color: var(--dots-secondary);
-        }
       }
+      a:hover {
+        text-decoration: none;
+        background-color: var(--dots-secondary);
+      }
+    }
+  }
+  input[type='checkbox'] {
+    display: none;
+  }
+  label {
+    color: var(--link);
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  &:has(input:checked) .hide {
+    display: block;
+  }
+  &:has(input:checked) .show {
+    display: none;
+  }
+}
+
+@include mobile {
+  #page-content {
+    width: 100%;
+    margin: 0;
+    padding: 0 32px;
+  }
+  #header {
+    padding: 27px 0 100px;
+  }
+  .home-projects {
+    column-count: 1;
+    section {
+      break-after: auto;
+    }
+    .section-title {
+      margin-top: 80px;
+    }
   }
 }

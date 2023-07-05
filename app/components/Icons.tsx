@@ -2,6 +2,8 @@
 
 import { Images, CodeBlock, Article, NoteBlank } from '@phosphor-icons/react'
 
+export { TreeStructure, Robot, Browsers, PencilLine, Package, SketchLogo } from '@phosphor-icons/react'
+
 export function SelectIcon({ category }: { category: string }) {
   switch (category) {
     case 'note':

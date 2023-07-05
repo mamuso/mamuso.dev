@@ -1,6 +1,6 @@
 import { PostType } from '@/lib/types'
 import Link from 'next/link'
-import { SelectIcon } from './Icon'
+import { SelectIcon } from './Icons'
 
 export default function PostHome({ post }: { post: PostType }) {
   return (

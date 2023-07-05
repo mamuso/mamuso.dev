@@ -1,9 +1,11 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
+import { useState } from 'react'
 import { NextPage } from 'next'
+import Link from 'next/link'
 import { getAllPosts } from '@/lib/api'
 import { PostType } from '@/lib/types'
 import PostHome from '@/app/components/PostHome'
-import Link from 'next/link'
+import { TreeStructure, Robot, Browsers, PencilLine, Package, SketchLogo } from '../app/components/Icons'
 
 export const metadata = {
   title: `${BLOG_TITLE} – Yet another journal`,
@@ -76,20 +78,153 @@ const Home: NextPage = () => {
         <section>
           <h2 className="section-title">Side, Fun Projects</h2>
           <ul>
-            <li>eeee</li>
-            <li>eeee</li>
-            <li>eeee</li>
-            <li>eeee</li>
-            <li>eeee</li>
-            <li>eeee</li>
-            <li>eeee</li>
-            <li>eeee</li>
-            <li>eeee</li>
-            <li>eeee</li>
-            <li>eeee</li>
+            <li>
+              <Link href="https://www.figma.com/community/plugin/1091247524080548244/Orgchart">
+                <i>
+                  <TreeStructure size={24} />
+                </i>
+                <span>
+                  <strong>Figma OrgChart</strong>
+                  <span>
+                    <em>Create an org chart from a yaml or a json</em>
+                  </span>
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link href="https://github.com/mamuso/weekly-update-action">
+                <i>
+                  <Robot size={24} />
+                </i>
+                <span>
+                  <strong>Weekly update – GitHub Action</strong>
+                  <span>
+                    <em>Automate the creation of a weekly discussion</em>
+                  </span>
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link href="https://github.com/mamuso/discussion-to-markdown-action">
+                <i>
+                  <Robot size={24} />
+                </i>
+                <span>
+                  <strong>Discussion to Markdown – GitHub Action</strong>
+                  <span>
+                    <em>Transform a GitHub discussion into markdown – duh!</em>
+                  </span>
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link href="https://github.com/mamuso/figma-to-gh-pages">
+                <i>
+                  <Robot size={24} />
+                </i>
+                <span>
+                  <strong>Figma to GitHub Pages – GitHub Action</strong>
+                  <span>
+                    <em>Use a Figma doc as a content source for your site</em>
+                  </span>
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link href="https://github.com/mamuso/close-figma-tab">
+                <i>
+                  <Browsers size={24} />
+                </i>
+                <span>
+                  <strong>Close Figma tab</strong>
+                  <span>
+                    <em>Get rid off tabs once docs open in the app</em>
+                  </span>
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link href="https://papercups.mamuso.net/">
+                <i>
+                  <PencilLine size={24} />
+                </i>
+                <span>
+                  <strong>Papercups</strong>
+                  <span>
+                    <em>Drawing the coffee cups that I sip</em>
+                  </span>
+                </span>
+              </Link>
+            </li>
+            <li className="hide">
+              <Link href="https://github.com/mamuso/unvlogable">
+                <i>
+                  <Package size={24} />
+                </i>
+                <span>
+                  <strong>Unvlogable</strong>
+                  <span>
+                    <em>A standardized oembed output for video services</em>
+                  </span>
+                </span>
+              </Link>
+            </li>
+            <li className="hide">
+              <Link href="https://github.com/mamuso/sketch-truncate-textlines">
+                <i>
+                  <SketchLogo size={24} />
+                </i>
+                <span>
+                  <strong>Truncate textlines – Sketch plugin</strong>
+                  <span>
+                    <em>Reduce the number of lines in a textbox</em>
+                  </span>
+                </span>
+              </Link>
+            </li>
+            <li className="hide">
+              <Link href="https://github.com/mamuso/sketch-cat-ipsum">
+                <i>
+                  <SketchLogo size={24} />
+                </i>
+                <span>
+                  <strong>Cat Ipsum – Sketch plugin</strong>
+                  <span>
+                    <em>catipsum.com, but inside Sketch</em>
+                  </span>
+                </span>
+              </Link>
+            </li>
+            <li className="hide">
+              <Link href="https://github.com/mamuso/yammer-sketch-tools">
+                <i>
+                  <SketchLogo size={24} />
+                </i>
+                <span>
+                  <strong>Yammer Commands – Sketch plugin</strong>
+                  <span>
+                    <em>A collection of utilities we used at Yammer</em>
+                  </span>
+                </span>
+              </Link>
+            </li>
+            <li className="hide">
+              <Link href="https://github.com/mamuso/acts_as_unvlogable">
+                <i>
+                  <SketchLogo size={24} />
+                </i>
+                <span>
+                  <strong>acts_as_unvlogable</strong>
+                  <span>
+                    <em>A ruby gem to embed videos in a rails app</em>
+                  </span>
+                </span>
+              </Link>
+            </li>
           </ul>
-          <p>
-            <a>View more ↓</a>
+          <p className="show">
+            <input type="checkbox" id="show-more" />
+            <label for="show-more">View more ↓</label>
           </p>
         </section>
         <section>

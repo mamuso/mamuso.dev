@@ -74,7 +74,6 @@ export default function Canvas(props: React.CanvasHTMLAttributes<HTMLCanvasEleme
           y += ch
 
           if (context && canvas) {
-            console.log(getComputedStyle(canvas).getPropertyValue('--dots'))
             context.fillStyle = getComputedStyle(canvas).getPropertyValue('--dots')
             context.fillRect(x - r / 2, y - r / 2, r, r)
           }

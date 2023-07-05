@@ -1,7 +1,7 @@
 import { PostType } from '@/lib/types'
 import Link from 'next/link'
 import Markdown from 'markdown-to-jsx'
-import { SelectIcon } from './Icon'
+import { SelectIcon } from './Icons'
 
 export default function PostList({ post }: { post: PostType }) {
   return (
