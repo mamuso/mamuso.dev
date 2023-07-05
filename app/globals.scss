@@ -2,8 +2,14 @@
 
 $monasans: var(--monasans);
 
-@mixin mobile {
+@mixin tablet {
   @media (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: 667px) {
     @content;
   }
 }
@@ -326,7 +332,7 @@ a {
   }
 }
 
-@include mobile {
+@include tablet {
   #page-content {
     width: 100%;
     margin: 0;
@@ -342,6 +348,33 @@ a {
     }
     .section-title {
       margin-top: 80px;
+    }
+  }
+}
+
+@include mobile {
+  .home-posts {
+    ul {
+      li {
+        a {
+          align-items: center;
+          flex-wrap: wrap;
+          justify-content: start;
+          i {
+            display: none;
+          }
+          strong {
+            flex: 1 1 auto;
+            display: block;
+          }    
+          time {
+            flex: none;
+            display: block;
+            width: 100%;
+            padding-left: 24px;
+          }
+        }
+      }
     }
   }
 }
