@@ -7,13 +7,9 @@ import Markdown from 'markdown-to-jsx'
 export default function Post({ post }: { post: PostType }) {
   return (
     <article>
-      {post.image && <Image src={`/assets/feed/${post.slug}.${post.image.format}`} width={post.image.width} height={post.image.height} alt={post.title} />}
-      {post.category != 'note' && (
-        <>
-          <h2>{post.title}</h2>
-        </>
-      )}
+      <h2>{post.title}</h2>
       <time dateTime={post.date}>{new Date(`${post.date}T00:00:00`).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}</time>
+      {post.basename && <Image src={`/assets/feed/${post.basename}`} width={post.width} height={post.height} alt={post.title} />}
       <Markdown>{post.content}</Markdown>
     </article>
   )

@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default function PostPage({ params }: { params: { slug: string } }) {
-  const post: PostType = getPostBySlug(params.slug, ['title', 'date', 'slug', 'image', 'content', 'category'])
+  const post: PostType = getPostBySlug(params.slug, ['title', 'date', 'slug', 'content', 'summary', 'category', 'basename', 'camera', 'iso', 'fnumber', 'exposureBiasValue', 'exposureTime', 'GPSLatitude', 'GPSLongitude', 'width', 'height', 'colorPalette'])
 
   return <Post post={post} />
 }
