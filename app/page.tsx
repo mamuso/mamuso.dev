@@ -211,7 +211,7 @@ const Home: NextPage = () => {
             <li className="hide">
               <Link href="https://github.com/mamuso/acts_as_unvlogable">
                 <i>
-                  <SketchLogo size={24} />
+                  <Package size={24} />
                 </i>
                 <span>
                   <strong>acts_as_unvlogable</strong>
