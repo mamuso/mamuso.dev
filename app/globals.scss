@@ -354,8 +354,10 @@ a {
     vertical-align: bottom;
     border-radius: 2px;
     opacity: 0;
+    visibility: hidden;
     &.loaded {
       opacity: 1;
+      visibility: visible;
     }
   }
 }
