@@ -332,10 +332,38 @@ a {
   }
 }
 
+.photo-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  &::after {
+    content: '';
+    flex-grow: 999999999;
+  }
+  div {
+    margin: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  i {
+    display: block;
+  }
+  img {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    vertical-align: bottom;
+    border-radius: 2px;
+    opacity: 0;
+    &.loaded {
+      opacity: 1;
+    }
+  }
+}
+
 @include tablet {
   #page-content {
     width: 100%;
-    margin: 0;
+    margin: 0 auto;
     padding: 0 32px;
   }
   #header {
@@ -354,14 +382,11 @@ a {
 
 @include mobile {
   #page-content {
-      width: 100%;
-      margin: 0;
-      padding: 0 24px;
-    }
+    width: 100%;
+    margin: 0;
+    padding: 0 20px;
+  }
   
-    #header {
-      padding: 19px 0 100px;
-    }
   .home-posts {
     ul {
       li {

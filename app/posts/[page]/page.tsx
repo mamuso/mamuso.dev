@@ -3,6 +3,7 @@ import { getAllPosts } from '@/lib/api'
 import { PostType } from '@/lib/types'
 import Pagination from '@/app/components/Pagination'
 import PostList from '@/app/components/PostList'
+import PhotoGallery from '@/app/components/PhotoGallery'
 
 export const metadata = {
   title: `Posts – ${BLOG_TITLE}`,
@@ -58,6 +59,7 @@ export default function Posts({ params }: { params: { page: number } }) {
         <PostList key={i} post={post} />
       ))}
       <Pagination page={page} totalPages={props.totalPages} />
+      <PhotoGallery />
     </>
   )
 }
