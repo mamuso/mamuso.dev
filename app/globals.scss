@@ -353,6 +353,15 @@ a {
 }
 
 @include mobile {
+  #page-content {
+      width: 100%;
+      margin: 0;
+      padding: 0 24px;
+    }
+  
+    #header {
+      padding: 19px 0 100px;
+    }
   .home-posts {
     ul {
       li {
@@ -360,11 +369,7 @@ a {
           align-items: center;
           flex-wrap: wrap;
           justify-content: start;
-          i {
-            display: none;
-          }
           strong {
-            flex: 1 1 auto;
             display: block;
           }    
           time {
