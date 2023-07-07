@@ -10,7 +10,7 @@ export default function Post({ post }: { post: PostType }) {
     <article>
       <h2>{post.title}</h2>
       <time dateTime={post.date}>{new Date(`${post.date}T00:00:00`).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}</time>
-      {post.basename && <Image src={`/assets/feed/${post.basename}`} sizes="100vw" width={post.width} height={post.height} alt={post.title} />}
+      {post.basename && <Image src={`/assets/feed/${post.basename}`} sizes="100vw" width={post.width} height={post.height} alt={post.title} className="photo-highlight" />}
       <Markdown>{post.content}</Markdown>
       <PhotoGallery />
     </article>

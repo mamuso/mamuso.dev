@@ -313,6 +313,9 @@ a {
       }
     }
   }
+  p.show {
+    margin-top: 4px;
+  }
   input[type='checkbox'] {
     display: none;
   }
@@ -335,12 +338,12 @@ a {
 .photo-gallery {
   display: flex;
   flex-wrap: wrap;
+  gap: 8px;
   &::after {
     content: '';
     flex-grow: 999999999;
   }
   div {
-    margin: 4px;
     position: relative;
     overflow: hidden;
   }
@@ -352,7 +355,7 @@ a {
     top: 0;
     width: 100%;
     vertical-align: bottom;
-    border-radius: 2px;
+    border-radius: 3px;
     opacity: 0;
     visibility: hidden;
     &.loaded {
@@ -360,6 +363,10 @@ a {
       visibility: visible;
     }
   }
+}
+
+.photo-highlight {
+    border-radius: 3px;
 }
 
 @include tablet {
