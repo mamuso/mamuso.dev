@@ -38,7 +38,7 @@ export const metadata = {
 }
 
 const postsPerPage: number = 20
-const allPosts: PostType[] = getAllPosts(['title', 'date', 'slug', 'image', 'content', 'category'])
+const allPosts: PostType[] = getAllPosts(['title', 'date', 'slug', 'content', 'category', 'basename', 'width', 'height'])
 
 function fetchData(page: number) {
   let pagePosts = allPosts.slice((page - 1) * postsPerPage, page * postsPerPage)

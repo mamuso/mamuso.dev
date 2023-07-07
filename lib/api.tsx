@@ -41,3 +41,13 @@ export function getAllPosts(fields: string[]): PostType[] {
     .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
   return posts
 }
+
+export function getPhotoPosts(fields: string[]): PostType[] {
+  const slugs = getPostSlugs()
+  const posts = slugs
+    .map((slug) => getPostBySlug(slug, fields))
+    .filter((post) => post.category === 'photo')
+    // sort posts by date in descending order
+    .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
+  return posts
+}
