@@ -58,6 +58,7 @@ export default function Posts({ params }: { params: { page: number } }) {
       {props.pagePosts.map((post, i) => (
         <div className="post-item" key={i}>
           <Post key={i} post={post} link={true} />
+          <hr />
         </div>
       ))}
       <Pagination page={page} totalPages={props.totalPages} />
