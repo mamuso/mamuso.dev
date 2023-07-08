@@ -92,7 +92,7 @@ a {
   position: relative;
   z-index: 1;
   width: 90%;
-  max-width: 960px;
+  max-width: 880px;
   margin: 0 auto;
   box-sizing: border-box;
 }
@@ -461,9 +461,12 @@ a {
   }
   &-content {
     margin-top: 20px;
-    font-size: 18px;
+    font-size: 16px;
     p, .photo-gallery {
       margin-top: 16px;
+    }
+    video {
+      margin-top: 20px;
     }
   }
   &-photometa {

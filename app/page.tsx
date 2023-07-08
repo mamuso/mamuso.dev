@@ -112,7 +112,7 @@ const Home: NextPage = () => {
                 <span>
                   <strong>Discussion to Markdown – GitHub Action</strong>
                   <span>
-                    <em>Transform a GitHub discussion into markdown – duh!</em>
+                    <em>Transform a discussion into markdown – duh!</em>
                   </span>
                 </span>
               </Link>
@@ -125,7 +125,7 @@ const Home: NextPage = () => {
                 <span>
                   <strong>Figma to GitHub Pages – GitHub Action</strong>
                   <span>
-                    <em>Use a Figma doc as a content source for your site</em>
+                    <em>Use a Figma doc as a CMS for your site</em>
                   </span>
                 </span>
               </Link>
