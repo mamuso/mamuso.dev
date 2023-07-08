@@ -32,12 +32,3 @@ export default function PhotoGallery() {
   }, [])
   return <></>
 }
-
-// ;<div key={p.fileName} style={{ width: `${(p.width * galleryHeight) / p.height}px`, flexGrow: `${(p.width * galleryHeight) / p.height}` }}>
-//   <Link href={`/photo/${path.basename(p.fileName, path.extname(p.fileName))}–${slugify(p.title, { lower: true })}`}>
-//     <a>
-//       <i style={{ paddingBottom: `${(p.height / p.width) * 100}%` }} />
-//       <img src={`/thumbs/${path.basename(p.fileName, path.extname(p.fileName))}_1024.jpg`} alt={p.title} />
-//     </a>
-//   </Link>
-// </div>

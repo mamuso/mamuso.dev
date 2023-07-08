@@ -356,7 +356,7 @@ a {
     top: 0;
     width: 100%;
     vertical-align: bottom;
-    border-radius: 3px;
+    border-radius: 4px;
     opacity: 0;
     visibility: hidden;
     &.loaded {
@@ -427,7 +427,7 @@ a {
     display: block;
     border-top: 1px dashed var(--text-secondary);
     opacity: 0.4;
-    margin: 40px 0;
+    margin: 60px 0;
   }
 }
 
@@ -465,8 +465,12 @@ a {
     p, .photo-gallery {
       margin-top: 16px;
     }
+    img {
+      border-radius: 4px;
+    }
     video {
-      margin-top: 20px;
+    border-radius: 4px;
+    margin-top: 20px;
     }
   }
   &-photometa {

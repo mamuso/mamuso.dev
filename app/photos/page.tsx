@@ -45,7 +45,7 @@ export default function Photos() {
         <div key={i} style={{ width: `${(post.width * galleryHeight) / post.height}px`, flexGrow: `${(post.width * galleryHeight) / post.height}` }}>
           <Link href={`/post/${post.slug}`}>
             <i style={{ paddingBottom: `${(post.height / post.width) * 100}%` }} />
-            <Image src={`/assets/feed/${post.basename}`} sizes="18vh" width={post.width} height={post.height} alt={post.title} className="loaded" />
+            <Image src={`/assets/feed/${post.basename}`} sizes="(max-width: 1600px) 100vw" width={post.width} height={post.height} alt={post.title} className="loaded" />
           </Link>
         </div>
       ))}
