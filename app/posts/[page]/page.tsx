@@ -1,8 +1,8 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
 import { getAllPosts } from '@/lib/api'
 import { PostType } from '@/lib/types'
+import Post from '@/app/components/Post'
 import Pagination from '@/app/components/Pagination'
-import PostList from '@/app/components/PostList'
 import PhotoGallery from '@/app/components/PhotoGallery'
 
 export const metadata = {
@@ -56,7 +56,9 @@ export default function Posts({ params }: { params: { page: number } }) {
   return (
     <>
       {props.pagePosts.map((post, i) => (
-        <PostList key={i} post={post} />
+        <div className="post-item" key={i}>
+          <Post key={i} post={post} link={true} />
+        </div>
       ))}
       <Pagination page={page} totalPages={props.totalPages} />
       <PhotoGallery />
