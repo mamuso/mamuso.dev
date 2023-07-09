@@ -43,7 +43,7 @@ const main = () => {
   posts.forEach((post) => {
     const url = `${BLOG_URL}/post/${post.slug}`
 
-    let description: string = post.basename ? "<img src='" + `${BLOG_URL}/assets/feed/${post.basename}` + "'/>" : ''
+    let description: string = post.basename ? "<img src='" + `${BLOG_URL}/assets/feed/${post.basename}` + "' alt='" + `${post.title}` + '/>' : ''
     description += renderPost(post.body)
       .replace("'/assets/", "'" + `${BLOG_URL}` + '/assets/')
       .replace('"/assets/', '"' + `${BLOG_URL}` + '/assets/')
