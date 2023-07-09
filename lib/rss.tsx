@@ -50,7 +50,7 @@ const main = () => {
       title: post.title,
       description: description,
       date: new Date(post?.date),
-      author: 'Max Leiter',
+      author: 'Manuel Muñoz Solera',
       url,
       guid: url,
     })
