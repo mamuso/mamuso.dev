@@ -458,6 +458,12 @@ a {
   }
 }
 
+.pagination {
+  a {
+    margin-right: 8px;
+  }
+}
+
 @include tablet {
   #page-content {
     width: 100%;

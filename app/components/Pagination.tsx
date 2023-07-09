@@ -4,7 +4,7 @@ export default function Pagination({ page, totalPages }: { page: number; totalPa
   const previousPage = +page - 1
   const nextPage = +page + 1
   return (
-    <section>
+    <section className="pagination">
       {previousPage > 0 && <Link href={`/posts/${previousPage}`}>← Previous</Link>}
       {nextPage <= totalPages && <Link href={`/posts/${nextPage}`}>Next →</Link>}
     </section>
