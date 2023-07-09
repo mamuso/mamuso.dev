@@ -1,9 +1,7 @@
-import { BLOG_URL } from '@/lib/constants'
 import { PostType } from '@/lib/types'
 import Link from 'next/link'
 import Image from 'next/image'
 import Markdown from 'markdown-to-jsx'
-import { SelectIcon } from './Icons'
 import PhotoMeta from './PhotoMeta'
 
 export default function Post({ post, link = false }: { post: PostType; link?: boolean }) {

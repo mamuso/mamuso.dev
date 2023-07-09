@@ -43,7 +43,7 @@ const main = () => {
   posts.forEach((post) => {
     const url = `${BLOG_URL}/post/${post.slug}`
 
-    let description: string = post.image ? "<img src='" + `${BLOG_URL}/assets/feed/${post.slug}.${post.image.format}` + "'/>" : ''
+    let description: string = post.basename ? "<img src='" + `${BLOG_URL}/assets/feed/${post.basename}` + "'/>" : ''
     description += renderPost(post.body)
 
     feed.item({
