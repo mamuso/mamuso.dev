@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 export default function PhotoGallery() {
   useEffect(() => {
     const gallery = document.querySelectorAll('.photo-gallery')
-    const galleryHeight = 320
+    const galleryHeight = 280
 
     gallery.forEach((gallery) => {
       const galleryImages = gallery.querySelectorAll('img')
