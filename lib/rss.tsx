@@ -45,6 +45,8 @@ const main = () => {
 
     let description: string = post.basename ? "<img src='" + `${BLOG_URL}/assets/feed/${post.basename}` + "'/>" : ''
     description += renderPost(post.body)
+      .replace("'/assets/", "'" + `${BLOG_URL}` + '/assets/')
+      .replace('"/assets/', '"' + `${BLOG_URL}` + '/assets/')
 
     feed.item({
       title: post.title,
@@ -57,7 +59,7 @@ const main = () => {
   })
 
   const rss = feed.xml({ indent: true })
-  fs.writeFileSync(path.join(__dirname, '../public/feed.xml'), rss)
+  fs.writeFileSync(path.join(__dirname, '../public/rss'), rss)
 }
 
 main()
