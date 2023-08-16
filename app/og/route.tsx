@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
           style={{
             width: '100%',
             height: '100%',
-            backgroundImage: `url(http://localhost:3000/images/og-template.png)`,
+            backgroundImage: `url(https://mamuso.dev/images/og-template.png)`,
             backgroundSize: 'cover',
             display: 'flex',
             justifyContent: 'flex-end',

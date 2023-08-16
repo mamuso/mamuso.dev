@@ -1,4 +1,4 @@
-import { BLOG_TITLE } from '@/lib/constants'
+import { BLOG_TITLE, BLOG_URL } from '@/lib/constants'
 import { Metadata, ResolvingMetadata } from 'next'
 import { getPostBySlug } from '@/lib/api'
 import { PostType } from '@/lib/types'
@@ -17,6 +17,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         type: 'image/png',
       },
       shortcut: { url: '/images/favicon.png', type: 'image/png' },
+    },
+    openGraph: {
+      url: `${BLOG_URL}`,
+      title: `${post.title ? post.title : 'Notes'} – ${BLOG_TITLE}`,
+      images: [
+        {
+          url: `${BLOG_URL}/og?title=${post.title ? post.title : 'Notes'}\&description=${post.date}`,
+          width: 1200,
+          height: 600,
+          alt: `${post.title} – ${post.date}`,
+        },
+      ],
     },
   }
 }

@@ -17,9 +17,9 @@ export const metadata = {
     description: `${BLOG_SUBTITLE}`,
     images: [
       {
-        url: `${BLOG_URL}/images/og.png`,
+        url: `${BLOG_URL}/og?title=${BLOG_TITLE}\&description=${BLOG_SUBTITLE}`,
         width: 1200,
-        height: 627,
+        height: 600,
         alt: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
       },
     ],
