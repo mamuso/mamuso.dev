@@ -23,10 +23,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title: `${post.title ? post.title : 'Notes'} – ${BLOG_TITLE}`,
       images: [
         {
-          url: `${BLOG_URL}/og?title=${post.title ? post.title : 'Notes'}\&description=${post.date}`,
+          url: `${BLOG_URL}/og?title=${post.title ? post.title : 'Notes'}\&description=${new Date(`${post.date}T00:00:00`).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}`,
           width: 1200,
           height: 600,
-          alt: `${post.title} – ${post.date}`,
+          alt: `${post.title} – ${new Date(`${post.date}T00:00:00`).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}`,
         },
       ],
     },

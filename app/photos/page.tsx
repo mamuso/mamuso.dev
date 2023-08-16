@@ -10,14 +10,14 @@ export const metadata = {
   canonical: `${BLOG_URL}`,
   openGraph: {
     url: `${BLOG_URL}`,
-    title: `Posts – ${BLOG_TITLE}`,
+    title: `Photos – ${BLOG_TITLE}`,
     description: `${BLOG_SUBTITLE}`,
     images: [
       {
-        url: `${BLOG_URL}/images/og.png`,
+        url: `${BLOG_URL}/og?title=Photos\&description=${BLOG_TITLE}`,
         width: 1200,
-        height: 627,
-        alt: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
+        height: 600,
+        alt: `Photos – ${BLOG_TITLE}`,
       },
     ],
     site_name: `${BLOG_TITLE}`,
