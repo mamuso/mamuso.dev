@@ -15,10 +15,10 @@ export const metadata = {
     description: `${BLOG_SUBTITLE}`,
     images: [
       {
-        url: `${BLOG_URL}/images/og.png`,
+        url: `${BLOG_URL}/og?title=Posts\&description=${BLOG_TITLE}`,
         width: 1200,
-        height: 627,
-        alt: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
+        height: 600,
+        alt: `Posts – ${BLOG_TITLE}`,
       },
     ],
     site_name: `${BLOG_TITLE}`,
