@@ -347,6 +347,8 @@ a {
   div {
     position: relative;
     overflow: hidden;
+    border-radius: 4px;
+    background-color: var(--dots);
   }
   i {
     display: block;
@@ -372,6 +374,7 @@ a {
   img {
     width: 100%;
     border-radius: 3px;
+    background-color: var(--dots);
   }
 }
 
@@ -455,6 +458,11 @@ a {
         }
       }
     }
+  }
+  footer {
+    margin: 32px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
   }
 }
 
