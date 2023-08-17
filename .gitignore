@@ -35,6 +35,6 @@ yarn-error.log*
 next-env.d.ts
 
 /public/feed.xml
-/public/rss
+/public/rss.xml
 /public/og
 /public/assets

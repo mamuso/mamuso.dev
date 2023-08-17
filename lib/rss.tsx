@@ -43,7 +43,7 @@ const main = () => {
   posts.forEach((post) => {
     const url = `${BLOG_URL}/post/${post.slug}`
 
-    let description: string = post.basename ? "<img src='" + `${BLOG_URL}/assets/feed/${post.basename}` + "' alt='" + `${post.title}` + "'/>" : ''
+    let description: string = post.basename ? "<img src='" + `${BLOG_URL}/assets/feed/${post.basename}` + '/>' : ''
     description += renderPost(post.body)
       .replace("'/assets/", "'" + `${BLOG_URL}` + '/assets/')
       .replace('"/assets/', '"' + `${BLOG_URL}` + '/assets/')
@@ -59,7 +59,7 @@ const main = () => {
   })
 
   const rss = feed.xml({ indent: true })
-  fs.writeFileSync(path.join(__dirname, '../public/rss'), rss)
+  fs.writeFileSync(path.join(__dirname, '../public/rss.xml'), rss)
 }
 
 main()
