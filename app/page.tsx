@@ -1,5 +1,4 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
-import { useState } from 'react'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { getAllPosts } from '@/lib/api'
@@ -70,7 +69,7 @@ const Home: NextPage = () => {
           ))}
         </ul>
         <p>
-          <Link href="/posts/1">View more →</Link>
+          <Link href="/posts">View more →</Link>
         </p>
       </section>
 
