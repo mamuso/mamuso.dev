@@ -38,15 +38,12 @@ const main = () => {
     image_url: `${BLOG_URL}/images/favicon.png`,
     language: 'en',
     description: `${BLOG_SUBTITLE}`,
-    custom_namespaces: {
-      icon: `${BLOG_URL}/images/favicon.png`,
-    },
   })
 
   posts.forEach((post) => {
     const url = `${BLOG_URL}/post/${post.slug}`
 
-    let description: string = post.basename ? "<img src='" + `${BLOG_URL}/assets/feed/${post.basename}` + "' alt='" + `${post.title}` + '/>' : ''
+    let description: string = post.basename ? "<img src='" + `${BLOG_URL}/assets/feed/${post.basename}` + "' alt='" + `${post.title}` + "'/>" : ''
     description += renderPost(post.body)
       .replace("'/assets/", "'" + `${BLOG_URL}` + '/assets/')
       .replace('"/assets/', '"' + `${BLOG_URL}` + '/assets/')
