@@ -38,6 +38,9 @@ const main = () => {
     image_url: `${BLOG_URL}/images/favicon.png`,
     language: 'en',
     description: `${BLOG_SUBTITLE}`,
+    custom_namespaces: {
+      icon: `${BLOG_URL}/images/favicon.png`,
+    },
   })
 
   posts.forEach((post) => {
