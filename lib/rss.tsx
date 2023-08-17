@@ -34,8 +34,8 @@ const main = () => {
   const feed = new RSS({
     title: `${BLOG_TITLE}`,
     site_url: `${BLOG_URL}`,
-    feed_url: `${BLOG_URL}/feed.xml`,
-    image_url: `${BLOG_URL}/images/og.png`,
+    feed_url: `${BLOG_URL}/rss`,
+    image_url: `${BLOG_URL}/images/favicon.png`,
     language: 'en',
     description: `${BLOG_SUBTITLE}`,
   })
