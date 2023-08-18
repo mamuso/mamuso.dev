@@ -37,7 +37,7 @@ const main = () => {
     id: `${BLOG_URL}`,
     link: `${BLOG_URL}`,
     image: `${BLOG_URL}/images/favicon.png`,
-    favicon: `${BLOG_URL}/favicon.png`,
+    favicon: `${BLOG_URL}/images/favicon.png`,
     copyright: `${new Date().getFullYear()}, mamuso`,
     language: 'en',
     feedLinks: {
@@ -67,8 +67,6 @@ const main = () => {
       author: [
         {
           name: 'Manuel Muñoz Solera',
-          email: 'mamuso@mamuso.net',
-          link: 'https://mamuso.dev',
         },
       ],
       link: url,
