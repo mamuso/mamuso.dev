@@ -38,7 +38,7 @@ const main = () => {
     link: `${BLOG_URL}`,
     image: `${BLOG_URL}/images/favicon.png`,
     icon: `${BLOG_URL}/images/favicon.png`,
-    favicon: `${BLOG_URL}/images/favicon.png`,
+    favicon: `${BLOG_URL}/images/favicon.ico`,
     copyright: `${new Date().getFullYear()}, mamuso`,
     language: 'en',
     feedLinks: {
