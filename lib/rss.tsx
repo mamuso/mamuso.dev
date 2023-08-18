@@ -37,6 +37,7 @@ const main = () => {
     id: `${BLOG_URL}`,
     link: `${BLOG_URL}`,
     image: `${BLOG_URL}/images/favicon.png`,
+    icon: `${BLOG_URL}/images/favicon.png`,
     favicon: `${BLOG_URL}/images/favicon.png`,
     copyright: `${new Date().getFullYear()}, mamuso`,
     language: 'en',
@@ -46,7 +47,6 @@ const main = () => {
     author: {
       name: 'Manuel Muñoz Solera',
       email: 'mamuso@mamuso.net',
-      link: 'https://mamuso.dev',
     },
   }
 
@@ -55,7 +55,7 @@ const main = () => {
   posts.forEach((post) => {
     const url = `${BLOG_URL}/post/${post.slug}`
 
-    let description: string = post.basename ? "<img src='" + `${BLOG_URL}/assets/feed/${post.basename}` + '/>' : ''
+    let description: string = post.basename ? `<img src='${BLOG_URL}/assets/feed/${post.basename}'/>` : ''
     description += renderPost(post.body)
       .replace("'/assets/", "'" + `${BLOG_URL}` + '/assets/')
       .replace('"/assets/', '"' + `${BLOG_URL}` + '/assets/')
