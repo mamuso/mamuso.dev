@@ -3,7 +3,7 @@ import { Feed } from 'feed'
 import path from 'path'
 import { marked } from 'marked'
 import matter from 'gray-matter'
-import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../lib/constants'
+import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from './constants'
 
 const posts = fs
   .readdirSync(path.resolve(__dirname, '../content/posts/'))
@@ -43,7 +43,7 @@ const main = () => {
     copyright: `${new Date().getFullYear()}, mamuso`,
     language: 'en',
     feedLinks: {
-      rss2: `${BLOG_URL}/rss.xml`,
+      rss2: `${BLOG_URL}/feed.xml`,
     },
     author: {
       name: 'Manuel Muñoz Solera',
@@ -75,7 +75,7 @@ const main = () => {
   })
 
   const rss = feed.atom1()
-  fs.writeFileSync(path.join(__dirname, '../public/rss.xml'), rss)
+  fs.writeFileSync(path.join(__dirname, '../public/feed.xml'), rss)
 }
 
 main()
