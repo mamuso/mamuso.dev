@@ -39,8 +39,9 @@ const main = () => {
     image: `${BLOG_URL}/images/favicon.png`,
     icon: `${BLOG_URL}/images/favicon.png`,
     logo: `${BLOG_URL}/images/favicon.png`,
-    favicon: `${BLOG_URL}/images/favicon.ico`,
+    favicon: `${BLOG_URL}/images/favicon.png`,
     copyright: `${new Date().getFullYear()}, mamuso`,
+    generator: 'mamuso.dev',
     language: 'en',
     feedLinks: {
       rss2: `${BLOG_URL}/feed.xml`,
