@@ -38,6 +38,7 @@ const main = () => {
     link: `${BLOG_URL}`,
     image: `${BLOG_URL}/images/favicon.png`,
     icon: `${BLOG_URL}/images/favicon.png`,
+    logo: `${BLOG_URL}/images/favicon.png`,
     favicon: `${BLOG_URL}/images/favicon.ico`,
     copyright: `${new Date().getFullYear()}, mamuso`,
     language: 'en',
@@ -73,7 +74,7 @@ const main = () => {
     })
   })
 
-  const rss = feed.rss2()
+  const rss = feed.atom1()
   fs.writeFileSync(path.join(__dirname, '../public/rss.xml'), rss)
 }
 
