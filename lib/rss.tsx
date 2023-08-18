@@ -1,5 +1,5 @@
 import fs from 'fs-extra'
-import RSS from 'rss'
+import { Feed } from 'feed'
 import path from 'path'
 import { marked } from 'marked'
 import matter from 'gray-matter'
@@ -31,14 +31,26 @@ marked.setOptions({
 const renderPost = (md: string) => marked.parse(md)
 
 const main = () => {
-  const feed = new RSS({
+  const feedOptions = {
     title: `${BLOG_TITLE}`,
-    site_url: `${BLOG_URL}`,
-    feed_url: `${BLOG_URL}/rss`,
-    image_url: `${BLOG_URL}/images/favicon.png`,
-    language: 'en',
     description: `${BLOG_SUBTITLE}`,
-  })
+    id: `${BLOG_URL}`,
+    link: `${BLOG_URL}`,
+    image: `${BLOG_URL}/images/favicon.png`,
+    favicon: `${BLOG_URL}/favicon.png`,
+    copyright: `${new Date().getFullYear()}, mamuso`,
+    language: 'en',
+    feedLinks: {
+      rss2: `${BLOG_URL}/rss.xml`,
+    },
+    author: {
+      name: 'Manuel Muñoz Solera',
+      email: 'mamuso@mamuso.net',
+      link: 'https://mamuso.dev',
+    },
+  }
+
+  const feed = new Feed(feedOptions)
 
   posts.forEach((post) => {
     const url = `${BLOG_URL}/post/${post.slug}`
@@ -48,17 +60,22 @@ const main = () => {
       .replace("'/assets/", "'" + `${BLOG_URL}` + '/assets/')
       .replace('"/assets/', '"' + `${BLOG_URL}` + '/assets/')
 
-    feed.item({
+    feed.addItem({
       title: post.title,
       description: description,
       date: new Date(post?.date),
-      author: 'Manuel Muñoz Solera',
-      url,
-      guid: url,
+      author: [
+        {
+          name: 'Manuel Muñoz Solera',
+          email: 'mamuso@mamuso.net',
+          link: 'https://mamuso.dev',
+        },
+      ],
+      link: url,
     })
   })
 
-  const rss = feed.xml({ indent: true })
+  const rss = feed.rss2()
   fs.writeFileSync(path.join(__dirname, '../public/rss.xml'), rss)
 }
 
