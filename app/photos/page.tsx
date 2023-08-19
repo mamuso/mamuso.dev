@@ -11,7 +11,7 @@ export const metadata = {
   openGraph: {
     url: `${BLOG_URL}`,
     title: `Photos – ${BLOG_TITLE}`,
-    description: `${BLOG_SUBTITLE}`,
+    description: `Mamuso has a camera`,
     images: [
       {
         url: `${BLOG_URL}/og?title=Photos\&description=${BLOG_TITLE}`,
