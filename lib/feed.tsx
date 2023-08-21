@@ -37,7 +37,7 @@ const main = () => {
     id: `${BLOG_URL}`,
     link: `${BLOG_URL}`,
     image: `${BLOG_URL}/images/favicon.png`,
-    icon: `${BLOG_URL}/images/favicon.png`,
+    icon: `${BLOG_URL}/images/favicon.ico`,
     logo: `${BLOG_URL}/images/favicon.png`,
     favicon: `${BLOG_URL}/images/favicon.png`,
     copyright: `${new Date().getFullYear()}, mamuso`,
@@ -59,8 +59,8 @@ const main = () => {
 
     let description: string = post.basename ? `<img src='${BLOG_URL}/assets/feed/${post.basename}'/>` : ''
     description += renderPost(post.body)
-      .replace("'/assets/", "'" + `${BLOG_URL}` + '/assets/')
-      .replace('"/assets/', '"' + `${BLOG_URL}` + '/assets/')
+      .replace(/\'\/assets\//g, "'" + `${BLOG_URL}` + '/assets/')
+      .replace(/\"\/assets\//g, '"' + `${BLOG_URL}` + '/assets/')
 
     feed.addItem({
       title: post.title,
