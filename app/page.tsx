@@ -7,9 +7,10 @@ import PostHome from '@/app/components/PostHome'
 import { TreeStructure, Robot, Browsers, PencilLine, Package, SketchLogo } from '../app/components/Icons'
 
 export const metadata = {
+  metadataBase: new URL('https://mamuso.dev'),
   title: `${BLOG_TITLE} – Yet another journal`,
   description: BLOG_SUBTITLE,
-  canonical: `${BLOG_URL}`,
+  canonical: `/`,
   openGraph: {
     url: `${BLOG_URL}`,
     title: `${BLOG_TITLE}`,

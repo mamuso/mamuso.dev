@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server'
 import { ImageResponse } from '@vercel/og'
 
-const monasans = fetch(new URL('../../public/fonts/mona-sans-black.ttf', import.meta.url)).then((res) => res.arrayBuffer())
-const monospace = fetch(new URL('../../public/fonts/firacode-regular.ttf', import.meta.url)).then((res) => res.arrayBuffer())
+const monasans = fetch(new URL('../public/fonts/mona-sans-black.ttf', import.meta.url)).then((res) => res.arrayBuffer())
+const monospace = fetch(new URL('../public/fonts/firacode-regular.ttf', import.meta.url)).then((res) => res.arrayBuffer())
 
 export const runtime = 'edge'
 
