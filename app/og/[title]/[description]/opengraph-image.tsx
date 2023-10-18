@@ -1,20 +1,22 @@
-import { NextRequest } from 'next/server'
 import { ImageResponse } from '@vercel/og'
 
-const monasans = fetch(new URL('../public/fonts/mona-sans-black.ttf', import.meta.url)).then((res) => res.arrayBuffer())
-const monospace = fetch(new URL('../public/fonts/firacode-regular.ttf', import.meta.url)).then((res) => res.arrayBuffer())
+const monasans = fetch(new URL('../../../../public/fonts/mona-sans-black.ttf', import.meta.url)).then((res) => res.arrayBuffer())
+const monospace = fetch(new URL('../../../../public/fonts/firacode-regular.ttf', import.meta.url)).then((res) => res.arrayBuffer())
 
 export const runtime = 'edge'
-
-export async function GET(req: NextRequest) {
+export const contentType = 'image/png'
+export const size = {
+  width: 1200,
+  height: 600,
+}
+export default async function Image({ params }: { params: { title: string; description: string } }) {
   try {
     const monasansData = await monasans
     const monospaceData = await monospace
 
-    const { searchParams } = req.nextUrl
     const values = {
-      title: searchParams.get('title') || 'Why did you not set a title?',
-      description: searchParams.get('description') || '',
+      title: params.title || 'Why did you not set a title?',
+      description: params.description || '',
     }
 
     values.title = values.title.length > 100 ? values.title.slice(0, 100) + '...' : values.title
@@ -62,31 +64,10 @@ export async function GET(req: NextRequest) {
           >
             {values.description}
           </p>
-          {/* 
-          <div
-            style={{
-              maxWidth: '80%',
-              height: '2.5rem',
-              backgroundColor: '#133c7f',
-              color: '#fff',
-              display: 'flex',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-              borderRadius: '0.35rem',
-            }}
-          >
-            <span key="space" style={{ width: '1rem', whiteSpace: 'nowrap' }}>
-              {' '}
-            </span>
-            <span key="space-2" style={{ width: '1rem', whiteSpace: 'nowrap' }}>
-              {' '}
-            </span>
-          </div> */}
         </div>
       ),
       {
-        width: 1200,
-        height: 600,
+        ...size,
         fonts: [
           {
             name: 'monasans',
@@ -100,6 +81,7 @@ export async function GET(req: NextRequest) {
       }
     )
   } catch (error) {
+    console.error(error)
     return new Response(`Failed to generate image`, {
       status: 500,
     })

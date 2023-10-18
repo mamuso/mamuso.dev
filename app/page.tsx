@@ -17,7 +17,7 @@ export const metadata = {
     description: `${BLOG_SUBTITLE}`,
     images: [
       {
-        url: `${BLOG_URL}/og?title=${BLOG_TITLE}\&description=${BLOG_SUBTITLE}`,
+        url: `${BLOG_URL}/og/${BLOG_TITLE}/${BLOG_SUBTITLE}/opengraph-image`,
         width: 1200,
         height: 600,
         alt: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,

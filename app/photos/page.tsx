@@ -14,7 +14,7 @@ export const metadata = {
     description: `Mamuso has a camera`,
     images: [
       {
-        url: `${BLOG_URL}/og?title=Photos\&description=${BLOG_TITLE}`,
+        url: `${BLOG_URL}/og/Photos/${BLOG_TITLE}/opengraph-image`,
         width: 1200,
         height: 600,
         alt: `Photos – ${BLOG_TITLE}`,
