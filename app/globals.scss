@@ -1,6 +1,39 @@
 @import './reset';
 
+// SCSS Variables
 $monasans: var(--monasans);
+$monaspaceneon: var(--monaspaceneon);
+
+$noise: url(/images/noise.png);
+$background-light: #f5f4f2;
+$background-accent-light: lighten($background-light, 20%);
+$foreground-light: #20202C;
+$dots-light: darken($background-light, 6%);
+$muted-light: rgba($foreground-light, 0.6);
+$accent-light: #ea3f8b;
+
+$background-dark: #20222b;
+$background-accent-dark: darken($background-dark, 6%);
+$dots-dark: lighten($background-dark, 3%);
+$foreground-dark: #ffffff;
+$muted-dark: rgba($foreground-dark, 0.5);
+$accent-dark: #ea3f8b;
+
+// Font Stacks
+$font-stack: ui-sans-serif,
+  system-ui,
+  -apple-system,
+  BlinkMacSystemFont,
+  Segoe UI,
+  Roboto,
+  Helvetica Neue,
+  Arial,
+  Noto Sans,
+  sans-serif,
+  Apple Color Emoji,
+  Segoe UI Emoji,
+  Segoe UI Symbol,
+  Noto Color Emoji;
 
 @mixin tablet {
   @media (max-width: 1024px) {
@@ -14,30 +47,41 @@ $monasans: var(--monasans);
   }
 }
 
-// Variables
-:root {
-  --background: #f5f4f2;
-  --background-gradient: linear-gradient(3deg, rgba(245, 244, 242, 1) 20%, rgba(245, 244, 242, 0) 80%);
-  --dots: rgba(20, 20, 20, 0.09);
-  --dots-secondary: rgba(0, 0, 0, 0.04);
-  --text: #363636;
-  --text-secondary: #808080;
-  --link: #D21872;
-  --logo: #404040;
-  --app-icon: #FFF;
+@mixin gradient-mask-background($inclination: 5deg, $start-color: transparent, $start: 25%, $stop-color: #FFF, $stop: 90%) {
+  background: linear-gradient($inclination, $start-color $start, $stop-color $stop);
+  -webkit-mask: $noise, linear-gradient($inclination, transparent $start, #000 ($stop + 15%));
+  mask: $noise, linear-gradient($inclination, transparent $start, #000 ($stop + 15%));
 }
+
+@mixin dithered-gradient($position, $start, $stop, $color) {
+  background: radial-gradient(circle at $position, transparent $start, $color $stop);
+  -webkit-mask: $noise, radial-gradient(circle at $position, transparent $start, #000 ($stop + 15%));
+  mask: $noise, radial-gradient(circle at $position, transparent $start, #000 ($stop + 15%));
+}
+
+
+:root {
+  --background: #{$background-light};
+  --background-gradient: linear-gradient(3deg, #{$background-light} 20%, transparent 80%);
+  --dots: #{$dots-light};
+  --background-accent: #{$background-accent-light};
+  --text: #{$foreground-light};
+  --text-secondary: #{$muted-light};
+  --link: #{$accent-light};
+  --logo: #{darken(desaturate($background-light, 5%), 75%)};
+}
+
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #141414;
-    --background-gradient: linear-gradient(3deg, rgba(20, 20, 20, 1) 20%, rgba(20, 20, 20, 0) 80%);
-    --dots: rgba(238, 241, 241, 0.07);
-    --dots-secondary: rgba(0, 0, 0, 0.6);
-    --text: #ffffff;
-    --text-secondary: #737373;
-    --link: #ED64A6;
-    --logo: #5C5C5C;
-    --app-icon: #333;
+    --background: #{$background-dark};
+    --background-gradient: linear-gradient(3deg, #{$background-dark} 20%, transparent 80%);
+    --dots: #{$dots-dark};
+    --background-accent: #{$background-accent-dark};
+    --text: #{$foreground-dark};
+    --text-secondary: #{$muted-dark};
+    --link: #{$accent-dark};
+    --logo: #{lighten(desaturate($background-dark, 5%), 80%)};
   }
 }
 
@@ -49,28 +93,29 @@ html {
 body {
   background: var(--background);
   color: var(--text);
-  font-family: ui-sans-serif,
-  system-ui,
-  -apple-system,
-  "system-ui",
-  "Segoe UI",
-  Roboto,
-  "Helvetica Neue",
-  Arial,
-  "Noto Sans",
-  sans-serif,
-  "Apple Color Emoji",
-  "Segoe UI Emoji",
-  "Segoe UI Symbol",
-  "Noto Color Emoji";
+  font-family: $font-stack;
   height: auto;
   line-height: 1.5;
   min-height: 100%;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  &::after {
+    @include gradient-mask-background($stop-color: var(--background-accent));
+  }
 }
 
 time,
 .mono {
-  font-family: ui-monospace,
+  font-family: $monaspaceneon, ui-monospace,
   SFMono-Regular,
   Menlo,
   Monaco,
@@ -99,8 +144,8 @@ a {
 
 #header {
   overflow: hidden;
-  margin: 0 0 100px;
-  padding-top: 56px;
+  margin: 0 0 40px;
+  padding-top: 100px;
   h1 {
     font-size: 16px;
     font-weight: 600;
@@ -118,7 +163,8 @@ a {
       vertical-align: middle;
     }
     path {
-      fill: var(--logo);
+      stroke: var(--logo);
+      // fill: var(--logo);
     }
     span {
       opacity: 1;
@@ -144,11 +190,11 @@ a {
 }
 
 #footer {
-  margin-top: 160px;
+  margin-top: 140px;
   padding: 0 0 40px;
+  color: var(--text-secondary);
   i {
     display: block;
-    border-top: 1px dashed var(--text-secondary);
     opacity: 0.4;
     margin-bottom: 16px;
   }
@@ -160,6 +206,9 @@ a {
     span {
       flex: 0 0 auto;
     }
+  }
+  a {
+    color: var(--text);
   }
 }
 
@@ -179,21 +228,23 @@ a {
 // Home
 .home-headline {
   h2 {
+    font-family: $font-stack;
     width: 100%;
     max-width: 520px;
-    font-family: $monasans;
     font-size: 24px;
-    line-height: 32px;
-    font-weight: 600;
-    letter-spacing: -0.3px;
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--text-secondary);
     span {
-      color: var(--link);
+      font-family: $monasans;
+      color: var(--text);
+      font-weight: 700;    
     }
   }
 }
 
 .home-posts {
-  margin: 100px -12px 0;
+  margin: 140px -12px 0;
   padding: 0 12px;
   ul {
     list-style: none;
@@ -240,7 +291,7 @@ a {
     }
   }
   p {
-    margin-top: 12px;
+    margin-top: 16px;
     font-size: 14px;
   }
   h3 {
@@ -263,7 +314,7 @@ a {
 }
 
 .home-projects {
-  margin-top: 100px;
+  margin-top: 140px;
   column-count: 2;
   column-gap: 40px;
   section {
@@ -277,7 +328,7 @@ a {
     margin-top: 8px;
     li {
       line-height: 20px;
-      margin-top: -4px;
+      margin-top: -2px;
       a {
         display: flex;
         gap: 16px;
@@ -290,7 +341,7 @@ a {
         color: var(--text-secondary);
         i {
           flex: 0 0 auto;
-          background-color: var(--app-icon);
+          background-color: var(--background-accent);
           border-radius: 8px;
           width: 40px;
           height: 40px;
@@ -300,7 +351,9 @@ a {
             margin: 8px;
           }
           path {
+            // stroke: var(--text);
             fill: var(--text);
+
           }
         }
         time {
@@ -327,12 +380,12 @@ a {
       }
       a:hover {
         text-decoration: none;
-        background-color: var(--dots-secondary);
+        background-color: var(--background-accent);
       }
     }
   }
   p.show {
-    margin-top: 4px;
+    margin-top: 12px;
   }
   input[type='checkbox'] {
     display: none;
@@ -354,6 +407,7 @@ a {
 }
 
 .photo-gallery {
+  margin-top: 140px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -366,6 +420,9 @@ a {
     overflow: hidden;
     border-radius: 4px;
     background-color: var(--dots);
+    &:last-child {
+      width: 100%!important;
+    }
   }
   i {
     display: block;
@@ -387,7 +444,7 @@ a {
 
 .photo-highlight {
   width: 104%;
-  margin: 16px -2% 0;
+  margin: -8px -2% 0;
   img {
     width: 100%;
     border-radius: 4px;
@@ -402,31 +459,30 @@ a {
     display: block;
     border-top: 1px dashed var(--text-secondary);
     opacity: 0.4; 
-    margin: 100px auto;
+    margin: 120px auto;
     width: 100%;
     max-width: 840px;
   }
 }
 
 .post {
+  margin-top: 140px;
   h2 {
-    margin: 8px auto;
+    margin: 0 0 8px;
     font-family: $monasans;
     font-size: 36px;
     line-height: 1.3;
-    font-weight: 600;
-    letter-spacing: -0.5px;
+    font-weight: 700;
     a {
       color: var(--text);
     }
   }
   &-meta {
-    margin: 0 auto;
+    margin: 0 0 32px;
     text-transform: capitalize;
     font-size: 14px;
-    color: var(--text-secondary);
+    color: var(--text);
     line-height: 1;
-    letter-spacing: -0.2px;
     * {
       margin-right: 8px;
       display: inline-block;
@@ -439,8 +495,11 @@ a {
     margin: 16px auto;
     font-size: 16px;
     line-height: 26px;
-    p, .photo-gallery {
+    p {
       margin-top: 16px;
+    }
+    .photo-gallery {
+      margin-top: 120px;
     }
     img {
       border-radius: 4px;

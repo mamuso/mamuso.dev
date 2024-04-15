@@ -56,7 +56,7 @@ const Home: NextPage = () => {
       <style>{`#header h1 span { opacity: 0;}`}</style>
       <section className="home-headline">
         <h2>
-          <span>Manuel Muñoz Solera</span> — Crayon holder and key stroker. Currently leading a talented team of software designers at GitHub.
+          <span>Manuel Muñoz Solera</span> – Crayon holder and key stroker. Currently leading a talented team of software designers at GitHub.
         </h2>
       </section>
 
@@ -164,7 +164,7 @@ const Home: NextPage = () => {
                 <span>
                   <strong>Unvlogable</strong>
                   <span>
-                    <em>A standardized oembed output for video services</em>
+                    <em>oEmbed output for video services</em>
                   </span>
                 </span>
               </Link>
@@ -263,7 +263,7 @@ const Home: NextPage = () => {
                   </svg>
                 </i>
                 <span>
-                  <strong>Microsoft, Developer Services</strong>
+                  <strong>Microsoft, Dev Services</strong>
                   <span>
                     <em>Director of Design</em>
                     <time>2018 – 2019</time>
@@ -379,7 +379,7 @@ const Home: NextPage = () => {
                   </svg>
                 </i>
                 <span>
-                  <strong>Masmadera – Ruiz Nicoli Lineas</strong>
+                  <strong>Masmadera – RNL </strong>
                   <span>
                     <em>Designer and Developer</em>
                     <time>2005 – 2006</time>

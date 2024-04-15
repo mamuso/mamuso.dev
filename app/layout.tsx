@@ -3,7 +3,7 @@ import Fathom from './components/Fathom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Canvas from './components/Canvas'
-import { monaSans } from './components/Fonts'
+import { monaSans, monaspaceNeon } from './components/Fonts'
 import './globals.scss'
 
 export const metadata = {
@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="alternate" type="application/rss+xml" title="mamuso.dev RSS" href={`${BLOG_URL}/feed.xml`}></link>
       </head>
-      <body className={`${monaSans.variable}`}>
+      <body className={`${monaSans.variable} ${monaspaceNeon.variable}`}>
         <Fathom />
         <Canvas />
         <div id="page-content">
