@@ -234,7 +234,7 @@ const Home: NextPage = () => {
               <Link href="https://vercel.com">
                 <i>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 3L23 21H1L12 3Z"/>
+                    <path d="M12 4L22 20H2L12 4Z"/>
                   </svg>
                 </i>
                 <span>
