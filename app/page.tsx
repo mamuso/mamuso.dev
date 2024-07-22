@@ -56,7 +56,7 @@ const Home: NextPage = () => {
       <style>{`#header h1 span { opacity: 0;}`}</style>
       <section className="home-headline">
         <h2>
-          <span>Manuel Muñoz Solera</span> – Crayon holder and key stroker. Currently leading a talented team of software designers at GitHub.
+          <span>Manuel Muñoz Solera</span> – Crayon holder and key stroker. Currently leading a talented team of designers at Vercel.
         </h2>
       </section>
 
