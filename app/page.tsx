@@ -231,6 +231,22 @@ const Home: NextPage = () => {
           <h2 className="section-title">Work</h2>
           <ul>
             <li>
+              <Link href="https://vercel.com">
+                <i>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3L23 21H1L12 3Z"/>
+                  </svg>
+                </i>
+                <span>
+                  <strong>Vercel</strong>
+                  <span>
+                    <em>VP of Design</em>
+                    <time>2024 – now</time>
+                  </span>
+                </span>
+              </Link>
+            </li>
+            <li>
               <Link href="https://github.com">
                 <i>
                   <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
@@ -245,7 +261,7 @@ const Home: NextPage = () => {
                   <strong>GitHub</strong>
                   <span>
                     <em>Director of Design</em>
-                    <time>2019 – Now</time>
+                    <time>2019 – 2024</time>
                   </span>
                 </span>
               </Link>
