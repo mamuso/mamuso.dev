@@ -45,7 +45,7 @@ export default function Photos() {
         <div key={i} style={{ width: `${(post.width * galleryHeight) / post.height}px`, flexGrow: `${(post.width * galleryHeight) / post.height}` }}>
           <Link href={`/post/${post.slug}`}>
             <i style={{ paddingBottom: `${(post.height / post.width) * 100}%` }} />
-            <Image src={`https://mamuso.dev/assets/feed/${post.basename}`} width={post.width} height={post.height} alt={post.title} className="loaded" />
+            <Image src={`/assets/feed/${post.basename}`} sizes="(min-width: 1040px) 874px, (min-width: 900px) 807px, calc(94.31vw - 23px)" width={post.width / 4} height={post.height / 4} alt={post.title} className="loaded" />
           </Link>
         </div>
       ))}

@@ -17,7 +17,7 @@ export default function PhotoGallery() {
           const imageHeight = image.height
 
           const wrapper = document.createElement('div')
-          wrapper.style.cssText = `width:${(imageWidth * galleryHeight) / imageHeight}px;flex-grow: ${(imageWidth * galleryHeight) / imageHeight}`
+          wrapper.style.cssText = `width:${(imageWidth * galleryHeight) / imageHeight}px; flex-grow: ${(imageWidth * galleryHeight) / imageHeight}`
 
           const spacer = document.createElement('i')
           spacer.style.cssText = `padding-bottom: ${(imageHeight / imageWidth) * 100}%`
