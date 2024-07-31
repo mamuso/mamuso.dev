@@ -18,7 +18,7 @@ export default function Post({ post, link = false }: { post: PostType; link?: bo
       </section>
       {post.basename && (
         <div className="photo-highlight">
-          <Image src={`/assets/feed/${post.basename}`} sizes="(max-width: 1600px) 100vw" width={post.width} height={post.height} alt={post.title} />
+          <Image src={`https://mamuso.dev/assets/feed/${post.basename}`} width={post.width} height={post.height} alt={post.title} />
         </div>
       )}
       <section className="post-content">
