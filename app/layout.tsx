@@ -3,6 +3,8 @@ import Fathom from './components/Fathom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Canvas from './components/Canvas'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Analytics } from '@vercel/analytics/react'
 import { monaSans, monaspaceNeon } from './components/Fonts'
 import './globals.scss'
 
@@ -18,6 +20,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <link rel="alternate" type="application/rss+xml" title="mamuso.dev RSS" href={`${BLOG_URL}/feed.xml`}></link>
+        <SpeedInsights />
+        <Analytics />
       </head>
       <body className={`${monaSans.variable} ${monaspaceNeon.variable}`}>
         <Fathom />
