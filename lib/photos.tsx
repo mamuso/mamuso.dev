@@ -59,7 +59,10 @@ const processPhotos = async () => {
 
             // Save image
             const sharpImage = sharp(targetImage)
-            sharpImage.resize(4096, 4096, { fit: 'inside' }).toFile(`${thumbFolder}${basename}.jpg`)
+            sharpImage.resize(2048).jpeg({ mozjpeg: true }).toFile(`${thumbFolder}${basename}.jpg`)
+
+            const galleryImage = sharp(targetImage)
+            galleryImage.resize(null, 640).jpeg({ mozjpeg: true }).toFile(`${thumbFolder}gallery-${basename}.jpg`)
 
             // Save md file
             fs.writeFile(`${dataFolder}${basename}.md`, mdContent, (err) => {
