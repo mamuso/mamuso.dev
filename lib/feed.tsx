@@ -18,17 +18,16 @@ const posts = fs
 
 const renderer = new marked.Renderer()
 
-renderer.link = (href, _, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`
-
-marked.setOptions({
-  mangle: false,
-  headerIds: false,
+// Set options
+marked.use({
+  async: false,
+  pedantic: false,
   gfm: true,
   breaks: true,
   renderer,
 })
 
-const renderPost = (md: string) => marked.parse(md)
+const renderPost = (md: string): string => `${marked.parse(md)}`
 
 const main = () => {
   const feedOptions = {
