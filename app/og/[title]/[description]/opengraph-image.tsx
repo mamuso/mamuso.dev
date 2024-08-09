@@ -41,7 +41,7 @@ export default async function Image({ params }: { params: { title: string; descr
               color: '#363636',
               fontSize: '7rem',
               fontFamily: 'geistsans',
-              lineHeight: '8.5rem',
+              lineHeight: '8rem',
               letterSpacing: '-0.1rem',
               width: '90%',
             }}
