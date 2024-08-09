@@ -18,7 +18,7 @@ export default function Post({ post }: { post: PostType }) {
         {post.iso && <li>ISO {post.iso}</li>}
         {post.GPSLatitude && (
           <li className="post-geo">
-            {post.GPSLatitude} N {post.GPSLongitude} W
+            {post.GPSLatitude} {post.GPSLongitude}
           </li>
         )}
       </ul>
