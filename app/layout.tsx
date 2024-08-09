@@ -4,7 +4,8 @@ import Footer from './components/Footer'
 import Canvas from './components/Canvas'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/react'
-import { monaSans, monaspaceNeon } from './components/Fonts'
+import { GeistSans } from 'geist/font/sans'
+import { GeistMono } from 'geist/font/mono'
 import './globals.scss'
 
 export const metadata = {
@@ -22,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SpeedInsights />
         <Analytics />
       </head>
-      <body className={`${monaSans.variable} ${monaspaceNeon.variable}`}>
+      <body className={`${GeistSans.variable} ${GeistMono.variable}`}>
         <Canvas />
         <div id="page-content">
           <Header />

@@ -1,7 +1,7 @@
 import { ImageResponse } from '@vercel/og'
 
-const monasans = fetch(new URL('../../../../public/fonts/mona-sans-black.ttf', import.meta.url)).then((res) => res.arrayBuffer())
-const monospace = fetch(new URL('../../../../public/fonts/firacode-regular.ttf', import.meta.url)).then((res) => res.arrayBuffer())
+const geistsans = fetch(new URL('../../../../public/fonts/Geist-Bold.ttf', import.meta.url)).then((res) => res.arrayBuffer())
+const monospace = fetch(new URL('../../../../public/fonts/GeistMono-Regular.ttf', import.meta.url)).then((res) => res.arrayBuffer())
 
 export const runtime = 'edge'
 export const contentType = 'image/png'
@@ -11,7 +11,7 @@ export const size = {
 }
 export default async function Image({ params }: { params: { title: string; description: string } }) {
   try {
-    const monasansData = await monasans
+    const geistsansData = await geistsans
     const monospaceData = await monospace
 
     const values = {
@@ -40,7 +40,7 @@ export default async function Image({ params }: { params: { title: string; descr
             style={{
               color: '#363636',
               fontSize: '7rem',
-              fontFamily: 'monasans',
+              fontFamily: 'geistsans',
               lineHeight: '8.5rem',
               letterSpacing: '-0.1rem',
               width: '90%',
@@ -70,8 +70,8 @@ export default async function Image({ params }: { params: { title: string; descr
         ...size,
         fonts: [
           {
-            name: 'monasans',
-            data: monasansData,
+            name: 'geistsans',
+            data: geistsansData,
           },
           {
             name: 'monospace',
