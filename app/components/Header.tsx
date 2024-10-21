@@ -16,6 +16,9 @@ export default function Header() {
         </Link>
       </h1>
       <ul>
+      <li>
+          <Link href="/now/">now</Link>
+        </li>
         <li>
           <Link href="/posts/">posts</Link>
         </li>
