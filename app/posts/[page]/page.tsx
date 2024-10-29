@@ -50,7 +50,8 @@ function fetchData(page: number) {
   }
 }
 
-export default function Posts({ params }: { params: { page: number } }) {
+export default async function Posts(props0: { params: Promise<{ page: number }> }) {
+  const params = await props0.params;
   const page: number = params.page
   const props = fetchData(page)
   return (
