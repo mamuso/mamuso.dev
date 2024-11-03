@@ -5,7 +5,8 @@ import { PostType } from '@/lib/types'
 import Post from '@/app/components/Post'
 import PhotoGallery from '@/app/components/PhotoGallery'
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params;
   const post: PostType = getPostBySlug(params.slug, ['title', 'date', 'slug', 'image', 'summary', 'content', 'category'])
 
   return {
@@ -33,7 +34,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default function PostPage({ params }: { params: { slug: string } }) {
+export default async function PostPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const post: PostType = getPostBySlug(params.slug, ['title', 'date', 'slug', 'content', 'summary', 'category', 'basename', 'camera', 'iso', 'fnumber', 'exposureBiasValue', 'exposureTime', 'GPSLatitude', 'GPSLongitude', 'width', 'height', 'colorPalette'])
   return (
     <>
