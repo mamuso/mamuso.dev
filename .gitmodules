@@ -1,4 +1,0 @@
-[submodule "content"]
-	path = content
-	url = https://github.com/mamuso/mamuso.dev.content.git
-	branch = main
