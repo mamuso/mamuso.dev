@@ -87,7 +87,7 @@ $font-stack: ui-sans-serif,
 
 html {
   background: var(--background);
-  font-size: 14px;
+  font-size: 16px;
 }
 
 body {
@@ -633,4 +633,10 @@ a {
     width: 100%;
     margin: 16px 0 0;
   }
+}
+
+.nextjs-toast {
+bottom: 100px!important;
+  left: 20px;
+  
 }
