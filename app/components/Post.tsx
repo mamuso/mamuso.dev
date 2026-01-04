@@ -18,7 +18,7 @@ export default function Post({ post, link = false }: { post: PostType; link?: bo
       </section>
       {post.basename && (
         <div className="photo-highlight">
-          <Image unoptimized src={`/assets/feed/${post.basename}`} sizes="(min-width: 1040px) 874px, (min-width: 900px) 807px, calc(94.31vw - 23px)" width={post.width / 3} height={post.height / 3} alt={post.title} />
+          <Image src={`/assets/feed/${post.basename}`} sizes="(min-width: 1040px) 874px, (min-width: 900px) 807px, calc(94.31vw - 23px)" width={post.width / 3} height={post.height / 3} alt={post.title} loading="eager" />
         </div>
       )}
       <section className="post-content">
