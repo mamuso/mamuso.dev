@@ -36,7 +36,7 @@ export const metadata = {
   },
 }
 
-const allPosts: PostType[] = getAllPosts(['title', 'date', 'slug', 'content', 'summary', 'category', 'basename', 'camera', 'iso', 'fnumber', 'exposureBiasValue', 'exposureTime', 'GPSLatitude', 'GPSLongitude', 'width', 'height', 'colorPalette'])
+const allPosts: PostType[] = getAllPosts(['title', 'date', 'slug', 'category'])
 
 export default function Posts() {
   // Group posts by year
@@ -63,8 +63,8 @@ export default function Posts() {
           <div key={year}>
             <h3 className="section-title">{year}</h3>
             <ul>
-              {posts.map((post, i) => (
-                <li key={i}>
+              {posts.map((post) => (
+                <li key={post.slug}>
                   <PostHome post={post} />
                 </li>
               ))}
