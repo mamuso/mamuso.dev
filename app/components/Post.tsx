@@ -19,7 +19,7 @@ export default function Post({ post, link = false, priority = false }: { post: P
       </section>
       {post.basename && (
         <div className="photo-highlight">
-          <Image src={`/assets/feed/${post.basename}`} sizes="(min-width: 1040px) 874px, (min-width: 900px) 807px, calc(94.31vw - 23px)" width={post.width / 3} height={post.height / 3} alt={post.title} priority={priority} />
+          <Image src={`/assets/feed/${post.basename}`} sizes="(min-width: 1040px) 874px, (min-width: 900px) 807px, calc(94.31vw - 23px)" width={post.width / 3} height={post.height / 3} alt={post.title || 'This picture is missing a title'} priority={priority} />
         </div>
       )}
       <section className="post-content">
