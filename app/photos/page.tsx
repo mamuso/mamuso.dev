@@ -41,8 +41,8 @@ export default function Photos() {
   const photoPosts: PostType[] = getPhotoPosts(['title', 'date', 'slug', 'category', 'basename', 'width', 'height'])
   return (
     <div className="photo-gallery">
-      {photoPosts.map((post, i) => (
-        <div key={i} style={{ width: `${(post.width * galleryHeight) / post.height}px`, flexGrow: `${(post.width * galleryHeight) / post.height}` }}>
+      {photoPosts.map((post) => (
+        <div key={post.slug} style={{ width: `${(post.width * galleryHeight) / post.height}px`, flexGrow: `${(post.width * galleryHeight) / post.height}` }}>
           <Link href={`/post/${post.slug}`}>
             <i style={{ paddingBottom: `${(post.height / post.width) * 100}%` }} />
             <Image src={`/assets/feed/gallery-${post.basename}`} sizes="(min-width: 1040px) 874px, (min-width: 900px) 807px, calc(94.31vw - 23px)" width={post.width / 4} height={post.height / 4} alt={post.title} className="loaded" />

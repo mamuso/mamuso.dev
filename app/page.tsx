@@ -44,8 +44,7 @@ const recentPosts = getAllPosts(['title', 'date', 'slug', 'image', 'category']).
 
 const Home: NextPage = () => {
   return (
-    <>
-      <style>{`#header h1 span { opacity: 0;}`}</style>
+    <div className="page-home">
       <section className="home-headline">
         <h2>
           <span>Manuel Muñoz Solera</span> – Crayon holder and key stroker. Currently leading a talented team of designers at Vercel.
@@ -398,7 +397,7 @@ const Home: NextPage = () => {
           </ul>
         </section>
       </section>
-    </>
+    </div>
   )
 }
 

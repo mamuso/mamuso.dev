@@ -225,6 +225,14 @@ a {
 .hide {
   display: none;
 }
+
+// Home page specific styles
+#page-content:has(.page-home) {
+  #header h1 span {
+    opacity: 0;
+  }
+}
+
 // Home
 .home-headline {
   h2 {
