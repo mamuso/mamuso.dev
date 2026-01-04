@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Markdown from 'markdown-to-jsx'
 import PhotoMeta from './PhotoMeta'
 
-export default function Post({ post, link = false }: { post: PostType; link?: boolean }) {
+export default function Post({ post, link = false, priority = false }: { post: PostType; link?: boolean; priority?: boolean }) {
   return (
     <article className="post">
       {link && (
@@ -19,7 +19,7 @@ export default function Post({ post, link = false }: { post: PostType; link?: bo
       </section>
       {post.basename && (
         <div className="photo-highlight">
-          <Image src={`/assets/feed/${post.basename}`} sizes="(min-width: 1040px) 874px, (min-width: 900px) 807px, calc(94.31vw - 23px)" width={post.width / 3} height={post.height / 3} alt={post.title} loading="eager" />
+          <Image src={`/assets/feed/${post.basename}`} sizes="(min-width: 1040px) 874px, (min-width: 900px) 807px, calc(94.31vw - 23px)" width={post.width / 3} height={post.height / 3} alt={post.title} priority={priority} />
         </div>
       )}
       <section className="post-content">

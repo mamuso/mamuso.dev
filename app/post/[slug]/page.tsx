@@ -39,7 +39,7 @@ export default async function PostPage(props: { params: Promise<{ slug: string }
   const post: PostType = getPostBySlug(params.slug, ['title', 'date', 'slug', 'content', 'summary', 'category', 'basename', 'camera', 'iso', 'fnumber', 'exposureBiasValue', 'exposureTime', 'GPSLatitude', 'GPSLongitude', 'width', 'height', 'colorPalette'])
   return (
     <>
-      <Post post={post} />
+      <Post post={post} priority={true} />
       <PhotoGallery />
     </>
   )
