@@ -87,6 +87,44 @@ const processPhotos = async () => {
         const gpsLatitude = convertGPSToDecimal(exifData.gps?.GPSLatitude)
         const gpsLongitude = convertGPSToDecimal(exifData.gps?.GPSLongitude)
 
+        // Get actual image dimensions after rotation is applied
+        const imageMetadata = await sharp(targetImage).rotate().metadata()
+        const actualWidth = imageMetadata.width || 0
+        const actualHeight = imageMetadata.height || 0
+        const isPortrait = actualHeight > actualWidth
+
+        // Save images - resize based on orientation
+        // Note: rotate() applies EXIF orientation automatically
+        let resizedImagePath: string
+        if (isPortrait) {
+          // Portrait: resize by height
+          resizedImagePath = `${thumbFolder}${basename}.jpg`
+          await sharp(targetImage)
+            .rotate()
+            .resize({ height: WEB_IMAGE_WIDTH, withoutEnlargement: true })
+            .jpeg({ mozjpeg: true })
+            .toFile(resizedImagePath)
+        } else {
+          // Landscape: resize by width
+          resizedImagePath = `${thumbFolder}${basename}.jpg`
+          await sharp(targetImage)
+            .rotate()
+            .resize({ width: WEB_IMAGE_WIDTH, withoutEnlargement: true })
+            .jpeg({ mozjpeg: true })
+            .toFile(resizedImagePath)
+        }
+
+        await sharp(targetImage)
+          .rotate()
+          .resize({ height: GALLERY_IMAGE_HEIGHT, withoutEnlargement: true })
+          .jpeg({ mozjpeg: true })
+          .toFile(`${thumbFolder}gallery-${basename}.jpg`)
+
+        // Get actual dimensions from the resized image
+        const resizedMetadata = await sharp(resizedImagePath).metadata()
+        const resizedWidth = resizedMetadata.width || 0
+        const resizedHeight = resizedMetadata.height || 0
+
         // Compose object to save in md file
         const mdContent =
           `---\n` +
@@ -101,21 +139,10 @@ const processPhotos = async () => {
           `exposureTime: "1/${Math.round(1 / (exifData.exif?.ExposureTime || 1))}"\n` +
           `GPSLatitude: ${gpsLatitude?.toFixed(6) || 0}\n` +
           `GPSLongitude: ${gpsLongitude?.toFixed(6) || 0}\n` +
-          `width: ${exifData.exif?.PixelXDimension || 0}\n` +
-          `height: ${exifData.exif?.PixelYDimension || 0}\n` +
+          `width: ${resizedWidth}\n` +
+          `height: ${resizedHeight}\n` +
           `colorPalette: ['${hexPalette.join("', '")}']\n` +
           `---`
-
-        // Save images
-        await sharp(targetImage)
-          .resize(WEB_IMAGE_WIDTH)
-          .jpeg({ mozjpeg: true })
-          .toFile(`${thumbFolder}${basename}.jpg`)
-
-        await sharp(targetImage)
-          .resize(null, GALLERY_IMAGE_HEIGHT)
-          .jpeg({ mozjpeg: true })
-          .toFile(`${thumbFolder}gallery-${basename}.jpg`)
 
         // Save md file
         await fs.writeFile(`${dataFolder}${basename}.md`, mdContent)
