@@ -1,4 +1,5 @@
-@import './reset';
+@use 'sass:color';
+@use './reset';
 
 // SCSS Variables
 $geistsans: var(--font-geist-sans);
@@ -6,15 +7,15 @@ $geistmono: var(--font-geist-mono);
 
 $noise: url(/images/noise.png);
 $background-light: #f5f4f2;
-$background-accent-light: lighten($background-light, 20%);
+$background-accent-light: color.adjust($background-light, $lightness: 20%);
 $foreground-light: #20202C;
-$dots-light: darken($background-light, 6%);
+$dots-light: color.adjust($background-light, $lightness: -6%);
 $muted-light: rgba($foreground-light, 0.6);
 $accent-light: #ea3f8b;
 
 $background-dark: #20222b;
-$background-accent-dark: darken($background-dark, 6%);
-$dots-dark: lighten($background-dark, 3%);
+$background-accent-dark: color.adjust($background-dark, $lightness: -6%);
+$dots-dark: color.adjust($background-dark, $lightness: 3%);
 $foreground-dark: #ffffff;
 $muted-dark: rgba($foreground-dark, 0.5);
 $accent-dark: #ea3f8b;
@@ -68,7 +69,7 @@ $font-stack: ui-sans-serif,
   --text: #{$foreground-light};
   --text-secondary: #{$muted-light};
   --link: #{$accent-light};
-  --logo: #{darken(desaturate($background-light, 5%), 75%)};
+  --logo: #{color.adjust(color.adjust($background-light, $saturation: -5%), $lightness: -75%)};
 }
 
 
@@ -81,7 +82,7 @@ $font-stack: ui-sans-serif,
     --text: #{$foreground-dark};
     --text-secondary: #{$muted-dark};
     --link: #{$accent-dark};
-    --logo: #{lighten(desaturate($background-dark, 5%), 80%)};
+    --logo: #{color.adjust(color.adjust($background-dark, $saturation: -5%), $lightness: 80%)};
   }
 }
 
