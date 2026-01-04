@@ -6,7 +6,7 @@ export default function Header() {
       <i></i>
       <div>
         <p>
-          mamuso.dev · <Link href="mailto:mamuso@mamuso.dev">Email</Link> · <Link href="https://github.com/mamuso">GitHub</Link>
+          mamuso.dev · <Link href="https://x.com/mamuso">x</Link> · <Link href="https://github.com/mamuso">github</Link>
         </p>
         <span>
           <Link href="#header">↑</Link>
