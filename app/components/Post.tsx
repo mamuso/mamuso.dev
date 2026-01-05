@@ -10,7 +10,7 @@ export default function Post({ post, link = false, priority = false }: { post: P
     <article className="post">
       {link && (
         <h2>
-          <Link href={`/post/${post.slug}`}>{post.title}</Link>
+          <Link href={`/note/${post.slug}`}>{post.title}</Link>
         </h2>
       )}
       {!link && <h2>{post.title}</h2>}

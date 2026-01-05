@@ -6,19 +6,19 @@ import Pagination from '@/app/components/Pagination'
 import PhotoGallery from '@/app/components/PhotoGallery'
 
 export const metadata = {
-  title: `Posts – ${BLOG_TITLE}`,
+  title: `Notes – ${BLOG_TITLE}`,
   description: BLOG_SUBTITLE,
   canonical: `${BLOG_URL}`,
   openGraph: {
     url: `${BLOG_URL}`,
-    title: `Posts – ${BLOG_TITLE}`,
+    title: `Notes – ${BLOG_TITLE}`,
     description: `${BLOG_SUBTITLE}`,
     images: [
       {
-        url: `${BLOG_URL}/og/Posts/${BLOG_TITLE}/opengraph-image`,
+        url: `${BLOG_URL}/og/Notes/${BLOG_TITLE}/opengraph-image`,
         width: 1200,
         height: 600,
-        alt: `Posts – ${BLOG_TITLE}`,
+        alt: `Notes – ${BLOG_TITLE}`,
       },
     ],
     site_name: `${BLOG_TITLE}`,

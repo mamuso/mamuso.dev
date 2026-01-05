@@ -17,7 +17,7 @@ export default function Header() {
       </h1>
       <ul>
         <li>
-          <Link href="/posts/">notes</Link>
+          <Link href="/notes/">notes</Link>
         </li>
         <li>
           <Link href="/photos/">photos</Link>

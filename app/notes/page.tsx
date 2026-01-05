@@ -5,19 +5,19 @@ import PostHome from '@/app/components/PostHome'
 import Link from 'next/link'
 
 export const metadata = {
-  title: `Posts – ${BLOG_TITLE}`,
+  title: `Notes – ${BLOG_TITLE}`,
   description: BLOG_SUBTITLE,
   canonical: `${BLOG_URL}`,
   openGraph: {
     url: `${BLOG_URL}`,
-    title: `Posts – ${BLOG_TITLE}`,
+    title: `Notes – ${BLOG_TITLE}`,
     description: `${BLOG_SUBTITLE}`,
     images: [
       {
-        url: `${BLOG_URL}/og?title=Posts\&description=${BLOG_TITLE}`,
+        url: `${BLOG_URL}/og?title=Notes\&description=${BLOG_TITLE}`,
         width: 1200,
         height: 600,
-        alt: `Posts – ${BLOG_TITLE}`,
+        alt: `Notes – ${BLOG_TITLE}`,
       },
     ],
     site_name: `${BLOG_TITLE}`,
@@ -54,7 +54,7 @@ export default function Posts() {
       <header className="home-post-header">
         <h2 className="section-title">Journal</h2>
         <p>
-          <Link href="/posts/1">Expand all notes ↓</Link>
+          <Link href="/notes/1">Expand all notes ↓</Link>
         </p>
       </header>
       {Object.entries(postsByYear)

@@ -47,7 +47,7 @@ export default function Photos() {
       <div className="photo-gallery">
         {photoPosts.map((post) => (
           <div key={post.slug} style={{ width: `${(post.width * galleryHeight) / post.height}px`, flexGrow: `${(post.width * galleryHeight) / post.height}` }}>
-            <Link href={`/post/${post.slug}`}>
+            <Link href={`/note/${post.slug}`}>
               <i style={{ paddingBottom: `${(post.height / post.width) * 100}%` }} />
               <Image src={`/assets/feed/gallery-${post.basename}`} sizes="(min-width: 1040px) 874px, (min-width: 900px) 807px, calc(94.31vw - 23px)" width={post.width / 4} height={post.height / 4} alt={post.title} className="loaded" />
             </Link>

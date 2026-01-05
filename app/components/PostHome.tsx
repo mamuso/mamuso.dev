@@ -5,7 +5,7 @@ import { SelectIcon } from './Icons'
 
 export default function PostHome({ post }: { post: PostType }) {
   return (
-    <Link href={`/post/${post.slug}`}>
+    <Link href={`/note/${post.slug}`}>
       <SelectIcon category={post.category} />
       <strong>{post.title}</strong>
       <i></i>
