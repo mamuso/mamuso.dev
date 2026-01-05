@@ -1,5 +1,5 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
-import { getAllPosts } from '@/lib/api'
+import { getAllPosts, getPostBySlug } from '@/lib/api'
 import { PostType } from '@/lib/types'
 import Post from '@/app/components/Post'
 import Pagination from '@/app/components/Pagination'
@@ -38,13 +38,22 @@ export const metadata = {
 }
 
 const POSTS_PER_PAGE = 20
-const allPosts: PostType[] = getAllPosts(['title', 'date', 'slug', 'content', 'summary', 'category', 'basename', 'camera', 'iso', 'fnumber', 'exposureBiasValue', 'exposureTime', 'GPSLatitude', 'GPSLongitude', 'width', 'height', 'colorPalette'])
 
-export default async function Posts(props0: { params: Promise<{ page: number }> }) {
-  const params = await props0.params;
+export default async function Posts(props: { params: Promise<{ page: number }> }) {
+  const params = await props.params;
   const page: number = params.page
-  const pagePosts = allPosts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE)
-  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE)
+
+  // First, get minimal data for all posts (only slug and date for sorting/pagination)
+  const allPostsMinimal = getAllPosts(['slug', 'date'])
+  const totalPages = Math.ceil(allPostsMinimal.length / POSTS_PER_PAGE)
+
+  // Get slugs for the current page only
+  const pagePostSlugs = allPostsMinimal.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE)
+
+  // Then, only load full data for posts on the current page
+  const pagePosts = pagePostSlugs.map((post) =>
+    getPostBySlug(post.slug, ['title', 'date', 'slug', 'content', 'summary', 'category', 'basename', 'camera', 'iso', 'fnumber', 'exposureBiasValue', 'exposureTime', 'GPSLatitude', 'GPSLongitude', 'width', 'height', 'colorPalette'])
+  )
 
   return (
     <>
