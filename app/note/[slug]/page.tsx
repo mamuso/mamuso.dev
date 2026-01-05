@@ -1,5 +1,5 @@
 import { BLOG_TITLE, BLOG_URL } from '@/lib/constants'
-import { Metadata, ResolvingMetadata } from 'next'
+import { Metadata } from 'next'
 import { getPostBySlug } from '@/lib/api'
 import { PostType } from '@/lib/types'
 import Post from '@/app/components/Post'

@@ -42,7 +42,7 @@ export default function Photos() {
   return (
     <section className="home-posts">
       <header className="home-post-header">
-        <h2 className="section-title">Looking back</h2>
+        <h2 className="section-title">Say Cheese</h2>
       </header>
       <div className="photo-gallery">
         {photoPosts.map((post) => (

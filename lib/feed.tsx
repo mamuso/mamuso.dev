@@ -5,14 +5,23 @@ import { marked } from 'marked'
 import matter from 'gray-matter'
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from './constants'
 
+interface FeedPost {
+  slug: string
+  body: string
+  title: string
+  date: string
+  basename?: string
+  [key: string]: unknown
+}
+
 const posts = fs
   .readdirSync(path.resolve(__dirname, '../content/posts/'))
   .filter((file) => path.extname(file) === '.md' || path.extname(file) === '.mdx')
   .map((file) => {
     const postContent = fs.readFileSync(`./content/posts/${file}`, 'utf8')
     const slug = file.replace(/\.md$/, '')
-    const { data, content }: { data: any; content: string } = matter(postContent)
-    return { ...data, slug: slug, body: content }
+    const { data, content } = matter(postContent)
+    return { ...data, slug: slug, body: content } as FeedPost
   })
   .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
