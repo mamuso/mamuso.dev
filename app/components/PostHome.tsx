@@ -1,4 +1,5 @@
 import { PostType } from '@/lib/types'
+import { formatPostDate } from '@/lib/constants'
 import Link from 'next/link'
 import { SelectIcon } from './Icons'
 
@@ -8,7 +9,7 @@ export default function PostHome({ post }: { post: PostType }) {
       <SelectIcon category={post.category} />
       <strong>{post.title}</strong>
       <i></i>
-      <time dateTime={post.date}>{new Date(`${post.date}T00:00:00`).toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' })}</time>
+      <time dateTime={post.date}>{formatPostDate(post.date)}</time>
     </Link>
   )
 }

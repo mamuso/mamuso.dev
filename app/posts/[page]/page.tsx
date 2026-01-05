@@ -37,32 +37,24 @@ export const metadata = {
   },
 }
 
-const postsPerPage: number = 20
+const POSTS_PER_PAGE = 20
 const allPosts: PostType[] = getAllPosts(['title', 'date', 'slug', 'content', 'summary', 'category', 'basename', 'camera', 'iso', 'fnumber', 'exposureBiasValue', 'exposureTime', 'GPSLatitude', 'GPSLongitude', 'width', 'height', 'colorPalette'])
-
-function fetchData(page: number) {
-  let pagePosts = allPosts.slice((page - 1) * postsPerPage, page * postsPerPage)
-  const totalPages = Math.ceil(allPosts.length / postsPerPage)
-  return {
-    pagePosts: pagePosts,
-    totalPages: totalPages,
-    page: page,
-  }
-}
 
 export default async function Posts(props0: { params: Promise<{ page: number }> }) {
   const params = await props0.params;
   const page: number = params.page
-  const props = fetchData(page)
+  const pagePosts = allPosts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE)
+  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE)
+
   return (
     <>
-      {props.pagePosts.map((post, i) => (
-        <div className="post-item" key={i}>
-          <Post key={i} post={post} link={true} />
+      {pagePosts.map((post) => (
+        <div className="post-item" key={post.slug}>
+          <Post post={post} link={true} />
           <hr />
         </div>
       ))}
-      <Pagination page={page} totalPages={props.totalPages} />
+      <Pagination page={page} totalPages={totalPages} />
       <PhotoGallery />
     </>
   )

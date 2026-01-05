@@ -39,21 +39,12 @@ export const metadata = {
   },
 }
 
-const postsPerPage: number = 10
-const allPosts: PostType[] = getAllPosts(['title', 'date', 'slug', 'image', 'category'])
-
-function fetchData() {
-  let pagePosts = allPosts.slice(0, postsPerPage)
-  return {
-    pagePosts: pagePosts,
-  }
-}
+const POSTS_PER_PAGE = 10
+const recentPosts = getAllPosts(['title', 'date', 'slug', 'image', 'category']).slice(0, POSTS_PER_PAGE)
 
 const Home: NextPage = () => {
-  const props = fetchData()
   return (
-    <>
-      <style>{`#header h1 span { opacity: 0;}`}</style>
+    <div className="page-home">
       <section className="home-headline">
         <h2>
           <span>Manuel Muñoz Solera</span> – Crayon holder and key stroker. Currently leading a talented team of designers at Vercel.
@@ -63,8 +54,8 @@ const Home: NextPage = () => {
       <section className="home-posts">
         <h2 className="section-title">Journal</h2>
         <ul>
-          {props.pagePosts.map((post, i) => (
-            <li key={i}>
+          {recentPosts.map((post) => (
+            <li key={post.slug}>
               <PostHome post={post} />
             </li>
           ))}
@@ -406,7 +397,7 @@ const Home: NextPage = () => {
           </ul>
         </section>
       </section>
-    </>
+    </div>
   )
 }
 
