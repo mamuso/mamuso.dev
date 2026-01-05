@@ -316,6 +316,8 @@ a {
 
 .home-post-header {
   text-align: right;
+  display: block;
+  overflow: hidden;
   h2 {
     float: left;
     text-align: left;
@@ -416,7 +418,7 @@ a {
 }
 
 .photo-gallery {
-  margin-top: 140px;
+  margin-top: 88px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;

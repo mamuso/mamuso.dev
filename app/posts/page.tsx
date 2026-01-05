@@ -54,7 +54,7 @@ export default function Posts() {
       <header className="home-post-header">
         <h2 className="section-title">Journal</h2>
         <p>
-          <Link href="/posts/1">Expand all entries ↓</Link>
+          <Link href="/posts/1">Expand all notes ↓</Link>
         </p>
       </header>
       {Object.entries(postsByYear)
