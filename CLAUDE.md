@@ -2,163 +2,109 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Overview
+## Project Overview
 
-This is a personal portfolio/journal site built with Next.js. Content is managed in a **separate Git submodule** (`mamuso.dev.content`) and processed at build time to generate a static site with blog posts and a photography portfolio.
+This is a Next.js-based personal website and blog (mamuso.dev) featuring posts, photos, and an RSS feed. Content is stored in a separate git submodule repository, and the site uses a build pipeline to process photos, generate RSS feeds, and copy assets before deployment.
 
-## Development Commands
+## Common Commands
 
+### Development
 ```bash
-# Development server with Turbopack
-pnpm dev
-
-# Build the site
-pnpm build
-# Note: build command runs in sequence:
-# 1. git submodule init && git submodule update --remote (fetch latest content)
-# 2. pnpm run assets (copy content/assets to public/assets)
-# 3. pnpm run rss (generate RSS feed from markdown posts)
-# 4. next build (Next.js static generation)
-
-# Start production server
-pnpm start
-
-# Lint code
-pnpm lint
-
-# Process new RAW photos (extracts EXIF, generates thumbnails, creates markdown)
-pnpm run photos
-
-# Generate RSS feed manually
-pnpm run rss
-
-# Copy assets to public folder manually
-pnpm run assets
+pnpm dev              # Start development server with Turbopack
+pnpm build            # Initialize/update submodules, process assets, generate RSS, and build for production
+pnpm start            # Start production server
+pnpm lint             # Run Next.js linting
 ```
+
+### Content Processing
+```bash
+pnpm run assets       # Copy assets from content/assets to public/assets
+pnpm run rss          # Generate RSS feed at public/feed.xml
+pnpm run photos       # Process new photos from content/assets/originals/
+```
+
+**Important**: The `photos` script processes photos by:
+1. Reading EXIF data from originals in `content/assets/originals/`
+2. Generating resized versions in `content/assets/feed/`
+3. Creating markdown files in `content/posts/` with photo metadata
+4. Only processing photos that haven't been processed yet (checks for existing markdown files)
 
 ## Architecture
 
-### Content Management
+### Content Management via Git Submodule
 
-Content is **externalized in a Git submodule**. The repository structure is:
+The `content/` directory is a git submodule (separate repository). The build process:
+1. Initializes/updates the submodule (`git submodule init && git submodule update --remote`)
+2. Processes assets and RSS feed
+3. Builds the Next.js application
 
-- **Content source**: `content/` (Git submodule, separate repository)
-  - `content/posts/` - Markdown files with YAML frontmatter
-  - `content/assets/` - Images and media
-  - `content/assets/originals/` - RAW photo files for processing
-- **Build output**: `public/assets/` - Assets copied during build
+All blog posts and photos are markdown files in `content/posts/` with frontmatter metadata.
 
-All content fetching happens at **build time** using filesystem reads. There are no runtime API calls or databases.
+### Content Processing Pipeline
 
-### Data Loading (lib/api.tsx)
+**Posts**: Markdown files in `content/posts/` with gray-matter frontmatter
+- `lib/api.tsx` handles reading posts from the filesystem
+- `getAllPosts()` returns all posts sorted by date
+- `getPhotoPosts()` filters posts with `category: photo`
+- Posts can be regular blog entries or photo posts with EXIF metadata
 
-Core data fetching functions that read markdown files directly from the filesystem:
+**Photos**: Special posts with additional metadata
+- Stored as markdown in `content/posts/` with `category: photo`
+- Include EXIF data: camera, ISO, f-number, exposure time, GPS coordinates
+- Include color palette extracted from the image
+- Photo files referenced via `basename` field
 
-- `getPostSlugs()` - Returns array of all post filenames
-- `getPostBySlug(slug, fields)` - Parses individual markdown file with `gray-matter`, returns specified fields
-- `getAllPosts(fields)` - Loads all posts, sorted by date descending
-- `getPhotoPosts(fields)` - Filters posts where `category === 'photo'`
+**RSS Feed** (`lib/feed.tsx`):
+- Generates Atom feed at `public/feed.xml`
+- Converts markdown to HTML using marked
+- Rewrites relative asset URLs to absolute URLs for feed readers
 
-**Frontmatter schema** (PostType):
+**Assets** (`lib/assets.tsx`):
+- Removes symlink and copies actual files from `content/assets` to `public/assets`
+- Required before build because content is externalized
 
-```yaml
-title: string
-date: string (YYYY-MM-DD)
-category: string (e.g., 'photo')
-summary: string
-basename: string (for photos, filename of the image)
-camera: string (EXIF Make + Model)
-iso: number
-fnumber: number
-exposureBiasValue: number
-exposureTime: number
-GPSLatitude: number
-GPSLongitude: number
-width: number (image dimensions)
-height: number
-colorPalette: string[] (hex colors extracted from photo)
-```
+### Application Structure
 
-### Build Scripts (lib/)
+**Next.js App Router**: Uses Next.js 15 with App Router pattern
+- `app/page.tsx` - Homepage with recent posts
+- `app/posts/page.tsx` - All posts listing
+- `app/posts/[page]/page.tsx` - Paginated posts
+- `app/post/[slug]/page.tsx` - Individual post view
+- `app/photos/page.tsx` - Photo gallery
+- `app/og/[title]/[description]/opengraph-image.tsx` - Dynamic OG images
 
-Three custom Node.js scripts run during build:
+**Components** (`app/components/`):
+- All components are in `app/components/`
+- Uses SCSS modules for styling (e.g., `Canvas.module.scss`)
+- Geist Sans and Geist Mono fonts from `geist/font`
 
-**1. `lib/assets.tsx`** - Asset Management
+**Styling**:
+- Global styles in `app/globals.scss`
+- CSS reset in `app/reset.scss`
+- Component-specific SCSS modules
 
-- Copies `content/assets/` to `public/assets/`
-- Ensures images are available for Next.js static generation
+**TypeScript**:
+- Main config: `tsconfig.json`
+- Build scripts use separate config: `node.tsconfig.json`
 
-**2. `lib/feed.tsx`** - RSS Feed Generation
+## Key Implementation Details
 
-- Reads all markdown posts via `getAllPosts()`
-- Converts markdown to HTML using `marked`
-- Generates Atom 1.0 feed with `feed` library
-- Outputs to `public/feed.xml`
-- Rewrites relative asset paths to absolute URLs
+**Photo Processing**: When adding new photos to `content/assets/originals/`, run `pnpm run photos` to:
+- Extract EXIF metadata
+- Generate color palettes using color-thief-node
+- Create 2048px web versions and 640px gallery thumbnails
+- Generate markdown files with all metadata
 
-**3. `lib/photos.tsx`** - Photo Processing Pipeline
+**Build Process**: The build command runs scripts sequentially:
+1. Updates content submodule
+2. Copies assets to public directory
+3. Generates RSS feed
+4. Builds Next.js application
 
-- Monitors `content/assets/originals/` for new RAW photos
-- Extracts EXIF metadata (camera, ISO, exposure, GPS coordinates)
-- Generates color palette using `color-thief-node`
-- Creates optimized thumbnails with `sharp` (mozjpeg compression)
-- Auto-generates markdown file in `content/posts/` with all metadata
-- Prevents reprocessing by checking if markdown already exists
-- Run with: `pnpm run photos`
+**Content Fields**: Posts use the `PostType` interface with optional fields. Photo posts include: `camera`, `iso`, `fnumber`, `exposureBiasValue`, `exposureTime`, `GPSLatitude`, `GPSLongitude`, `width`, `height`, `colorPalette`, and `basename`.
 
-### Routing Structure
+## Configuration
 
-```
-/                             - Home (10 latest posts + work history)
-/post/[slug]/                 - Individual post view
-/posts/                       - All posts grouped by year
-/posts/[page]/                - Paginated posts (20 per page)
-/photos/                      - Photo gallery grid
-/og/[title]/[description]/    - Dynamic OG image generation
-```
-
-### Markdown Rendering
-
-- Markdown parsed with `gray-matter` (YAML frontmatter + content)
-- Rendered to JSX using `markdown-to-jsx` library
-- Rendering happens in React components after build-time data loading
-- Full posts rendered in `app/components/Post.tsx`
-- Summaries rendered in `app/components/PostHome.tsx`
-
-### Photo Workflow
-
-To add a new photo to the site:
-
-1. Place RAW image in `content/assets/originals/`
-2. Run `pnpm run photos`
-3. Script automatically:
-   - Extracts EXIF data
-   - Generates color palette
-   - Creates optimized thumbnails in `content/assets/feed/`
-   - Generates markdown file in `content/posts/` with frontmatter
-4. Photo appears as a post with `category: photo`
-5. Displayed in photo gallery and post feeds
-
-Photo posts include camera metadata (via `PhotoMeta.tsx`) and justified gallery layouts (via `PhotoGallery.tsx`).
-
-## TypeScript Configuration
-
-- Main config: `tsconfig.json` (Next.js, strict mode, paths aliased with `@/*`)
-- Node scripts: `node.tsconfig.json` (extends main, targets ES2017 CommonJS for ts-node compatibility)
-- Use `ts-node --project ./node.tsconfig.json` for running build scripts
-
-## Key Dependencies
-
-- **Framework**: Next.js 15.4.10, React 19.0.0, Turbopack
-- **Content**: `gray-matter` (frontmatter), `marked` (Markdown→HTML), `markdown-to-jsx` (Markdown→JSX)
-- **Images**: `sharp` (processing), `color-thief-node` (palette), `fast-exif` (metadata)
-- **Feeds**: `feed` (RSS generation)
-- **Analytics**: Vercel Analytics, Vercel Speed Insights
-
-## Important Notes
-
-- **Content is in a submodule**: Always run `git submodule update --remote` to fetch latest content before building
-- **No runtime database**: All data comes from markdown files read at build time
-- **Photo processing is manual**: Run `pnpm run photos` when adding new photos to `content/assets/originals/`
-- **Build scripts use ts-node**: They require the separate `node.tsconfig.json` to run
-- **pnpm only**: This project uses pnpm with specific overrides in package.json
+- **React Strict Mode**: Disabled (`reactStrictMode: false` in `next.config.js`)
+- **Package Manager**: Uses pnpm with specific overrides for React types
+- **Built Dependencies**: Only certain dependencies are built (`@parcel/watcher`, `canvas`, `sharp`, `unrs-resolver`)
