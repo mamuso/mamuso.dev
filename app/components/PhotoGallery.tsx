@@ -15,7 +15,13 @@ export default function PhotoGallery() {
       galleryImages.forEach((image) => {
         const img = image as HTMLImageElement
 
+        // Skip already processed images
+        if (img.classList.contains('loaded')) return
+
         const handleImageLoad = () => {
+          // Double-check in case of race condition
+          if (img.classList.contains('loaded')) return
+
           const imageWidth = img.naturalWidth || img.width
           const imageHeight = img.naturalHeight || img.height
 

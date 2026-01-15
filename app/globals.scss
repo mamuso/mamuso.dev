@@ -62,6 +62,7 @@ $font-stack: ui-sans-serif,
 
 
 :root {
+  color-scheme: light dark;
   --background: #{$background-light};
   --background-gradient: linear-gradient(3deg, #{$background-light} 20%, transparent 80%);
   --dots: #{$dots-light};
@@ -70,6 +71,7 @@ $font-stack: ui-sans-serif,
   --text-secondary: #{$muted-light};
   --link: #{$accent-light};
   --logo: #{color.adjust(color.adjust($background-light, $saturation: -5%), $lightness: -75%)};
+  --focus-ring: #{$accent-light};
 }
 
 
@@ -83,6 +85,7 @@ $font-stack: ui-sans-serif,
     --text-secondary: #{$muted-dark};
     --link: #{$accent-dark};
     --logo: #{color.adjust(color.adjust($background-dark, $saturation: -5%), $lightness: 80%)};
+    --focus-ring: #{$accent-dark};
   }
 }
 
@@ -124,14 +127,20 @@ time,
   Liberation Mono,
   Courier New,
   monospace;
+  font-variant-numeric: tabular-nums;
 }
 
-a { 
+a {
   color: var(--link);
   text-decoration: none;
   &:hover {
     text-decoration: underline;
   }
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 #page-content {

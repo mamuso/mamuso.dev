@@ -20,8 +20,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <link rel="alternate" type="application/rss+xml" title="mamuso.dev RSS" href={`${BLOG_URL}/feed.xml`}></link>
-        <SpeedInsights />
-        <Analytics />
       </head>
       <body className={`${GeistSans.variable} ${GeistMono.variable}`}>
         <Canvas />
@@ -30,6 +28,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <Footer />
         </div>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   )
