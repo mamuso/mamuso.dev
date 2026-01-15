@@ -1,17 +1,17 @@
 import Link from 'next/link'
 
-export default function Header() {
+export default function Footer() {
   return (
-    <section id="footer">
+    <footer id="footer">
       <i></i>
       <div>
         <p>
           mamuso.dev · <Link href="https://x.com/mamuso">x</Link> · <Link href="https://github.com/mamuso">github</Link>
         </p>
         <span>
-          <Link href="#header">↑</Link>
+          <Link href="#header" aria-label="Back to top">↑</Link>
         </span>
       </div>
-    </section>
+    </footer>
   )
 }

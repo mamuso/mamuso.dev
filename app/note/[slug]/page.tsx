@@ -1,9 +1,15 @@
 import { BLOG_TITLE, BLOG_URL } from '@/lib/constants'
 import { Metadata } from 'next'
-import { getPostBySlug } from '@/lib/api'
+import { getAllPosts, getPostBySlug } from '@/lib/api'
 import { PostType } from '@/lib/types'
 import Post from '@/app/components/Post'
 import PhotoGallery from '@/app/components/PhotoGallery'
+
+// Pre-generate all post pages at build time
+export async function generateStaticParams() {
+  const posts = getAllPosts(['slug'])
+  return posts.map((post) => ({ slug: post.slug }))
+}
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const params = await props.params;

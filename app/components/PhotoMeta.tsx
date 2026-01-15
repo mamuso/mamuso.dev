@@ -1,6 +1,6 @@
 import { PostType } from '@/lib/types'
 
-export default function Post({ post }: { post: PostType }) {
+export default function PhotoMeta({ post }: { post: PostType }) {
   return (
     <section className="post-photometa mono">
       <ul>

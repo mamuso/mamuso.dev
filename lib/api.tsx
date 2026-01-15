@@ -1,5 +1,6 @@
 import fs from 'fs-extra'
 import { join } from 'path'
+import { cache } from 'react'
 import { PostType } from './types'
 import matter from 'gray-matter'
 
@@ -9,11 +10,17 @@ export function getPostSlugs() {
   return fs.readdirSync(postsDirectory)
 }
 
-export function getPostBySlug(slug: string, fields: string[] = []): PostType {
+// Cache raw file read per request to avoid duplicate filesystem reads
+const getPostData = cache((slug: string) => {
   const realSlug = slug.replace(/\.md$/, '')
   const fullPath = join(postsDirectory, `${realSlug}.md`)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
   const { data, content } = matter(fileContents)
+  return { realSlug, data, content }
+})
+
+export function getPostBySlug(slug: string, fields: string[] = []): PostType {
+  const { realSlug, data, content } = getPostData(slug)
   const items: Record<string, unknown> = {}
 
   // Ensure only the minimal needed data is exposed

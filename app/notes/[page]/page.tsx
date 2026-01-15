@@ -39,6 +39,13 @@ export const metadata = {
 
 const POSTS_PER_PAGE = 20
 
+// Pre-generate all pagination pages at build time
+export async function generateStaticParams() {
+  const allPosts = getAllPosts(['slug'])
+  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE)
+  return Array.from({ length: totalPages }, (_, i) => ({ page: String(i + 1) }))
+}
+
 export default async function Posts(props: { params: Promise<{ page: number }> }) {
   const params = await props.params;
   const page: number = params.page

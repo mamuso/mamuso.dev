@@ -26,15 +26,15 @@ export default function Canvas(props: React.CanvasHTMLAttributes<HTMLCanvasEleme
     let regularSpacing = true
     let branching = false
 
-    window.addEventListener('resize', onResize, false)
-
-    function onResize() {
+    const handleResize = () => {
       regularSpacing = true
       branching = false
       vw = getCanvasWidth()
       vh = getCanvasHeight()
       resizeCanvas()
     }
+
+    window.addEventListener('resize', handleResize, false)
 
     function resizeCanvas() {
       if (!canvas) return
@@ -46,9 +46,8 @@ export default function Canvas(props: React.CanvasHTMLAttributes<HTMLCanvasEleme
     resizeCanvas()
 
     // Redraw on change color scheme
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-      onResize()
-    })
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addEventListener('change', handleResize)
 
     // Function to generate normally distributed random numbers
     function randn_bm() {
@@ -97,6 +96,11 @@ export default function Canvas(props: React.CanvasHTMLAttributes<HTMLCanvasEleme
           }
         }
       }
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      mediaQuery.removeEventListener('change', handleResize)
     }
   }, [])
 
