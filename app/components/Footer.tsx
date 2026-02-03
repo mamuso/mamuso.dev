@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default function Header() {
+export default function Footer() {
   return (
     <section id="footer">
       <i></i>
