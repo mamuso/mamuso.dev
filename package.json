@@ -34,7 +34,7 @@
     "@types/react-dom": "19.2.3",
     "@types/rss": "^0.0.32",
     "color-thief-node": "^1.0.4",
-    "eslint": "^8.57.1",
+    "eslint": "^9.26.0",
     "eslint-config-next": "16.0.10",
     "fast-exif": "^2.0.1",
     "feed": "^4.2.2",
