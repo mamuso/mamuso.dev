@@ -21,7 +21,7 @@
     "geist": "^1.5.1",
     "gray-matter": "^4.0.3",
     "markdown-to-jsx": "^7.7.17",
-    "next": "16.0.10",
+    "next": "16.1.5",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
