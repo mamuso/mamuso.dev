@@ -3,7 +3,6 @@ import { getAllPosts, getPostBySlug } from '@/lib/api'
 import { PostType } from '@/lib/types'
 import Post from '@/app/components/Post'
 import Pagination from '@/app/components/Pagination'
-import PhotoGallery from '@/app/components/PhotoGallery'
 
 export const metadata = {
   title: `Notes – ${BLOG_TITLE}`,
@@ -71,7 +70,6 @@ export default async function Posts(props: { params: Promise<{ page: number }> }
         </div>
       ))}
       <Pagination page={page} totalPages={totalPages} />
-      <PhotoGallery />
     </>
   )
 }
