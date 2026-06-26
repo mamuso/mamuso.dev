@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import ThemeToggle from './ThemeToggle'
 
 export default function Header() {
   return (
@@ -22,9 +21,6 @@ export default function Header() {
         </li>
         <li>
           <Link href="/photos/">pics</Link>
-        </li>
-        <li>
-          <ThemeToggle />
         </li>
       </ul>
     </nav>

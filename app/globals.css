@@ -1,7 +1,5 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
   --color-background: #f5f4f2;
   --color-foreground: #20202c;
@@ -11,14 +9,15 @@
 
 @layer base {
   :root {
-    color-scheme: light;
+    color-scheme: light dark;
   }
 
-  .dark {
-    color-scheme: dark;
-    --color-background: #20222b;
-    --color-foreground: #ffffff;
-    --color-muted: color-mix(in srgb, #ffffff 50%, transparent);
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-background: #20222b;
+      --color-foreground: #ffffff;
+      --color-muted: color-mix(in srgb, #ffffff 50%, transparent);
+    }
   }
 
   body {
