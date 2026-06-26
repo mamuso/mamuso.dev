@@ -3,7 +3,6 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import { getRecentPosts } from '@/lib/api'
 import PostHome from '@/app/components/PostHome'
-import { TreeStructure, Robot, Browsers, PencilLine, Package, SketchLogo } from '../app/components/Icons'
 
 export const metadata = {
   metadataBase: new URL('https://mamuso.dev'),
@@ -43,16 +42,16 @@ const recentPosts = getRecentPosts(POSTS_PER_PAGE, ['title', 'date', 'slug', 'im
 
 const Home: NextPage = () => {
   return (
-    <div className="page-home">
-      <section className="home-headline">
+    <div>
+      <section>
         <h2>
           <span>Manuel Muñoz Solera</span>
           Crayon holder and key stroker.
         </h2>
       </section>
 
-      <section className="home-posts">
-        <h2 className="section-title">Journal</h2>
+      <section>
+        <h2>Journal</h2>
         <ul>
           {recentPosts.map((post) => (
             <li key={post.slug}>
@@ -65,16 +64,12 @@ const Home: NextPage = () => {
         </p>
       </section>
 
-      <section className="home-projects">
+      <section>
         <section>
-          <h2 className="section-title">Side, Fun Projects</h2>
+          <h2>Side, Fun Projects</h2>
           <ul>
             <li>
-              <Link href="https://www.figma.com/community/plugin/1091247524080548244/Orgchart">
-                <i>
-                  <TreeStructure size={24} />
-                </i>
-                <span>
+              <Link href="https://www.figma.com/community/plugin/1091247524080548244/Orgchart"><span>
                   <strong>Figma OrgChart</strong>
                   <span>
                     <em>Create an org chart from a yaml or a json</em>
@@ -83,11 +78,7 @@ const Home: NextPage = () => {
               </Link>
             </li>
             <li>
-              <Link href="https://github.com/mamuso/weekly-update-action">
-                <i>
-                  <Robot size={24} />
-                </i>
-                <span>
+              <Link href="https://github.com/mamuso/weekly-update-action"><span>
                   <strong>Weekly update – GitHub Action</strong>
                   <span>
                     <em>Automate the creation of a weekly discussion</em>
@@ -96,11 +87,7 @@ const Home: NextPage = () => {
               </Link>
             </li>
             <li>
-              <Link href="https://github.com/mamuso/discussion-to-markdown-action">
-                <i>
-                  <Robot size={24} />
-                </i>
-                <span>
+              <Link href="https://github.com/mamuso/discussion-to-markdown-action"><span>
                   <strong>Discussion to Markdown – GitHub Action</strong>
                   <span>
                     <em>Transform a discussion into markdown – duh!</em>
@@ -109,11 +96,7 @@ const Home: NextPage = () => {
               </Link>
             </li>
             <li>
-              <Link href="https://github.com/mamuso/figma-to-gh-pages">
-                <i>
-                  <Robot size={24} />
-                </i>
-                <span>
+              <Link href="https://github.com/mamuso/figma-to-gh-pages"><span>
                   <strong>Figma to GitHub Pages – GitHub Action</strong>
                   <span>
                     <em>Use a Figma doc as a CMS for your site</em>
@@ -122,11 +105,7 @@ const Home: NextPage = () => {
               </Link>
             </li>
             <li>
-              <Link href="https://github.com/mamuso/close-figma-tab">
-                <i>
-                  <Browsers size={24} />
-                </i>
-                <span>
+              <Link href="https://github.com/mamuso/close-figma-tab"><span>
                   <strong>Close Figma tab</strong>
                   <span>
                     <em>Get rid off tabs once docs open in the app</em>
@@ -135,11 +114,7 @@ const Home: NextPage = () => {
               </Link>
             </li>
             <li>
-              <Link href="https://papercups.mamuso.net/">
-                <i>
-                  <PencilLine size={24} />
-                </i>
-                <span>
+              <Link href="https://papercups.mamuso.net/"><span>
                   <strong>Papercups</strong>
                   <span>
                     <em>Drawing the coffee cups that I sip</em>
@@ -147,12 +122,8 @@ const Home: NextPage = () => {
                 </span>
               </Link>
             </li>
-            <li className="hide">
-              <Link href="https://github.com/mamuso/unvlogable">
-                <i>
-                  <Package size={24} />
-                </i>
-                <span>
+            <li>
+              <Link href="https://github.com/mamuso/unvlogable"><span>
                   <strong>Unvlogable</strong>
                   <span>
                     <em>oEmbed output for video services</em>
@@ -160,12 +131,8 @@ const Home: NextPage = () => {
                 </span>
               </Link>
             </li>
-            <li className="hide">
-              <Link href="https://github.com/mamuso/sketch-truncate-textlines">
-                <i>
-                  <SketchLogo size={24} />
-                </i>
-                <span>
+            <li>
+              <Link href="https://github.com/mamuso/sketch-truncate-textlines"><span>
                   <strong>Truncate textlines – Sketch plugin</strong>
                   <span>
                     <em>Reduce the number of lines in a textbox</em>
@@ -173,12 +140,8 @@ const Home: NextPage = () => {
                 </span>
               </Link>
             </li>
-            <li className="hide">
-              <Link href="https://github.com/mamuso/sketch-cat-ipsum">
-                <i>
-                  <SketchLogo size={24} />
-                </i>
-                <span>
+            <li>
+              <Link href="https://github.com/mamuso/sketch-cat-ipsum"><span>
                   <strong>Cat Ipsum – Sketch plugin</strong>
                   <span>
                     <em>catipsum.com, but inside Sketch</em>
@@ -186,12 +149,8 @@ const Home: NextPage = () => {
                 </span>
               </Link>
             </li>
-            <li className="hide">
-              <Link href="https://github.com/mamuso/yammer-sketch-tools">
-                <i>
-                  <SketchLogo size={24} />
-                </i>
-                <span>
+            <li>
+              <Link href="https://github.com/mamuso/yammer-sketch-tools"><span>
                   <strong>Yammer Commands – Sketch plugin</strong>
                   <span>
                     <em>A collection of utilities we used at Yammer</em>
@@ -199,12 +158,8 @@ const Home: NextPage = () => {
                 </span>
               </Link>
             </li>
-            <li className="hide">
-              <Link href="https://github.com/mamuso/acts_as_unvlogable">
-                <i>
-                  <Package size={24} />
-                </i>
-                <span>
+            <li>
+              <Link href="https://github.com/mamuso/acts_as_unvlogable"><span>
                   <strong>acts_as_unvlogable</strong>
                   <span>
                     <em>A ruby gem to embed videos in a rails app</em>
@@ -213,13 +168,9 @@ const Home: NextPage = () => {
               </Link>
             </li>
           </ul>
-          <p className="show">
-            <input type="checkbox" id="show-more" />
-            <label htmlFor="show-more">View more ↓</label>
-          </p>
         </section>
         <section>
-          <h2 className="section-title">Work</h2>
+          <h2>Work</h2>
           <ul>
             <li>
               <Link href="https://vercel.com">

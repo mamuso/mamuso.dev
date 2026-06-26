@@ -38,7 +38,6 @@ export const metadata = {
 
 const POSTS_PER_PAGE = 20
 
-// Pre-generate all pagination pages at build time
 export async function generateStaticParams() {
   const allPosts = getAllPosts(['slug'])
   const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE)
@@ -49,14 +48,11 @@ export default async function Posts(props: { params: Promise<{ page: number }> }
   const params = await props.params;
   const page: number = params.page
 
-  // First, get minimal data for all posts (only slug and date for sorting/pagination)
   const allPostsMinimal = getAllPosts(['slug', 'date'])
   const totalPages = Math.ceil(allPostsMinimal.length / POSTS_PER_PAGE)
 
-  // Get slugs for the current page only
   const pagePostSlugs = allPostsMinimal.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE)
 
-  // Then, only load full data for posts on the current page
   const pagePosts = pagePostSlugs.map((post) =>
     getPostBySlug(post.slug, ['title', 'date', 'slug', 'content', 'summary', 'category', 'basename', 'camera', 'iso', 'fnumber', 'exposureBiasValue', 'exposureTime', 'GPSLatitude', 'GPSLongitude', 'width', 'height', 'colorPalette'])
   )
@@ -64,7 +60,7 @@ export default async function Posts(props: { params: Promise<{ page: number }> }
   return (
     <>
       {pagePosts.map((post) => (
-        <div className="post-item" key={post.slug}>
+        <div key={post.slug}>
           <Post post={post} link={true} />
           <hr />
         </div>

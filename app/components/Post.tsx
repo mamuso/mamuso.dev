@@ -8,22 +8,22 @@ import { markdownOverrides } from './MarkdownPhotoGallery'
 
 export default function Post({ post, link = false, priority = false }: { post: PostType; link?: boolean; priority?: boolean }) {
   return (
-    <article className="post">
+    <article>
       {link && (
         <h2>
           <Link href={`/note/${post.slug}`}>{post.title}</Link>
         </h2>
       )}
       {!link && <h2>{post.title}</h2>}
-      <section className="post-meta mono">
+      <section>
         <time dateTime={post.date}>{formatPostDate(post.date, true)}</time>
       </section>
       {post.basename && (
-        <div className="photo-highlight">
+        <div>
           <Image src={`/assets/feed/${post.basename}`} sizes="(min-width: 1040px) 874px, (min-width: 900px) 807px, calc(94.31vw - 23px)" width={post.width / 3} height={post.height / 3} alt={post.title || 'This picture is missing a title'} priority={priority} />
         </div>
       )}
-      <section className="post-content">
+      <section>
         {post.category === 'photo' && <PhotoMeta post={post} />}
         <Markdown options={{ overrides: markdownOverrides }}>{post.content}</Markdown>
       </section>

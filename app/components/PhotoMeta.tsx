@@ -2,13 +2,11 @@ import { PostType } from '@/lib/types'
 
 export default function PhotoMeta({ post }: { post: PostType }) {
   return (
-    <section className="post-photometa mono">
+    <section>
       <ul>
         {post.colorPalette && (
-          <li className="post-colors">
-            {post.colorPalette.map((color, index) => (
-              <span key={index} style={{ backgroundColor: color }}></span>
-            ))}
+          <li>
+            {post.colorPalette.join(', ')}
           </li>
         )}
         {post.camera && <li>{post.camera}</li>}
@@ -17,7 +15,7 @@ export default function PhotoMeta({ post }: { post: PostType }) {
         {post.exposureTime && <li>{post.exposureTime}s</li>}
         {post.iso && <li>ISO {post.iso}</li>}
         {post.GPSLatitude && (
-          <li className="post-geo">
+          <li>
             {post.GPSLatitude} {post.GPSLongitude}
           </li>
         )}
