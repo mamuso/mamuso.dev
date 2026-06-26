@@ -1,4 +1,5 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../lib/constants'
+import { themeInitScript } from '../lib/theme'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import DeferredClientShell from './components/DeferredClientEffects'
@@ -13,8 +14,9 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <link rel="alternate" type="application/rss+xml" title="mamuso.dev RSS" href={`${BLOG_URL}/feed.xml`}></link>
       </head>
       <body>

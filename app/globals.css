@@ -1,1 +1,31 @@
 @import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-background: #f5f4f2;
+  --color-foreground: #20202c;
+  --color-muted: color-mix(in srgb, #20202c 60%, transparent);
+  --color-accent: #ea3f8b;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --color-background: #20222b;
+    --color-foreground: #ffffff;
+    --color-muted: color-mix(in srgb, #ffffff 50%, transparent);
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  a {
+    @apply text-accent underline-offset-2 hover:underline;
+  }
+}
