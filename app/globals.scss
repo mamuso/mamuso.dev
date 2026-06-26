@@ -254,6 +254,7 @@ a {
     line-height: 1.2;
     color: var(--text-secondary);
     span {
+      display: block;
       font-family: $geistsans;
       color: var(--text);
       font-weight: 600;    

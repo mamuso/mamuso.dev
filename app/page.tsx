@@ -46,7 +46,8 @@ const Home: NextPage = () => {
     <div className="page-home">
       <section className="home-headline">
         <h2>
-          <span>Manuel Muñoz Solera</span> – Crayon holder and key stroker.
+          <span>Manuel Muñoz Solera</span>
+          Crayon holder and key stroker.
         </h2>
       </section>
 
