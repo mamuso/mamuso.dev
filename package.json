@@ -42,5 +42,20 @@
     "sharp": "^0.35.2",
     "ts-node": "^10.9.2",
     "typescript": "6.0.3"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.17",
+      "@types/react-dom": "19.2.3",
+      "postcss": "8.5.10"
+    },
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "sharp",
+      "unrs-resolver"
+    ]
   }
 }

@@ -1,3 +1,5 @@
+'use client'
+
 import { Images, CodeBlock, Article, Note, TreeStructure, Robot, Browsers, PencilLine, Package, SketchLogo } from '@phosphor-icons/react'
 
 export { TreeStructure, Robot, Browsers, PencilLine, Package, SketchLogo }
