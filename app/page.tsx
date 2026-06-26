@@ -1,8 +1,7 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
 import { NextPage } from 'next'
 import Link from 'next/link'
-import { getAllPosts } from '@/lib/api'
-import { PostType } from '@/lib/types'
+import { getRecentPosts } from '@/lib/api'
 import PostHome from '@/app/components/PostHome'
 import { TreeStructure, Robot, Browsers, PencilLine, Package, SketchLogo } from '../app/components/Icons'
 
@@ -40,14 +39,15 @@ export const metadata = {
 }
 
 const POSTS_PER_PAGE = 10
-const recentPosts = getAllPosts(['title', 'date', 'slug', 'image', 'category']).slice(0, POSTS_PER_PAGE)
+const recentPosts = getRecentPosts(POSTS_PER_PAGE, ['title', 'date', 'slug', 'image', 'category'])
 
 const Home: NextPage = () => {
   return (
     <div className="page-home">
       <section className="home-headline">
         <h2>
-          <span>Manuel Muñoz Solera</span> – Crayon holder and key stroker. Currently leading a talented team of designers at Vercel.
+          <span>Manuel Muñoz Solera</span>
+          Crayon holder and key stroker.
         </h2>
       </section>
 
@@ -232,7 +232,7 @@ const Home: NextPage = () => {
                   <strong>Vercel</strong>
                   <span>
                     <em>VP of Design</em>
-                    <time>2024 – now</time>
+                    <time>2024 – 2026</time>
                   </span>
                 </span>
               </Link>

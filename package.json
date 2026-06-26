@@ -7,7 +7,7 @@
     "dev": "next dev --turbopack",
     "build": "git submodule init && git submodule update --remote && pnpm run assets && pnpm run rss && next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "rss": "pnpm exec ts-node --project ./node.tsconfig.json lib/feed",
     "assets": "pnpm exec ts-node --project ./node.tsconfig.json lib/assets",
     "photos": "ts-node --project ./node.tsconfig.json lib/photos"
@@ -18,39 +18,42 @@
     "@vercel/og": "^0.11.1",
     "@vercel/speed-insights": "^2.0.0",
     "fs-extra": "^11.3.5",
-    "geist": "^1.7.0",
+    "geist": "^1.7.2",
     "gray-matter": "^4.0.3",
-    "markdown-to-jsx": "^9.8.0",
-    "next": "16.2.6",
-    "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "markdown-to-jsx": "^9.8.2",
+    "next": "16.2.9",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
   },
   "devDependencies": {
     "@types/color-thief-node": "^1.0.4",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^25.8.0",
-    "@types/react": "19.2.14",
+    "@types/node": "^26.0.1",
+    "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "@types/rss": "^0.0.32",
     "color-thief-node": "^1.0.4",
     "eslint": "^9.39.2",
-    "eslint-config-next": "16.2.6",
+    "eslint-config-next": "16.2.9",
     "fast-exif": "^2.0.1",
     "feed": "^5.2.1",
-    "marked": "^18.0.3",
-    "sass": "^1.99.0",
-    "sharp": "^0.34.5",
+    "marked": "^18.0.5",
+    "sass": "^1.101.0",
+    "sharp": "^0.35.2",
     "ts-node": "^10.9.2",
     "typescript": "6.0.3"
   },
+  "engines": {
+    "node": "24.x"
+  },
   "pnpm": {
     "overrides": {
-      "@types/react": "19.2.14",
-      "@types/react-dom": "19.2.3"
+      "@types/react": "19.2.17",
+      "@types/react-dom": "19.2.3",
+      "postcss": "8.5.10"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
-      "canvas",
       "sharp",
       "unrs-resolver"
     ]

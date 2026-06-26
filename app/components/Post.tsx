@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Markdown from 'markdown-to-jsx'
 import PhotoMeta from './PhotoMeta'
+import { markdownOverrides } from './MarkdownPhotoGallery'
 
 export default function Post({ post, link = false, priority = false }: { post: PostType; link?: boolean; priority?: boolean }) {
   return (
@@ -24,7 +25,7 @@ export default function Post({ post, link = false, priority = false }: { post: P
       )}
       <section className="post-content">
         {post.category === 'photo' && <PhotoMeta post={post} />}
-        <Markdown>{post.content}</Markdown>
+        <Markdown options={{ overrides: markdownOverrides }}>{post.content}</Markdown>
       </section>
     </article>
   )

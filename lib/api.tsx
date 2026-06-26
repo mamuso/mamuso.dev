@@ -6,9 +6,7 @@ import matter from 'gray-matter'
 
 const postsDirectory = join(process.cwd(), 'content/posts/')
 
-export function getPostSlugs() {
-  return fs.readdirSync(postsDirectory)
-}
+const getPostSlugs = cache(() => fs.readdirSync(postsDirectory))
 
 // Cache raw file read per request to avoid duplicate filesystem reads
 const getPostData = cache((slug: string) => {
@@ -17,6 +15,17 @@ const getPostData = cache((slug: string) => {
   const fileContents = fs.readFileSync(fullPath, 'utf8')
   const { data, content } = matter(fileContents)
   return { realSlug, data, content }
+})
+
+type PostSummary = { slug: string; date: string }
+
+const getSortedPostSummaries = cache((): PostSummary[] => {
+  return getPostSlugs()
+    .map((slug) => {
+      const { realSlug, data } = getPostData(slug)
+      return { slug: realSlug, date: data.date as string }
+    })
+    .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
 })
 
 export function getPostBySlug(slug: string, fields: string[] = []): PostType {
@@ -41,20 +50,22 @@ export function getPostBySlug(slug: string, fields: string[] = []): PostType {
 }
 
 export function getAllPosts(fields: string[]): PostType[] {
-  const slugs = getPostSlugs()
-  const posts = slugs
-    .map((slug) => getPostBySlug(slug, fields))
-    // sort posts by date in descending order
-    .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
-  return posts
+  return getSortedPostSummaries().map(({ slug }) => getPostBySlug(slug, fields))
+}
+
+export function getRecentPosts(count: number, fields: string[]): PostType[] {
+  return getSortedPostSummaries()
+    .slice(0, count)
+    .map(({ slug }) => getPostBySlug(slug, fields))
 }
 
 export function getPhotoPosts(fields: string[]): PostType[] {
-  const slugs = getPostSlugs()
-  const posts = slugs
+  return getPostSlugs()
+    .filter((slug) => getPostData(slug).data.category === 'photo')
+    .sort((slugA, slugB) => {
+      const dateA = getPostData(slugA).data.date as string
+      const dateB = getPostData(slugB).data.date as string
+      return dateA > dateB ? -1 : 1
+    })
     .map((slug) => getPostBySlug(slug, fields))
-    .filter((post) => post.category === 'photo')
-    // sort posts by date in descending order
-    .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
-  return posts
 }

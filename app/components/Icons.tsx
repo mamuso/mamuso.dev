@@ -1,8 +1,8 @@
 'use client'
 
-import { Images, CodeBlock, Article, Note } from '@phosphor-icons/react'
+import { Images, CodeBlock, Article, Note, TreeStructure, Robot, Browsers, PencilLine, Package, SketchLogo } from '@phosphor-icons/react'
 
-export { TreeStructure, Robot, Browsers, PencilLine, Package, SketchLogo } from '@phosphor-icons/react'
+export { TreeStructure, Robot, Browsers, PencilLine, Package, SketchLogo }
 
 export function SelectIcon({ category }: { category: string }) {
   switch (category) {
