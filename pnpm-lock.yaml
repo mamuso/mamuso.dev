@@ -13,6 +13,9 @@ importers:
 
   .:
     dependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.3.1
+        version: 4.3.1
       '@vercel/analytics':
         specifier: ^2.0.1
         version: 2.0.1(next@16.2.9(@babel/core@7.29.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(sass@1.101.0))(react@19.2.7)
@@ -34,16 +37,19 @@ importers:
       next:
         specifier: 16.2.9
         version: 16.2.9(@babel/core@7.29.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(sass@1.101.0)
+      postcss:
+        specifier: 8.5.10
+        version: 8.5.10
       react:
         specifier: 19.2.7
         version: 19.2.7
       react-dom:
         specifier: 19.2.7
         version: 19.2.7(react@19.2.7)
-    devDependencies:
-      '@tailwindcss/postcss':
+      tailwindcss:
         specifier: ^4.3.1
         version: 4.3.1
+    devDependencies:
       '@types/color-thief-node':
         specifier: ^1.0.4
         version: 1.0.4
@@ -80,15 +86,9 @@ importers:
       marked:
         specifier: ^18.0.5
         version: 18.0.5
-      postcss:
-        specifier: 8.5.10
-        version: 8.5.10
       sharp:
         specifier: ^0.35.2
         version: 0.35.2
-      tailwindcss:
-        specifier: ^4.3.1
-        version: 4.3.1
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@26.0.1)(typescript@6.0.3)
