@@ -1,9 +1,10 @@
 import { ImageResponse } from 'next/og'
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 
-const geistsans = fetch(new URL('../../../../public/fonts/Geist-Bold.ttf', import.meta.url)).then((res) => res.arrayBuffer())
-const monospace = fetch(new URL('../../../../public/fonts/GeistMono-Regular.ttf', import.meta.url)).then((res) => res.arrayBuffer())
+const geistsans = readFile(join(process.cwd(), 'public/fonts/Geist-Bold.ttf'))
+const monospace = readFile(join(process.cwd(), 'public/fonts/GeistMono-Regular.ttf'))
 
-export const runtime = 'edge'
 export const contentType = 'image/png'
 export const size = {
   width: 1200,
