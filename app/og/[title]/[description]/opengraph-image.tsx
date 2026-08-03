@@ -1,4 +1,4 @@
-import { ImageResponse } from '@vercel/og'
+import { ImageResponse } from 'next/og'
 
 const geistsans = fetch(new URL('../../../../public/fonts/Geist-Bold.ttf', import.meta.url)).then((res) => res.arrayBuffer())
 const monospace = fetch(new URL('../../../../public/fonts/GeistMono-Regular.ttf', import.meta.url)).then((res) => res.arrayBuffer())
@@ -9,14 +9,15 @@ export const size = {
   width: 1200,
   height: 600,
 }
-export default async function Image({ params }: { params: { title: string; description: string } }) {
+export default async function Image({ params }: { params: Promise<{ title: string; description: string }> }) {
+  const { title, description } = await params
   try {
     const geistsansData = await geistsans
     const monospaceData = await monospace
 
     const values = {
-      title: params.title || 'Why did you not set a title?',
-      description: params.description || '',
+      title: title || 'Why did you not set a title?',
+      description: description || '',
     }
 
     values.title = values.title.length > 100 ? values.title.slice(0, 100) + '...' : values.title
