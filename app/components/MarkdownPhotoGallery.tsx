@@ -1,26 +1,19 @@
 import { Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react'
 
-const GALLERY_HEIGHT = 320
-
 type ImgProps = {
   src?: string
   alt?: string
   width?: number | string
   height?: number | string
-  className?: string
 }
 
-function GalleryImage({ src, alt, width, height, className }: ImgProps) {
+function GalleryImage({ src, alt, width, height }: ImgProps) {
   const w = Number(width) || 1600
   const h = Number(height) || 1200
-  const flexGrow = (w * GALLERY_HEIGHT) / h
 
   return (
-    <div style={{ width: `${flexGrow}px`, flexGrow: `${flexGrow}` }}>
-      <i style={{ paddingBottom: `${(h / w) * 100}%` }} />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt={alt || ''} width={w} height={h} className={['loaded', className].filter(Boolean).join(' ')} />
-    </div>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={alt || ''} width={w} height={h} />
   )
 }
 
@@ -45,7 +38,7 @@ function transformGalleryContent(node: ReactNode): ReactNode {
 }
 
 export function MarkdownPhotoGallery({ children }: { children: ReactNode }) {
-  return <div className="photo-gallery">{transformGalleryContent(children)}</div>
+  return <div>{transformGalleryContent(children)}</div>
 }
 
 export const markdownOverrides = {
@@ -65,7 +58,7 @@ export const markdownOverrides = {
         return <MarkdownPhotoGallery>{children}</MarkdownPhotoGallery>
       }
       return (
-        <div className={classes || undefined} {...props}>
+        <div {...props}>
           {children}
         </div>
       )
