@@ -13,8 +13,6 @@
     "photos": "ts-node --project ./node.tsconfig.json lib/photos"
   },
   "dependencies": {
-    "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0",
     "fs-extra": "^11.4.0",
     "gray-matter": "^4.0.3",
     "markdown-to-jsx": "^9.10.1",
@@ -28,7 +26,6 @@
     "@types/node": "^26.1.2",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
-    "@types/rss": "^0.0.32",
     "color-thief-node": "^1.0.4",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.3.0",
@@ -53,7 +50,6 @@
       "sharp": "0.35.3"
     },
     "onlyBuiltDependencies": [
-      "@parcel/watcher",
       "sharp",
       "unrs-resolver"
     ]
