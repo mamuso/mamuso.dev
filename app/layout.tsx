@@ -1,6 +1,7 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../lib/constants'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import './globals.css'
 
 export const metadata = {
   title: {
