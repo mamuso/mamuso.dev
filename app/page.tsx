@@ -6,7 +6,7 @@ import PostHome from '@/app/components/PostHome'
 
 export const metadata = {
   metadataBase: new URL('https://mamuso.dev'),
-  title: `${BLOG_TITLE} – Yet another journal`,
+  title: 'mamuso - manuel muñoz solera',
   description: BLOG_SUBTITLE,
   canonical: `/`,
   openGraph: {

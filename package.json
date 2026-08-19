@@ -13,12 +13,15 @@
     "photos": "ts-node --project ./node.tsconfig.json lib/photos"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
     "fs-extra": "^11.4.0",
     "gray-matter": "^4.0.3",
     "markdown-to-jsx": "^9.10.1",
     "next": "16.3.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
@@ -27,6 +30,7 @@
     "@types/node": "^26.1.2",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
+    "@types/three": "^0.185.4",
     "color-thief-node": "^1.0.4",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.3.0",

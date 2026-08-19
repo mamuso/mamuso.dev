@@ -1,9 +1,4 @@
 import { ImageResponse } from 'next/og'
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
-
-const geistsans = readFile(join(process.cwd(), 'public/fonts/Geist-Bold.ttf'))
-const monospace = readFile(join(process.cwd(), 'public/fonts/GeistMono-Regular.ttf'))
 
 export const contentType = 'image/png'
 export const size = {
@@ -13,9 +8,6 @@ export const size = {
 export default async function Image({ params }: { params: Promise<{ title: string; description: string }> }) {
   const { title, description } = await params
   try {
-    const geistsansData = await geistsans
-    const monospaceData = await monospace
-
     const values = {
       title: title || 'Why did you not set a title?',
       description: description || '',
@@ -42,7 +34,6 @@ export default async function Image({ params }: { params: Promise<{ title: strin
             style={{
               color: '#363636',
               fontSize: '7rem',
-              fontFamily: 'geistsans',
               lineHeight: '8rem',
               letterSpacing: '-0.1rem',
               width: '90%',
@@ -55,7 +46,6 @@ export default async function Image({ params }: { params: Promise<{ title: strin
             style={{
               color: '#808080',
               fontSize: '2rem',
-              fontFamily: 'monospace',
               width: '90%',
               lineHeight: '1.5rem',
               lineClamp: '2rem',
@@ -68,19 +58,7 @@ export default async function Image({ params }: { params: Promise<{ title: strin
           </p>
         </div>
       ),
-      {
-        ...size,
-        fonts: [
-          {
-            name: 'geistsans',
-            data: geistsansData,
-          },
-          {
-            name: 'monospace',
-            data: monospaceData,
-          },
-        ],
-      }
+      size
     )
   } catch (error) {
     console.error(error)
