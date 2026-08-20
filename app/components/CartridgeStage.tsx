@@ -20,7 +20,7 @@ export default function CartridgeStage() {
   return (
     <CartridgeViewer
       key={isLarge ? "lg" : "sm"}
-      margin={isLarge ? 1 : 1.35}
+      margin={isLarge ? 1.4 : 1.7}
     />
   );
 }

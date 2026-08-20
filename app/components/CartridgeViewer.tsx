@@ -2,9 +2,50 @@
 
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Bounds, Environment, useBounds, useGLTF, useTexture } from "@react-three/drei";
+import { Bounds, Environment, Html, useBounds, useGLTF, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import type { Group, Object3D } from "three";
+
+// Matches the cartridge model's footprint in local space (X unaffected by
+// the resting pitch, which only rotates around X) — used both as the
+// pointer hit target and to offset the hover label clear of the shell.
+const CARTRIDGE_WIDTH = 0.11;
+const CARTRIDGE_HITBOX_GEOMETRY = new THREE.BoxGeometry(0.11, 0.072, 0.02);
+const HOVER_LABEL_GAP = 0.02;
+
+// Vertical room a cartridge needs once clicked open to show its front (its
+// natural, unpitched height) instead of just its spine thickness, plus a
+// little breathing room so it doesn't touch its neighbors.
+const OPEN_HEIGHT = 0.072 + 0.02;
+// Click flips a cartridge from resting on its spine (pitched 90deg on X)
+// back to its natural, front-facing orientation.
+const OPEN_PITCH_OFFSET = -Math.PI / 2;
+// Small random roll each time a cartridge opens, as if it had just been set
+// down — the closed spine stack stays perfectly aligned.
+const OPEN_ROLL_JITTER_DEG = 3;
+// However tall the open cartridge is, or which one it is, pin it to the
+// same fixed pixel offset from the canvas top so it never grows past frame.
+const OPEN_TOP_OFFSET_PX = 140;
+
+/** World Y, on the world-X=0/world-Z=planeZ plane, that projects to a given
+ * pixel Y (measured from the canvas top) under the current (static) camera. */
+function pixelYToWorldY(
+  camera: THREE.Camera,
+  pixelY: number,
+  canvasHeightPx: number,
+  planeZ: number
+) {
+  camera.updateMatrixWorld();
+  if (camera instanceof THREE.PerspectiveCamera) camera.updateProjectionMatrix();
+  const probe = new THREE.Vector3(0, 0, planeZ).project(camera);
+  const ndcY = 1 - (pixelY / canvasHeightPx) * 2;
+  const raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera(new THREE.Vector2(probe.x, ndcY), camera);
+  const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -planeZ);
+  const point = new THREE.Vector3();
+  raycaster.ray.intersectPlane(plane, point);
+  return point.y;
+}
 
 const HOVER_LIFT = 0.1;
 const DETAIL_LIFT = 0.19;
@@ -33,6 +74,10 @@ const ROW_PITCH = 0.016;
 // Fraction of the visible half-width to pan the camera by, so the stack sits
 // right of center instead of dead center — without changing Bounds' zoom.
 const CAMERA_PAN_FRACTION = 0.5;
+
+// Fraction of the visible half-height to raise the camera by, so the stack
+// sits a bit lower in frame — leaving headroom above for opened cartridges.
+const CAMERA_VERTICAL_PAN_FRACTION = -0.15;
 
 import { CARTRIDGES } from "@/data/cartridges";
 
@@ -82,6 +127,9 @@ function CartridgeInner({
   detailLift = DETAIL_LIFT,
   shellOpacity,
   renderOrderBase = 0,
+  onHoverChange,
+  isOpen = false,
+  onToggleOpen,
 }: {
   scene: Object3D;
   position: [number, number];
@@ -95,6 +143,9 @@ function CartridgeInner({
   detailLift?: number;
   shellOpacity?: number;
   renderOrderBase?: number;
+  onHoverChange?: (hovered: boolean) => void;
+  isOpen?: boolean;
+  onToggleOpen?: () => void;
 }) {
   const { gl, invalidate } = useThree();
   const isRock = motion === "rock";
@@ -150,6 +201,9 @@ function CartridgeInner({
   const depthVelocity = useRef(0);
   const depthPosition = useRef(isDetailPose ? detailLift : 0);
   const depthTarget = useRef(isDetailPose ? detailLift : 0);
+  const positionYVelocity = useRef(0);
+  const positionY = useRef(position[1]);
+  const positionYTarget = useRef(position[1]);
   const hovered = useRef(false);
   const hoverMotion = useRef(false);
   const restedRef = useRef(isStatic || !isRock);
@@ -163,6 +217,28 @@ function CartridgeInner({
     pivotRef.current.position.z = isDetailPose ? detailLift : 0;
     invalidate();
   }, [isRock, isDetailPose, detailLift, restingPitch, restingYaw, restingRoll, invalidate]);
+
+  // Click flips this cartridge to its front-facing orientation in place —
+  // no forward pop, it stays flush at the same depth as the rest of the
+  // stack — with a small random roll, as if just set down. Every other
+  // cartridge just springs its Y slot to make room.
+  useEffect(() => {
+    pitchTarget.current = isOpen ? restingPitch + OPEN_PITCH_OFFSET : restingPitch;
+    rollTarget.current = isOpen
+      ? restingRoll + (Math.random() * 2 - 1) * OPEN_ROLL_JITTER_DEG * DEG
+      : restingRoll;
+    depthTarget.current = isDetailPose ? detailLift : 0;
+    restedRef.current = false;
+    invalidate();
+  }, [isOpen, restingPitch, restingRoll, isDetailPose, detailLift, invalidate]);
+
+  // Whichever cartridge is open makes the whole stack reflow — every
+  // cartridge (open or not) springs to its newly assigned Y slot.
+  useEffect(() => {
+    positionYTarget.current = position[1];
+    restedRef.current = false;
+    invalidate();
+  }, [position[1], invalidate]);
 
   useFrame((state, delta) => {
     if (!pivotRef.current) return;
@@ -282,8 +358,8 @@ function CartridgeInner({
     if (restedRef.current && !hoverMotion.current) return;
 
     const dt = Math.min(delta, 1 / 30);
-    const stiffness = 90;
-    const damping = 14;
+    const stiffness = 360;
+    const damping = 28;
     const motionStiffness = hoverMotion.current ? 160 : stiffness;
     const motionDamping = hoverMotion.current ? 18 : damping;
 
@@ -311,6 +387,12 @@ function CartridgeInner({
     depthPosition.current += depthVelocity.current * dt;
     pivotRef.current.position.z = depthPosition.current;
 
+    const positionYDisplacement = positionY.current - positionYTarget.current;
+    positionYVelocity.current +=
+      (-motionStiffness * positionYDisplacement - motionDamping * positionYVelocity.current) * dt;
+    positionY.current += positionYVelocity.current * dt;
+    pivotRef.current.position.y = positionY.current;
+
     const EPS_POS = 1e-5;
     const EPS_VEL = 1e-4;
     const settled =
@@ -321,7 +403,9 @@ function CartridgeInner({
       Math.abs(pitchDisplacement) < EPS_POS &&
       Math.abs(pitchVelocity.current) < EPS_VEL &&
       Math.abs(depthDisplacement) < EPS_POS &&
-      Math.abs(depthVelocity.current) < EPS_VEL;
+      Math.abs(depthVelocity.current) < EPS_VEL &&
+      Math.abs(positionYDisplacement) < EPS_POS &&
+      Math.abs(positionYVelocity.current) < EPS_VEL;
 
     if (settled) {
       if (!restedRef.current) {
@@ -329,10 +413,12 @@ function CartridgeInner({
         rollAngle.current = rollTarget.current;
         pitchAngle.current = pitchTarget.current;
         depthPosition.current = depthTarget.current;
+        positionY.current = positionYTarget.current;
         pivotRef.current.rotation.y = yawAngle.current;
         pivotRef.current.rotation.z = rollAngle.current;
         pivotRef.current.rotation.x = pitchAngle.current;
         pivotRef.current.position.z = depthPosition.current;
+        pivotRef.current.position.y = positionY.current;
         hoverMotion.current = false;
         restedRef.current = true;
         invalidate();
@@ -346,10 +432,31 @@ function CartridgeInner({
   return (
     <group
       ref={pivotRef}
-      position={[position[0], position[1], isDetailPose ? detailLift : 0]}
+      position={[position[0], positionY.current, isDetailPose ? detailLift : 0]}
       rotation={[restingPitch, restingYaw, restingRoll]}
     >
       <primitive object={instance} position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]} />
+      {(onHoverChange || onToggleOpen) && (
+        <mesh
+          geometry={CARTRIDGE_HITBOX_GEOMETRY}
+          onPointerEnter={(event) => {
+            event.stopPropagation();
+            gl.domElement.style.cursor = "pointer";
+            onHoverChange?.(true);
+          }}
+          onPointerLeave={(event) => {
+            event.stopPropagation();
+            gl.domElement.style.cursor = "auto";
+            onHoverChange?.(false);
+          }}
+          onClick={(event) => {
+            event.stopPropagation();
+            onToggleOpen?.();
+          }}
+        >
+          <meshBasicMaterial visible={false} />
+        </mesh>
+      )}
     </group>
   );
 }
@@ -384,11 +491,15 @@ function CartridgePan() {
     const direction = camera.position.clone().sub(center).normalize();
     const visibleHalfWidth = distance * Math.tan((camera.fov * DEG) / 2) * camera.aspect;
     const offset = visibleHalfWidth * CAMERA_PAN_FRACTION;
+    const visibleHalfHeight = distance * Math.tan((camera.fov * DEG) / 2);
+    const verticalOffset = visibleHalfHeight * CAMERA_VERTICAL_PAN_FRACTION;
 
     const camPos = center.clone().addScaledVector(direction, distance);
     camPos.x -= offset;
+    camPos.y += verticalOffset;
     const target = center.clone();
     target.x -= offset;
+    target.y += verticalOffset;
 
     bounds.moveTo(camPos).lookAt({ target });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -420,7 +531,29 @@ function CartridgeSceneTextures({
 }) {
   const { scene } = useGLTF("/models/famicom_cartridge.glb");
   const textures = useTexture(labelUrls);
-  const { gl, invalidate } = useThree();
+  const { gl, invalidate, camera, size } = useThree();
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  // Contiguous Y slots: everyone gets ROW_PITCH except the open cartridge,
+  // which gets OPEN_HEIGHT — the rest spring apart to make room. Closed, the
+  // whole stack is centered; open, the whole arrangement is shifted so the
+  // open cartridge always lands at the same fixed pixel offset from the
+  // canvas top, however tall it is or wherever it sits in the stack.
+  const yPositions = useMemo(() => {
+    const heights = layout.map((_, i) => (i === openIndex ? OPEN_HEIGHT : ROW_PITCH));
+    const total = heights.reduce((sum, h) => sum + h, 0);
+    let cursor = total / 2;
+    const centered = heights.map((h) => {
+      const center = cursor - h / 2;
+      cursor -= h;
+      return center;
+    });
+    if (openIndex === null) return centered;
+    const openWorldY = pixelYToWorldY(camera, OPEN_TOP_OFFSET_PX, size.height, 0);
+    const shift = openWorldY - centered[openIndex];
+    return centered.map((y) => y + shift);
+  }, [layout, openIndex, camera, size.height]);
 
   const textureByLabel = useMemo(() => {
     const list = Array.isArray(textures) ? textures : [textures];
@@ -458,6 +591,13 @@ function CartridgeSceneTextures({
         <planeGeometry args={[0.8, 0.8]} />
         <shadowMaterial transparent opacity={shadowOpacity} depthWrite={false} />
       </mesh>
+      {/* Click-catcher behind everything: clicking empty canvas closes whichever
+          cartridge is open. Cartridge hitboxes stopPropagation, so this only
+          fires on genuine misses. */}
+      <mesh position={[0, 0, -1]} onClick={() => setOpenIndex(null)}>
+        <planeGeometry args={[20, 20]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      </mesh>
       <Bounds fit clip margin={margin} maxDuration={0.001}>
         <CartridgePan />
         <group>
@@ -465,7 +605,7 @@ function CartridgeSceneTextures({
             <CartridgeInner
               key={i}
               scene={scene}
-              position={c.position}
+              position={[c.position[0], yPositions[i]]}
               color={c.color}
               labelTexture={textureByLabel.get(c.label)!}
               restingYaw={c.restingYaw}
@@ -476,8 +616,27 @@ function CartridgeSceneTextures({
               detailLift={detailLift}
               shellOpacity={c.shellOpacity}
               renderOrderBase={i * 10}
+              onHoverChange={(hovered) => setHoveredIndex(hovered ? i : null)}
+              isOpen={i === openIndex}
+              onToggleOpen={() => setOpenIndex((cur) => (cur === i ? null : i))}
             />
           ))}
+          {hoveredIndex !== null && (
+            <Html
+              position={[
+                layout[hoveredIndex].position[0] - CARTRIDGE_WIDTH / 2 - HOVER_LABEL_GAP,
+                yPositions[hoveredIndex],
+                0,
+              ]}
+              style={{ pointerEvents: "none" }}
+            >
+              <div className="-translate-x-full -translate-y-1/2 whitespace-nowrap text-right text-sm font-medium leading-tight">
+                Company
+                <br />
+                0000 - 0000
+              </div>
+            </Html>
+          )}
         </group>
       </Bounds>
       <Environment preset="studio" environmentIntensity={0.6} resolution={128} />
@@ -628,7 +787,7 @@ export default function CartridgeViewer({
   );
 
   return (
-    <div className="relative left-1/2 right-1/2 -mx-[50vw] w-screen h-[420px] lg:h-[640px] overflow-hidden border border-[magenta]">
+    <div className="relative left-1/2 right-1/2 -mx-[50vw] w-screen h-[580px] overflow-hidden border border-[magenta]">
       <Canvas
         camera={{ fov: 20 }}
         dpr={dpr}
