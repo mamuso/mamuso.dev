@@ -33,7 +33,9 @@ This audit was performed against the Next.js 16 / React 19 codebase in August 20
 
 ## 5. Split up `CartridgeViewer.tsx`
 
-The viewer is over 900 lines and currently mixes camera framing, model/material preparation, animation state, layout, and interaction. Extract those responsibilities into focused modules or hooks. Remove the remaining `Company / 0000 - 0000` placeholder labels and magenta debug border when their replacements are ready.
+**Status:** Implemented in this cleanup.
+
+The viewer was split into focused modules for camera framing, model/material preparation, animation state, stack layout, cartridge interaction, and scene composition. The placeholder company labels and their reserved mobile layout gap remain available for the upcoming real content; the magenta debug border was removed.
 
 ## 6. Make the 3D interaction accessible
 
