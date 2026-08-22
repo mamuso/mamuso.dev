@@ -121,6 +121,8 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
   aspect: 720 / 760,
   panFraction: 0.75,
   verticalPanFraction: -0.22,
+  // 100px lower than the OPEN_TOP_OFFSET_PX default.
+  openTopOffsetPx: 240,
 };
 export const CAMERA_PRESET_SMALL: CameraPreset = {
   margin: 1.7,
@@ -661,6 +663,11 @@ function CartridgeSceneTextures({
     cameraPreset.openBottomGapPx,
   ]);
 
+  // On non-compact (larger) breakpoints, the side label sticks to whichever
+  // cartridge is open even once the pointer leaves it — hover still takes
+  // over for previewing a different cartridge in the meantime.
+  const sideLabelIndex = hoveredIndex ?? openIndex;
+
   const textureByLabel = useMemo(() => {
     const list = Array.isArray(textures) ? textures : [textures];
     const map = new Map<string, THREE.Texture>();
@@ -726,11 +733,11 @@ function CartridgeSceneTextures({
               onToggleOpen={() => setOpenIndex((cur) => (cur === i ? null : i))}
             />
           ))}
-          {!cameraPreset.compactLabels && hoveredIndex !== null && (
+          {!cameraPreset.compactLabels && sideLabelIndex !== null && (
             <Html
               position={[
-                layout[hoveredIndex].position[0] - CARTRIDGE_WIDTH / 2 - HOVER_LABEL_GAP,
-                yPositions[hoveredIndex],
+                layout[sideLabelIndex].position[0] - CARTRIDGE_WIDTH / 2 - HOVER_LABEL_GAP,
+                yPositions[sideLabelIndex],
                 0,
               ]}
               style={{ pointerEvents: "none" }}
