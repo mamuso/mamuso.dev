@@ -25,6 +25,8 @@ const OPEN_PITCH_OFFSET = -Math.PI / 2;
 const OPEN_ROLL_JITTER_DEG = 3;
 // However tall the open cartridge is, or which one it is, pin it to the
 // same fixed pixel offset from the canvas top so it never grows past frame.
+// Per-preset override lives on CameraPreset.openTopOffsetPx; this is the
+// fallback when a preset doesn't set one.
 const OPEN_TOP_OFFSET_PX = 140;
 
 /** World Y, on the world-X=0/world-Z=planeZ plane, that projects to a given
@@ -102,6 +104,9 @@ export type CameraPreset = {
   aspect: number;
   panFraction?: number;
   verticalPanFraction?: number;
+  openTopOffsetPx?: number;
+  openBottomGapPx?: number;
+  compactLabels?: boolean;
 };
 // At this reference aspect (<1, width-dominant fit), panFraction is
 // crop-safe across the *whole* large breakpoint (not just right at 720px)
@@ -121,6 +126,17 @@ export const CAMERA_PRESET_SMALL: CameraPreset = {
   margin: 1.7,
   aspect: 390 / 580,
   panFraction: 0,
+  verticalPanFraction: 0.1,
+  // Mobile's cartridges rest lower in frame than desktop's, so an opened
+  // cartridge needs more headroom to land clear of the stack below it.
+  openTopOffsetPx: 200,
+  // Room below the opened cartridge, clear of the cartridges beneath it, to
+  // later hold text — mobile only.
+  openBottomGapPx: 50,
+  // Mobile shows the company/years label under the open cartridge instead
+  // of beside the hovered one — there's no room for a side label, and hover
+  // isn't a mobile concept anyway.
+  compactLabels: true,
 };
 
 import { CARTRIDGES } from "@/data/cartridges";
@@ -608,21 +624,42 @@ function CartridgeSceneTextures({
   // which gets OPEN_HEIGHT — the rest spring apart to make room. Closed, the
   // whole stack is centered; open, the whole arrangement is shifted so the
   // open cartridge always lands at the same fixed pixel offset from the
-  // canvas top, however tall it is or wherever it sits in the stack.
-  const yPositions = useMemo(() => {
+  // canvas top, however tall it is or wherever it sits in the stack. On
+  // presets with openBottomGapPx set, an extra gap is inserted right after
+  // the open cartridge's slot (pushing only the cartridges below it further
+  // down) to leave room for text under the open cartridge.
+  const { yPositions, openLabelY } = useMemo(() => {
+    const openTopOffsetPx = cameraPreset.openTopOffsetPx ?? OPEN_TOP_OFFSET_PX;
+    const openBottomGapPx = cameraPreset.openBottomGapPx ?? 0;
+    const extraBottomGap =
+      openIndex !== null && openBottomGapPx > 0
+        ? pixelYToWorldY(camera, openTopOffsetPx, size.height, 0) -
+          pixelYToWorldY(camera, openTopOffsetPx + openBottomGapPx, size.height, 0)
+        : 0;
     const heights = layout.map((_, i) => (i === openIndex ? OPEN_HEIGHT : ROW_PITCH));
-    const total = heights.reduce((sum, h) => sum + h, 0);
+    const total = heights.reduce((sum, h) => sum + h, 0) + extraBottomGap;
     let cursor = total / 2;
-    const centered = heights.map((h) => {
+    const centered = heights.map((h, i) => {
       const center = cursor - h / 2;
       cursor -= h;
+      if (i === openIndex) cursor -= extraBottomGap;
       return center;
     });
-    if (openIndex === null) return centered;
-    const openWorldY = pixelYToWorldY(camera, OPEN_TOP_OFFSET_PX, size.height, 0);
+    if (openIndex === null) return { yPositions: centered, openLabelY: 0 };
+    const openWorldY = pixelYToWorldY(camera, openTopOffsetPx, size.height, 0);
     const shift = openWorldY - centered[openIndex];
-    return centered.map((y) => y + shift);
-  }, [layout, openIndex, camera, size.height]);
+    // A bit into the extra gap carved out below the open cartridge's slot,
+    // biased toward the cartridge rather than centered in the gap.
+    const labelY = centered[openIndex] - OPEN_HEIGHT / 2 - extraBottomGap * 0.3 + shift;
+    return { yPositions: centered.map((y) => y + shift), openLabelY: labelY };
+  }, [
+    layout,
+    openIndex,
+    camera,
+    size.height,
+    cameraPreset.openTopOffsetPx,
+    cameraPreset.openBottomGapPx,
+  ]);
 
   const textureByLabel = useMemo(() => {
     const list = Array.isArray(textures) ? textures : [textures];
@@ -689,7 +726,7 @@ function CartridgeSceneTextures({
               onToggleOpen={() => setOpenIndex((cur) => (cur === i ? null : i))}
             />
           ))}
-          {hoveredIndex !== null && (
+          {!cameraPreset.compactLabels && hoveredIndex !== null && (
             <Html
               position={[
                 layout[hoveredIndex].position[0] - CARTRIDGE_WIDTH / 2 - HOVER_LABEL_GAP,
@@ -699,6 +736,18 @@ function CartridgeSceneTextures({
               style={{ pointerEvents: "none" }}
             >
               <div className="-translate-x-full -translate-y-1/2 whitespace-nowrap text-right text-sm font-medium leading-tight">
+                Company
+                <br />
+                0000 - 0000
+              </div>
+            </Html>
+          )}
+          {cameraPreset.compactLabels && openIndex !== null && (
+            <Html
+              position={[layout[openIndex].position[0], openLabelY, 0]}
+              style={{ pointerEvents: "none" }}
+            >
+              <div className="-translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-center text-sm font-medium leading-tight">
                 Company
                 <br />
                 0000 - 0000
