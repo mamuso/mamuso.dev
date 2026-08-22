@@ -1,4 +1,4 @@
-import { BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
+import { BLOG_TITLE, BLOG_SUBTITLE, getPostYear } from '@/lib/constants'
 import { getAllPosts } from '@/lib/api'
 import { PostType } from '@/lib/types'
 import PostHome from '@/app/components/PostHome'
@@ -16,7 +16,7 @@ const allPosts: PostType[] = getAllPosts(['title', 'date', 'slug', 'category'])
 
 export default function Posts() {
   const postsByYear: { [key: number]: PostType[] } = allPosts.reduce((acc: { [key: number]: PostType[] }, post) => {
-    const year = new Date(post.date).getFullYear()
+    const year = getPostYear(post.date)
     if (!acc[year]) {
       acc[year] = []
     }

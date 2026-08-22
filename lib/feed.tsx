@@ -3,7 +3,7 @@ import { Feed } from 'feed'
 import path from 'path'
 import { marked } from 'marked'
 import matter from 'gray-matter'
-import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from './constants'
+import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE, parsePostDate } from './constants'
 
 interface FeedPost {
   slug: string
@@ -23,7 +23,7 @@ const posts = fs
     const { data, content } = matter(postContent)
     return { ...data, slug: slug, body: content } as FeedPost
   })
-  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  .sort((a, b) => parsePostDate(b.date).getTime() - parsePostDate(a.date).getTime())
 
 const renderer = new marked.Renderer()
 
@@ -73,7 +73,7 @@ const main = () => {
     feed.addItem({
       title: post.title,
       description: description,
-      date: new Date(post?.date),
+      date: parsePostDate(post.date),
       author: [
         {
           name: 'Manuel Muñoz Solera',

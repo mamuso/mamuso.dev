@@ -29,7 +29,9 @@ This audit was performed against the Next.js 16 / React 19 codebase in August 20
 
 ## 4. Fix timezone-sensitive post dates
 
-`new Date('YYYY-MM-DD')` is parsed as UTC and can display the previous calendar day in negative UTC offsets. Parse post dates as local calendar dates or format them explicitly in UTC. Cover this with tests running in more than one timezone.
+**Status:** Implemented in this cleanup.
+
+Post dates are parsed and formatted explicitly as UTC calendar dates, including year grouping, Open Graph descriptions, and feed timestamps. Tests cover the behavior in both `America/Los_Angeles` and `Asia/Tokyo`.
 
 ## 5. Split up `CartridgeViewer.tsx`
 

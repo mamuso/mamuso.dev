@@ -1,4 +1,4 @@
-import { BLOG_SUBTITLE, BLOG_TITLE } from '@/lib/constants'
+import { BLOG_SUBTITLE, BLOG_TITLE, formatPostDate } from '@/lib/constants'
 import { getPostBySlug, hasPostSlug } from '@/lib/api'
 import { ImageResponse } from 'next/og'
 import { notFound } from 'next/navigation'
@@ -25,12 +25,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
     const post = getPostBySlug(slug, ['title', 'date'])
     content = {
       title: post.title || 'Notes',
-      description: new Date(`${post.date}T00:00:00`).toLocaleDateString('en-us', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      }),
+      description: formatPostDate(post.date, true),
     }
   }
 
