@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Bounds, Environment, Html, useBounds, useGLTF, useTexture } from "@react-three/drei";
+import { Environment, Html, useGLTF, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import type { Group, Object3D } from "three";
 
@@ -72,12 +72,56 @@ const INTRO_LIFT = 0.05;
 const ROW_PITCH = 0.016;
 
 // Fraction of the visible half-width to pan the camera by, so the stack sits
-// right of center instead of dead center — without changing Bounds' zoom.
+// off-center instead of dead center — without changing the framing distance.
+// Tunable per preset (see CAMERA_PRESET_LARGE/SMALL below). Since it's a
+// fraction of the visible width AT THE REFERENCE ASPECT (not the real one),
+// crop-safety at the reference aspect does NOT by itself guarantee safety at
+// every wider real aspect when the reference aspect is <1 (width-dominant
+// fit) — the required margin has to be solved for directly (see
+// CAMERA_PRESET_LARGE's comment for the safe-panFraction formula at a given
+// margin/reference aspect).
 const CAMERA_PAN_FRACTION = 0.5;
 
-// Fraction of the visible half-height to raise the camera by, so the stack
-// sits a bit lower in frame — leaving headroom above for opened cartridges.
+// Fraction of the visible half-height to shift camera+target by (together,
+// so the look direction doesn't change — a dolly, not a tilt). Since content
+// stays fixed while the viewing window itself shifts, a NEGATIVE fraction
+// (camera+target move down) makes content appear HIGHER/closer to the top;
+// a POSITIVE fraction makes it appear lower.
+// Tunable per preset since the same fraction reads as a much bigger gap on
+// a taller canvas (world-space framing is unchanged, but it's stretched
+// over more pixels) — see CartridgeViewer's h-[580px] lg:h-[760px].
 const CAMERA_VERTICAL_PAN_FRACTION = -0.15;
+
+// Camera framing is computed once from a fixed reference aspect ratio per
+// breakpoint (not the live canvas size), so it never shifts as the window
+// resizes — only when CartridgeStage swaps presets at the 720px breakpoint.
+// Each reference aspect uses that breakpoint's *narrowest* expected width
+// over that breakpoint's canvas height.
+export type CameraPreset = {
+  margin: number;
+  aspect: number;
+  panFraction?: number;
+  verticalPanFraction?: number;
+};
+// At this reference aspect (<1, width-dominant fit), panFraction is
+// crop-safe across the *whole* large breakpoint (not just right at 720px)
+// only when margin*(1-panFraction) >= 1, i.e. panFraction <= 1-1/margin.
+// At margin 2.0 that caps safe panFraction at 0.5. panFraction 0.75
+// deliberately exceeds it (accepted trade-off, not a bug): the stack's
+// right edge crops for real widths in ~720-900px, and is clean from ~900px
+// up. Raise the margin (shrinks cartridges) or the breakpoint floor (raises
+// where "large" kicks in) to close that gap if it ever becomes a problem.
+export const CAMERA_PRESET_LARGE: CameraPreset = {
+  margin: 2.0,
+  aspect: 720 / 760,
+  panFraction: 0.75,
+  verticalPanFraction: -0.22,
+};
+export const CAMERA_PRESET_SMALL: CameraPreset = {
+  margin: 1.7,
+  aspect: 390 / 580,
+  panFraction: 0,
+};
 
 import { CARTRIDGES } from "@/data/cartridges";
 
@@ -472,44 +516,69 @@ export type CartridgeLayoutEntry = {
 };
 
 /**
- * Runs once Bounds has computed its fit (same center/distance it would use
- * for `reset()`), then re-aims the camera at a point offset along world X —
- * a lateral dolly that keeps the same distance/zoom instead of Bounds'
- * default dead-center framing.
+ * Frames its children with a fixed camera transform, computed once from a
+ * fixed reference aspect ratio (`preset.aspect`) rather than the live canvas
+ * size — so the framing never depends on the actual pixel dimensions of the
+ * container, only on the content's own bounding box and the chosen preset.
+ * Mirrors drei's Bounds `fit` math, then applies the same lateral/vertical
+ * dolly CartridgePan used to, so the stack sits right of center instead of
+ * dead center.
  */
-function CartridgePan() {
-  const bounds = useBounds();
+function FixedCameraRig({
+  preset,
+  children,
+}: {
+  preset: CameraPreset;
+  children: React.ReactNode;
+}) {
+  const groupRef = useRef<Group>(null);
   const camera = useThree((state) => state.camera) as THREE.PerspectiveCamera;
+  const invalidate = useThree((state) => state.invalidate);
 
-  // Mount-only: Bounds itself only fits once on mount (no `observe` prop), so
-  // this only needs to run once too. Re-running on later renders would derive
-  // `direction` from camera.position after it's already been offset by a
-  // previous call, compounding the shift into a visible rotation each time —
-  // e.g. on mobile, address-bar show/hide during scroll fires resize events.
-  useEffect(() => {
-    const { center, distance } = bounds.getSize();
-    const direction = camera.position.clone().sub(center).normalize();
-    const visibleHalfWidth = distance * Math.tan((camera.fov * DEG) / 2) * camera.aspect;
-    const offset = visibleHalfWidth * CAMERA_PAN_FRACTION;
-    const visibleHalfHeight = distance * Math.tan((camera.fov * DEG) / 2);
-    const verticalOffset = visibleHalfHeight * CAMERA_VERTICAL_PAN_FRACTION;
+  // Mount-only: content is static, and re-running this on later renders
+  // (e.g. resize events) is exactly the size-dependent behavior this
+  // component exists to avoid.
+  useLayoutEffect(() => {
+    if (!groupRef.current) return;
+    const box3 = new THREE.Box3().setFromObject(groupRef.current);
+    if (box3.isEmpty()) return;
+    const center = box3.getCenter(new THREE.Vector3());
+    const size = box3.getSize(new THREE.Vector3());
+    const maxSize = Math.max(size.x, size.y, size.z);
 
-    const camPos = center.clone().addScaledVector(direction, distance);
+    const halfFov = (camera.fov * DEG) / 2;
+    const fitHeightDistance = maxSize / (2 * Math.tan(halfFov));
+    const fitWidthDistance = fitHeightDistance / preset.aspect;
+    const distance = preset.margin * Math.max(fitHeightDistance, fitWidthDistance);
+
+    const visibleHalfHeight = distance * Math.tan(halfFov);
+    const visibleHalfWidth = visibleHalfHeight * preset.aspect;
+    const offset = visibleHalfWidth * (preset.panFraction ?? CAMERA_PAN_FRACTION);
+    const verticalOffset =
+      visibleHalfHeight * (preset.verticalPanFraction ?? CAMERA_VERTICAL_PAN_FRACTION);
+
+    const camPos = center.clone();
+    camPos.z += distance;
     camPos.x -= offset;
     camPos.y += verticalOffset;
     const target = center.clone();
     target.x -= offset;
     target.y += verticalOffset;
 
-    bounds.moveTo(camPos).lookAt({ target });
+    camera.position.copy(camPos);
+    camera.near = Math.max(0.01, distance - maxSize);
+    camera.far = distance + maxSize * 4;
+    camera.updateProjectionMatrix();
+    camera.lookAt(target);
+    invalidate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return null;
+  return <group ref={groupRef}>{children}</group>;
 }
 
 function CartridgeSceneTextures({
-  margin,
+  cameraPreset,
   layout,
   labelUrls,
   shadowOpacity = 0.14,
@@ -519,7 +588,7 @@ function CartridgeSceneTextures({
   hoverLift = HOVER_LIFT,
   detailLift = DETAIL_LIFT,
 }: {
-  margin: number;
+  cameraPreset: CameraPreset;
   layout: CartridgeLayoutEntry[];
   labelUrls: string[];
   shadowOpacity?: number;
@@ -598,8 +667,7 @@ function CartridgeSceneTextures({
         <planeGeometry args={[20, 20]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
-      <Bounds fit clip margin={margin} maxDuration={0.001}>
-        <CartridgePan />
+      <FixedCameraRig preset={cameraPreset}>
         <group>
           {layout.map((c, i) => (
             <CartridgeInner
@@ -638,14 +706,14 @@ function CartridgeSceneTextures({
             </Html>
           )}
         </group>
-      </Bounds>
+      </FixedCameraRig>
       <Environment preset="studio" environmentIntensity={0.6} resolution={128} />
     </>
   );
 }
 
 export function CartridgeScene({
-  margin,
+  cameraPreset,
   layout,
   shadowOpacity = 0.14,
   shadowPlanePosition,
@@ -654,7 +722,7 @@ export function CartridgeScene({
   hoverLift = HOVER_LIFT,
   detailLift = DETAIL_LIFT,
 }: {
-  margin: number;
+  cameraPreset: CameraPreset;
   layout: CartridgeLayoutEntry[];
   shadowOpacity?: number;
   shadowPlanePosition?: [number, number, number];
@@ -670,7 +738,7 @@ export function CartridgeScene({
 
   return (
     <CartridgeSceneTextures
-      margin={margin}
+      cameraPreset={cameraPreset}
       layout={layout}
       labelUrls={labelUrls}
       shadowOpacity={shadowOpacity}
@@ -756,9 +824,9 @@ useGLTF.preload("/models/famicom_cartridge.glb");
 useTexture.preload(LABEL_URLS);
 
 export default function CartridgeViewer({
-  margin = 1.15,
+  cameraPreset = CAMERA_PRESET_LARGE,
 }: {
-  margin?: number;
+  cameraPreset?: CameraPreset;
 }) {
   const [dpr, setDpr] = useState(1);
 
@@ -787,7 +855,7 @@ export default function CartridgeViewer({
   );
 
   return (
-    <div className="relative left-1/2 right-1/2 -mx-[50vw] w-screen h-[580px] overflow-hidden border border-[magenta]">
+    <div className="relative left-1/2 right-1/2 -mx-[50vw] w-screen h-[580px] min-[720px]:h-[760px] overflow-hidden border border-[magenta]">
       <Canvas
         camera={{ fov: 20 }}
         dpr={dpr}
@@ -802,7 +870,7 @@ export default function CartridgeViewer({
         }}
       >
         <Suspense fallback={null}>
-          <CartridgeScene margin={margin} layout={layout} />
+          <CartridgeScene cameraPreset={cameraPreset} layout={layout} />
         </Suspense>
       </Canvas>
     </div>
