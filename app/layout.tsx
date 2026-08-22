@@ -1,4 +1,5 @@
 import Script from 'next/script'
+import type { Metadata } from 'next'
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../lib/constants'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -26,11 +27,17 @@ const platformDetectionScript = `
 })();
 `
 
-export const metadata = {
-  title: {
-    default: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
+export const metadata: Metadata = {
+  metadataBase: new URL(BLOG_URL),
+  title: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
+  description: BLOG_SUBTITLE,
+  icons: {
+    icon: {
+      url: '/images/favicon.png',
+      type: 'image/png',
+    },
+    shortcut: { url: '/images/favicon.png', type: 'image/png' },
   },
-  description: { default: BLOG_SUBTITLE },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

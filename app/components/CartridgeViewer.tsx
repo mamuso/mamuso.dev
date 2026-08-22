@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, Html, useGLTF, useTexture } from "@react-three/drei";
+import { Environment, Html, useCursor, useGLTF, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import type { Group, Object3D } from "three";
 
@@ -264,9 +264,10 @@ function CartridgeInner({
   const depthPosition = useRef(isDetailPose ? detailLift : 0);
   const depthTarget = useRef(isDetailPose ? detailLift : 0);
   const positionYVelocity = useRef(0);
-  const positionY = useRef(position[1]);
-  const positionYTarget = useRef(position[1]);
-  const hovered = useRef(false);
+  const positionX = position[0];
+  const targetPositionY = position[1];
+  const positionY = useRef(targetPositionY);
+  const positionYTarget = useRef(targetPositionY);
   const hoverMotion = useRef(false);
   const restedRef = useRef(isStatic || !isRock);
   const staticFlipProgress = useRef(0);
@@ -276,9 +277,13 @@ function CartridgeInner({
   useLayoutEffect(() => {
     if (!pivotRef.current || isRock) return;
     pivotRef.current.rotation.set(restingPitch, restingYaw, restingRoll);
-    pivotRef.current.position.z = isDetailPose ? detailLift : 0;
+    pivotRef.current.position.set(
+      positionX,
+      positionY.current,
+      isDetailPose ? detailLift : 0
+    );
     invalidate();
-  }, [isRock, isDetailPose, detailLift, restingPitch, restingYaw, restingRoll, invalidate]);
+  }, [isRock, isDetailPose, detailLift, restingPitch, restingYaw, restingRoll, positionX, invalidate]);
 
   // Click flips this cartridge to its front-facing orientation in place —
   // no forward pop, it stays flush at the same depth as the rest of the
@@ -297,10 +302,10 @@ function CartridgeInner({
   // Whichever cartridge is open makes the whole stack reflow — every
   // cartridge (open or not) springs to its newly assigned Y slot.
   useEffect(() => {
-    positionYTarget.current = position[1];
+    positionYTarget.current = targetPositionY;
     restedRef.current = false;
     invalidate();
-  }, [position[1], invalidate]);
+  }, [targetPositionY, invalidate]);
 
   useFrame((state, delta) => {
     if (!pivotRef.current) return;
@@ -492,23 +497,17 @@ function CartridgeInner({
   });
 
   return (
-    <group
-      ref={pivotRef}
-      position={[position[0], positionY.current, isDetailPose ? detailLift : 0]}
-      rotation={[restingPitch, restingYaw, restingRoll]}
-    >
+    <group ref={pivotRef}>
       <primitive object={instance} position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]} />
       {(onHoverChange || onToggleOpen) && (
         <mesh
           geometry={CARTRIDGE_HITBOX_GEOMETRY}
           onPointerEnter={(event) => {
             event.stopPropagation();
-            gl.domElement.style.cursor = "pointer";
             onHoverChange?.(true);
           }}
           onPointerLeave={(event) => {
             event.stopPropagation();
-            gl.domElement.style.cursor = "auto";
             onHoverChange?.(false);
           }}
           onClick={(event) => {
@@ -550,7 +549,8 @@ function FixedCameraRig({
   children: React.ReactNode;
 }) {
   const groupRef = useRef<Group>(null);
-  const camera = useThree((state) => state.camera) as THREE.PerspectiveCamera;
+  const activeCamera = useThree((state) => state.camera) as THREE.PerspectiveCamera;
+  const cameraRef = useRef(activeCamera);
   const invalidate = useThree((state) => state.invalidate);
 
   // Mount-only: content is static, and re-running this on later renders
@@ -558,6 +558,7 @@ function FixedCameraRig({
   // component exists to avoid.
   useLayoutEffect(() => {
     if (!groupRef.current) return;
+    const camera = cameraRef.current;
     const box3 = new THREE.Box3().setFromObject(groupRef.current);
     if (box3.isEmpty()) return;
     const center = box3.getCenter(new THREE.Vector3());
@@ -621,6 +622,7 @@ function CartridgeSceneTextures({
   const { gl, invalidate, camera, size } = useThree();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  useCursor(hoveredIndex !== null);
 
   // Contiguous Y slots: everyone gets ROW_PITCH except the open cartridge,
   // which gets OPEN_HEIGHT — the rest spring apart to make room. Closed, the

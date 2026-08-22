@@ -5,6 +5,7 @@ import { PostType } from './types'
 import matter from 'gray-matter'
 
 const postsDirectory = join(process.cwd(), 'content/posts/')
+const safeSlugPattern = /^[A-Za-z0-9-]+$/
 
 const getPostSlugs = cache(() => fs.readdirSync(postsDirectory))
 
@@ -27,6 +28,11 @@ const getSortedPostSummaries = cache((): PostSummary[] => {
     })
     .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
 })
+
+export function hasPostSlug(slug: string): boolean {
+  const realSlug = slug.replace(/\.md$/, '')
+  return safeSlugPattern.test(realSlug) && fs.existsSync(join(postsDirectory, `${realSlug}.md`))
+}
 
 export function getPostBySlug(slug: string, fields: string[] = []): PostType {
   const { realSlug, data, content } = getPostData(slug)

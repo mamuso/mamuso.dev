@@ -1,41 +1,16 @@
-import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
+import { BLOG_SUBTITLE } from '@/lib/constants'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { getRecentPosts } from '@/lib/api'
 import PostHome from '@/app/components/PostHome'
+import { createPageMetadata } from '@/lib/metadata'
 
-export const metadata = {
-  metadataBase: new URL('https://mamuso.dev'),
+export const metadata = createPageMetadata({
   title: 'mamuso - manuel muñoz solera',
   description: BLOG_SUBTITLE,
-  canonical: `/`,
-  openGraph: {
-    url: `${BLOG_URL}`,
-    title: `${BLOG_TITLE}`,
-    description: `${BLOG_SUBTITLE}`,
-    images: [
-      {
-        url: `${BLOG_URL}/og/${BLOG_TITLE}/${BLOG_SUBTITLE}/opengraph-image`,
-        width: 1200,
-        height: 600,
-        alt: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
-      },
-    ],
-    site_name: `${BLOG_TITLE}`,
-  },
-  twitter: {
-    handle: '@mamuso',
-    site: '@mamuso',
-    cardType: 'summary_large_image',
-  },
-  icons: {
-    icon: {
-      url: '/images/favicon.png',
-      type: 'image/png',
-    },
-    shortcut: { url: '/images/favicon.png', type: 'image/png' },
-  },
-}
+  path: '/',
+  ogSlug: 'home',
+})
 
 const POSTS_PER_PAGE = 10
 const recentPosts = getRecentPosts(POSTS_PER_PAGE, ['title', 'date', 'slug', 'image', 'category'])

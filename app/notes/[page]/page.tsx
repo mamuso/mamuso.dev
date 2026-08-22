@@ -1,41 +1,22 @@
-import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
+import { BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
 import { getAllPosts, getPostBySlug } from '@/lib/api'
 import Post from '@/app/components/Post'
 import Pagination from '@/app/components/Pagination'
-
-export const metadata = {
-  title: `Notes – ${BLOG_TITLE}`,
-  description: BLOG_SUBTITLE,
-  canonical: `${BLOG_URL}`,
-  openGraph: {
-    url: `${BLOG_URL}`,
-    title: `Notes – ${BLOG_TITLE}`,
-    description: `${BLOG_SUBTITLE}`,
-    images: [
-      {
-        url: `${BLOG_URL}/og/Notes/${BLOG_TITLE}/opengraph-image`,
-        width: 1200,
-        height: 600,
-        alt: `Notes – ${BLOG_TITLE}`,
-      },
-    ],
-    site_name: `${BLOG_TITLE}`,
-  },
-  twitter: {
-    handle: '@mamuso',
-    site: '@mamuso',
-    cardType: 'summary_large_image',
-  },
-  icons: {
-    icon: {
-      url: '/images/favicon.png',
-      type: 'image/png',
-    },
-    shortcut: { url: '/images/favicon.png', type: 'image/png' },
-  },
-}
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { createPageMetadata } from '@/lib/metadata'
 
 const POSTS_PER_PAGE = 20
+type PageProps = { params: Promise<{ page: string }> }
+
+function getPageNumber(value: string, totalPages: number): number {
+  if (!/^\d+$/.test(value)) notFound()
+
+  const page = Number(value)
+  if (!Number.isSafeInteger(page) || page < 1 || page > totalPages) notFound()
+
+  return page
+}
 
 export async function generateStaticParams() {
   const allPosts = getAllPosts(['slug'])
@@ -43,12 +24,25 @@ export async function generateStaticParams() {
   return Array.from({ length: totalPages }, (_, i) => ({ page: String(i + 1) }))
 }
 
-export default async function Posts(props: { params: Promise<{ page: number }> }) {
-  const params = await props.params
-  const page: number = params.page
-
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const allPostsMinimal = getAllPosts(['slug', 'date'])
   const totalPages = Math.ceil(allPostsMinimal.length / POSTS_PER_PAGE)
+  const { page: pageParam } = await params
+  const page = getPageNumber(pageParam, totalPages)
+
+  return createPageMetadata({
+    title: `Notes, page ${page} – ${BLOG_TITLE}`,
+    description: BLOG_SUBTITLE,
+    path: `/notes/${page}`,
+    ogSlug: 'notes',
+  })
+}
+
+export default async function Posts({ params }: PageProps) {
+  const allPostsMinimal = getAllPosts(['slug', 'date'])
+  const totalPages = Math.ceil(allPostsMinimal.length / POSTS_PER_PAGE)
+  const { page: pageParam } = await params
+  const page = getPageNumber(pageParam, totalPages)
 
   const pagePostSlugs = allPostsMinimal.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE)
 

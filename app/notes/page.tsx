@@ -1,40 +1,16 @@
-import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
+import { BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
 import { getAllPosts } from '@/lib/api'
 import { PostType } from '@/lib/types'
 import PostHome from '@/app/components/PostHome'
 import Link from 'next/link'
+import { createPageMetadata } from '@/lib/metadata'
 
-export const metadata = {
+export const metadata = createPageMetadata({
   title: `Notes – ${BLOG_TITLE}`,
   description: BLOG_SUBTITLE,
-  canonical: `${BLOG_URL}`,
-  openGraph: {
-    url: `${BLOG_URL}`,
-    title: `Notes – ${BLOG_TITLE}`,
-    description: `${BLOG_SUBTITLE}`,
-    images: [
-      {
-        url: `${BLOG_URL}/og?title=Notes\&description=${BLOG_TITLE}`,
-        width: 1200,
-        height: 600,
-        alt: `Notes – ${BLOG_TITLE}`,
-      },
-    ],
-    site_name: `${BLOG_TITLE}`,
-  },
-  twitter: {
-    handle: '@mamuso',
-    site: '@mamuso',
-    cardType: 'summary_large_image',
-  },
-  icons: {
-    icon: {
-      url: '/images/favicon.png',
-      type: 'image/png',
-    },
-    shortcut: { url: '/images/favicon.png', type: 'image/png' },
-  },
-}
+  path: '/notes',
+  ogSlug: 'notes',
+})
 
 const allPosts: PostType[] = getAllPosts(['title', 'date', 'slug', 'category'])
 
