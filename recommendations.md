@@ -41,7 +41,9 @@ The viewer was split into focused modules for camera framing, model/material pre
 
 ## 6. Make the 3D interaction accessible
 
-The cartridges are pointer-operated meshes without keyboard or semantic equivalents. Add named DOM controls or an accessible overlay, provide a meaningful fallback, and honor `prefers-reduced-motion`. Once the viewer's effects are confirmed idempotent, re-enable React Strict Mode.
+**Status:** Implemented in this cleanup.
+
+The viewer now has named, keyboard-accessible DOM controls synchronized with the 3D interaction, visible focus states, live selection status, and meaningful loading/WebGL fallbacks. Motion snaps to its end state when `prefers-reduced-motion` is enabled. Effects clean up subscriptions and avoid repeating random state during Strict Mode checks, so React Strict Mode is enabled again.
 
 ## 7. Replace unsafe content typing
 

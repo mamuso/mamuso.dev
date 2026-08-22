@@ -24,6 +24,7 @@ export type CartridgeTiltAndShift = {
 };
 
 export type CartridgeLayoutEntry = {
+  name: string;
   color: string;
   label: string;
   position: [number, number];
@@ -36,6 +37,9 @@ export type CartridgeLayoutEntry = {
 export type CartridgeSceneProps = {
   cameraPreset: CameraPreset;
   layout: CartridgeLayoutEntry[];
+  openIndex: number | null;
+  onOpenIndexChange: (index: number | null) => void;
+  reducedMotion?: boolean;
   shadowOpacity?: number;
   shadowPlanePosition?: [number, number, number];
   lightPosition?: [number, number, number];

@@ -1,14 +1,14 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { CartridgeFallback } from './cartridge/CartridgeFallback'
 
 const CartridgeStageDynamic = dynamic(() => import('./CartridgeStage'), {
   ssr: false,
   loading: () => (
-    <div
-      className="relative left-1/2 right-1/2 -mx-[50vw] w-screen h-[420px] lg:h-[640px]"
-      aria-hidden="true"
-    />
+    <div className="relative left-1/2 right-1/2 -mx-[50vw] h-[580px] w-screen min-[720px]:h-[760px]">
+      <CartridgeFallback />
+    </div>
   ),
 })
 

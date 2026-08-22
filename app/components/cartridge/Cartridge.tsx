@@ -20,6 +20,7 @@ type CartridgeProps = {
   motion?: CartridgeMotion;
   hoverLift?: number;
   detailLift?: number;
+  reducedMotion?: boolean;
   shellOpacity?: number;
   renderOrderBase?: number;
   onHoverChange?: (hovered: boolean) => void;
@@ -37,6 +38,7 @@ export function Cartridge({
   restingPitch = 0,
   motion = "still",
   detailLift = DETAIL_LIFT,
+  reducedMotion = false,
   shellOpacity,
   renderOrderBase = 0,
   onHoverChange,
@@ -76,6 +78,7 @@ export function Cartridge({
     motion,
     detailLift,
     isOpen,
+    reducedMotion,
   });
 
   return (

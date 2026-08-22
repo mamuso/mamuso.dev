@@ -32,6 +32,7 @@ type MotionOptions = {
   motion: CartridgeMotion;
   detailLift: number;
   isOpen: boolean;
+  reducedMotion: boolean;
 };
 
 /**
@@ -46,6 +47,7 @@ export function useCartridgeMotion({
   motion,
   detailLift,
   isOpen,
+  reducedMotion,
 }: MotionOptions) {
   const invalidate = useThree((state) => state.invalidate);
   const isRock = motion === "rock";
@@ -77,6 +79,8 @@ export function useCartridgeMotion({
   const staticFlipProgress = useRef(0);
   const staticFlipDirection = useRef<0 | 1 | -1>(0);
   const introStart = useRef<number | null>(null);
+  const previousIsOpen = useRef(isOpen);
+  const openRollOffset = useRef(0);
 
   useLayoutEffect(() => {
     if (!pivotRef.current) return;
@@ -97,14 +101,39 @@ export function useCartridgeMotion({
   // Opening flips the cartridge face-up with a small natural roll. Closing
   // returns it to its resting pitch and roll.
   useEffect(() => {
+    if (isOpen && !previousIsOpen.current) {
+      openRollOffset.current =
+        (Math.random() * 2 - 1) * OPEN_ROLL_JITTER_DEG * DEG;
+    } else if (!isOpen) {
+      openRollOffset.current = 0;
+    }
+    previousIsOpen.current = isOpen;
+
     pitchTarget.current = isOpen
       ? restingPitch + OPEN_PITCH_OFFSET
       : restingPitch;
     rollTarget.current = isOpen
-      ? restingRoll +
-        (Math.random() * 2 - 1) * OPEN_ROLL_JITTER_DEG * DEG
+      ? restingRoll + openRollOffset.current
       : restingRoll;
     depthTarget.current = isDetailPose ? detailLift : 0;
+
+    if (reducedMotion && pivotRef.current) {
+      pitchAngle.current = isIntro ? INTRO_END_PITCH : pitchTarget.current;
+      yawAngle.current = restingYaw;
+      rollAngle.current = rollTarget.current;
+      depthPosition.current = isIntro ? INTRO_LIFT : depthTarget.current;
+      pitchVelocity.current = 0;
+      yawVelocity.current = 0;
+      rollVelocity.current = 0;
+      depthVelocity.current = 0;
+      pivotRef.current.rotation.set(
+        pitchAngle.current,
+        yawAngle.current,
+        rollAngle.current
+      );
+      pivotRef.current.position.z = depthPosition.current;
+    }
+
     restedRef.current = false;
     invalidate();
   }, [
@@ -114,18 +143,28 @@ export function useCartridgeMotion({
     isOpen,
     restingPitch,
     restingRoll,
+    restingYaw,
+    reducedMotion,
+    isIntro,
   ]);
 
   // Reflow every cartridge toward its new stack slot when one opens.
   useEffect(() => {
     positionYTarget.current = targetPositionY;
+
+    if (reducedMotion && pivotRef.current) {
+      positionY.current = targetPositionY;
+      positionYVelocity.current = 0;
+      pivotRef.current.position.y = targetPositionY;
+    }
+
     restedRef.current = false;
     invalidate();
-  }, [invalidate, targetPositionY]);
+  }, [invalidate, reducedMotion, targetPositionY]);
 
   useFrame((state, delta) => {
     const pivot = pivotRef.current;
-    if (!pivot || isFrozen) return;
+    if (!pivot || isFrozen || reducedMotion) return;
 
     if (isIntro) {
       if (introStart.current === null) {

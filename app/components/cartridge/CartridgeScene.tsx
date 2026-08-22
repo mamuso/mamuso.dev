@@ -31,6 +31,9 @@ export function CartridgeScene({
   motion = "still",
   hoverLift = HOVER_LIFT,
   detailLift = DETAIL_LIFT,
+  openIndex,
+  onOpenIndexChange,
+  reducedMotion = false,
 }: CartridgeSceneProps) {
   const labelUrls = useMemo(
     () => [...new Set(layout.map((cartridge) => cartridge.label))],
@@ -48,6 +51,9 @@ export function CartridgeScene({
       motion={motion}
       hoverLift={hoverLift}
       detailLift={detailLift}
+      openIndex={openIndex}
+      onOpenIndexChange={onOpenIndexChange}
+      reducedMotion={reducedMotion}
     />
   );
 }
@@ -62,12 +68,14 @@ function CartridgeSceneAssets({
   motion,
   hoverLift,
   detailLift,
+  openIndex,
+  onOpenIndexChange,
+  reducedMotion,
 }: Required<CartridgeSceneProps> & { labelUrls: string[] }) {
   const { scene } = useGLTF("/models/famicom_cartridge.glb");
   const textures = useTexture(labelUrls);
   const { gl, invalidate, camera, size } = useThree();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
   useCursor(hoveredIndex !== null);
 
   const { yPositions, openLabelY } = useCartridgeStackLayout({
@@ -118,7 +126,7 @@ function CartridgeSceneAssets({
           depthWrite={false}
         />
       </mesh>
-      <mesh position={[0, 0, -1]} onClick={() => setOpenIndex(null)}>
+      <mesh position={[0, 0, -1]} onClick={() => onOpenIndexChange(null)}>
         <planeGeometry args={[20, 20]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
@@ -137,6 +145,7 @@ function CartridgeSceneAssets({
               motion={motion}
               hoverLift={hoverLift}
               detailLift={detailLift}
+              reducedMotion={reducedMotion}
               shellOpacity={cartridge.shellOpacity}
               renderOrderBase={index * 10}
               onHoverChange={(hovered) =>
@@ -144,9 +153,7 @@ function CartridgeSceneAssets({
               }
               isOpen={index === openIndex}
               onToggleOpen={() =>
-                setOpenIndex((current) =>
-                  current === index ? null : index
-                )
+                onOpenIndexChange(openIndex === index ? null : index)
               }
             />
           ))}
