@@ -12,6 +12,7 @@ import {
 import * as THREE from "three";
 import { CameraRig } from "./CameraRig";
 import { Cartridge } from "./Cartridge";
+import { GrainEffect } from "./GrainEffect";
 import {
   CARTRIDGE_WIDTH,
   DETAIL_LIFT,
@@ -194,6 +195,7 @@ function CartridgeSceneAssets({
         environmentIntensity={0.6}
         resolution={128}
       />
+      <GrainEffect />
     </>
   );
 }
