@@ -1,11 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import type { Object3D } from "three";
 import { CARTRIDGE_HITBOX_GEOMETRY, DETAIL_LIFT } from "./constants";
-import { createCartridgeInstance } from "./materials";
+import {
+  createCartridgeInstance,
+  disposeCartridgeInstance,
+} from "./materials";
 import { useCartridgeMotion } from "./useCartridgeMotion";
 import type { CartridgeMotion } from "./types";
 
@@ -68,6 +71,10 @@ export function Cartridge({
   const modelCenter = useMemo(
     () =>
       new THREE.Box3().setFromObject(instance).getCenter(new THREE.Vector3()),
+    [instance]
+  );
+  useEffect(
+    () => () => disposeCartridgeInstance(instance),
     [instance]
   );
   const pivotRef = useCartridgeMotion({

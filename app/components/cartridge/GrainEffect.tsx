@@ -8,7 +8,7 @@ import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 
-const DEFAULT_GRAIN_INTENSITY = 0.03;
+const DEFAULT_GRAIN_INTENSITY = 0.04;
 
 const GRAIN_SHADER = {
   uniforms: {

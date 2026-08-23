@@ -82,7 +82,10 @@ export default function CartridgeViewer({
         performance={{ min: 0.75, max: 1, debounce: 200 }}
         shadows={{ type: THREE.PCFShadowMap }}
         gl={{
-          antialias: true,
+          // GrainEffect already renders the scene into an up-to-4x multisampled
+          // target. Multisampling the final full-screen pass again wastes
+          // GPU memory without improving edge quality.
+          antialias: false,
           powerPreference: "high-performance",
           toneMapping: THREE.ACESFilmicToneMapping,
           outputColorSpace: THREE.SRGBColorSpace,

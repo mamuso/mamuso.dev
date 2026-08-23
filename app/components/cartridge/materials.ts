@@ -79,6 +79,22 @@ export function configureLabelTexture(
   renderer.initTexture(texture);
 }
 
+/**
+ * Cloned cartridge materials are owned by their instance. The model geometry
+ * and textures remain shared, so only release the per-instance materials when
+ * a viewer unmounts.
+ */
+export function disposeCartridgeInstance(instance: Object3D) {
+  instance.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+
+    const materials = Array.isArray(object.material)
+      ? object.material
+      : [object.material];
+    for (const material of materials) material.dispose();
+  });
+}
+
 function isLabelArtworkMaterial(material: THREE.Material) {
   return (
     material.name === "Label (Artwork)" ||
