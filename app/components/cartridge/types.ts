@@ -25,6 +25,8 @@ export type CartridgeTiltAndShift = {
 
 export type CartridgeLayoutEntry = {
   name: string;
+  company: string;
+  period?: string;
   color: string;
   label: string;
   position: [number, number];

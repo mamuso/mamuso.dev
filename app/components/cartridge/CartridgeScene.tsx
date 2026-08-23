@@ -170,9 +170,10 @@ function CartridgeSceneAssets({
               style={{ pointerEvents: "none" }}
             >
               <div className="-translate-x-full -translate-y-1/2 whitespace-nowrap text-right text-sm font-medium leading-tight">
-                Company
-                <br />
-                0000 - 0000
+                {layout[sideLabelIndex].company}
+                <span className="block font-mono">
+                  {layout[sideLabelIndex].period ?? "0000 - 0000"}
+                </span>
               </div>
             </Html>
           )}
@@ -182,9 +183,10 @@ function CartridgeSceneAssets({
               style={{ pointerEvents: "none" }}
             >
               <div className="-translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-center text-sm font-medium leading-tight">
-                Company
-                <br />
-                0000 - 0000
+                {layout[openIndex].company}
+                <span className="block font-mono">
+                  {layout[openIndex].period ?? "0000 - 0000"}
+                </span>
               </div>
             </Html>
           )}
