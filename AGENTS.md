@@ -25,11 +25,10 @@ caveats are captured here.
 - A one-time entry in the agent's `~/.bashrc` prepends nvm's Node 24 `bin`, so login/interactive shells (including tmux sessions) get Node 24. Run `pnpm dev` / `pnpm build` from a login shell (e.g. `bash -l`) so Node 24 is active.
 - `pnpm` is installed under Node 24 (via `npm i -g pnpm@10`). `pnpm install` also works under Node 22 (native deps are N-API/ABI-stable), which is why the update script does not force a Node switch.
 
-### Listing pages cache the post list at module load (content-editing gotcha)
+### Listing pages read content during rendering
 
-- The homepage (`/`) and `/notes` build their post list from a top-level `const` + React `cache()` in `lib/api.tsx`, evaluated once when the module first loads.
-- Newly added or edited markdown files in `content/posts/` do NOT appear on those listing pages until the dev server is restarted.
-- Individual `/note/[slug]` pages read per-request, so they reflect new/edited content immediately.
+- The homepage (`/`) and `/notes` read their post lists inside their Server Component functions, so development requests see content changes without a server restart.
+- Production listings opt into indefinite revalidation because each deployment is built from the content commit pinned by the parent repository.
 
 ### Content pipeline scripts
 

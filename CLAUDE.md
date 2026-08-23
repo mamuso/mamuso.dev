@@ -1,113 +1,74 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file gives coding agents the repository-specific context needed to work on mamuso.dev.
 
-## Project Overview
+## Project overview
 
-This is a Next.js-based personal website and blog (mamuso.dev) featuring posts, photos, and an RSS feed. Content is stored in a separate git submodule repository, and the site uses a build pipeline to process photos, generate RSS feeds, and copy assets before deployment.
+mamuso.dev is a Next.js 16 App Router site running React 19. It is a filesystem-backed personal journal with notes, photography, an Atom feed, and a client-side 3D cartridge viewer. There is no database, authentication, API service, or required environment configuration.
 
-## Common Commands
+Content and source images live in the public `content/` git submodule. The application validates Markdown frontmatter and reads content directly from the filesystem in Server Components and build scripts.
 
-### Development
+## Requirements and commands
+
+Use Node.js 24 and pnpm 10.
+
 ```bash
-pnpm dev              # Start development server with Turbopack
-pnpm build            # Checkout pinned content, process assets, generate RSS, and build for production
-pnpm start            # Start production server
-pnpm lint             # Run Next.js linting
+pnpm dev                # Start the Turbopack development server on localhost:3000
+pnpm build              # Check out pinned content, copy assets, generate RSS, and build for production
+pnpm start              # Serve a production build
+pnpm lint               # Run ESLint
+pnpm test               # Run date tests in two timezones and validate content frontmatter
+pnpm run assets         # Copy content/assets to public/assets
+pnpm run rss            # Generate public/feed.xml
+pnpm run photos         # Process previously unprocessed photo originals
+pnpm run content:update # Intentionally advance the content submodule
 ```
 
-### Content Processing
+`pnpm build` runs `git submodule update --init`, so it always uses the content commit pinned by the parent repository. Do not add `--remote` to the build. Use `pnpm run content:update`, review the result, and commit the changed gitlink when an intentional content update is needed.
+
+For development, initialize the submodule and copy its assets before starting the app:
+
 ```bash
-pnpm run assets       # Copy assets from content/assets to public/assets
-pnpm run rss          # Generate RSS feed at public/feed.xml
-pnpm run photos       # Process new photos from content/assets/originals/
-pnpm run content:update # Explicitly update content from its configured remote branch
+git submodule update --init
+pnpm install
+pnpm run assets
+pnpm dev
 ```
 
-**Important**: The `photos` script processes photos by:
-1. Reading EXIF data from originals in `content/assets/originals/`
-2. Generating resized versions in `content/assets/feed/`
-3. Creating markdown files in `content/posts/` with photo metadata
-4. Only processing photos that haven't been processed yet (checks for existing markdown files)
+## Routes and rendering
 
-## Architecture
+- `app/page.tsx` — homepage with recent notes
+- `app/notes/page.tsx` — complete note archive grouped by year
+- `app/notes/[page]/page.tsx` — paginated note archive
+- `app/note/[slug]/page.tsx` — individual note or photo
+- `app/photos/page.tsx` — photo gallery
+- `app/og/[slug]/opengraph-image.tsx` — generated social image
+- `app/layout.tsx` — global metadata, header/footer, and cartridge stage
 
-### Content Management via Git Submodule
+Legacy `/posts/:path*` and `/post/:slug` URLs permanently redirect to `/notes/:path*` and `/note/:slug`. Listing pages read content inside their Server Component functions so filesystem changes appear during development; they opt into indefinite production revalidation because content is pinned for each deployment.
 
-The `content/` directory is a git submodule (separate repository). The build process:
-1. Initializes the submodule and checks out the commit pinned by the parent repository (`git submodule update --init`)
-2. Processes assets and RSS feed
-3. Builds the Next.js application
+## Content pipeline
 
-Run `pnpm run content:update` only when intentionally advancing the content submodule, then review and commit the updated submodule pointer in this repository.
+Markdown files in `content/posts/` use gray-matter frontmatter. `lib/post-frontmatter.ts` validates every post into the `Post` model in `lib/types.ts`; `lib/api.ts` exposes type-safe field projections and sorted post/photo queries.
 
-All blog posts and photos are markdown files in `content/posts/` with frontmatter metadata.
+Photo posts use `category: photo` and may include image dimensions, camera and exposure data, GPS coordinates, a color palette, and a `basename`. `pnpm run photos` reads new files from `content/assets/originals/`, applies EXIF orientation, writes web/gallery images to `content/assets/feed/`, and creates matching Markdown files. Already processed basenames are skipped.
 
-### Content Processing Pipeline
+The remaining scripts are:
 
-**Posts**: Markdown files in `content/posts/` with gray-matter frontmatter
-- `lib/api.tsx` handles reading posts from the filesystem
-- `getAllPosts()` returns all posts sorted by date
-- `getPhotoPosts()` filters posts with `category: photo`
-- Posts can be regular blog entries or photo posts with EXIF metadata
+- `lib/assets.ts` — replace `public/assets` with a copy of the submodule assets
+- `lib/feed.ts` — render Markdown and generate the Atom feed at `public/feed.xml`
+- `lib/photos.ts` — process photo originals and create their content metadata
 
-**Photos**: Special posts with additional metadata
-- Stored as markdown in `content/posts/` with `category: photo`
-- Include EXIF data: camera, ISO, f-number, exposure time, GPS coordinates
-- Include color palette extracted from the image
-- Photo files referenced via `basename` field
+Script-only modules use `.ts`; reserve `.tsx` for files that contain JSX.
 
-**RSS Feed** (`lib/feed.tsx`):
-- Generates Atom feed at `public/feed.xml`
-- Converts markdown to HTML using marked
-- Rewrites relative asset URLs to absolute URLs for feed readers
+## UI architecture
 
-**Assets** (`lib/assets.tsx`):
-- Removes symlink and copies actual files from `content/assets` to `public/assets`
-- Required before build because content is externalized
+The interface uses Tailwind CSS 4 from `app/globals.css`; there are no Sass or CSS modules. The body font is the platform system font on Apple devices and the bundled variable SF Pro webfont elsewhere, with a system-font fallback.
 
-### Application Structure
+The career archive is a dynamically imported React Three Fiber scene. `CartridgeViewer.tsx` coordinates focused modules under `app/components/cartridge/` for camera behavior, materials, layout, motion, controls, fallback content, and reduced-motion handling. Keep the DOM controls as the keyboard and screen-reader equivalent of mesh interaction.
 
-**Next.js App Router**: Uses Next.js 15 with App Router pattern
-- `app/page.tsx` - Homepage with recent posts
-- `app/posts/page.tsx` - All posts listing
-- `app/posts/[page]/page.tsx` - Paginated posts
-- `app/post/[slug]/page.tsx` - Individual post view
-- `app/photos/page.tsx` - Photo gallery
-- `app/og/[title]/[description]/opengraph-image.tsx` - Dynamic OG images
+React Strict Mode is enabled in `next.config.js`.
 
-**Components** (`app/components/`):
-- All components are in `app/components/`
-- Uses SCSS modules for styling (e.g., `Canvas.module.scss`)
-- Geist Sans and Geist Mono fonts from `geist/font`
+## TypeScript and tests
 
-**Styling**:
-- Global styles in `app/globals.scss`
-- CSS reset in `app/reset.scss`
-- Component-specific SCSS modules
-
-**TypeScript**:
-- Main config: `tsconfig.json`
-- Build scripts use separate config: `node.tsconfig.json`
-
-## Key Implementation Details
-
-**Photo Processing**: When adding new photos to `content/assets/originals/`, run `pnpm run photos` to:
-- Extract EXIF metadata
-- Generate color palettes using color-thief-node
-- Create 2048px web versions and 640px gallery thumbnails
-- Generate markdown files with all metadata
-
-**Build Process**: The build command runs scripts sequentially:
-1. Checks out the pinned content submodule commit
-2. Copies assets to public directory
-3. Generates RSS feed
-4. Builds Next.js application
-
-**Content Fields**: Posts use the `PostType` interface with optional fields. Photo posts include: `camera`, `iso`, `fnumber`, `exposureBiasValue`, `exposureTime`, `GPSLatitude`, `GPSLongitude`, `width`, `height`, `colorPalette`, and `basename`.
-
-## Configuration
-
-- **React Strict Mode**: Disabled (`reactStrictMode: false` in `next.config.js`)
-- **Package Manager**: Uses pnpm with specific overrides for React types
-- **Built Dependencies**: Only certain dependencies are built (`@parcel/watcher`, `canvas`, `sharp`, `unrs-resolver`)
+The application uses strict TypeScript through `tsconfig.json`. Node-run content scripts and tests use `node.tsconfig.json`. Date-only post values are parsed and formatted in UTC so their displayed calendar day is stable across timezones. Frontmatter tests validate both the content repository and failure cases for malformed metadata.

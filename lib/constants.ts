@@ -4,7 +4,7 @@ export const BLOG_SUBTITLE: string = 'A (Mostly) Personal Journal'
 
 const POST_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/
 
-/** Parse a date-only post value as a calendar date anchored in UTC. */
+/** Parse a date-only post value as a calendar date in UTC. */
 export function parsePostDate(dateString: string): Date {
   const match = POST_DATE_PATTERN.exec(dateString)
   if (!match) throw new RangeError(`Invalid post date: ${dateString}`)

@@ -69,7 +69,9 @@ Production builds now initialize and check out the content commit pinned by the 
 
 ## 11. Refresh repository documentation
 
-`CLAUDE.md` still describes Next.js 15, old `/posts` routes, SCSS modules, and Geist. `README.md` still names `feed.mamuso.net` and contains no useful setup instructions. Update both to match the current architecture. Rename script-only `lib/*.tsx` files to `.ts` where they contain no JSX.
+**Status:** Implemented in this cleanup.
+
+The original `README.md` is intentionally preserved. `DEVELOPMENT.md` now provides current setup, commands, content workflow, and route documentation, while `CLAUDE.md` describes the Next.js 16 and React 19 architecture, current note routes, Tailwind styling, SF Pro fallback strategy, content validation, and cartridge viewer. JSX-free modules under `lib/` now use the `.ts` extension.
 
 ## 12. Add a small regression suite
 

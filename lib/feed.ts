@@ -27,7 +27,7 @@ const posts = fs
 
 const renderer = new marked.Renderer()
 
-// Set options
+// Configure Markdown rendering.
 marked.use({
   async: false,
   pedantic: false,

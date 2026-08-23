@@ -10,7 +10,7 @@ const safeSlugPattern = /^[A-Za-z0-9_-]+$/
 
 const getPostSlugs = cache(() => fs.readdirSync(postsDirectory))
 
-// Cache validated post reads per request to avoid duplicate filesystem work.
+// Cache each validated post read per request to avoid duplicate filesystem work.
 const getPost = cache((slug: string): Post => {
   const realSlug = slug.replace(/\.md$/, '')
   if (!safeSlugPattern.test(realSlug)) throw new TypeError(`Invalid post slug: ${slug}`)

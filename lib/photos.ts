@@ -1,4 +1,4 @@
-// Process the photos inside the content/originals folder
+// Process the photos inside the content/originals folder.
 import * as fs from 'fs-extra'
 import path from 'path'
 import { getPaletteFromURL } from 'color-thief-node'
