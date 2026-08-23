@@ -1,7 +1,6 @@
 // Process the photos inside the content/originals folder.
 import * as fs from 'fs-extra'
 import path from 'path'
-import { getPaletteFromURL } from 'color-thief-node'
 import * as exif from 'fast-exif'
 import sharp from 'sharp'
 
@@ -14,6 +13,8 @@ const dataFolder: string = 'content/posts/'
 // Image dimensions
 const WEB_IMAGE_WIDTH = 2048
 const GALLERY_IMAGE_HEIGHT = 640
+const PALETTE_SAMPLE_SIZE = 64
+const MIN_COLOR_DISTANCE_SQUARED = 30 * 30
 
 // -----------------------------------------------------------
 // Types
@@ -44,7 +45,77 @@ const convertGPSToDecimal = (coords: [number, number, number] | undefined): numb
   return coords[0] + coords[1] / 60 + coords[2] / 3600
 }
 
-const processPhotos = async () => {
+type ColorBucket = {
+  key: number
+  count: number
+  red: number
+  green: number
+  blue: number
+}
+
+export async function extractColorPalette(input: string | Buffer, colorCount = 5): Promise<string[]> {
+  if (!Number.isSafeInteger(colorCount) || colorCount < 1) {
+    throw new RangeError('colorCount must be a positive integer')
+  }
+
+  const { data, info } = await sharp(input)
+    .rotate()
+    .resize({
+      width: PALETTE_SAMPLE_SIZE,
+      height: PALETTE_SAMPLE_SIZE,
+      fit: 'inside',
+      withoutEnlargement: true,
+    })
+    .toColourspace('srgb')
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+
+  const buckets = new Map<number, ColorBucket>()
+
+  for (let offset = 0; offset < data.length; offset += info.channels) {
+    const red = data[offset]
+    const green = data[offset + 1]
+    const blue = data[offset + 2]
+    const key = ((red >> 5) << 10) | ((green >> 5) << 5) | (blue >> 5)
+    const bucket = buckets.get(key)
+
+    if (bucket) {
+      bucket.count += 1
+      bucket.red += red
+      bucket.green += green
+      bucket.blue += blue
+    } else {
+      buckets.set(key, { key, count: 1, red, green, blue })
+    }
+  }
+
+  const candidates = [...buckets.values()]
+    .sort((a, b) => b.count - a.count || a.key - b.key)
+    .map((bucket) => ({
+      red: Math.round(bucket.red / bucket.count),
+      green: Math.round(bucket.green / bucket.count),
+      blue: Math.round(bucket.blue / bucket.count),
+    }))
+
+  const selected: typeof candidates = []
+  for (const candidate of candidates) {
+    const isDistinct = selected.every((color) => {
+      const red = candidate.red - color.red
+      const green = candidate.green - color.green
+      const blue = candidate.blue - color.blue
+      return red * red + green * green + blue * blue >= MIN_COLOR_DISTANCE_SQUARED
+    })
+    if (isDistinct) selected.push(candidate)
+    if (selected.length === colorCount) break
+  }
+
+  return selected.map(({ red, green, blue }) =>
+    `#${[red, green, blue].map((channel) => channel.toString(16).padStart(2, '0')).join('')}`
+  )
+}
+
+export const processPhotos = async () => {
   try {
     const files = await fs.readdir(imageFolder)
 
@@ -78,10 +149,7 @@ const processPhotos = async () => {
         }
 
         // Get color palette from image
-        const palette = await getPaletteFromURL(targetImage)
-        const hexPalette = palette.map((color: number[]) =>
-          '#' + ((1 << 24) + (color[0] << 16) + (color[1] << 8) + color[2]).toString(16).slice(1)
-        )
+        const hexPalette = await extractColorPalette(targetImage)
 
         // Convert GPS coordinates
         const gpsLatitude = convertGPSToDecimal(exifData.gps?.GPSLatitude)
@@ -162,4 +230,4 @@ const processPhotos = async () => {
   }
 }
 
-processPhotos()
+if (require.main === module) void processPhotos()

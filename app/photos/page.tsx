@@ -21,7 +21,10 @@ export default function Photos() {
           if (!post.basename || !post.width || !post.height) return null
 
           return (
-            <li key={post.slug}>
+            <li
+              key={post.slug}
+              className="[content-visibility:auto] [contain-intrinsic-size:auto_640px]"
+            >
               <Link href={`/note/${post.slug}`}>
                 <Image src={`/assets/feed/gallery-${post.basename}`} width={post.width / 4} height={post.height / 4} alt={post.title} />
               </Link>
