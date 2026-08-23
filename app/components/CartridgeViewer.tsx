@@ -62,6 +62,12 @@ const ROCK_PITCH_END = 15 * (Math.PI / 180);
 const ROCK_PERIOD_SEC = 12;
 const DEG = Math.PI / 180;
 
+// Hero entrance: cartridges arrive from above one after another, then keep
+// using the existing spring motion for hover/open interactions.
+const ENTRANCE_OFFSET_Y = 0.4;
+const ENTRANCE_DURATION_SEC = 1.1;
+const ENTRANCE_STAGGER_SEC = 0.08;
+
 // Intro reveal: hold, then gently lift + tilt into place.
 const INTRO_DELAY_SEC = 3;
 const INTRO_DURATION_SEC = 6;
@@ -192,6 +198,7 @@ function CartridgeInner({
   onHoverChange,
   isOpen = false,
   onToggleOpen,
+  entranceDelaySec,
 }: {
   scene: Object3D;
   position: [number, number];
@@ -208,6 +215,7 @@ function CartridgeInner({
   onHoverChange?: (hovered: boolean) => void;
   isOpen?: boolean;
   onToggleOpen?: () => void;
+  entranceDelaySec?: number;
 }) {
   const { gl, invalidate } = useThree();
   const isRock = motion === "rock";
@@ -264,11 +272,17 @@ function CartridgeInner({
   const depthPosition = useRef(isDetailPose ? detailLift : 0);
   const depthTarget = useRef(isDetailPose ? detailLift : 0);
   const positionYVelocity = useRef(0);
-  const positionY = useRef(position[1]);
+  const positionY = useRef(
+    position[1] + (entranceDelaySec === undefined ? 0 : ENTRANCE_OFFSET_Y)
+  );
   const positionYTarget = useRef(position[1]);
   const hovered = useRef(false);
   const hoverMotion = useRef(false);
-  const restedRef = useRef(isStatic || !isRock);
+  const entranceStart = useRef<number | null>(null);
+  const entranceComplete = useRef(entranceDelaySec === undefined);
+  const restedRef = useRef(
+    entranceDelaySec === undefined && (isStatic || !isRock)
+  );
   const staticFlipProgress = useRef(0);
   const staticFlipDirection = useRef<0 | 1 | -1>(0);
   const introStart = useRef<number | null>(null);
@@ -305,6 +319,34 @@ function CartridgeInner({
   useFrame((state, delta) => {
     if (!pivotRef.current) return;
     if (isFrozen) return;
+
+    if (!entranceComplete.current) {
+      if (entranceStart.current === null) {
+        entranceStart.current = state.clock.elapsedTime;
+      }
+      const elapsed =
+        state.clock.elapsedTime - entranceStart.current - (entranceDelaySec ?? 0);
+      const progress = THREE.MathUtils.clamp(
+        elapsed / ENTRANCE_DURATION_SEC,
+        0,
+        1
+      );
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      positionY.current =
+        positionYTarget.current + ENTRANCE_OFFSET_Y * (1 - eased);
+      pivotRef.current.position.y = positionY.current;
+
+      if (progress < 1) {
+        invalidate();
+      } else {
+        entranceComplete.current = true;
+        positionY.current = positionYTarget.current;
+        pivotRef.current.position.y = positionY.current;
+        restedRef.current = true;
+      }
+      return;
+    }
 
     if (isIntro) {
       if (introStart.current === null) introStart.current = state.clock.elapsedTime;
@@ -496,6 +538,7 @@ function CartridgeInner({
       ref={pivotRef}
       position={[position[0], positionY.current, isDetailPose ? detailLift : 0]}
       rotation={[restingPitch, restingYaw, restingRoll]}
+      userData={{ cameraPositionY: position[1] }}
     >
       <primitive object={instance} position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]} />
       {(onHoverChange || onToggleOpen) && (
@@ -558,7 +601,18 @@ function FixedCameraRig({
   // component exists to avoid.
   useLayoutEffect(() => {
     if (!groupRef.current) return;
+
+    // Entrance motion starts the cartridges above their resting slots. Frame
+    // the settled layout so the camera remains fixed while they fall in.
+    const animatedPositions: Array<{ object: Object3D; y: number }> = [];
+    groupRef.current.traverse((object) => {
+      const cameraPositionY = object.userData.cameraPositionY;
+      if (typeof cameraPositionY !== "number") return;
+      animatedPositions.push({ object, y: object.position.y });
+      object.position.y = cameraPositionY;
+    });
     const box3 = new THREE.Box3().setFromObject(groupRef.current);
+    for (const { object, y } of animatedPositions) object.position.y = y;
     if (box3.isEmpty()) return;
     const center = box3.getCenter(new THREE.Vector3());
     const size = box3.getSize(new THREE.Vector3());
@@ -731,6 +785,7 @@ function CartridgeSceneTextures({
               onHoverChange={(hovered) => setHoveredIndex(hovered ? i : null)}
               isOpen={i === openIndex}
               onToggleOpen={() => setOpenIndex((cur) => (cur === i ? null : i))}
+              entranceDelaySec={i * ENTRANCE_STAGGER_SEC}
             />
           ))}
           {!cameraPreset.compactLabels && sideLabelIndex !== null && (
