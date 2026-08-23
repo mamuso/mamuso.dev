@@ -68,6 +68,7 @@ const ENTRANCE_OFFSET_Y = 0.4;
 const ENTRANCE_OFFSET_Z = 0.08;
 const ENTRANCE_DURATION_SEC = 1.15;
 const ENTRANCE_STAGGER_SEC = 0.1;
+const TAP_MAX_MOVEMENT_PX = 8;
 
 // Intro reveal: hold, then gently lift + tilt into place.
 const INTRO_DELAY_SEC = 3;
@@ -270,7 +271,10 @@ function CartridgeInner({
   const pitchAngle = useRef(isRock ? ROCK_PITCH_START : restingPitch);
   const pitchTarget = useRef(isRock ? ROCK_PITCH_START : restingPitch);
   const depthVelocity = useRef(0);
-  const depthPosition = useRef(isDetailPose ? detailLift : 0);
+  const depthPosition = useRef(
+    (isDetailPose ? detailLift : 0) +
+      (entranceDelaySec === undefined ? 0 : ENTRANCE_OFFSET_Z)
+  );
   const depthTarget = useRef(isDetailPose ? detailLift : 0);
   const positionYVelocity = useRef(0);
   const positionY = useRef(
@@ -279,7 +283,6 @@ function CartridgeInner({
   const positionYTarget = useRef(position[1]);
   const hovered = useRef(false);
   const hoverMotion = useRef(false);
-  const blockedPointerDown = useRef(false);
   const entranceStart = useRef<number | null>(null);
   const entranceComplete = useRef(entranceDelaySec === undefined);
   const restedRef = useRef(
@@ -292,9 +295,7 @@ function CartridgeInner({
   useLayoutEffect(() => {
     if (!pivotRef.current || isRock) return;
     pivotRef.current.rotation.set(restingPitch, restingYaw, restingRoll);
-    pivotRef.current.position.z =
-      (isDetailPose ? detailLift : 0) +
-      (entranceComplete.current ? 0 : ENTRANCE_OFFSET_Z);
+    pivotRef.current.position.z = depthPosition.current;
     invalidate();
   }, [isRock, isDetailPose, detailLift, restingPitch, restingYaw, restingRoll, invalidate]);
 
@@ -344,8 +345,9 @@ function CartridgeInner({
       positionY.current =
         positionYTarget.current + ENTRANCE_OFFSET_Y * (1 - eased);
       pivotRef.current.position.y = positionY.current;
-      pivotRef.current.position.z =
+      depthPosition.current =
         depthTarget.current + ENTRANCE_OFFSET_Z * (1 - eased);
+      pivotRef.current.position.z = depthPosition.current;
 
       if (progress < 1) {
         invalidate();
@@ -551,8 +553,7 @@ function CartridgeInner({
       position={[
         position[0],
         positionY.current,
-        (isDetailPose ? detailLift : 0) +
-          (entranceDelaySec === undefined ? 0 : ENTRANCE_OFFSET_Z),
+        depthPosition.current,
       ]}
       rotation={[restingPitch, restingYaw, restingRoll]}
       userData={{
@@ -575,16 +576,12 @@ function CartridgeInner({
             gl.domElement.style.cursor = "auto";
             onHoverChange?.(false);
           }}
-          onPointerDown={(event) => {
-            event.stopPropagation();
-            blockedPointerDown.current = !entranceComplete.current;
-          }}
           onClick={(event) => {
             event.stopPropagation();
-            if (blockedPointerDown.current || !entranceComplete.current) {
-              blockedPointerDown.current = false;
-              return;
-            }
+            if (
+              event.delta > TAP_MAX_MOVEMENT_PX ||
+              !entranceComplete.current
+            ) return;
             onToggleOpen?.();
           }}
         >
@@ -1012,6 +1009,7 @@ export default function CartridgeViewer({
     <div className="relative left-1/2 right-1/2 -mx-[50vw] w-screen h-[580px] min-[720px]:h-[760px] overflow-hidden border border-[magenta]">
       <Canvas
         camera={{ fov: 20 }}
+        style={{ touchAction: "pan-y" }}
         dpr={dpr}
         frameloop="demand"
         performance={{ min: 0.75, max: 1, debounce: 200 }}
