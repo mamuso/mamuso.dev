@@ -3,62 +3,48 @@
   "version": "1.0.2",
   "description": "Why does it hurt so much to hit your funny bone?",
   "private": true,
+  "packageManager": "pnpm@10.17.1",
   "scripts": {
     "dev": "next dev",
-    "build": "git submodule init && git submodule update --remote && pnpm run assets && pnpm run rss && next build",
+    "build": "git submodule init && git submodule update --remote && corepack pnpm run assets && corepack pnpm run rss && next build",
     "start": "next start",
     "lint": "eslint .",
-    "rss": "pnpm exec ts-node --project ./node.tsconfig.json lib/feed",
-    "assets": "pnpm exec ts-node --project ./node.tsconfig.json lib/assets",
+    "rss": "ts-node --project ./node.tsconfig.json lib/feed",
+    "assets": "ts-node --project ./node.tsconfig.json lib/assets",
     "photos": "ts-node --project ./node.tsconfig.json lib/photos"
   },
   "dependencies": {
-    "@phosphor-icons/react": "^2.1.10",
-    "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
     "fs-extra": "^11.4.0",
-    "geist": "^1.7.2",
     "gray-matter": "^4.0.3",
-    "markdown-to-jsx": "^9.10.1",
+    "markdown-to-jsx": "^9.10.2",
     "next": "16.3.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "three": "^0.185.1"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/color-thief-node": "^1.0.4",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.2.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
-    "@types/rss": "^0.0.32",
+    "@types/three": "^0.185.4",
     "color-thief-node": "^1.0.4",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.3.0",
     "fast-exif": "^2.0.1",
     "feed": "^6.0.0",
-    "marked": "^18.0.7",
-    "sass": "^1.102.0",
-    "sharp": "^0.35.3",
+    "marked": "^18.0.10",
+    "postcss": "8.5.26",
+    "sharp": "0.35.3",
+    "tailwindcss": "^4.3.3",
     "ts-node": "^10.9.2",
     "typescript": "6.0.3"
   },
   "engines": {
     "node": "24.x"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.2.18",
-      "@types/react-dom": "19.2.4",
-      "@babel/core": "7.29.6",
-      "immutable": "5.1.9",
-      "js-yaml": "3.15.1",
-      "postcss": "8.5.25",
-      "sharp": "0.35.3"
-    },
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "sharp",
-      "unrs-resolver"
-    ]
   }
 }

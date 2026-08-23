@@ -39,7 +39,6 @@ export const metadata = {
 const allPosts: PostType[] = getAllPosts(['title', 'date', 'slug', 'category'])
 
 export default function Posts() {
-  // Group posts by year
   const postsByYear: { [key: number]: PostType[] } = allPosts.reduce((acc: { [key: number]: PostType[] }, post) => {
     const year = new Date(post.date).getFullYear()
     if (!acc[year]) {
@@ -50,9 +49,9 @@ export default function Posts() {
   }, {} as { [key: number]: PostType[] })
 
   return (
-    <section className="home-posts">
-      <header className="home-post-header">
-        <h2 className="section-title">Journal</h2>
+    <section>
+      <header>
+        <h2>Journal</h2>
         <p>
           <Link href="/notes/1">Expand all notes ↓</Link>
         </p>
@@ -61,7 +60,7 @@ export default function Posts() {
         .reverse()
         .map(([year, posts]) => (
           <div key={year}>
-            <h3 className="section-title">{year}</h3>
+            <h3>{year}</h3>
             <ul>
               {posts.map((post) => (
                 <li key={post.slug}>

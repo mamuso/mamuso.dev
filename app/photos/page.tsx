@@ -37,23 +37,19 @@ export const metadata = {
 }
 
 export default function Photos() {
-  const galleryHeight = 200
   const photoPosts: PostType[] = getPhotoPosts(['title', 'date', 'slug', 'category', 'basename', 'width', 'height'])
   return (
-    <section className="home-posts">
-      <header className="home-post-header">
-        <h2 className="section-title">Say Cheese</h2>
-      </header>
-      <div className="photo-gallery">
+    <section>
+      <h2>Say Cheese</h2>
+      <ul>
         {photoPosts.map((post) => (
-          <div key={post.slug} style={{ width: `${(post.width * galleryHeight) / post.height}px`, flexGrow: `${(post.width * galleryHeight) / post.height}` }}>
+          <li key={post.slug}>
             <Link href={`/note/${post.slug}`}>
-              <i style={{ paddingBottom: `${(post.height / post.width) * 100}%` }} />
-              <Image src={`/assets/feed/gallery-${post.basename}`} sizes="(min-width: 1040px) 874px, (min-width: 900px) 807px, calc(94.31vw - 23px)" width={post.width / 4} height={post.height / 4} alt={post.title} className="loaded" />
+              <Image src={`/assets/feed/gallery-${post.basename}`} width={post.width / 4} height={post.height / 4} alt={post.title} />
             </Link>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   )
 }
