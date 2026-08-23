@@ -11,7 +11,7 @@ This is a Next.js-based personal website and blog (mamuso.dev) featuring posts, 
 ### Development
 ```bash
 pnpm dev              # Start development server with Turbopack
-pnpm build            # Initialize/update submodules, process assets, generate RSS, and build for production
+pnpm build            # Checkout pinned content, process assets, generate RSS, and build for production
 pnpm start            # Start production server
 pnpm lint             # Run Next.js linting
 ```
@@ -21,6 +21,7 @@ pnpm lint             # Run Next.js linting
 pnpm run assets       # Copy assets from content/assets to public/assets
 pnpm run rss          # Generate RSS feed at public/feed.xml
 pnpm run photos       # Process new photos from content/assets/originals/
+pnpm run content:update # Explicitly update content from its configured remote branch
 ```
 
 **Important**: The `photos` script processes photos by:
@@ -34,9 +35,11 @@ pnpm run photos       # Process new photos from content/assets/originals/
 ### Content Management via Git Submodule
 
 The `content/` directory is a git submodule (separate repository). The build process:
-1. Initializes/updates the submodule (`git submodule init && git submodule update --remote`)
+1. Initializes the submodule and checks out the commit pinned by the parent repository (`git submodule update --init`)
 2. Processes assets and RSS feed
 3. Builds the Next.js application
+
+Run `pnpm run content:update` only when intentionally advancing the content submodule, then review and commit the updated submodule pointer in this repository.
 
 All blog posts and photos are markdown files in `content/posts/` with frontmatter metadata.
 
@@ -96,7 +99,7 @@ All blog posts and photos are markdown files in `content/posts/` with frontmatte
 - Generate markdown files with all metadata
 
 **Build Process**: The build command runs scripts sequentially:
-1. Updates content submodule
+1. Checks out the pinned content submodule commit
 2. Copies assets to public directory
 3. Generates RSS feed
 4. Builds Next.js application

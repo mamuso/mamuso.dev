@@ -1,6 +1,6 @@
 import { BLOG_TITLE, BLOG_SUBTITLE, getPostYear } from '@/lib/constants'
 import { getAllPosts } from '@/lib/api'
-import { PostType } from '@/lib/types'
+import type { Post } from '@/lib/types'
 import PostHome from '@/app/components/PostHome'
 import Link from 'next/link'
 import { createPageMetadata } from '@/lib/metadata'
@@ -12,17 +12,22 @@ export const metadata = createPageMetadata({
   ogSlug: 'notes',
 })
 
-const allPosts: PostType[] = getAllPosts(['title', 'date', 'slug', 'category'])
+// Content is immutable within a deployment, so production can retain the
+// generated route indefinitely. Development still renders from disk per request.
+export const revalidate = false
+
+type NoteListPost = Pick<Post, 'title' | 'date' | 'slug' | 'category'>
 
 export default function Posts() {
-  const postsByYear: { [key: number]: PostType[] } = allPosts.reduce((acc: { [key: number]: PostType[] }, post) => {
+  const allPosts = getAllPosts(['title', 'date', 'slug', 'category'])
+  const postsByYear = allPosts.reduce<Record<number, NoteListPost[]>>((acc, post) => {
     const year = getPostYear(post.date)
     if (!acc[year]) {
       acc[year] = []
     }
     acc[year].push(post)
     return acc
-  }, {} as { [key: number]: PostType[] })
+  }, {})
 
   return (
     <section>

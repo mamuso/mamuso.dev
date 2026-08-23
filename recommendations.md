@@ -47,11 +47,15 @@ The viewer now has named, keyboard-accessible DOM controls synchronized with the
 
 ## 7. Replace unsafe content typing
 
-`getPostBySlug` accepts arbitrary field strings and casts an incomplete record through `unknown` to a fully required `PostType`. Validate frontmatter and use type-safe projections such as `Pick<Post, K>`, or return a complete typed post. Mark photo-only and optional fields as optional.
+**Status:** Implemented in this cleanup.
+
+Frontmatter is validated into a complete internal `Post`, while content queries accept only `keyof Post` fields and return `Pick<Post, K>` projections. Summary, category, image, and photo metadata fields are optional, and malformed known fields fail with source-specific validation errors.
 
 ## 8. Remove module-load content snapshots
 
-The homepage and Notes listing read posts into top-level constants, so content changes do not appear during development until the server restarts. Read content inside page functions and choose an explicit production caching strategy.
+**Status:** Implemented in this cleanup.
+
+The homepage and Notes listing now read posts inside their Server Component render functions, so development requests see filesystem changes without restarting Next.js. Both routes explicitly use indefinite production revalidation because content is immutable within a deployment and refreshed by the content-backed build.
 
 ## 9. Reduce static asset weight
 
@@ -59,7 +63,9 @@ The 3D experience eagerly loads approximately 6.6 MB of label PNGs, a 2.7 MB fon
 
 ## 10. Make builds reproducible
 
-The build script runs `git submodule update --remote`, allowing a deployment to use content newer than the submodule commit recorded by the parent repository. Build from the pinned commit with `git submodule update --init`, and provide a separate explicit `content:update` command.
+**Status:** Implemented in this cleanup.
+
+Production builds now initialize and check out the content commit pinned by the parent repository. Updating from the configured content branch requires the separate `pnpm run content:update` command, after which the changed submodule pointer can be reviewed and committed explicitly.
 
 ## 11. Refresh repository documentation
 

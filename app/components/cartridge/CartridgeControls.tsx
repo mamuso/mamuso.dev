@@ -23,7 +23,7 @@ export function CartridgeControls({
 
   return (
     <div
-      className="absolute inset-x-4 bottom-5 z-10 flex flex-wrap justify-center gap-2 min-[720px]:bottom-7"
+      className="pointer-events-none absolute inset-x-4 bottom-5 z-10 flex flex-wrap justify-center gap-2 opacity-0 transition-opacity focus-within:pointer-events-auto focus-within:opacity-100 motion-reduce:transition-none min-[720px]:bottom-7"
       role="group"
       aria-label="Career cartridges"
       aria-describedby="cartridge-controls-help cartridge-selection-status"

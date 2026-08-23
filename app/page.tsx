@@ -12,10 +12,15 @@ export const metadata = createPageMetadata({
   ogSlug: 'home',
 })
 
+// Content is immutable within a deployment, so production can retain the
+// generated route indefinitely. Development still renders from disk per request.
+export const revalidate = false
+
 const POSTS_PER_PAGE = 10
-const recentPosts = getRecentPosts(POSTS_PER_PAGE, ['title', 'date', 'slug', 'image', 'category'])
 
 const Home: NextPage = () => {
+  const recentPosts = getRecentPosts(POSTS_PER_PAGE, ['title', 'date', 'slug', 'category'])
+
   return (
     <>
       <section>

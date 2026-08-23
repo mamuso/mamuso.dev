@@ -1,7 +1,6 @@
 import { BLOG_TITLE } from '@/lib/constants'
 import { Metadata } from 'next'
 import { getAllPosts, getPostBySlug, hasPostSlug } from '@/lib/api'
-import { PostType } from '@/lib/types'
 import Post from '@/app/components/Post'
 import { notFound } from 'next/navigation'
 import { createPageMetadata } from '@/lib/metadata'
@@ -18,7 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params
   if (!hasPostSlug(slug)) notFound()
 
-  const post: PostType = getPostBySlug(slug, ['title', 'date', 'slug', 'summary'])
+  const post = getPostBySlug(slug, ['title', 'date', 'slug', 'summary'])
 
   return createPageMetadata({
     title: `${post.title || 'Notes'} – ${BLOG_TITLE}`,
@@ -32,6 +31,6 @@ export default async function PostPage({ params }: PageProps) {
   const { slug } = await params
   if (!hasPostSlug(slug)) notFound()
 
-  const post: PostType = getPostBySlug(slug, ['title', 'date', 'slug', 'content', 'summary', 'category', 'basename', 'camera', 'iso', 'fnumber', 'exposureBiasValue', 'exposureTime', 'GPSLatitude', 'GPSLongitude', 'width', 'height', 'colorPalette'])
+  const post = getPostBySlug(slug, ['title', 'date', 'slug', 'content', 'summary', 'category', 'basename', 'camera', 'iso', 'fnumber', 'exposureBiasValue', 'exposureTime', 'GPSLatitude', 'GPSLongitude', 'width', 'height', 'colorPalette'])
   return <Post post={post} priority={true} />
 }

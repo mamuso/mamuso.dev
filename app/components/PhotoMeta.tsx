@@ -1,6 +1,18 @@
-import { PostType } from '@/lib/types'
+import type { Post } from '@/lib/types'
 
-export default function PhotoMeta({ post }: { post: PostType }) {
+type PhotoMetadata = Pick<
+  Post,
+  | 'colorPalette'
+  | 'camera'
+  | 'fnumber'
+  | 'exposureBiasValue'
+  | 'exposureTime'
+  | 'iso'
+  | 'GPSLatitude'
+  | 'GPSLongitude'
+>
+
+export default function PhotoMeta({ post }: { post: PhotoMetadata }) {
   return (
     <ul>
       {post.colorPalette && <li>Colors: {post.colorPalette.join(', ')}</li>}

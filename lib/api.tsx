@@ -1,21 +1,26 @@
 import fs from 'fs-extra'
 import { join } from 'path'
 import { cache } from 'react'
-import { PostType } from './types'
+import type { Post } from './types'
 import matter from 'gray-matter'
+import { parsePostFrontmatter } from './post-frontmatter'
 
 const postsDirectory = join(process.cwd(), 'content/posts/')
-const safeSlugPattern = /^[A-Za-z0-9-]+$/
+const safeSlugPattern = /^[A-Za-z0-9_-]+$/
 
 const getPostSlugs = cache(() => fs.readdirSync(postsDirectory))
 
-// Cache raw file read per request to avoid duplicate filesystem reads
-const getPostData = cache((slug: string) => {
+// Cache validated post reads per request to avoid duplicate filesystem work.
+const getPost = cache((slug: string): Post => {
   const realSlug = slug.replace(/\.md$/, '')
+  if (!safeSlugPattern.test(realSlug)) throw new TypeError(`Invalid post slug: ${slug}`)
+
   const fullPath = join(postsDirectory, `${realSlug}.md`)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
   const { data, content } = matter(fileContents)
-  return { realSlug, data, content }
+  const frontmatter = parsePostFrontmatter(data, `Post ${realSlug}`)
+
+  return { ...frontmatter, slug: realSlug, content }
 })
 
 type PostSummary = { slug: string; date: string }
@@ -23,8 +28,8 @@ type PostSummary = { slug: string; date: string }
 const getSortedPostSummaries = cache((): PostSummary[] => {
   return getPostSlugs()
     .map((slug) => {
-      const { realSlug, data } = getPostData(slug)
-      return { slug: realSlug, date: data.date as string }
+      const { slug: realSlug, date } = getPost(slug)
+      return { slug: realSlug, date }
     })
     .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
 })
@@ -34,44 +39,43 @@ export function hasPostSlug(slug: string): boolean {
   return safeSlugPattern.test(realSlug) && fs.existsSync(join(postsDirectory, `${realSlug}.md`))
 }
 
-export function getPostBySlug(slug: string, fields: string[] = []): PostType {
-  const { realSlug, data, content } = getPostData(slug)
-  const items: Record<string, unknown> = {}
-
-  // Ensure only the minimal needed data is exposed
-  fields.forEach((field) => {
-    if (field === 'slug') {
-      items[field] = realSlug
-    }
-    if (field === 'content') {
-      items[field] = content
-    }
-
-    if (data[field] !== undefined) {
-      items[field] = data[field]
-    }
-  })
-
-  return items as unknown as PostType
+export function getPostBySlug<const K extends keyof Post>(
+  slug: string,
+  fields: readonly K[]
+): Pick<Post, K> {
+  return pickFields(getPost(slug), fields)
 }
 
-export function getAllPosts(fields: string[]): PostType[] {
+export function getAllPosts<const K extends keyof Post>(
+  fields: readonly K[]
+): Pick<Post, K>[] {
   return getSortedPostSummaries().map(({ slug }) => getPostBySlug(slug, fields))
 }
 
-export function getRecentPosts(count: number, fields: string[]): PostType[] {
+export function getRecentPosts<const K extends keyof Post>(
+  count: number,
+  fields: readonly K[]
+): Pick<Post, K>[] {
   return getSortedPostSummaries()
     .slice(0, count)
     .map(({ slug }) => getPostBySlug(slug, fields))
 }
 
-export function getPhotoPosts(fields: string[]): PostType[] {
+export function getPhotoPosts<const K extends keyof Post>(
+  fields: readonly K[]
+): Pick<Post, K>[] {
   return getPostSlugs()
-    .filter((slug) => getPostData(slug).data.category === 'photo')
+    .filter((slug) => getPost(slug).category === 'photo')
     .sort((slugA, slugB) => {
-      const dateA = getPostData(slugA).data.date as string
-      const dateB = getPostData(slugB).data.date as string
+      const dateA = getPost(slugA).date
+      const dateB = getPost(slugB).date
       return dateA > dateB ? -1 : 1
     })
     .map((slug) => getPostBySlug(slug, fields))
+}
+
+function pickFields<T, K extends keyof T>(source: T, fields: readonly K[]): Pick<T, K> {
+  const projection = {} as Pick<T, K>
+  for (const field of fields) projection[field] = source[field]
+  return projection
 }

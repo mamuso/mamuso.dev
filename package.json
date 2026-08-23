@@ -5,11 +5,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "git submodule init && git submodule update --remote && pnpm run assets && pnpm run rss && next build",
+    "build": "git submodule update --init && pnpm run assets && pnpm run rss && next build",
+    "content:update": "git submodule update --init --remote content",
     "start": "next start",
     "lint": "eslint .",
-    "test": "pnpm run test:dates",
+    "test": "pnpm run test:dates && pnpm run test:content",
     "test:dates": "TZ=America/Los_Angeles TS_NODE_PROJECT=node.tsconfig.json node --require ts-node/register tests/post-dates.test.ts && TZ=Asia/Tokyo TS_NODE_PROJECT=node.tsconfig.json node --require ts-node/register tests/post-dates.test.ts",
+    "test:content": "TS_NODE_PROJECT=node.tsconfig.json node --require ts-node/register tests/post-frontmatter.test.ts",
     "rss": "pnpm exec ts-node --project ./node.tsconfig.json lib/feed",
     "assets": "pnpm exec ts-node --project ./node.tsconfig.json lib/assets",
     "photos": "ts-node --project ./node.tsconfig.json lib/photos"
