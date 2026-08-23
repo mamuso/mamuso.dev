@@ -65,7 +65,7 @@ const DEG = Math.PI / 180;
 // Hero entrance: build the stack from the bottom up so each falling cartridge
 // lands above the previous one instead of passing through it.
 const ENTRANCE_OFFSET_Y = 0.4;
-const ENTRANCE_OFFSET_Z = 0.24;
+const ENTRANCE_OFFSET_Z = 0.48;
 const ENTRANCE_DURATION_SEC = 1.15;
 const ENTRANCE_STAGGER_SEC = 0.1;
 const TAP_MAX_MOVEMENT_PX = 8;
