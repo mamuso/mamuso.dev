@@ -62,11 +62,11 @@ const ROCK_PITCH_END = 15 * (Math.PI / 180);
 const ROCK_PERIOD_SEC = 12;
 const DEG = Math.PI / 180;
 
-// Hero entrance: cartridges arrive from above one after another, then keep
-// using the existing spring motion for hover/open interactions.
+// Hero entrance: build the stack from the bottom up so each falling cartridge
+// lands above the previous one instead of passing through it.
 const ENTRANCE_OFFSET_Y = 0.4;
-const ENTRANCE_DURATION_SEC = 1.1;
-const ENTRANCE_STAGGER_SEC = 0.08;
+const ENTRANCE_DURATION_SEC = 1.4;
+const ENTRANCE_STAGGER_SEC = 0.14;
 
 // Intro reveal: hold, then gently lift + tilt into place.
 const INTRO_DELAY_SEC = 3;
@@ -331,7 +331,11 @@ function CartridgeInner({
         0,
         1
       );
-      const eased = 1 - Math.pow(1 - progress, 3);
+      // Smootherstep has zero velocity and acceleration at both ends, avoiding
+      // the abrupt launch of ease-out while still settling without a bounce.
+      const eased =
+        progress * progress * progress *
+        (progress * (progress * 6 - 15) + 10);
 
       positionY.current =
         positionYTarget.current + ENTRANCE_OFFSET_Y * (1 - eased);
@@ -785,7 +789,9 @@ function CartridgeSceneTextures({
               onHoverChange={(hovered) => setHoveredIndex(hovered ? i : null)}
               isOpen={i === openIndex}
               onToggleOpen={() => setOpenIndex((cur) => (cur === i ? null : i))}
-              entranceDelaySec={i * ENTRANCE_STAGGER_SEC}
+              entranceDelaySec={
+                (layout.length - 1 - i) * ENTRANCE_STAGGER_SEC
+              }
             />
           ))}
           {!cameraPreset.compactLabels && sideLabelIndex !== null && (
