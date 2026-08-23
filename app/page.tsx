@@ -2,6 +2,7 @@ import { BLOG_SUBTITLE } from '@/lib/constants'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { getRecentPosts } from '@/lib/api'
+import CartridgeStage from '@/app/components/CartridgeStageDynamic'
 import PostHome from '@/app/components/PostHome'
 import { createPageMetadata } from '@/lib/metadata'
 
@@ -23,6 +24,7 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <CartridgeStage />
       <section>
         <h2>Manuel Muñoz Solera</h2>
         <p>Crayon holder and key stroker.</p>

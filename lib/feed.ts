@@ -2,28 +2,14 @@ import fs from 'fs-extra'
 import { Feed } from 'feed'
 import path from 'path'
 import { marked } from 'marked'
-import matter from 'gray-matter'
+import { getAllPosts } from './api'
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE, parsePostDate } from './constants'
+import type { Post } from './types'
 
-interface FeedPost {
-  slug: string
-  body: string
-  title: string
-  date: string
-  basename?: string
-  [key: string]: unknown
-}
+export type FeedPost = Pick<Post, 'slug' | 'content' | 'title' | 'date' | 'basename'>
 
-const posts = fs
-  .readdirSync(path.resolve(__dirname, '../content/posts/'))
-  .filter((file) => path.extname(file) === '.md' || path.extname(file) === '.mdx')
-  .map((file) => {
-    const postContent = fs.readFileSync(`./content/posts/${file}`, 'utf8')
-    const slug = file.replace(/\.md$/, '')
-    const { data, content } = matter(postContent)
-    return { ...data, slug: slug, body: content } as FeedPost
-  })
-  .sort((a, b) => parsePostDate(b.date).getTime() - parsePostDate(a.date).getTime())
+const FEED_FIELDS = ['slug', 'content', 'title', 'date', 'basename'] as const
+const FEED_URL = `${BLOG_URL}/feed.xml`
 
 const renderer = new marked.Renderer()
 
@@ -36,43 +22,51 @@ marked.use({
   renderer,
 })
 
-const renderPost = (md: string): string => `${marked.parse(md)}`
+const renderPost = (markdown: string): string => `${marked.parse(markdown)}`
 
-const main = () => {
-  const feedOptions = {
-    title: `${BLOG_TITLE}`,
-    description: `${BLOG_SUBTITLE}`,
-    id: `${BLOG_URL}`,
-    link: `${BLOG_URL}`,
+export function generateAtomFeed(posts: FeedPost[] = getAllPosts(FEED_FIELDS)): string {
+  if (posts.length === 0) throw new Error('Cannot generate an Atom feed without posts')
+
+  const sortedPosts = [...posts].sort((a, b) => {
+    const dateOrder = parsePostDate(b.date).getTime() - parsePostDate(a.date).getTime()
+    return dateOrder || a.slug.localeCompare(b.slug)
+  })
+  const updated = parsePostDate(sortedPosts[0].date)
+
+  const feed = new Feed({
+    title: BLOG_TITLE,
+    description: BLOG_SUBTITLE,
+    id: BLOG_URL,
+    link: BLOG_URL,
+    updated,
     image: `${BLOG_URL}/images/favicon.png`,
-    icon: `${BLOG_URL}/images/favicon.ico`,
-    logo: `${BLOG_URL}/images/favicon.png`,
     favicon: `${BLOG_URL}/images/favicon.png`,
-    copyright: `${new Date().getFullYear()}, mamuso`,
+    copyright: `${updated.getUTCFullYear()}, mamuso`,
     generator: 'mamuso.dev',
     language: 'en',
     feedLinks: {
-      rss2: `${BLOG_URL}/feed.xml`,
+      atom: FEED_URL,
     },
     author: {
       name: 'Manuel Muñoz Solera',
       email: 'mamuso@mamuso.net',
     },
-  }
+  })
 
-  const feed = new Feed(feedOptions)
-
-  posts.forEach((post) => {
-    const url = `${BLOG_URL}/post/${post.slug}`
-
-    let description: string = post.basename ? `<img src='${BLOG_URL}/assets/feed/${post.basename}'/>` : ''
-    description += renderPost(post.body)
-      .replace(/\'\/assets\//g, "'" + `${BLOG_URL}` + '/assets/')
-      .replace(/\"\/assets\//g, '"' + `${BLOG_URL}` + '/assets/')
+  sortedPosts.forEach((post) => {
+    const url = `${BLOG_URL}/note/${post.slug}`
+    const image = post.basename
+      ? `<img src="${BLOG_URL}/assets/feed/${post.basename}" alt="" />`
+      : ''
+    const description = image + renderPost(post.content).replace(
+      /(["'])\/assets\//g,
+      `$1${BLOG_URL}/assets/`
+    )
 
     feed.addItem({
+      id: url,
       title: post.title,
-      description: description,
+      description,
       date: parsePostDate(post.date),
       author: [
         {
@@ -83,8 +77,11 @@ const main = () => {
     })
   })
 
-  const rss = feed.atom1()
-  fs.writeFileSync(path.join(__dirname, '../public/feed.xml'), rss)
+  return feed.atom1()
 }
 
-main()
+export function writeAtomFeed(outputPath = path.resolve(process.cwd(), 'public/feed.xml')): void {
+  fs.writeFileSync(outputPath, generateAtomFeed())
+}
+
+if (require.main === module) writeAtomFeed()

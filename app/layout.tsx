@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../lib/constants'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import CartridgeStage from './components/CartridgeStageDynamic'
 import './globals.css'
 
 const platformDetectionScript = `
@@ -44,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="alternate" type="application/rss+xml" title="mamuso.dev RSS" href={`${BLOG_URL}/feed.xml`}></link>
+        <link rel="alternate" type="application/atom+xml" title="mamuso.dev Atom" href={`${BLOG_URL}/feed.xml`}></link>
         <Script id="platform-detection" strategy="beforeInteractive">
           {platformDetectionScript}
         </Script>
@@ -52,7 +51,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div className="container mx-auto px-6 py-6 sm:px-8">
           <Header />
-          <CartridgeStage />
           <main>{children}</main>
           <Footer />
         </div>

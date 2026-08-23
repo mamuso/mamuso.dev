@@ -43,7 +43,7 @@ pnpm dev
 - `app/note/[slug]/page.tsx` — individual note or photo
 - `app/photos/page.tsx` — photo gallery
 - `app/og/[slug]/opengraph-image.tsx` — generated social image
-- `app/layout.tsx` — global metadata, header/footer, and cartridge stage
+- `app/layout.tsx` — global metadata and the shared header/footer shell
 
 Legacy `/posts/:path*` and `/post/:slug` URLs permanently redirect to `/notes/:path*` and `/note/:slug`. Listing pages read content inside their Server Component functions so filesystem changes appear during development; they opt into indefinite production revalidation because content is pinned for each deployment.
 
@@ -65,7 +65,7 @@ Script-only modules use `.ts`; reserve `.tsx` for files that contain JSX.
 
 The interface uses Tailwind CSS 4 from `app/globals.css`; there are no Sass or CSS modules. The body font is the platform system font on Apple devices and the bundled variable SF Pro webfont elsewhere, with a system-font fallback.
 
-The career archive is a dynamically imported React Three Fiber scene. `CartridgeViewer.tsx` coordinates focused modules under `app/components/cartridge/` for camera behavior, materials, layout, motion, controls, fallback content, and reduced-motion handling. Keep the DOM controls as the keyboard and screen-reader equivalent of mesh interaction.
+The homepage career archive is a dynamically imported React Three Fiber scene. It stays outside the root layout so other routes do not load the Three.js bundle or cartridge assets. `CartridgeViewer.tsx` coordinates focused modules under `app/components/cartridge/` for camera behavior, materials, layout, motion, controls, fallback content, and reduced-motion handling. Keep the DOM controls as the keyboard and screen-reader equivalent of mesh interaction.
 
 React Strict Mode is enabled in `next.config.js`.
 
