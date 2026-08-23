@@ -134,7 +134,7 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
   openTopOffsetPx: 240,
 };
 export const CAMERA_PRESET_SMALL: CameraPreset = {
-  margin: 1.5,
+  margin: 1.3,
   aspect: 390 / 580,
   panFraction: 0,
   verticalPanFraction: 0.1,
@@ -574,6 +574,7 @@ function CartridgeInner({
       userData={{
         cameraPositionY: position[1],
         cameraPositionZ: isDetailPose ? detailLift : 0,
+        cameraRotationX: restingPitch,
       }}
     >
       <primitive object={instance} position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]} />
@@ -645,26 +646,36 @@ function FixedCameraRig({
 
     // Entrance motion starts the cartridges above their resting slots. Frame
     // the settled layout so the camera remains fixed while they fall in.
-    const animatedPositions: Array<{ object: Object3D; y: number; z: number }> = [];
+    const animatedTransforms: Array<{
+      object: Object3D;
+      y: number;
+      z: number;
+      rotationX: number;
+    }> = [];
     groupRef.current.traverse((object) => {
       const cameraPositionY = object.userData.cameraPositionY;
       const cameraPositionZ = object.userData.cameraPositionZ;
+      const cameraRotationX = object.userData.cameraRotationX;
       if (
         typeof cameraPositionY !== "number" ||
-        typeof cameraPositionZ !== "number"
+        typeof cameraPositionZ !== "number" ||
+        typeof cameraRotationX !== "number"
       ) return;
-      animatedPositions.push({
+      animatedTransforms.push({
         object,
         y: object.position.y,
         z: object.position.z,
+        rotationX: object.rotation.x,
       });
       object.position.y = cameraPositionY;
       object.position.z = cameraPositionZ;
+      if (preset.compactLabels) object.rotation.x = cameraRotationX;
     });
     const box3 = new THREE.Box3().setFromObject(groupRef.current);
-    for (const { object, y, z } of animatedPositions) {
+    for (const { object, y, z, rotationX } of animatedTransforms) {
       object.position.y = y;
       object.position.z = z;
+      object.rotation.x = rotationX;
     }
     if (box3.isEmpty()) return;
     const center = box3.getCenter(new THREE.Vector3());
