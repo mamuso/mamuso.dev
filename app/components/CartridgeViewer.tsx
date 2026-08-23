@@ -65,7 +65,8 @@ const DEG = Math.PI / 180;
 // Hero entrance: build the stack from the bottom up so each falling cartridge
 // lands above the previous one instead of passing through it.
 const ENTRANCE_OFFSET_Y = 0.4;
-const ENTRANCE_OFFSET_Z = 0.48;
+const ENTRANCE_OFFSET_Z = 0.5;
+const ENTRANCE_PITCH_OFFSET = -15 * DEG;
 const ENTRANCE_DURATION_SEC = 1.15;
 const ENTRANCE_STAGGER_SEC = 0.1;
 const TAP_MAX_MOVEMENT_PX = 8;
@@ -268,7 +269,12 @@ function CartridgeInner({
   const rollAngle = useRef(restingRoll);
   const rollTarget = useRef(restingRoll);
   const pitchVelocity = useRef(0);
-  const pitchAngle = useRef(isRock ? ROCK_PITCH_START : restingPitch);
+  const pitchAngle = useRef(
+    isRock
+      ? ROCK_PITCH_START
+      : restingPitch +
+          (entranceDelaySec === undefined ? 0 : ENTRANCE_PITCH_OFFSET)
+  );
   const pitchTarget = useRef(isRock ? ROCK_PITCH_START : restingPitch);
   const depthVelocity = useRef(0);
   const depthPosition = useRef(
@@ -294,7 +300,11 @@ function CartridgeInner({
 
   useLayoutEffect(() => {
     if (!pivotRef.current || isRock) return;
-    pivotRef.current.rotation.set(restingPitch, restingYaw, restingRoll);
+    pivotRef.current.rotation.set(
+      pitchAngle.current,
+      restingYaw,
+      restingRoll
+    );
     pivotRef.current.position.z = depthPosition.current;
     invalidate();
   }, [isRock, isDetailPose, detailLift, restingPitch, restingYaw, restingRoll, invalidate]);
@@ -348,6 +358,9 @@ function CartridgeInner({
       depthPosition.current =
         depthTarget.current + ENTRANCE_OFFSET_Z * (1 - eased);
       pivotRef.current.position.z = depthPosition.current;
+      pitchAngle.current =
+        restingPitch + ENTRANCE_PITCH_OFFSET * (1 - eased);
+      pivotRef.current.rotation.x = pitchAngle.current;
 
       if (progress < 1) {
         invalidate();
@@ -355,8 +368,10 @@ function CartridgeInner({
         entranceComplete.current = true;
         positionY.current = positionYTarget.current;
         depthPosition.current = depthTarget.current;
+        pitchAngle.current = restingPitch;
         pivotRef.current.position.y = positionY.current;
         pivotRef.current.position.z = depthPosition.current;
+        pivotRef.current.rotation.x = pitchAngle.current;
         restedRef.current = true;
       }
       return;
@@ -555,7 +570,7 @@ function CartridgeInner({
         positionY.current,
         depthPosition.current,
       ]}
-      rotation={[restingPitch, restingYaw, restingRoll]}
+      rotation={[pitchAngle.current, restingYaw, restingRoll]}
       userData={{
         cameraPositionY: position[1],
         cameraPositionZ: isDetailPose ? detailLift : 0,
