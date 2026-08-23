@@ -66,7 +66,7 @@ const DEG = Math.PI / 180;
 // lands above the previous one instead of passing through it.
 const ENTRANCE_OFFSET_Y = 0.4;
 const ENTRANCE_OFFSET_Z = 0.5;
-const ENTRANCE_PITCH_OFFSET = -15 * DEG;
+const ENTRANCE_PITCH_OFFSET = -45 * DEG;
 const ENTRANCE_DURATION_SEC = 1.15;
 const ENTRANCE_STAGGER_SEC = 0.1;
 const TAP_MAX_MOVEMENT_PX = 8;
