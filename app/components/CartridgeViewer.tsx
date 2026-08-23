@@ -43,8 +43,10 @@ export default function CartridgeViewer({
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    const updateDevicePixelRatio = () =>
-      setDevicePixelRatio(Math.min(window.devicePixelRatio, 2));
+    const updateDevicePixelRatio = () => {
+      const maxPixelRatio = window.innerWidth < 720 ? 3 : 2;
+      setDevicePixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
+    };
 
     updateDevicePixelRatio();
     window.addEventListener("resize", updateDevicePixelRatio);
@@ -82,10 +84,7 @@ export default function CartridgeViewer({
         performance={{ min: 0.75, max: 1, debounce: 200 }}
         shadows={{ type: THREE.PCFShadowMap }}
         gl={{
-          // GrainEffect already renders the scene into an up-to-4x multisampled
-          // target. Multisampling the final full-screen pass again wastes
-          // GPU memory without improving edge quality.
-          antialias: false,
+          antialias: true,
           powerPreference: "high-performance",
           toneMapping: THREE.ACESFilmicToneMapping,
           outputColorSpace: THREE.SRGBColorSpace,

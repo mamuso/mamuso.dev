@@ -55,7 +55,7 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
 };
 
 export const CAMERA_PRESET_SMALL: CameraPreset = {
-  margin: 1.7,
+  margin: 1.5,
   aspect: 390 / 580,
   panFraction: 0,
   verticalPanFraction: 0.1,
