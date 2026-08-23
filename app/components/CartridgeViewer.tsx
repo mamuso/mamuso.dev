@@ -65,8 +65,9 @@ const DEG = Math.PI / 180;
 // Hero entrance: build the stack from the bottom up so each falling cartridge
 // lands above the previous one instead of passing through it.
 const ENTRANCE_OFFSET_Y = 0.4;
-const ENTRANCE_DURATION_SEC = 1.4;
-const ENTRANCE_STAGGER_SEC = 0.14;
+const ENTRANCE_OFFSET_Z = 0.08;
+const ENTRANCE_DURATION_SEC = 1.15;
+const ENTRANCE_STAGGER_SEC = 0.1;
 
 // Intro reveal: hold, then gently lift + tilt into place.
 const INTRO_DELAY_SEC = 3;
@@ -131,7 +132,7 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
   openTopOffsetPx: 240,
 };
 export const CAMERA_PRESET_SMALL: CameraPreset = {
-  margin: 1.7,
+  margin: 1.5,
   aspect: 390 / 580,
   panFraction: 0,
   verticalPanFraction: 0.1,
@@ -278,6 +279,7 @@ function CartridgeInner({
   const positionYTarget = useRef(position[1]);
   const hovered = useRef(false);
   const hoverMotion = useRef(false);
+  const blockedPointerDown = useRef(false);
   const entranceStart = useRef<number | null>(null);
   const entranceComplete = useRef(entranceDelaySec === undefined);
   const restedRef = useRef(
@@ -290,7 +292,9 @@ function CartridgeInner({
   useLayoutEffect(() => {
     if (!pivotRef.current || isRock) return;
     pivotRef.current.rotation.set(restingPitch, restingYaw, restingRoll);
-    pivotRef.current.position.z = isDetailPose ? detailLift : 0;
+    pivotRef.current.position.z =
+      (isDetailPose ? detailLift : 0) +
+      (entranceComplete.current ? 0 : ENTRANCE_OFFSET_Z);
     invalidate();
   }, [isRock, isDetailPose, detailLift, restingPitch, restingYaw, restingRoll, invalidate]);
 
@@ -340,13 +344,17 @@ function CartridgeInner({
       positionY.current =
         positionYTarget.current + ENTRANCE_OFFSET_Y * (1 - eased);
       pivotRef.current.position.y = positionY.current;
+      pivotRef.current.position.z =
+        depthTarget.current + ENTRANCE_OFFSET_Z * (1 - eased);
 
       if (progress < 1) {
         invalidate();
       } else {
         entranceComplete.current = true;
         positionY.current = positionYTarget.current;
+        depthPosition.current = depthTarget.current;
         pivotRef.current.position.y = positionY.current;
+        pivotRef.current.position.z = depthPosition.current;
         restedRef.current = true;
       }
       return;
@@ -540,9 +548,17 @@ function CartridgeInner({
   return (
     <group
       ref={pivotRef}
-      position={[position[0], positionY.current, isDetailPose ? detailLift : 0]}
+      position={[
+        position[0],
+        positionY.current,
+        (isDetailPose ? detailLift : 0) +
+          (entranceDelaySec === undefined ? 0 : ENTRANCE_OFFSET_Z),
+      ]}
       rotation={[restingPitch, restingYaw, restingRoll]}
-      userData={{ cameraPositionY: position[1] }}
+      userData={{
+        cameraPositionY: position[1],
+        cameraPositionZ: isDetailPose ? detailLift : 0,
+      }}
     >
       <primitive object={instance} position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]} />
       {(onHoverChange || onToggleOpen) && (
@@ -550,6 +566,7 @@ function CartridgeInner({
           geometry={CARTRIDGE_HITBOX_GEOMETRY}
           onPointerEnter={(event) => {
             event.stopPropagation();
+            if (!entranceComplete.current) return;
             gl.domElement.style.cursor = "pointer";
             onHoverChange?.(true);
           }}
@@ -558,8 +575,16 @@ function CartridgeInner({
             gl.domElement.style.cursor = "auto";
             onHoverChange?.(false);
           }}
+          onPointerDown={(event) => {
+            event.stopPropagation();
+            blockedPointerDown.current = !entranceComplete.current;
+          }}
           onClick={(event) => {
             event.stopPropagation();
+            if (blockedPointerDown.current || !entranceComplete.current) {
+              blockedPointerDown.current = false;
+              return;
+            }
             onToggleOpen?.();
           }}
         >
@@ -608,15 +633,27 @@ function FixedCameraRig({
 
     // Entrance motion starts the cartridges above their resting slots. Frame
     // the settled layout so the camera remains fixed while they fall in.
-    const animatedPositions: Array<{ object: Object3D; y: number }> = [];
+    const animatedPositions: Array<{ object: Object3D; y: number; z: number }> = [];
     groupRef.current.traverse((object) => {
       const cameraPositionY = object.userData.cameraPositionY;
-      if (typeof cameraPositionY !== "number") return;
-      animatedPositions.push({ object, y: object.position.y });
+      const cameraPositionZ = object.userData.cameraPositionZ;
+      if (
+        typeof cameraPositionY !== "number" ||
+        typeof cameraPositionZ !== "number"
+      ) return;
+      animatedPositions.push({
+        object,
+        y: object.position.y,
+        z: object.position.z,
+      });
       object.position.y = cameraPositionY;
+      object.position.z = cameraPositionZ;
     });
     const box3 = new THREE.Box3().setFromObject(groupRef.current);
-    for (const { object, y } of animatedPositions) object.position.y = y;
+    for (const { object, y, z } of animatedPositions) {
+      object.position.y = y;
+      object.position.z = z;
+    }
     if (box3.isEmpty()) return;
     const center = box3.getCenter(new THREE.Vector3());
     const size = box3.getSize(new THREE.Vector3());
