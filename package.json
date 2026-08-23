@@ -6,7 +6,7 @@
   "packageManager": "pnpm@10.17.1",
   "scripts": {
     "dev": "next dev",
-    "build": "git submodule update --init && pnpm run assets && pnpm run rss && next build",
+    "build": "git submodule update --init && corepack pnpm run assets && corepack pnpm run rss && next build",
     "content:update": "git submodule update --init --remote content",
     "start": "next start",
     "lint": "eslint .",
@@ -15,8 +15,8 @@
     "test:content": "TS_NODE_PROJECT=node.tsconfig.json node --require ts-node/register tests/post-frontmatter.test.ts",
     "test:feed": "TS_NODE_PROJECT=node.tsconfig.json node --require ts-node/register tests/feed.test.ts",
     "test:photos": "TS_NODE_PROJECT=node.tsconfig.json node --require ts-node/register tests/photo-palette.test.ts",
-    "rss": "pnpm exec ts-node --project ./node.tsconfig.json lib/feed",
-    "assets": "pnpm exec ts-node --project ./node.tsconfig.json lib/assets",
+    "rss": "ts-node --project ./node.tsconfig.json lib/feed",
+    "assets": "ts-node --project ./node.tsconfig.json lib/assets",
     "photos": "ts-node --project ./node.tsconfig.json lib/photos"
   },
   "dependencies": {
