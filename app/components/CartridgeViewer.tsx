@@ -62,6 +62,15 @@ const ROCK_PITCH_END = 15 * (Math.PI / 180);
 const ROCK_PERIOD_SEC = 12;
 const DEG = Math.PI / 180;
 
+// Hero entrance: build the stack from the bottom up so each falling cartridge
+// lands above the previous one instead of passing through it.
+const ENTRANCE_OFFSET_Y = 0.4;
+const ENTRANCE_OFFSET_Z = 0.5;
+const ENTRANCE_PITCH_OFFSET = -45 * DEG;
+const ENTRANCE_DURATION_SEC = 1.15;
+const ENTRANCE_STAGGER_SEC = 0.1;
+const TAP_MAX_MOVEMENT_PX = 8;
+
 // Intro reveal: hold, then gently lift + tilt into place.
 const INTRO_DELAY_SEC = 3;
 const INTRO_DURATION_SEC = 6;
@@ -125,7 +134,7 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
   openTopOffsetPx: 240,
 };
 export const CAMERA_PRESET_SMALL: CameraPreset = {
-  margin: 1.7,
+  margin: 1.3,
   aspect: 390 / 580,
   panFraction: 0,
   verticalPanFraction: 0.1,
@@ -192,6 +201,7 @@ function CartridgeInner({
   onHoverChange,
   isOpen = false,
   onToggleOpen,
+  entranceDelaySec,
 }: {
   scene: Object3D;
   position: [number, number];
@@ -208,6 +218,7 @@ function CartridgeInner({
   onHoverChange?: (hovered: boolean) => void;
   isOpen?: boolean;
   onToggleOpen?: () => void;
+  entranceDelaySec?: number;
 }) {
   const { gl, invalidate } = useThree();
   const isRock = motion === "rock";
@@ -258,25 +269,43 @@ function CartridgeInner({
   const rollAngle = useRef(restingRoll);
   const rollTarget = useRef(restingRoll);
   const pitchVelocity = useRef(0);
-  const pitchAngle = useRef(isRock ? ROCK_PITCH_START : restingPitch);
+  const pitchAngle = useRef(
+    isRock
+      ? ROCK_PITCH_START
+      : restingPitch +
+          (entranceDelaySec === undefined ? 0 : ENTRANCE_PITCH_OFFSET)
+  );
   const pitchTarget = useRef(isRock ? ROCK_PITCH_START : restingPitch);
   const depthVelocity = useRef(0);
-  const depthPosition = useRef(isDetailPose ? detailLift : 0);
+  const depthPosition = useRef(
+    (isDetailPose ? detailLift : 0) +
+      (entranceDelaySec === undefined ? 0 : ENTRANCE_OFFSET_Z)
+  );
   const depthTarget = useRef(isDetailPose ? detailLift : 0);
   const positionYVelocity = useRef(0);
-  const positionY = useRef(position[1]);
+  const positionY = useRef(
+    position[1] + (entranceDelaySec === undefined ? 0 : ENTRANCE_OFFSET_Y)
+  );
   const positionYTarget = useRef(position[1]);
   const hovered = useRef(false);
   const hoverMotion = useRef(false);
-  const restedRef = useRef(isStatic || !isRock);
+  const entranceStart = useRef<number | null>(null);
+  const entranceComplete = useRef(entranceDelaySec === undefined);
+  const restedRef = useRef(
+    entranceDelaySec === undefined && (isStatic || !isRock)
+  );
   const staticFlipProgress = useRef(0);
   const staticFlipDirection = useRef<0 | 1 | -1>(0);
   const introStart = useRef<number | null>(null);
 
   useLayoutEffect(() => {
     if (!pivotRef.current || isRock) return;
-    pivotRef.current.rotation.set(restingPitch, restingYaw, restingRoll);
-    pivotRef.current.position.z = isDetailPose ? detailLift : 0;
+    pivotRef.current.rotation.set(
+      pitchAngle.current,
+      restingYaw,
+      restingRoll
+    );
+    pivotRef.current.position.z = depthPosition.current;
     invalidate();
   }, [isRock, isDetailPose, detailLift, restingPitch, restingYaw, restingRoll, invalidate]);
 
@@ -305,6 +334,48 @@ function CartridgeInner({
   useFrame((state, delta) => {
     if (!pivotRef.current) return;
     if (isFrozen) return;
+
+    if (!entranceComplete.current) {
+      if (entranceStart.current === null) {
+        entranceStart.current = state.clock.elapsedTime;
+      }
+      const elapsed =
+        state.clock.elapsedTime - entranceStart.current - (entranceDelaySec ?? 0);
+      const progress = THREE.MathUtils.clamp(
+        elapsed / ENTRANCE_DURATION_SEC,
+        0,
+        1
+      );
+      // Smootherstep has zero velocity and acceleration at both ends, avoiding
+      // the abrupt launch of ease-out while still settling without a bounce.
+      const eased =
+        progress * progress * progress *
+        (progress * (progress * 6 - 15) + 10);
+
+      positionY.current =
+        positionYTarget.current + ENTRANCE_OFFSET_Y * (1 - eased);
+      pivotRef.current.position.y = positionY.current;
+      depthPosition.current =
+        depthTarget.current + ENTRANCE_OFFSET_Z * (1 - eased);
+      pivotRef.current.position.z = depthPosition.current;
+      pitchAngle.current =
+        restingPitch + ENTRANCE_PITCH_OFFSET * (1 - eased);
+      pivotRef.current.rotation.x = pitchAngle.current;
+
+      if (progress < 1) {
+        invalidate();
+      } else {
+        entranceComplete.current = true;
+        positionY.current = positionYTarget.current;
+        depthPosition.current = depthTarget.current;
+        pitchAngle.current = restingPitch;
+        pivotRef.current.position.y = positionY.current;
+        pivotRef.current.position.z = depthPosition.current;
+        pivotRef.current.rotation.x = pitchAngle.current;
+        restedRef.current = true;
+      }
+      return;
+    }
 
     if (isIntro) {
       if (introStart.current === null) introStart.current = state.clock.elapsedTime;
@@ -494,8 +565,17 @@ function CartridgeInner({
   return (
     <group
       ref={pivotRef}
-      position={[position[0], positionY.current, isDetailPose ? detailLift : 0]}
-      rotation={[restingPitch, restingYaw, restingRoll]}
+      position={[
+        position[0],
+        positionY.current,
+        depthPosition.current,
+      ]}
+      rotation={[pitchAngle.current, restingYaw, restingRoll]}
+      userData={{
+        cameraPositionY: position[1],
+        cameraPositionZ: isDetailPose ? detailLift : 0,
+        cameraRotationX: restingPitch,
+      }}
     >
       <primitive object={instance} position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]} />
       {(onHoverChange || onToggleOpen) && (
@@ -503,6 +583,7 @@ function CartridgeInner({
           geometry={CARTRIDGE_HITBOX_GEOMETRY}
           onPointerEnter={(event) => {
             event.stopPropagation();
+            if (!entranceComplete.current) return;
             gl.domElement.style.cursor = "pointer";
             onHoverChange?.(true);
           }}
@@ -513,6 +594,10 @@ function CartridgeInner({
           }}
           onClick={(event) => {
             event.stopPropagation();
+            if (
+              event.delta > TAP_MAX_MOVEMENT_PX ||
+              !entranceComplete.current
+            ) return;
             onToggleOpen?.();
           }}
         >
@@ -558,7 +643,40 @@ function FixedCameraRig({
   // component exists to avoid.
   useLayoutEffect(() => {
     if (!groupRef.current) return;
+
+    // Entrance motion starts the cartridges above their resting slots. Frame
+    // the settled layout so the camera remains fixed while they fall in.
+    const animatedTransforms: Array<{
+      object: Object3D;
+      y: number;
+      z: number;
+      rotationX: number;
+    }> = [];
+    groupRef.current.traverse((object) => {
+      const cameraPositionY = object.userData.cameraPositionY;
+      const cameraPositionZ = object.userData.cameraPositionZ;
+      const cameraRotationX = object.userData.cameraRotationX;
+      if (
+        typeof cameraPositionY !== "number" ||
+        typeof cameraPositionZ !== "number" ||
+        typeof cameraRotationX !== "number"
+      ) return;
+      animatedTransforms.push({
+        object,
+        y: object.position.y,
+        z: object.position.z,
+        rotationX: object.rotation.x,
+      });
+      object.position.y = cameraPositionY;
+      object.position.z = cameraPositionZ;
+      if (preset.compactLabels) object.rotation.x = cameraRotationX;
+    });
     const box3 = new THREE.Box3().setFromObject(groupRef.current);
+    for (const { object, y, z, rotationX } of animatedTransforms) {
+      object.position.y = y;
+      object.position.z = z;
+      object.rotation.x = rotationX;
+    }
     if (box3.isEmpty()) return;
     const center = box3.getCenter(new THREE.Vector3());
     const size = box3.getSize(new THREE.Vector3());
@@ -584,7 +702,10 @@ function FixedCameraRig({
     target.y += verticalOffset;
 
     camera.position.copy(camPos);
-    camera.near = Math.max(0.01, distance - maxSize);
+    camera.near = Math.max(
+      0.01,
+      distance - maxSize - ENTRANCE_OFFSET_Z
+    );
     camera.far = distance + maxSize * 4;
     camera.updateProjectionMatrix();
     camera.lookAt(target);
@@ -731,6 +852,9 @@ function CartridgeSceneTextures({
               onHoverChange={(hovered) => setHoveredIndex(hovered ? i : null)}
               isOpen={i === openIndex}
               onToggleOpen={() => setOpenIndex((cur) => (cur === i ? null : i))}
+              entranceDelaySec={
+                (layout.length - 1 - i) * ENTRANCE_STAGGER_SEC
+              }
             />
           ))}
           {!cameraPreset.compactLabels && sideLabelIndex !== null && (
@@ -914,6 +1038,7 @@ export default function CartridgeViewer({
     <div className="relative left-1/2 right-1/2 -mx-[50vw] w-screen h-[580px] min-[720px]:h-[760px] overflow-hidden border border-[magenta]">
       <Canvas
         camera={{ fov: 20 }}
+        style={{ touchAction: "pan-y" }}
         dpr={dpr}
         frameloop="demand"
         performance={{ min: 0.75, max: 1, debounce: 200 }}
