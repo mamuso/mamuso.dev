@@ -33,19 +33,33 @@ export type {
 useGLTF.preload("/models/famicom_cartridge.glb");
 useTexture.preload(LABEL_URLS);
 
+function getTargetPixelRatio() {
+  const isCompactViewport = window.innerWidth < 720;
+  const minimumPixelRatio = isCompactViewport ? 2 : 1;
+  const maximumPixelRatio = isCompactViewport ? 3 : 2;
+
+  return Math.min(
+    Math.max(window.devicePixelRatio || 1, minimumPixelRatio),
+    maximumPixelRatio
+  );
+}
+
 export default function CartridgeViewer({
   cameraPreset = CAMERA_PRESET_LARGE,
 }: {
   cameraPreset?: CameraPreset;
 }) {
-  const [devicePixelRatio, setDevicePixelRatio] = useState(1);
+  // This viewer is loaded with `ssr: false`, so reading the viewport here is
+  // safe and avoids rendering the entrance's first frame at a blurry DPR 1.
+  const [devicePixelRatio, setDevicePixelRatio] = useState(
+    getTargetPixelRatio
+  );
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     const updateDevicePixelRatio = () => {
-      const maxPixelRatio = window.innerWidth < 720 ? 3 : 2;
-      setDevicePixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
+      setDevicePixelRatio(getTargetPixelRatio());
     };
 
     updateDevicePixelRatio();
@@ -77,6 +91,7 @@ export default function CartridgeViewer({
       <Canvas
         role="img"
         aria-label="A 3D stack of career cartridges. Use the company controls to open each cartridge."
+        onPointerMissed={() => setOpenIndex(null)}
         camera={{ fov: 20 }}
         dpr={devicePixelRatio}
         frameloop="demand"

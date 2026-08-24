@@ -42,8 +42,8 @@ export const INTRO_LIFT = 0.05;
 export const ENTRANCE_OFFSET_Y = 0.4;
 export const ENTRANCE_OFFSET_Z = 0.5;
 export const ENTRANCE_PITCH_OFFSET = -45 * DEG;
-export const ENTRANCE_DURATION_SEC = 1.15;
-export const ENTRANCE_STAGGER_SEC = 0.1;
+export const ENTRANCE_DURATION_SEC = 0.9;
+export const ENTRANCE_STAGGER_SEC = 0.075;
 
 // A pointer that travels farther than this between press and release is a
 // scroll gesture, not a tap, so it must not toggle a cartridge open.

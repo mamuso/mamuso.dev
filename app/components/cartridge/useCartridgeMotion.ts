@@ -42,6 +42,8 @@ type MotionOptions = {
    * and mount already settled.
    */
   entranceDelaySec?: number;
+  /** Receives normalized progress for entrance-synchronized scene effects. */
+  entranceProgressRef?: { current: number };
 };
 
 /**
@@ -58,6 +60,7 @@ export function useCartridgeMotion({
   isOpen,
   reducedMotion,
   entranceDelaySec,
+  entranceProgressRef,
 }: MotionOptions) {
   const invalidate = useThree((state) => state.invalidate);
   const isRock = motion === "rock";
@@ -202,14 +205,12 @@ export function useCartridgeMotion({
         0,
         1
       );
-      // Smootherstep has zero velocity and acceleration at both ends, avoiding
-      // the abrupt launch of an ease-out while still settling without a bounce.
-      const eased =
-        progress *
-        progress *
-        progress *
-        (progress * (progress * 6 - 15) + 10);
-      const remaining = 1 - eased;
+      // A cubic ease-out covers the offscreen distance decisively, then
+      // approaches the stack with near-zero velocity and acceleration for a
+      // soft landing. The abrupt part of the curve happens outside the frame.
+      const remaining = Math.pow(1 - progress, 3);
+      const eased = 1 - remaining;
+      if (entranceProgressRef) entranceProgressRef.current = eased;
 
       positionY.current =
         positionYTarget.current + ENTRANCE_OFFSET_Y * remaining;

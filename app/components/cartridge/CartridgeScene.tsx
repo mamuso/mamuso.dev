@@ -1,7 +1,7 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useState } from "react";
-import { useThree } from "@react-three/fiber";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
 import {
   Environment,
   Html,
@@ -78,7 +78,26 @@ function CartridgeSceneAssets({
   const textures = useTexture(labelUrls);
   const { gl, invalidate, camera, size } = useThree();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const shadowMaterialRef = useRef<THREE.ShadowMaterial>(null);
+  const entranceProgressRef = useRef(reducedMotion ? 1 : 0);
+  const stageEntranceShadow =
+    cameraPreset.compactLabels === true && !reducedMotion;
   useCursor(hoveredIndex !== null);
+
+  useFrame(() => {
+    if (!stageEntranceShadow || !shadowMaterialRef.current) return;
+
+    // The bottom cartridge lands first. Keep its shadow out of view while it
+    // is high above the stack, then ease the shadow in as it reaches the
+    // surface so compact layouts do not show a disconnected shadow.
+    const fade = THREE.MathUtils.smootherstep(
+      entranceProgressRef.current,
+      0.7,
+      1
+    );
+    shadowMaterialRef.current.visible = fade > 0;
+    shadowMaterialRef.current.opacity = shadowOpacity * fade;
+  });
 
   const { yPositions, openLabelY } = useCartridgeStackLayout({
     camera,
@@ -88,6 +107,10 @@ function CartridgeSceneAssets({
     openIndex,
   });
   const sideLabelIndex = hoveredIndex ?? openIndex;
+  const modelCenter = useMemo(
+    () => new THREE.Box3().setFromObject(scene).getCenter(new THREE.Vector3()),
+    [scene]
+  );
   const textureByLabel = useMemo(() => {
     const textureList = Array.isArray(textures) ? textures : [textures];
     return new Map(
@@ -123,14 +146,12 @@ function CartridgeSceneAssets({
       <mesh position={shadowPlanePosition} receiveShadow>
         <planeGeometry args={[0.8, 0.8]} />
         <shadowMaterial
+          ref={shadowMaterialRef}
           transparent
-          opacity={shadowOpacity}
+          visible={!stageEntranceShadow}
+          opacity={stageEntranceShadow ? 0 : shadowOpacity}
           depthWrite={false}
         />
-      </mesh>
-      <mesh position={[0, 0, -1]} onClick={() => onOpenIndexChange(null)}>
-        <planeGeometry args={[20, 20]} />
-        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       <CameraRig preset={cameraPreset}>
         <group>
@@ -138,6 +159,7 @@ function CartridgeSceneAssets({
             <Cartridge
               key={cartridge.label}
               scene={scene}
+              modelCenter={modelCenter}
               position={[cartridge.position[0], yPositions[index]]}
               color={cartridge.color}
               labelTexture={textureByLabel.get(cartridge.label)!}
@@ -161,6 +183,11 @@ function CartridgeSceneAssets({
                 reducedMotion
                   ? undefined
                   : (layout.length - 1 - index) * ENTRANCE_STAGGER_SEC
+              }
+              entranceProgressRef={
+                stageEntranceShadow && index === layout.length - 1
+                  ? entranceProgressRef
+                  : undefined
               }
             />
           ))}
@@ -199,7 +226,7 @@ function CartridgeSceneAssets({
         </group>
       </CameraRig>
       <Environment
-        preset="studio"
+        files="/environments/studio_small_03_1k.hdr"
         environmentIntensity={0.6}
         resolution={128}
       />

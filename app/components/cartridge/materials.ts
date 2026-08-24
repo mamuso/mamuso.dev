@@ -72,9 +72,10 @@ export function configureLabelTexture(
   texture.flipY = false;
   texture.wrapS = THREE.ClampToEdgeWrapping;
   texture.wrapT = THREE.ClampToEdgeWrapping;
-  texture.generateMipmaps = false;
-  texture.minFilter = THREE.LinearFilter;
+  texture.generateMipmaps = true;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
   texture.magFilter = THREE.LinearFilter;
+  texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
   texture.needsUpdate = true;
   renderer.initTexture(texture);
 }
@@ -122,9 +123,10 @@ function prepareMaterial(
 
   if (material.name === "Label (Paper)") {
     const paper = material.clone() as THREE.MeshStandardMaterial;
-    paper.transparent = true;
-    paper.opacity = 0;
-    paper.depthWrite = false;
+    // The artwork fully replaces this GLB placeholder. Hiding its material
+    // skips one draw call per cartridge while leaving the label geometry and
+    // appearance unchanged.
+    paper.visible = false;
     return sharpenTextures(paper, maxAnisotropy);
   }
 

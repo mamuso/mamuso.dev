@@ -14,6 +14,7 @@ const GRAIN_SHADER = {
   uniforms: {
     tDiffuse: { value: null },
     intensity: { value: DEFAULT_GRAIN_INTENSITY },
+    pixelRatio: { value: 1 },
   },
   vertexShader: /* glsl */ `
     varying vec2 vUv;
@@ -26,6 +27,7 @@ const GRAIN_SHADER = {
   fragmentShader: /* glsl */ `
     uniform sampler2D tDiffuse;
     uniform float intensity;
+    uniform float pixelRatio;
     varying vec2 vUv;
 
     float random(vec2 coordinates) {
@@ -40,7 +42,11 @@ const GRAIN_SHADER = {
       float luminance = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
       float midtone = 1.0 - abs(luminance * 2.0 - 1.0);
       float response = mix(0.35, 1.0, smoothstep(0.0, 1.0, midtone));
-      color.rgb += grain * intensity * response * color.a;
+      // At DPR 1 every noise sample survives as a full CSS pixel. Temper the
+      // effect there; DPR 2+ naturally averages the physical-pixel grain when
+      // the browser composites the canvas back to CSS pixels.
+      float dprResponse = min(pixelRatio, 2.0) * 0.5;
+      color.rgb += grain * intensity * dprResponse * response * color.a;
       gl_FragColor = color;
     }
   `,
@@ -82,6 +88,8 @@ export function GrainEffect({
 
     composer.setPixelRatio(viewport.dpr);
     composer.setSize(size.width, size.height);
+    const grainPass = composer.passes[1] as ShaderPass;
+    grainPass.uniforms.pixelRatio.value = viewport.dpr;
     invalidate();
   }, [invalidate, size.height, size.width, viewport.dpr]);
 

@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import type { Object3D } from "three";
+import type { Object3D, Vector3 } from "three";
 import {
   CARTRIDGE_HITBOX_GEOMETRY,
   DETAIL_LIFT,
@@ -18,6 +18,7 @@ import type { CartridgeMotion } from "./types";
 
 type CartridgeProps = {
   scene: Object3D;
+  modelCenter: Vector3;
   position: [number, number];
   color: string;
   labelTexture: THREE.Texture;
@@ -34,10 +35,12 @@ type CartridgeProps = {
   isOpen?: boolean;
   onToggleOpen?: () => void;
   entranceDelaySec?: number;
+  entranceProgressRef?: { current: number };
 };
 
 export function Cartridge({
   scene,
+  modelCenter,
   position,
   color,
   labelTexture,
@@ -53,6 +56,7 @@ export function Cartridge({
   isOpen = false,
   onToggleOpen,
   entranceDelaySec,
+  entranceProgressRef,
 }: CartridgeProps) {
   const renderer = useThree((state) => state.gl);
   const instance = useMemo(
@@ -74,11 +78,6 @@ export function Cartridge({
       shellOpacity,
     ]
   );
-  const modelCenter = useMemo(
-    () =>
-      new THREE.Box3().setFromObject(instance).getCenter(new THREE.Vector3()),
-    [instance]
-  );
   useEffect(
     () => () => disposeCartridgeInstance(instance),
     [instance]
@@ -93,6 +92,7 @@ export function Cartridge({
     isOpen,
     reducedMotion,
     entranceDelaySec,
+    entranceProgressRef,
   });
 
   return (
