@@ -23,6 +23,17 @@ export type CartridgeTiltAndShift = {
   shift: number;
 };
 
+/**
+ * Where a cartridge comes to rest once its entrance finishes. Cartridges mount
+ * at an offset, so the camera rig reads this to frame the settled stack rather
+ * than the pre-entrance pose.
+ */
+export type CartridgeSettledTransform = {
+  y: number;
+  z: number;
+  rotationX: number;
+};
+
 export type CartridgeLayoutEntry = {
   name: string;
   company: string;

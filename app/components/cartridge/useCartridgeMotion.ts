@@ -6,6 +6,10 @@ import * as THREE from "three";
 import type { Group } from "three";
 import {
   DETAIL_LIFT,
+  ENTRANCE_DURATION_SEC,
+  ENTRANCE_OFFSET_Y,
+  ENTRANCE_OFFSET_Z,
+  ENTRANCE_PITCH_OFFSET,
   INTRO_DELAY_SEC,
   INTRO_DURATION_SEC,
   INTRO_END_PITCH,
@@ -22,7 +26,7 @@ import {
   STATIC_RETURN_STIFFNESS,
   DEG,
 } from "./constants";
-import type { CartridgeMotion } from "./types";
+import type { CartridgeMotion, CartridgeSettledTransform } from "./types";
 
 type MotionOptions = {
   position: [number, number];
@@ -33,6 +37,11 @@ type MotionOptions = {
   detailLift: number;
   isOpen: boolean;
   reducedMotion: boolean;
+  /**
+   * Seconds to wait before this cartridge drops in. Omit to skip the entrance
+   * and mount already settled.
+   */
+  entranceDelaySec?: number;
 };
 
 /**
@@ -48,6 +57,7 @@ export function useCartridgeMotion({
   detailLift,
   isOpen,
   reducedMotion,
+  entranceDelaySec,
 }: MotionOptions) {
   const invalidate = useThree((state) => state.invalidate);
   const isRock = motion === "rock";
@@ -57,6 +67,9 @@ export function useCartridgeMotion({
   const isDetailPose = isRock || isStatic || isFrozen;
   const positionX = position[0];
   const targetPositionY = position[1];
+  // Reduced motion skips the drop entirely and mounts the stack settled.
+  const hasEntrance = entranceDelaySec !== undefined && !reducedMotion;
+  const settledDepth = isDetailPose ? detailLift : 0;
 
   const pivotRef = useRef<Group>(null);
   const yawVelocity = useRef(0);
@@ -66,16 +79,26 @@ export function useCartridgeMotion({
   const rollAngle = useRef(restingRoll);
   const rollTarget = useRef(restingRoll);
   const pitchVelocity = useRef(0);
-  const pitchAngle = useRef(isRock ? ROCK_PITCH_START : restingPitch);
+  const pitchAngle = useRef(
+    isRock
+      ? ROCK_PITCH_START
+      : restingPitch + (hasEntrance ? ENTRANCE_PITCH_OFFSET : 0)
+  );
   const pitchTarget = useRef(isRock ? ROCK_PITCH_START : restingPitch);
   const depthVelocity = useRef(0);
-  const depthPosition = useRef(isDetailPose ? detailLift : 0);
-  const depthTarget = useRef(isDetailPose ? detailLift : 0);
+  const depthPosition = useRef(
+    settledDepth + (hasEntrance ? ENTRANCE_OFFSET_Z : 0)
+  );
+  const depthTarget = useRef(settledDepth);
   const positionYVelocity = useRef(0);
-  const positionY = useRef(targetPositionY);
+  const positionY = useRef(
+    targetPositionY + (hasEntrance ? ENTRANCE_OFFSET_Y : 0)
+  );
   const positionYTarget = useRef(targetPositionY);
   const hoverMotion = useRef(false);
-  const restedRef = useRef(isStatic || !isRock);
+  const entranceStart = useRef<number | null>(null);
+  const entranceComplete = useRef(!hasEntrance);
+  const restedRef = useRef(!hasEntrance && (isStatic || !isRock));
   const staticFlipProgress = useRef(0);
   const staticFlipDirection = useRef<0 | 1 | -1>(0);
   const introStart = useRef<number | null>(null);
@@ -93,7 +116,7 @@ export function useCartridgeMotion({
     pivotRef.current.position.set(
       positionX,
       positionY.current,
-      isDetailPose ? detailLift : 0
+      depthPosition.current
     );
     invalidate();
   }, [detailLift, invalidate, isDetailPose, positionX]);
@@ -165,6 +188,53 @@ export function useCartridgeMotion({
   useFrame((state, delta) => {
     const pivot = pivotRef.current;
     if (!pivot || isFrozen || reducedMotion) return;
+
+    if (!entranceComplete.current) {
+      if (entranceStart.current === null) {
+        entranceStart.current = state.clock.elapsedTime;
+      }
+      const elapsed =
+        state.clock.elapsedTime -
+        entranceStart.current -
+        (entranceDelaySec ?? 0);
+      const progress = THREE.MathUtils.clamp(
+        elapsed / ENTRANCE_DURATION_SEC,
+        0,
+        1
+      );
+      // Smootherstep has zero velocity and acceleration at both ends, avoiding
+      // the abrupt launch of an ease-out while still settling without a bounce.
+      const eased =
+        progress *
+        progress *
+        progress *
+        (progress * (progress * 6 - 15) + 10);
+      const remaining = 1 - eased;
+
+      positionY.current =
+        positionYTarget.current + ENTRANCE_OFFSET_Y * remaining;
+      depthPosition.current = depthTarget.current + ENTRANCE_OFFSET_Z * remaining;
+      pitchAngle.current = restingPitch + ENTRANCE_PITCH_OFFSET * remaining;
+      pivot.position.y = positionY.current;
+      pivot.position.z = depthPosition.current;
+      pivot.rotation.x = pitchAngle.current;
+
+      if (progress < 1) {
+        invalidate();
+        return;
+      }
+
+      // Snap to the exact resting pose so the spring below starts at rest.
+      entranceComplete.current = true;
+      positionY.current = positionYTarget.current;
+      depthPosition.current = depthTarget.current;
+      pitchAngle.current = restingPitch;
+      pivot.position.y = positionY.current;
+      pivot.position.z = depthPosition.current;
+      pivot.rotation.x = pitchAngle.current;
+      restedRef.current = true;
+      return;
+    }
 
     if (isIntro) {
       if (introStart.current === null) {
@@ -373,7 +443,13 @@ export function useCartridgeMotion({
     }
   });
 
-  return pivotRef;
+  const settledTransform: CartridgeSettledTransform = {
+    y: targetPositionY,
+    z: settledDepth,
+    rotationX: restingPitch,
+  };
+
+  return { pivotRef, entranceComplete, settledTransform };
 }
 
 function isSpringSettled(displacement: number, velocity: number) {

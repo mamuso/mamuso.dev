@@ -3,13 +3,13 @@
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import type { Group } from "three";
+import type { Group, Object3D } from "three";
 import {
   CAMERA_PAN_FRACTION,
   CAMERA_VERTICAL_PAN_FRACTION,
   DEG,
 } from "./constants";
-import type { CameraPreset } from "./types";
+import type { CameraPreset, CartridgeSettledTransform } from "./types";
 
 /**
  * Frames its children once from a fixed reference aspect ratio. This keeps the
@@ -33,7 +33,10 @@ export function CameraRig({
     if (!groupRef.current) return;
 
     const camera = cameraRef.current;
-    const bounds = new THREE.Box3().setFromObject(groupRef.current);
+    const bounds = measureSettledBounds(
+      groupRef.current,
+      preset.compactLabels ?? false
+    );
     if (bounds.isEmpty()) return;
 
     const center = bounds.getCenter(new THREE.Vector3());
@@ -73,4 +76,49 @@ export function CameraRig({
   }, []);
 
   return <group ref={groupRef}>{children}</group>;
+}
+
+/**
+ * Cartridges mount at their entrance offsets, so measuring the group as-is
+ * would frame the pre-entrance pose and leave the camera drifting as they
+ * fall. Move each cartridge to its settled transform, measure, then restore.
+ *
+ * Only the small-screen preset also unwinds the entrance pitch: its tighter
+ * framing is sensitive to the tilted bounding box, while the large preset is
+ * framed wide enough that including the tilt makes no visible difference.
+ */
+function measureSettledBounds(group: Group, unwindPitch: boolean) {
+  const moved: Array<{
+    object: Object3D;
+    y: number;
+    z: number;
+    rotationX: number;
+  }> = [];
+
+  group.traverse((object) => {
+    const settled = object.userData.cartridgeSettled as
+      | CartridgeSettledTransform
+      | undefined;
+    if (!settled) return;
+
+    moved.push({
+      object,
+      y: object.position.y,
+      z: object.position.z,
+      rotationX: object.rotation.x,
+    });
+    object.position.y = settled.y;
+    object.position.z = settled.z;
+    if (unwindPitch) object.rotation.x = settled.rotationX;
+  });
+
+  const bounds = new THREE.Box3().setFromObject(group);
+
+  for (const { object, y, z, rotationX } of moved) {
+    object.position.y = y;
+    object.position.z = z;
+    object.rotation.x = rotationX;
+  }
+
+  return bounds;
 }

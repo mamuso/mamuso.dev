@@ -37,6 +37,18 @@ export const INTRO_DURATION_SEC = 6;
 export const INTRO_END_PITCH = -10 * DEG;
 export const INTRO_LIFT = 0.05;
 
+// Hero entrance: the stack builds from the bottom up so each falling cartridge
+// lands above the one before it instead of passing through it.
+export const ENTRANCE_OFFSET_Y = 0.4;
+export const ENTRANCE_OFFSET_Z = 0.5;
+export const ENTRANCE_PITCH_OFFSET = -45 * DEG;
+export const ENTRANCE_DURATION_SEC = 1.15;
+export const ENTRANCE_STAGGER_SEC = 0.1;
+
+// A pointer that travels farther than this between press and release is a
+// scroll gesture, not a tap, so it must not toggle a cartridge open.
+export const TAP_MAX_MOVEMENT_PX = 8;
+
 // With cartridges pitched 90 degrees on X, the stacking axis is the shell's
 // thickness rather than its height.
 export const ROW_PITCH = 0.016;

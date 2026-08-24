@@ -16,6 +16,7 @@ import { GrainEffect } from "./GrainEffect";
 import {
   CARTRIDGE_WIDTH,
   DETAIL_LIFT,
+  ENTRANCE_STAGGER_SEC,
   HOVER_LABEL_GAP,
   HOVER_LIFT,
 } from "./constants";
@@ -155,6 +156,11 @@ function CartridgeSceneAssets({
               isOpen={index === openIndex}
               onToggleOpen={() =>
                 onOpenIndexChange(openIndex === index ? null : index)
+              }
+              entranceDelaySec={
+                reducedMotion
+                  ? undefined
+                  : (layout.length - 1 - index) * ENTRANCE_STAGGER_SEC
               }
             />
           ))}

@@ -4,7 +4,11 @@ import { useEffect, useMemo } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import type { Object3D } from "three";
-import { CARTRIDGE_HITBOX_GEOMETRY, DETAIL_LIFT } from "./constants";
+import {
+  CARTRIDGE_HITBOX_GEOMETRY,
+  DETAIL_LIFT,
+  TAP_MAX_MOVEMENT_PX,
+} from "./constants";
 import {
   createCartridgeInstance,
   disposeCartridgeInstance,
@@ -29,6 +33,7 @@ type CartridgeProps = {
   onHoverChange?: (hovered: boolean) => void;
   isOpen?: boolean;
   onToggleOpen?: () => void;
+  entranceDelaySec?: number;
 };
 
 export function Cartridge({
@@ -47,6 +52,7 @@ export function Cartridge({
   onHoverChange,
   isOpen = false,
   onToggleOpen,
+  entranceDelaySec,
 }: CartridgeProps) {
   const renderer = useThree((state) => state.gl);
   const instance = useMemo(
@@ -77,7 +83,7 @@ export function Cartridge({
     () => () => disposeCartridgeInstance(instance),
     [instance]
   );
-  const pivotRef = useCartridgeMotion({
+  const { pivotRef, entranceComplete, settledTransform } = useCartridgeMotion({
     position,
     restingYaw,
     restingRoll,
@@ -86,10 +92,11 @@ export function Cartridge({
     detailLift,
     isOpen,
     reducedMotion,
+    entranceDelaySec,
   });
 
   return (
-    <group ref={pivotRef}>
+    <group ref={pivotRef} userData={{ cartridgeSettled: settledTransform }}>
       <primitive
         object={instance}
         position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]}
@@ -99,6 +106,7 @@ export function Cartridge({
           geometry={CARTRIDGE_HITBOX_GEOMETRY}
           onPointerEnter={(event) => {
             event.stopPropagation();
+            if (!entranceComplete.current) return;
             onHoverChange?.(true);
           }}
           onPointerLeave={(event) => {
@@ -107,6 +115,13 @@ export function Cartridge({
           }}
           onClick={(event) => {
             event.stopPropagation();
+            // Ignore drags: a moving pointer is a scroll, not a tap.
+            if (
+              event.delta > TAP_MAX_MOVEMENT_PX ||
+              !entranceComplete.current
+            ) {
+              return;
+            }
             onToggleOpen?.();
           }}
         >
