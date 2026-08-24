@@ -57,9 +57,11 @@ export const CAMERA_PAN_FRACTION = 0.5;
 export const CAMERA_VERTICAL_PAN_FRACTION = -0.15;
 
 // Framing uses a fixed reference aspect per breakpoint so resizing within a
-// breakpoint does not move the stack.
+// breakpoint does not move the stack. `margin` scales the camera distance, so
+// lowering it moves the camera in and renders the cartridges larger; the pan
+// fractions are relative to the visible extents and so hold their composition.
 export const CAMERA_PRESET_LARGE: CameraPreset = {
-  margin: 2,
+  margin: 1.7,
   aspect: 720 / 760,
   panFraction: 0.75,
   verticalPanFraction: -0.22,
