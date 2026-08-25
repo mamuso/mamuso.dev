@@ -5,6 +5,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Html, useGLTF, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import type { Group, Object3D } from "three";
+import * as stylex from "@stylexjs/stylex";
 
 // Matches the cartridge model's footprint in local space (X unaffected by
 // the resting pitch, which only rotates around X) — used both as the
@@ -866,7 +867,7 @@ function CartridgeSceneTextures({
               ]}
               style={{ pointerEvents: "none" }}
             >
-              <div className="-translate-x-full -translate-y-1/2 whitespace-nowrap text-right text-sm font-medium leading-tight">
+              <div {...stylex.props(styles.label, styles.sideLabel)}>
                 Company
                 <br />
                 0000 - 0000
@@ -878,7 +879,7 @@ function CartridgeSceneTextures({
               position={[layout[openIndex].position[0], openLabelY, 0]}
               style={{ pointerEvents: "none" }}
             >
-              <div className="-translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-center text-sm font-medium leading-tight">
+              <div {...stylex.props(styles.label, styles.compactLabel)}>
                 Company
                 <br />
                 0000 - 0000
@@ -1035,7 +1036,7 @@ export default function CartridgeViewer({
   );
 
   return (
-    <div className="relative left-1/2 right-1/2 -mx-[50vw] w-screen h-[580px] min-[720px]:h-[760px] overflow-hidden border border-[magenta]">
+    <div {...stylex.props(styles.viewer)}>
       <Canvas
         camera={{ fov: 20 }}
         style={{ touchAction: "pan-y" }}
@@ -1057,3 +1058,35 @@ export default function CartridgeViewer({
     </div>
   );
 }
+
+const styles = stylex.create({
+  viewer: {
+    borderColor: 'magenta',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    height: {
+      default: 580,
+      '@media (min-width: 720px)': 760,
+    },
+    left: '50%',
+    marginInline: '-50vw',
+    overflow: 'hidden',
+    position: 'relative',
+    right: '50%',
+    width: '100vw',
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: 500,
+    lineHeight: 1.25,
+    whiteSpace: 'nowrap',
+  },
+  sideLabel: {
+    textAlign: 'right',
+    transform: 'translate(-100%, -50%)',
+  },
+  compactLabel: {
+    textAlign: 'center',
+    transform: 'translate(-50%, -50%)',
+  },
+});

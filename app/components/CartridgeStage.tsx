@@ -10,7 +10,7 @@ import CartridgeViewer, {
 // ratio, not the live canvas size) — tighter on large screens, roomier on
 // small ones, but never recalculated as the window resizes within a
 // breakpoint. Only crossing the 720px breakpoint swaps the preset (matches
-// CartridgeViewer's min-[720px]:h-[760px] and CAMERA_PRESET_LARGE's aspect).
+// CartridgeViewer's 720px StyleX media query and CAMERA_PRESET_LARGE's aspect).
 export default function CartridgeStage() {
   const [isLarge, setIsLarge] = useState(false);
 

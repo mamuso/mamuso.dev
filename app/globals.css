@@ -1,16 +1,16 @@
-@import "tailwindcss";
+@stylex;
 
 html,
 body {
   overflow-x: hidden;
 }
 
-@theme {
-  --font-sans: var(--font-body);
-}
-
 :root {
   --font-body: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
 }
 
 :root[data-platform='non-apple'] {

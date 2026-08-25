@@ -1,4 +1,5 @@
 import Script from 'next/script'
+import * as stylex from '@stylexjs/stylex'
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../lib/constants'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -43,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Script>
       </head>
       <body>
-        <div className="container mx-auto px-6 py-6 sm:px-8">
+        <div {...stylex.props(styles.page)}>
           <Header />
           <CartridgeStage />
           <main>{children}</main>
@@ -53,3 +54,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
+
+const styles = stylex.create({
+  page: {
+    boxSizing: 'border-box',
+    marginInline: 'auto',
+    paddingBlock: 24,
+    paddingInline: {
+      default: 24,
+      '@media (min-width: 640px)': 32,
+    },
+    width: '100%',
+  },
+})
