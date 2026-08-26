@@ -79,7 +79,7 @@ A few files already use StyleX (`app/layout.tsx`, `CartridgeStageDynamic.tsx`, `
 
 ## Cartridge viewer
 
-`app/layout.tsx` currently mounts `CartridgeStage` on every route, above `<main>`. The viewer is a client-only React Three Fiber canvas (`ssr: false`) in `app/components/CartridgeViewer.tsx`, with cartridge definitions in `data/cartridges.ts` and textures in `public/labels/`. Interaction is pointer-only on mesh hitboxes. Hover labels are still placeholder copy until wired to real employer names.
+The homepage dynamically imports the React Three Fiber cartridge scene so other routes do not load the Three.js bundle or cartridge assets. `app/page.tsx` renders `CartridgeStage` (`ssr: false`) above the journal. The viewer lives in `app/components/CartridgeViewer.tsx`, with definitions in `data/cartridges.ts` and textures in `public/labels/`. Interaction is pointer-only on mesh hitboxes. Hover labels are still placeholder copy until wired to real employer names.
 
 ## TypeScript
 
