@@ -3,7 +3,6 @@ import * as stylex from '@stylexjs/stylex'
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../lib/constants'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import CartridgeStage from './components/CartridgeStageDynamic'
 import './globals.css'
 
 const platformDetectionScript = `
@@ -46,7 +45,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div {...stylex.props(styles.page)}>
           <Header />
-          <CartridgeStage />
           <main>{children}</main>
           <Footer />
         </div>

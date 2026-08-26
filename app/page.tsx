@@ -3,6 +3,7 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import { getRecentPosts } from '@/lib/api'
 import PostHome from '@/app/components/PostHome'
+import CartridgeStage from '@/app/components/CartridgeStageDynamic'
 
 export const metadata = {
   metadataBase: new URL('https://mamuso.dev'),
@@ -43,6 +44,7 @@ const recentPosts = getRecentPosts(POSTS_PER_PAGE, ['title', 'date', 'slug', 'im
 const Home: NextPage = () => {
   return (
     <>
+      <CartridgeStage />
       <section>
         <h2>Manuel Muñoz Solera</h2>
         <p>Crayon holder and key stroker.</p>
