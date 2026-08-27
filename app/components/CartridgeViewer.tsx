@@ -70,6 +70,9 @@ const ROCK_PITCH_START = -15 * (Math.PI / 180);
 const ROCK_PITCH_END = 15 * (Math.PI / 180);
 const ROCK_PERIOD_SEC = 12;
 const DEG = Math.PI / 180;
+// A long lens keeps the top-down stack close to orthographic while retaining
+// enough perspective for the hover and opening motions to read as depth.
+const CAMERA_FOV_DEGREES = 14;
 
 // Hero entrance: build the stack from the bottom up so each falling cartridge
 // lands above the previous one instead of passing through it.
@@ -1133,7 +1136,7 @@ export default function CartridgeViewer({
     <div {...stylex.props(styles.viewer)}>
       <CartridgeBackdrop />
       <Canvas
-        camera={{ fov: 20 }}
+        camera={{ fov: CAMERA_FOV_DEGREES }}
         style={{ position: "relative", touchAction: "pan-y" }}
         dpr={dpr}
         frameloop="demand"
