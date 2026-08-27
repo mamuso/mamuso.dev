@@ -269,6 +269,8 @@ function CartridgeInner({
   const rollVelocity = useRef(0);
   const rollAngle = useRef(restingRoll);
   const rollTarget = useRef(restingRoll);
+  const openRollOffset = useRef(0);
+  const wasOpen = useRef(false);
   const pitchVelocity = useRef(0);
   const pitchAngle = useRef(
     isRock
@@ -315,11 +317,18 @@ function CartridgeInner({
   // stack — with a small random roll, as if just set down. Every other
   // cartridge just springs its Y slot to make room.
   useEffect(() => {
+    if (isOpen && !wasOpen.current) {
+      openRollOffset.current =
+        (Math.random() * 2 - 1) * OPEN_ROLL_JITTER_DEG * DEG;
+    } else if (!isOpen) {
+      openRollOffset.current = 0;
+    }
     pitchTarget.current = isOpen ? restingPitch + OPEN_PITCH_OFFSET : restingPitch;
     rollTarget.current = isOpen
-      ? restingRoll + (Math.random() * 2 - 1) * OPEN_ROLL_JITTER_DEG * DEG
+      ? restingRoll + openRollOffset.current
       : restingRoll;
     depthTarget.current = isDetailPose ? detailLift : 0;
+    wasOpen.current = isOpen;
     restedRef.current = false;
     invalidate();
   }, [isOpen, restingPitch, restingRoll, isDetailPose, detailLift, invalidate]);
@@ -571,7 +580,7 @@ function CartridgeInner({
         positionY.current,
         depthPosition.current,
       ]}
-      rotation={[pitchAngle.current, restingYaw, restingRoll]}
+      rotation={[pitchAngle.current, yawAngle.current, rollAngle.current]}
       userData={{
         cameraPositionY: position[1],
         cameraPositionZ: isDetailPose ? detailLift : 0,
