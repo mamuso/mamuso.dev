@@ -13,6 +13,8 @@ import * as THREE from "three";
 import type { Group, Object3D } from "three";
 import * as stylex from "@stylexjs/stylex";
 
+import CartridgeBackdrop from "./CartridgeBackdrop";
+
 // Matches the cartridge model's footprint in local space (X unaffected by
 // the resting pitch, which only rotates around X) — used both as the
 // pointer hit target and to offset the hover label clear of the shell.
@@ -919,7 +921,6 @@ function CartridgeSceneTextures({
         </group>
       </FixedCameraRig>
       <Environment environmentIntensity={0.6} resolution={128}>
-        <color attach="background" args={["#f1f1f1"]} />
         <Lightformer intensity={3} position={[0, 5, 2]} scale={[5, 5]} />
         <Lightformer intensity={1.5} position={[-5, 1, 1]} scale={[3, 5]} />
         <Lightformer intensity={1} position={[5, -1, 1]} scale={[3, 5]} />
@@ -1130,14 +1131,16 @@ export default function CartridgeViewer({
 
   return (
     <div {...stylex.props(styles.viewer)}>
+      <CartridgeBackdrop />
       <Canvas
         camera={{ fov: 20 }}
-        style={{ touchAction: "pan-y" }}
+        style={{ position: "relative", touchAction: "pan-y" }}
         dpr={dpr}
         frameloop="demand"
         performance={{ min: 0.75, max: 1, debounce: 200 }}
         shadows={{ type: THREE.PCFShadowMap }}
         gl={{
+          alpha: true,
           antialias: true,
           powerPreference: "high-performance",
           toneMapping: THREE.ACESFilmicToneMapping,
@@ -1154,6 +1157,7 @@ export default function CartridgeViewer({
 
 const styles = stylex.create({
   viewer: {
+    backgroundColor: '#f1f1f1',
     borderColor: 'magenta',
     borderStyle: 'solid',
     borderWidth: 1,

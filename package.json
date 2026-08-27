@@ -9,6 +9,7 @@
     "build": "git submodule init && git submodule update --remote && corepack pnpm run assets && corepack pnpm run rss && next build",
     "start": "next start",
     "lint": "eslint .",
+    "shader:check": "vgpu check app/components/*.wgsl --require-validation",
     "rss": "ts-node --project ./node.tsconfig.json lib/feed",
     "assets": "ts-node --project ./node.tsconfig.json lib/assets",
     "photos": "ts-node --project ./node.tsconfig.json lib/photos"
@@ -23,7 +24,8 @@
     "next": "16.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "three": "^0.185.1"
+    "three": "^0.185.1",
+    "vgpu": "0.3.1"
   },
   "devDependencies": {
     "@stylexjs/babel-plugin": "^0.19.0",
@@ -35,6 +37,8 @@
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
     "@types/three": "^0.185.4",
+    "@vgpu/wgsl": "0.3.1",
+    "@webgpu/types": "^0.1.72",
     "autoprefixer": "^10.5.4",
     "color-thief-node": "^1.0.4",
     "eslint": "^9.39.5",
