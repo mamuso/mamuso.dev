@@ -26,9 +26,9 @@ const HOVER_LABEL_GAP = 0.02;
 // natural, unpitched height) instead of just its spine thickness, plus a
 // little breathing room so it doesn't touch its neighbors.
 const OPEN_HEIGHT = 0.072 + 0.02;
-// Click flips a cartridge from resting on its spine (pitched 90deg on X)
-// back to its natural, front-facing orientation.
-const OPEN_PITCH_OFFSET = -Math.PI / 2;
+// Click flips a cartridge from its resting pitch back to its natural,
+// front-facing orientation.
+const OPEN_PITCH = 0;
 // Small random roll each time a cartridge opens, as if it had just been set
 // down — the closed spine stack stays perfectly aligned.
 const OPEN_ROLL_JITTER_DEG = 3;
@@ -70,6 +70,9 @@ const ROCK_PITCH_START = -15 * (Math.PI / 180);
 const ROCK_PITCH_END = 15 * (Math.PI / 180);
 const ROCK_PERIOD_SEC = 12;
 const DEG = Math.PI / 180;
+// Keep a hint of the cartridge face visible after it lands instead of resting
+// at a perfectly edge-on 90-degree pitch.
+const STACK_RESTING_PITCH = 85 * DEG;
 // A long lens keeps the top-down stack close to orthographic while retaining
 // enough perspective for the hover and opening motions to read as depth.
 const CAMERA_FOV_DEGREES = 14;
@@ -344,7 +347,7 @@ function CartridgeInner({
     } else if (!isOpen) {
       openRollOffset.current = 0;
     }
-    pitchTarget.current = isOpen ? restingPitch + OPEN_PITCH_OFFSET : restingPitch;
+    pitchTarget.current = isOpen ? OPEN_PITCH : restingPitch;
     rollTarget.current = isOpen
       ? restingRoll + openRollOffset.current
       : restingRoll;
@@ -1126,7 +1129,7 @@ export default function CartridgeViewer({
           ] as [number, number],
           restingYaw: 0,
           restingRoll: 0,
-          restingPitch: Math.PI / 2,
+          restingPitch: STACK_RESTING_PITCH,
         };
       }),
     []
