@@ -1157,7 +1157,6 @@ export default function CartridgeViewer({
 
 const styles = stylex.create({
   viewer: {
-    backgroundColor: '#f1f1f1',
     borderColor: 'magenta',
     borderStyle: 'solid',
     borderWidth: 1,

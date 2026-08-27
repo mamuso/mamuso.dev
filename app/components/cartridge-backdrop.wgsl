@@ -21,7 +21,20 @@ fn grain(pixel: vec2f) -> f32 {
   let pixel = floor(uv * params.resolution);
   let paperGrain = (grain(pixel) - 0.5) * 0.006;
 
-  let base = vec3f(0.945);
-  let color = base + verticalLight + centerLight - vignette + paperGrain;
-  return vec4f(color, 1.0);
+  let horizontalFeather =
+    smoothstep(0.0, 0.12, uv.x) * smoothstep(0.0, 0.12, 1.0 - uv.x);
+  let verticalFeather =
+    smoothstep(0.0, 0.12, uv.y) * smoothstep(0.0, 0.12, 1.0 - uv.y);
+  let edgeFeather = horizontalFeather * verticalFeather;
+  let overlay =
+    (verticalLight + centerLight - vignette + paperGrain) * edgeFeather;
+  let isHighlight = overlay >= 0.0;
+
+  // The page behind this canvas is a textured composite, not a flat color.
+  // Emit premultiplied light or shadow only, so that composite remains visible.
+  let shadowAlpha = clamp(-overlay / 0.9, 0.0, 0.04);
+  let highlightAlpha = clamp(overlay / 0.1, 0.0, 0.12);
+  let alpha = select(shadowAlpha, highlightAlpha, isHighlight);
+  let premultipliedColor = select(vec3f(0.0), vec3f(alpha), isHighlight);
+  return vec4f(premultipliedColor, alpha);
 }

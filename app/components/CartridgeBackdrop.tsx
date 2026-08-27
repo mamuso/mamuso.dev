@@ -5,8 +5,8 @@ import { useEffect, useRef } from "react";
 import backdropShader from "./cartridge-backdrop.wgsl";
 
 /**
- * A static, progressively enhanced backdrop for the cartridge stage.
- * The parent supplies the same flat color as a fallback when WebGPU is absent.
+ * A static, progressively enhanced lighting overlay for the cartridge stage.
+ * It initializes after the hero's critical load and leaves the page background visible.
  */
 export default function CartridgeBackdrop() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,8 +17,10 @@ export default function CartridgeBackdrop() {
 
     let disposed = false;
     let cleanupGpu: (() => void) | undefined;
+    let idleCallbackId: number | undefined;
+    let startupDelayId: number | undefined;
 
-    void (async () => {
+    const initialize = async () => {
       try {
         const { effect, frame, init, surface } = await import("vgpu");
         if (disposed) return;
@@ -42,7 +44,9 @@ export default function CartridgeBackdrop() {
         }
 
         backdropSurface = surface(gpu, canvas, {
-          dpr: [1, 2],
+          alphaMode: "premultiplied",
+          clearColor: [0, 0, 0, 0],
+          dpr: 1,
           label: "cartridge-backdrop",
         });
         const backdrop = effect(gpu, backdropShader, {
@@ -72,12 +76,35 @@ export default function CartridgeBackdrop() {
         render();
       } catch {
         cleanupGpu?.();
-        // WebGPU is progressive enhancement; the parent's color remains visible.
+        // WebGPU is progressive enhancement; the page background remains visible.
       }
-    })();
+    };
+
+    const scheduleInitialization = () => {
+      startupDelayId = window.setTimeout(() => {
+        if (disposed) return;
+        if ("requestIdleCallback" in window) {
+          idleCallbackId = window.requestIdleCallback(
+            () => void initialize(),
+            { timeout: 1500 }
+          );
+          return;
+        }
+        void initialize();
+      }, 2000);
+    };
+
+    if (document.readyState === "complete") {
+      scheduleInitialization();
+    } else {
+      window.addEventListener("load", scheduleInitialization, { once: true });
+    }
 
     return () => {
       disposed = true;
+      window.removeEventListener("load", scheduleInitialization);
+      if (startupDelayId !== undefined) window.clearTimeout(startupDelayId);
+      if (idleCallbackId !== undefined) window.cancelIdleCallback(idleCallbackId);
       cleanupGpu?.();
     };
   }, []);
