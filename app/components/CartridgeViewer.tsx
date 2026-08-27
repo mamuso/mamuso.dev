@@ -2,7 +2,13 @@
 
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, Html, useGLTF, useTexture } from "@react-three/drei";
+import {
+  Environment,
+  Html,
+  Lightformer,
+  useGLTF,
+  useTexture,
+} from "@react-three/drei";
 import * as THREE from "three";
 import type { Group, Object3D } from "three";
 import * as stylex from "@stylexjs/stylex";
@@ -118,16 +124,11 @@ export type CameraPreset = {
   openBottomGapPx?: number;
   compactLabels?: boolean;
 };
-// At this reference aspect (<1, width-dominant fit), panFraction is
-// crop-safe across the *whole* large breakpoint (not just right at 720px)
-// only when margin*(1-panFraction) >= 1, i.e. panFraction <= 1-1/margin.
-// At margin 2.0 that caps safe panFraction at 0.5. panFraction 0.75
-// deliberately exceeds it (accepted trade-off, not a bug): the stack's
-// right edge crops for real widths in ~720-900px, and is clean from ~900px
-// up. Raise the margin (shrinks cartridges) or the breakpoint floor (raises
-// where "large" kicks in) to close that gap if it ever becomes a problem.
+// The large composition deliberately prioritizes scale and its rightward pan
+// over being fully crop-safe at the narrowest widths in this breakpoint.
+// Lowering the margin moves the fixed camera closer and enlarges the stack.
 export const CAMERA_PRESET_LARGE: CameraPreset = {
-  margin: 2.0,
+  margin: 1.75,
   aspect: 720 / 760,
   panFraction: 0.75,
   verticalPanFraction: -0.22,
@@ -230,6 +231,7 @@ function CartridgeInner({
 
   const instance = useMemo(() => {
     const maxAniso = gl.capabilities.getMaxAnisotropy();
+    const pixelRatio = gl.getPixelRatio();
     const clone = scene.clone();
     clone.traverse((obj) => {
       if (obj instanceof THREE.Mesh) {
@@ -241,9 +243,23 @@ function CartridgeInner({
         const isShell = materials.some((m) => m.name === "Cartridge Shell");
         obj.material = Array.isArray(obj.material)
           ? materials.map((m) =>
-              prepareMaterial(m, color, maxAniso, labelTexture, shellOpacity)
+              prepareMaterial(
+                m,
+                color,
+                maxAniso,
+                pixelRatio,
+                labelTexture,
+                shellOpacity
+              )
             )
-          : prepareMaterial(materials[0], color, maxAniso, labelTexture, shellOpacity);
+          : prepareMaterial(
+              materials[0],
+              color,
+              maxAniso,
+              pixelRatio,
+              labelTexture,
+              shellOpacity
+            );
         if (hasArtwork) {
           obj.renderOrder = renderOrderBase + 1;
           obj.castShadow = false;
@@ -619,6 +635,9 @@ function CartridgeInner({
 }
 
 export type CartridgeLayoutEntry = {
+  name: string;
+  company: string;
+  period?: string;
   color: string;
   label: string;
   position: [number, number];
@@ -781,9 +800,9 @@ function CartridgeSceneTextures({
     if (openIndex === null) return { yPositions: centered, openLabelY: 0 };
     const openWorldY = pixelYToWorldY(camera, openTopOffsetPx, size.height, 0);
     const shift = openWorldY - centered[openIndex];
-    // A bit into the extra gap carved out below the open cartridge's slot,
-    // biased toward the cartridge rather than centered in the gap.
-    const labelY = centered[openIndex] - OPEN_HEIGHT / 2 - extraBottomGap * 0.3 + shift;
+    // Keep the compact label close to the cartridge while leaving most of the
+    // reserved gap available before the cartridges below it.
+    const labelY = centered[openIndex] - OPEN_HEIGHT / 2 - extraBottomGap * 0.1 + shift;
     return { yPositions: centered.map((y) => y + shift), openLabelY: labelY };
   }, [
     layout,
@@ -877,9 +896,10 @@ function CartridgeSceneTextures({
               style={{ pointerEvents: "none" }}
             >
               <div {...stylex.props(styles.label, styles.sideLabel)}>
-                Company
-                <br />
-                0000 - 0000
+                {layout[sideLabelIndex].company}
+                <span {...stylex.props(styles.period)}>
+                  {layout[sideLabelIndex].period ?? "0000 - 0000"}
+                </span>
               </div>
             </Html>
           )}
@@ -889,15 +909,21 @@ function CartridgeSceneTextures({
               style={{ pointerEvents: "none" }}
             >
               <div {...stylex.props(styles.label, styles.compactLabel)}>
-                Company
-                <br />
-                0000 - 0000
+                {layout[openIndex].company}
+                <span {...stylex.props(styles.period)}>
+                  {layout[openIndex].period ?? "0000 - 0000"}
+                </span>
               </div>
             </Html>
           )}
         </group>
       </FixedCameraRig>
-      <Environment preset="studio" environmentIntensity={0.6} resolution={128} />
+      <Environment environmentIntensity={0.6} resolution={128}>
+        <color attach="background" args={["#f1f1f1"]} />
+        <Lightformer intensity={3} position={[0, 5, 2]} scale={[5, 5]} />
+        <Lightformer intensity={1.5} position={[-5, 1, 1]} scale={[3, 5]} />
+        <Lightformer intensity={1} position={[5, -1, 1]} scale={[3, 5]} />
+      </Environment>
     </>
   );
 }
@@ -948,10 +974,63 @@ function isLabelArtworkMaterial(material: THREE.Material) {
   );
 }
 
+const CARTRIDGE_GRAIN_INTENSITY = 0.02;
+
+function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
+  material.onBeforeCompile = (shader) => {
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        "void main() {",
+        /* glsl */ `
+          float cartridgeGrainRandom(vec2 coordinates) {
+            vec3 value = fract(vec3(coordinates.xyx) * 0.1031);
+            value += dot(value, value.yzx + 33.33);
+            return fract((value.x + value.y) * value.z);
+          }
+
+          void main() {
+        `
+      )
+      .replace(
+        "#include <opaque_fragment>",
+        /* glsl */ `
+          #include <opaque_fragment>
+
+          float cartridgeGrain =
+            cartridgeGrainRandom(floor(gl_FragCoord.xy)) - 0.5;
+          float cartridgeLuminance = dot(
+            gl_FragColor.rgb,
+            vec3(0.2126, 0.7152, 0.0722)
+          );
+          float cartridgeMidtone =
+            1.0 - abs(cartridgeLuminance * 2.0 - 1.0);
+          float cartridgeGrainResponse = mix(
+            0.35,
+            1.0,
+            smoothstep(0.0, 1.0, cartridgeMidtone)
+          );
+          float cartridgeDprResponse = min(${pixelRatio.toFixed(2)}, 2.0) * 0.5;
+
+          gl_FragColor.rgb +=
+            cartridgeGrain *
+            ${CARTRIDGE_GRAIN_INTENSITY.toFixed(3)} *
+            cartridgeDprResponse *
+            cartridgeGrainResponse *
+            gl_FragColor.a;
+        `
+      );
+  };
+  material.customProgramCacheKey = () =>
+    `cartridge-grain-v1-${pixelRatio.toFixed(2)}`;
+  material.needsUpdate = true;
+  return material;
+}
+
 function prepareMaterial(
   material: THREE.Material,
   color: string,
   maxAniso: number,
+  pixelRatio: number,
   labelTexture: THREE.Texture,
   shellOpacity?: number
 ) {
@@ -963,28 +1042,34 @@ function prepareMaterial(
       tinted.opacity = shellOpacity;
       tinted.depthWrite = false;
     }
-    return sharpenTextures(tinted, maxAniso);
+    return addCartridgeGrain(sharpenTextures(tinted, maxAniso), pixelRatio);
   }
   if (material.name === "Label (Paper)") {
     const paper = material.clone() as THREE.MeshStandardMaterial;
-    paper.transparent = true;
-    paper.opacity = 0;
-    paper.depthWrite = false;
+    paper.visible = false;
     return sharpenTextures(paper, maxAniso);
   }
   if (isLabelArtworkMaterial(material)) {
-    return new THREE.MeshBasicMaterial({
-      map: labelTexture,
-      toneMapped: false,
-      transparent: true,
-      depthWrite: false,
-      side: THREE.DoubleSide,
-      polygonOffset: true,
-      polygonOffsetFactor: -2,
-      polygonOffsetUnits: -2,
-    });
+    return addCartridgeGrain(
+      new THREE.MeshStandardMaterial({
+        map: labelTexture,
+        color: 0xffffff,
+        metalness: 0,
+        roughness: 0.85,
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        polygonOffset: true,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2,
+      }),
+      pixelRatio
+    );
   }
-  return sharpenTextures(material.clone(), maxAniso);
+  return addCartridgeGrain(
+    sharpenTextures(material.clone(), maxAniso),
+    pixelRatio
+  );
 }
 
 function configureLabelTexture(texture: THREE.Texture, gl: THREE.WebGLRenderer) {
@@ -992,6 +1077,9 @@ function configureLabelTexture(texture: THREE.Texture, gl: THREE.WebGLRenderer) 
   texture.flipY = false;
   texture.wrapS = THREE.ClampToEdgeWrapping;
   texture.wrapT = THREE.ClampToEdgeWrapping;
+  // These labels are typography-heavy and shown almost head-on. Sampling the
+  // full-resolution source into a guaranteed 2x canvas keeps small type much
+  // sharper than selecting a softened intermediate mip level.
   texture.generateMipmaps = false;
   texture.minFilter = THREE.LinearFilter;
   texture.magFilter = THREE.LinearFilter;
@@ -1018,14 +1106,10 @@ export default function CartridgeViewer({
 }: {
   cameraPreset?: CameraPreset;
 }) {
-  const [dpr, setDpr] = useState(1);
-
-  useEffect(() => {
-    const update = () => setDpr(Math.min(window.devicePixelRatio, 2));
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
+  // Fine label typography needs a 2x render target even on standard-DPI
+  // displays. The grain now lives in cartridge materials, so this no longer
+  // multiplies the cost of a full-canvas post-processing target.
+  const dpr = 2;
 
   const layout = useMemo(
     () =>
@@ -1089,6 +1173,10 @@ const styles = stylex.create({
     fontWeight: 500,
     lineHeight: 1.25,
     whiteSpace: 'nowrap',
+  },
+  period: {
+    display: 'block',
+    fontVariantNumeric: 'tabular-nums',
   },
   sideLabel: {
     textAlign: 'right',
