@@ -984,6 +984,15 @@ function isLabelArtworkMaterial(material: THREE.Material) {
 const CARTRIDGE_GRAIN_INTENSITY = 0.02;
 const CARTRIDGE_SHELL_ROUGHNESS = 0.6;
 const CARTRIDGE_SHELL_ENV_MAP_INTENSITY = 0.85;
+// Keep translucent shells visibly frosted without turning them milky. The
+// transmission amount comes from each cartridge's shellOpacity; these values
+// only control how softly the scene is blurred through the plastic.
+const FROSTED_SHELL_ROUGHNESS = 0.32;
+const FROSTED_SHELL_THICKNESS = 0.0025;
+const FROSTED_SHELL_IOR = 1.46;
+// Preserve the requested shell hue in the frost while lifting it enough for
+// dark plastics to continue transmitting the scene behind them.
+const FROSTED_SHELL_TINT_LIFT = 0.02;
 
 function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
   material.onBeforeCompile = (shader) => {
@@ -1047,21 +1056,33 @@ function prepareMaterial(
   shellOpacity?: number
 ) {
   if (material.name === "Cartridge Shell") {
-    const tinted = material.clone() as THREE.MeshStandardMaterial;
-    tinted.color.set(color);
+    const isFrosted = shellOpacity != null && shellOpacity < 1;
+    const shellColor = new THREE.Color(color);
+    const frostedTransmissionColor = shellColor
+      .clone()
+      .lerp(new THREE.Color(0xffffff), FROSTED_SHELL_TINT_LIFT);
+    const tinted = isFrosted
+      ? new THREE.MeshPhysicalMaterial({
+          // Three multiplies transmitted light by the base color. Lift dark
+          // shell colors so black plastic can transmit instead of canceling
+          // the framebuffer sample entirely.
+          color: frostedTransmissionColor,
+          metalness: 0,
+          roughness: FROSTED_SHELL_ROUGHNESS,
+          envMapIntensity: CARTRIDGE_SHELL_ENV_MAP_INTENSITY,
+          transmission: 1 - shellOpacity,
+          thickness: FROSTED_SHELL_THICKNESS,
+          ior: FROSTED_SHELL_IOR,
+          side: THREE.FrontSide,
+        })
+      : (material.clone() as THREE.MeshStandardMaterial);
+    tinted.name = material.name;
+    if (!isFrosted) tinted.color.copy(shellColor);
     // Molded ABS plastic: broad, restrained highlights with no metallic
     // response. Keep this explicit instead of inheriting Blender defaults.
     tinted.metalness = 0;
-    tinted.roughness = CARTRIDGE_SHELL_ROUGHNESS;
+    if (!isFrosted) tinted.roughness = CARTRIDGE_SHELL_ROUGHNESS;
     tinted.envMapIntensity = CARTRIDGE_SHELL_ENV_MAP_INTENSITY;
-    if (shellOpacity != null && shellOpacity < 1) {
-      tinted.transparent = true;
-      tinted.opacity = shellOpacity;
-      tinted.depthWrite = false;
-      // The shell is a closed volume. Rendering its backfaces blends a second
-      // shell layer over some angles, producing dark patches on the top face.
-      tinted.side = THREE.FrontSide;
-    }
     return addCartridgeGrain(sharpenTextures(tinted, maxAniso), pixelRatio);
   }
   if (material.name === "Label (Paper)") {

@@ -19,9 +19,9 @@ export const CARTRIDGES: CartridgeDefinition[] = [
     name: "Vercel",
     company: "Vercel",
     period: "2024 - 2026",
-    color: "#000",
+    color: "#2A2A2A",
     label: "/labels/vercel.png",
-    shellOpacity: 0.7,
+    shellOpacity: 0.5,
   },
   {
     name: "GitHub",
