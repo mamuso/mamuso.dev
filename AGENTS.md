@@ -12,6 +12,12 @@ caveats are captured here.
 - Next.js dev server: `pnpm dev` (Turbopack) on `http://localhost:3000`. This is the whole product.
 - There are no other services (no backend/DB). Vercel Analytics/Speed Insights are client-only and no-op locally.
 
+### GPU rendering
+
+- Use `vgpu` for all new GPU rendering work in this project.
+- The existing Three.js/React Three Fiber/Drei cartridge scene is a temporary compatibility baseline. Do not remove it until a vgpu renderer loads the same GLB and passes visual-parity checks; do not add another rendering stack.
+- Keep GPU features progressively enhanced: the page and its content must remain usable when WebGPU is unavailable.
+
 ### Content lives in a git submodule (required)
 
 - All posts/photos/assets come from the `content/` git submodule (`github.com/mamuso/mamuso.dev.content.git`, public).

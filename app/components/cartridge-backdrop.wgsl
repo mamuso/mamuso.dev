@@ -4,7 +4,7 @@ struct BackdropParams {
 
 @group(0) @binding(0) var<uniform> params: BackdropParams;
 
-const GRAIN_INTENSITY = 0.012;
+const GRAIN_INTENSITY = 0.024;
 
 fn grain(pixel: vec2f) -> f32 {
   let value = dot(pixel, vec2f(12.9898, 78.233));

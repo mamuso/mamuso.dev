@@ -136,7 +136,7 @@ export type CameraPreset = {
 // over being fully crop-safe at the narrowest widths in this breakpoint.
 // Lowering the margin moves the fixed camera closer and enlarges the stack.
 export const CAMERA_PRESET_LARGE: CameraPreset = {
-  margin: 1.75,
+  margin: 1.35,
   aspect: 720 / 760,
   panFraction: 0.75,
   verticalPanFraction: -0.22,
@@ -981,7 +981,7 @@ function isLabelArtworkMaterial(material: THREE.Material) {
   );
 }
 
-const CARTRIDGE_GRAIN_INTENSITY = 0.02;
+const CARTRIDGE_GRAIN_INTENSITY = 0.015;
 
 function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
   material.onBeforeCompile = (shader) => {
@@ -1057,12 +1057,15 @@ function prepareMaterial(
     return sharpenTextures(paper, maxAniso);
   }
   if (isLabelArtworkMaterial(material)) {
+    // Let the label respond to scene lighting while bypassing tone mapping to
+    // preserve fine typography, and retain the cartridge's procedural grain.
     return addCartridgeGrain(
       new THREE.MeshStandardMaterial({
         map: labelTexture,
         color: 0xffffff,
         metalness: 0,
         roughness: 0.85,
+        toneMapped: false,
         transparent: true,
         depthWrite: false,
         side: THREE.DoubleSide,
@@ -1084,6 +1087,7 @@ function configureLabelTexture(texture: THREE.Texture, gl: THREE.WebGLRenderer) 
   texture.flipY = false;
   texture.wrapS = THREE.ClampToEdgeWrapping;
   texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.anisotropy = gl.capabilities.getMaxAnisotropy();
   // These labels are typography-heavy and shown almost head-on. Sampling the
   // full-resolution source into a guaranteed 2x canvas keeps small type much
   // sharper than selecting a softened intermediate mip level.
