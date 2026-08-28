@@ -89,7 +89,7 @@ const TAP_MAX_MOVEMENT_PX = 8;
 // Intro reveal: hold, then gently lift + tilt into place.
 const INTRO_DELAY_SEC = 3;
 const INTRO_DURATION_SEC = 6;
-const INTRO_END_PITCH = -10 * DEG;
+const INTRO_END_PITCH = -7 * DEG;
 const INTRO_LIFT = 0.05;
 
 // Vertical pitch between cartridge centers. With cartridges pitched 90deg on X,
@@ -136,7 +136,7 @@ export type CameraPreset = {
 // over being fully crop-safe at the narrowest widths in this breakpoint.
 // Lowering the margin moves the fixed camera closer and enlarges the stack.
 export const CAMERA_PRESET_LARGE: CameraPreset = {
-  margin: 1.35,
+  margin: 1.25,
   aspect: 720 / 760,
   panFraction: 0.75,
   verticalPanFraction: -0.22,
