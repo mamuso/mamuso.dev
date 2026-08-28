@@ -981,7 +981,9 @@ function isLabelArtworkMaterial(material: THREE.Material) {
   );
 }
 
-const CARTRIDGE_GRAIN_INTENSITY = 0.015;
+const CARTRIDGE_GRAIN_INTENSITY = 0.02;
+const CARTRIDGE_SHELL_ROUGHNESS = 0.6;
+const CARTRIDGE_SHELL_ENV_MAP_INTENSITY = 0.85;
 
 function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
   material.onBeforeCompile = (shader) => {
@@ -1003,8 +1005,11 @@ function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
         /* glsl */ `
           #include <opaque_fragment>
 
+          float cartridgeGrainPixelRatio = min(${pixelRatio.toFixed(2)}, 2.0);
           float cartridgeGrain =
-            cartridgeGrainRandom(floor(gl_FragCoord.xy)) - 0.5;
+            cartridgeGrainRandom(
+              floor(gl_FragCoord.xy / cartridgeGrainPixelRatio)
+            ) - 0.5;
           float cartridgeLuminance = dot(
             gl_FragColor.rgb,
             vec3(0.2126, 0.7152, 0.0722)
@@ -1016,7 +1021,7 @@ function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
             1.0,
             smoothstep(0.0, 1.0, cartridgeMidtone)
           );
-          float cartridgeDprResponse = min(${pixelRatio.toFixed(2)}, 2.0) * 0.5;
+          float cartridgeDprResponse = cartridgeGrainPixelRatio * 0.5;
 
           gl_FragColor.rgb +=
             cartridgeGrain *
@@ -1028,7 +1033,7 @@ function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
       );
   };
   material.customProgramCacheKey = () =>
-    `cartridge-grain-v1-${pixelRatio.toFixed(2)}`;
+    `cartridge-grain-v2-${pixelRatio.toFixed(2)}`;
   material.needsUpdate = true;
   return material;
 }
@@ -1044,10 +1049,18 @@ function prepareMaterial(
   if (material.name === "Cartridge Shell") {
     const tinted = material.clone() as THREE.MeshStandardMaterial;
     tinted.color.set(color);
+    // Molded ABS plastic: broad, restrained highlights with no metallic
+    // response. Keep this explicit instead of inheriting Blender defaults.
+    tinted.metalness = 0;
+    tinted.roughness = CARTRIDGE_SHELL_ROUGHNESS;
+    tinted.envMapIntensity = CARTRIDGE_SHELL_ENV_MAP_INTENSITY;
     if (shellOpacity != null && shellOpacity < 1) {
       tinted.transparent = true;
       tinted.opacity = shellOpacity;
       tinted.depthWrite = false;
+      // The shell is a closed volume. Rendering its backfaces blends a second
+      // shell layer over some angles, producing dark patches on the top face.
+      tinted.side = THREE.FrontSide;
     }
     return addCartridgeGrain(sharpenTextures(tinted, maxAniso), pixelRatio);
   }

@@ -12,7 +12,7 @@ export const CARTRIDGES: CartridgeDefinition[] = [
     name: "Cursor",
     company: "SpaceXAI",
     period: "2026 - now",
-    color: "#232427",
+    color: "#303236",
     label: "/labels/cursor.png",
   },
   {
@@ -49,7 +49,7 @@ export const CARTRIDGES: CartridgeDefinition[] = [
     name: "Tuenti",
     company: "Tuenti",
     period: "2010 - 2013",
-    color: "#FF0177",
+    color: "#0750B5",
     label: "/labels/tuenti.png",
   },
 ];
