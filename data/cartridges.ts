@@ -13,14 +13,14 @@ export const CARTRIDGES: CartridgeDefinition[] = [
     company: "SpaceXAI",
     period: "2026 - now",
     color: "#303236",
-    label: "/labels/cursor.png",
+    label: "/labels/cursor.webp",
   },
   {
     name: "Vercel",
     company: "Vercel",
     period: "2024 - 2026",
     color: "#2A2A2A",
-    label: "/labels/vercel.png",
+    label: "/labels/vercel.webp",
     shellOpacity: 0.1,
   },
   {
@@ -28,7 +28,7 @@ export const CARTRIDGES: CartridgeDefinition[] = [
     company: "GitHub",
     period: "2019 - 2024",
     color: "#4A5A8A",
-    label: "/labels/github.png",
+    label: "/labels/github.webp",
     shellOpacity: 0.7,
   },
   {
@@ -36,29 +36,29 @@ export const CARTRIDGES: CartridgeDefinition[] = [
     company: "Microsoft, Dev Services",
     period: "2018 - 2019",
     color: "#687887",
-    label: "/labels/devops.png",
+    label: "/labels/devops.webp",
   },
   {
     name: "Microsoft",
     company: "Microsoft",
     period: "2013 - 2018",
     color: "#A79F8D",
-    label: "/labels/microsoft.png",
+    label: "/labels/microsoft.webp",
   },
   {
     name: "Tuenti",
     company: "Tuenti",
     period: "2010 - 2013",
     color: "#1452A3",
-    label: "/labels/tuenti.png",
+    label: "/labels/tuenti.webp",
     shellOpacity: 0.8,
   },
 ];
 
 export const TUENTI_CARTRIDGE = CARTRIDGES.find(
-  (cartridge) => cartridge.label === "/labels/tuenti.png"
+  (cartridge) => cartridge.label === "/labels/tuenti.webp"
 )!;
 
 export const VERCEL_CARTRIDGE = CARTRIDGES.find(
-  (cartridge) => cartridge.label === "/labels/vercel.png"
+  (cartridge) => cartridge.label === "/labels/vercel.webp"
 )!;
