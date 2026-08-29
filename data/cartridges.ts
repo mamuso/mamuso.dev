@@ -21,7 +21,7 @@ export const CARTRIDGES: CartridgeDefinition[] = [
     period: "2024 - 2026",
     color: "#2A2A2A",
     label: "/labels/vercel.png",
-    shellOpacity: 0.5,
+    shellOpacity: 0.1,
   },
   {
     name: "GitHub",
@@ -35,7 +35,7 @@ export const CARTRIDGES: CartridgeDefinition[] = [
     name: "Azure DevOps",
     company: "Microsoft, Dev Services",
     period: "2018 - 2019",
-    color: "#BB9F77",
+    color: "#687887",
     label: "/labels/devops.png",
   },
   {
@@ -49,8 +49,9 @@ export const CARTRIDGES: CartridgeDefinition[] = [
     name: "Tuenti",
     company: "Tuenti",
     period: "2010 - 2013",
-    color: "#0750B5",
+    color: "#1452A3",
     label: "/labels/tuenti.png",
+    shellOpacity: 0.8,
   },
 ];
 
