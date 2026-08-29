@@ -13,6 +13,8 @@ import * as THREE from "three";
 import type { Group, Object3D } from "three";
 import * as stylex from "@stylexjs/stylex";
 
+import CartridgeBackdrop from "./CartridgeBackdrop";
+
 // Matches the cartridge model's footprint in local space (X unaffected by
 // the resting pitch, which only rotates around X) — used both as the
 // pointer hit target and to offset the hover label clear of the shell.
@@ -24,9 +26,9 @@ const HOVER_LABEL_GAP = 0.02;
 // natural, unpitched height) instead of just its spine thickness, plus a
 // little breathing room so it doesn't touch its neighbors.
 const OPEN_HEIGHT = 0.072 + 0.02;
-// Click flips a cartridge from resting on its spine (pitched 90deg on X)
-// back to its natural, front-facing orientation.
-const OPEN_PITCH_OFFSET = -Math.PI / 2;
+// Click flips a cartridge from its resting pitch back to its natural,
+// front-facing orientation.
+const OPEN_PITCH = 0;
 // Small random roll each time a cartridge opens, as if it had just been set
 // down — the closed spine stack stays perfectly aligned.
 const OPEN_ROLL_JITTER_DEG = 3;
@@ -68,6 +70,12 @@ const ROCK_PITCH_START = -15 * (Math.PI / 180);
 const ROCK_PITCH_END = 15 * (Math.PI / 180);
 const ROCK_PERIOD_SEC = 12;
 const DEG = Math.PI / 180;
+// Keep a hint of the cartridge face visible after it lands instead of resting
+// at a perfectly edge-on 90-degree pitch.
+const STACK_RESTING_PITCH = 85 * DEG;
+// A long lens keeps the top-down stack close to orthographic while retaining
+// enough perspective for the hover and opening motions to read as depth.
+const CAMERA_FOV_DEGREES = 14;
 
 // Hero entrance: build the stack from the bottom up so each falling cartridge
 // lands above the previous one instead of passing through it.
@@ -81,7 +89,7 @@ const TAP_MAX_MOVEMENT_PX = 8;
 // Intro reveal: hold, then gently lift + tilt into place.
 const INTRO_DELAY_SEC = 3;
 const INTRO_DURATION_SEC = 6;
-const INTRO_END_PITCH = -10 * DEG;
+const INTRO_END_PITCH = -7 * DEG;
 const INTRO_LIFT = 0.05;
 
 // Vertical pitch between cartridge centers. With cartridges pitched 90deg on X,
@@ -128,7 +136,7 @@ export type CameraPreset = {
 // over being fully crop-safe at the narrowest widths in this breakpoint.
 // Lowering the margin moves the fixed camera closer and enlarges the stack.
 export const CAMERA_PRESET_LARGE: CameraPreset = {
-  margin: 1.75,
+  margin: 1.25,
   aspect: 720 / 760,
   panFraction: 0.75,
   verticalPanFraction: -0.22,
@@ -339,7 +347,7 @@ function CartridgeInner({
     } else if (!isOpen) {
       openRollOffset.current = 0;
     }
-    pitchTarget.current = isOpen ? restingPitch + OPEN_PITCH_OFFSET : restingPitch;
+    pitchTarget.current = isOpen ? OPEN_PITCH : restingPitch;
     rollTarget.current = isOpen
       ? restingRoll + openRollOffset.current
       : restingRoll;
@@ -919,7 +927,6 @@ function CartridgeSceneTextures({
         </group>
       </FixedCameraRig>
       <Environment environmentIntensity={0.6} resolution={128}>
-        <color attach="background" args={["#f1f1f1"]} />
         <Lightformer intensity={3} position={[0, 5, 2]} scale={[5, 5]} />
         <Lightformer intensity={1.5} position={[-5, 1, 1]} scale={[3, 5]} />
         <Lightformer intensity={1} position={[5, -1, 1]} scale={[3, 5]} />
@@ -975,6 +982,17 @@ function isLabelArtworkMaterial(material: THREE.Material) {
 }
 
 const CARTRIDGE_GRAIN_INTENSITY = 0.02;
+const CARTRIDGE_SHELL_ROUGHNESS = 0.6;
+const CARTRIDGE_SHELL_ENV_MAP_INTENSITY = 0.85;
+// Keep translucent shells visibly frosted without turning them milky. The
+// transmission amount comes from each cartridge's shellOpacity; these values
+// only control how softly the scene is blurred through the plastic.
+const FROSTED_SHELL_ROUGHNESS = 0.32;
+const FROSTED_SHELL_THICKNESS = 0.0025;
+const FROSTED_SHELL_IOR = 1.46;
+// Preserve the requested shell hue in the frost while lifting it enough for
+// dark plastics to continue transmitting the scene behind them.
+const FROSTED_SHELL_TINT_LIFT = 0.02;
 
 function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
   material.onBeforeCompile = (shader) => {
@@ -996,8 +1014,11 @@ function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
         /* glsl */ `
           #include <opaque_fragment>
 
+          float cartridgeGrainPixelRatio = min(${pixelRatio.toFixed(2)}, 2.0);
           float cartridgeGrain =
-            cartridgeGrainRandom(floor(gl_FragCoord.xy)) - 0.5;
+            cartridgeGrainRandom(
+              floor(gl_FragCoord.xy / cartridgeGrainPixelRatio)
+            ) - 0.5;
           float cartridgeLuminance = dot(
             gl_FragColor.rgb,
             vec3(0.2126, 0.7152, 0.0722)
@@ -1009,7 +1030,7 @@ function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
             1.0,
             smoothstep(0.0, 1.0, cartridgeMidtone)
           );
-          float cartridgeDprResponse = min(${pixelRatio.toFixed(2)}, 2.0) * 0.5;
+          float cartridgeDprResponse = cartridgeGrainPixelRatio * 0.5;
 
           gl_FragColor.rgb +=
             cartridgeGrain *
@@ -1021,7 +1042,7 @@ function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
       );
   };
   material.customProgramCacheKey = () =>
-    `cartridge-grain-v1-${pixelRatio.toFixed(2)}`;
+    `cartridge-grain-v2-${pixelRatio.toFixed(2)}`;
   material.needsUpdate = true;
   return material;
 }
@@ -1035,13 +1056,33 @@ function prepareMaterial(
   shellOpacity?: number
 ) {
   if (material.name === "Cartridge Shell") {
-    const tinted = material.clone() as THREE.MeshStandardMaterial;
-    tinted.color.set(color);
-    if (shellOpacity != null && shellOpacity < 1) {
-      tinted.transparent = true;
-      tinted.opacity = shellOpacity;
-      tinted.depthWrite = false;
-    }
+    const isFrosted = shellOpacity != null && shellOpacity < 1;
+    const shellColor = new THREE.Color(color);
+    const frostedTransmissionColor = shellColor
+      .clone()
+      .lerp(new THREE.Color(0xffffff), FROSTED_SHELL_TINT_LIFT);
+    const tinted = isFrosted
+      ? new THREE.MeshPhysicalMaterial({
+          // Three multiplies transmitted light by the base color. Lift dark
+          // shell colors so black plastic can transmit instead of canceling
+          // the framebuffer sample entirely.
+          color: frostedTransmissionColor,
+          metalness: 0,
+          roughness: FROSTED_SHELL_ROUGHNESS,
+          envMapIntensity: CARTRIDGE_SHELL_ENV_MAP_INTENSITY,
+          transmission: 1 - shellOpacity,
+          thickness: FROSTED_SHELL_THICKNESS,
+          ior: FROSTED_SHELL_IOR,
+          side: THREE.FrontSide,
+        })
+      : (material.clone() as THREE.MeshStandardMaterial);
+    tinted.name = material.name;
+    if (!isFrosted) tinted.color.copy(shellColor);
+    // Molded ABS plastic: broad, restrained highlights with no metallic
+    // response. Keep this explicit instead of inheriting Blender defaults.
+    tinted.metalness = 0;
+    if (!isFrosted) tinted.roughness = CARTRIDGE_SHELL_ROUGHNESS;
+    tinted.envMapIntensity = CARTRIDGE_SHELL_ENV_MAP_INTENSITY;
     return addCartridgeGrain(sharpenTextures(tinted, maxAniso), pixelRatio);
   }
   if (material.name === "Label (Paper)") {
@@ -1050,12 +1091,15 @@ function prepareMaterial(
     return sharpenTextures(paper, maxAniso);
   }
   if (isLabelArtworkMaterial(material)) {
+    // Let the label respond to scene lighting while bypassing tone mapping to
+    // preserve fine typography, and retain the cartridge's procedural grain.
     return addCartridgeGrain(
       new THREE.MeshStandardMaterial({
         map: labelTexture,
         color: 0xffffff,
         metalness: 0,
         roughness: 0.85,
+        toneMapped: false,
         transparent: true,
         depthWrite: false,
         side: THREE.DoubleSide,
@@ -1077,6 +1121,7 @@ function configureLabelTexture(texture: THREE.Texture, gl: THREE.WebGLRenderer) 
   texture.flipY = false;
   texture.wrapS = THREE.ClampToEdgeWrapping;
   texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.anisotropy = gl.capabilities.getMaxAnisotropy();
   // These labels are typography-heavy and shown almost head-on. Sampling the
   // full-resolution source into a guaranteed 2x canvas keeps small type much
   // sharper than selecting a softened intermediate mip level.
@@ -1122,7 +1167,7 @@ export default function CartridgeViewer({
           ] as [number, number],
           restingYaw: 0,
           restingRoll: 0,
-          restingPitch: Math.PI / 2,
+          restingPitch: STACK_RESTING_PITCH,
         };
       }),
     []
@@ -1130,14 +1175,16 @@ export default function CartridgeViewer({
 
   return (
     <div {...stylex.props(styles.viewer)}>
+      <CartridgeBackdrop />
       <Canvas
-        camera={{ fov: 20 }}
-        style={{ touchAction: "pan-y" }}
+        camera={{ fov: CAMERA_FOV_DEGREES }}
+        style={{ position: "relative", touchAction: "pan-y" }}
         dpr={dpr}
         frameloop="demand"
         performance={{ min: 0.75, max: 1, debounce: 200 }}
         shadows={{ type: THREE.PCFShadowMap }}
         gl={{
+          alpha: true,
           antialias: true,
           powerPreference: "high-performance",
           toneMapping: THREE.ACESFilmicToneMapping,
