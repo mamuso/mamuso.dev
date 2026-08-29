@@ -468,11 +468,9 @@ function CartridgeInner({
         0,
         1
       );
-      // Quintic acceleration and deceleration with a decisive midpoint.
-      const eased =
-        progress < 0.5
-          ? 16 * Math.pow(progress, 5)
-          : 1 - Math.pow(-2 * progress + 2, 5) / 2;
+      // Move immediately, then settle softly. An ease-in curve makes a cold
+      // entrance look stalled even after the renderer is ready.
+      const eased = 1 - Math.pow(1 - progress, 3);
 
       positionY.current =
         positionYTarget.current + ENTRANCE_OFFSET_Y * (1 - eased);
