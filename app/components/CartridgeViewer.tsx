@@ -848,7 +848,7 @@ function CartridgeSceneTextures({
   cameraPreset,
   layout,
   labelUrls,
-  shadowOpacity = 0.14,
+  shadowOpacity = 0.2,
   shadowPlanePosition = [0, 0, -0.027] as [number, number, number],
   lightPosition = [1, 1, 5] as [number, number, number],
   motion = "still",
@@ -1059,7 +1059,7 @@ function CartridgeSceneTextures({
 export function CartridgeScene({
   cameraPreset,
   layout,
-  shadowOpacity = 0.14,
+  shadowOpacity = 0.2,
   shadowPlanePosition,
   lightPosition,
   motion = "still",
