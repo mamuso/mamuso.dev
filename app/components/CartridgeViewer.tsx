@@ -1,20 +1,13 @@
 "use client";
 
-import {
-  Suspense,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Environment,
   Html,
   Lightformer,
   useGLTF,
+  useTexture,
 } from "@react-three/drei";
 import * as THREE from "three";
 import type { Group, Object3D } from "three";
@@ -289,13 +282,11 @@ function CartridgeInner({
   onToggleOpen,
   entranceDelaySec,
   entranceReady = true,
-  qualityReady = false,
-  onEntranceComplete,
 }: {
   scene: Object3D;
   position: [number, number, number];
   color: string;
-  labelTexture?: THREE.Texture;
+  labelTexture: THREE.Texture;
   restingYaw: number;
   restingRoll: number;
   restingPitch?: number;
@@ -309,8 +300,6 @@ function CartridgeInner({
   onToggleOpen?: () => void;
   entranceDelaySec?: number;
   entranceReady?: boolean;
-  qualityReady?: boolean;
-  onEntranceComplete?: () => void;
 }) {
   const { gl, invalidate } = useThree();
   const isRock = motion === "rock";
@@ -320,31 +309,53 @@ function CartridgeInner({
   const isDetailPose = isRock || isStatic || isFrozen;
   const [positionX, restingY, restingZ] = position;
 
-  const entranceInstance = useMemo(
-    () => createCartridgeInstance(scene, color, renderOrderBase),
-    [scene, color, renderOrderBase]
-  );
-  const qualityInstance = useMemo(
-    () =>
-      labelTexture
-        ? createCartridgeInstance(
-            scene,
-            color,
-            renderOrderBase,
-            gl,
-            labelTexture,
-            shellOpacity
-          )
-        : null,
-    [scene, color, renderOrderBase, gl, labelTexture, shellOpacity]
-  );
+  const instance = useMemo(() => {
+    const maxAniso = gl.capabilities.getMaxAnisotropy();
+    const pixelRatio = gl.getPixelRatio();
+    const clone = scene.clone();
+    clone.traverse((obj) => {
+      if (obj instanceof THREE.Mesh) {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+        obj.raycast = () => null;
+        const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+        const hasArtwork = materials.some(isLabelArtworkMaterial);
+        const isShell = materials.some((m) => m.name === "Cartridge Shell");
+        obj.material = Array.isArray(obj.material)
+          ? materials.map((m) =>
+              prepareMaterial(
+                m,
+                color,
+                maxAniso,
+                pixelRatio,
+                labelTexture,
+                shellOpacity
+              )
+            )
+          : prepareMaterial(
+              materials[0],
+              color,
+              maxAniso,
+              pixelRatio,
+              labelTexture,
+              shellOpacity
+            );
+        if (hasArtwork) {
+          obj.renderOrder = renderOrderBase + 1;
+          obj.castShadow = false;
+          obj.receiveShadow = false;
+        } else if (isShell && shellOpacity != null && shellOpacity < 1) {
+          obj.castShadow = false;
+          obj.renderOrder = renderOrderBase;
+        }
+      }
+    });
+    return clone;
+  }, [scene, color, gl, labelTexture, shellOpacity, renderOrderBase]);
 
   const modelCenter = useMemo(
-    () =>
-      new THREE.Box3()
-        .setFromObject(entranceInstance)
-        .getCenter(new THREE.Vector3()),
-    [entranceInstance]
+    () => new THREE.Box3().setFromObject(instance).getCenter(new THREE.Vector3()),
+    [instance]
   );
 
   const pivotRef = useRef<Group>(null);
@@ -484,7 +495,6 @@ function CartridgeInner({
         pivotRef.current.position.z = depthPosition.current;
         pivotRef.current.rotation.x = pitchAngle.current;
         restedRef.current = true;
-        onEntranceComplete?.();
       }
       return;
     }
@@ -693,18 +703,7 @@ function CartridgeInner({
         cameraRotationX: restingPitch,
       }}
     >
-      <primitive
-        object={entranceInstance}
-        position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]}
-        visible={!qualityReady}
-      />
-      {qualityInstance && (
-        <primitive
-          object={qualityInstance}
-          position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]}
-          visible={qualityReady}
-        />
-      )}
+      <primitive object={instance} position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]} />
       {(onHoverChange || onToggleOpen) && (
         <mesh
           geometry={CARTRIDGE_HITBOX_GEOMETRY}
@@ -847,10 +846,10 @@ function FixedCameraRig({
   return <group ref={groupRef}>{children}</group>;
 }
 
-function CartridgeSceneModel({
+function CartridgeSceneTextures({
   cameraPreset,
   layout,
-  labelTextures,
+  labelUrls,
   shadowOpacity = 0.14,
   shadowPlanePosition = [0, 0, -0.027] as [number, number, number],
   lightPosition = [1, 1, 5] as [number, number, number],
@@ -860,7 +859,7 @@ function CartridgeSceneModel({
 }: {
   cameraPreset: CameraPreset;
   layout: CartridgeLayoutEntry[];
-  labelTextures: ReadonlyMap<string, THREE.Texture> | null;
+  labelUrls: string[];
   shadowOpacity?: number;
   shadowPlanePosition?: [number, number, number];
   lightPosition?: [number, number, number];
@@ -869,6 +868,7 @@ function CartridgeSceneModel({
   detailLift?: number;
 }) {
   const { scene } = useGLTF("/models/famicom_cartridge.glb");
+  const textures = useTexture(labelUrls);
   const {
     gl,
     invalidate,
@@ -879,21 +879,6 @@ function CartridgeSceneModel({
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [entranceReady, setEntranceReady] = useState(false);
-  const [entranceSettled, setEntranceSettled] = useState(false);
-  const [qualityCompiled, setQualityCompiled] = useState(false);
-  const completedEntrances = useRef(new Set<number>());
-  const fullQualityMounted = labelTextures !== null && entranceSettled;
-
-  const handleEntranceComplete = useCallback(
-    (index: number) => {
-      if (completedEntrances.current.has(index)) return;
-      completedEntrances.current.add(index);
-      if (completedEntrances.current.size === layout.length) {
-        setEntranceSettled(true);
-      }
-    },
-    [layout.length]
-  );
 
   // Each closed slot comes from that cartridge's transformed bounds, so the
   // randomized poses retain a hard physical gap. The open cartridge gets a
@@ -942,11 +927,23 @@ function CartridgeSceneModel({
   // over for previewing a different cartridge in the meantime.
   const sideLabelIndex = hoveredIndex ?? openIndex;
 
+  const textureByLabel = useMemo(() => {
+    const list = Array.isArray(textures) ? textures : [textures];
+    const map = new Map<string, THREE.Texture>();
+    labelUrls.forEach((url, i) => map.set(url, list[i]));
+    return map;
+  }, [textures, labelUrls]);
+
   useLayoutEffect(() => {
     let active = true;
+
+    for (const texture of textureByLabel.values()) {
+      configureLabelTexture(texture, gl);
+    }
+    uploadSceneTextures(renderScene, gl);
     invalidate();
 
-    const warmEntrance = async () => {
+    const warmScene = async () => {
       try {
         await gl.compileAsync(renderScene, camera);
       } catch {
@@ -959,42 +956,17 @@ function CartridgeSceneModel({
       invalidate();
     };
 
-    void warmEntrance();
+    void warmScene();
     return () => {
       active = false;
     };
-  }, [gl, invalidate, renderScene, camera]);
-
-  useLayoutEffect(() => {
-    if (!fullQualityMounted) return;
-    let active = true;
-
-    uploadSceneTextures(renderScene, gl);
-    invalidate();
-
-    const warmQuality = async () => {
-      try {
-        await gl.compileAsync(renderScene, camera);
-      } catch {
-        // The lightweight entrance remains a usable fallback if full-quality
-        // compilation fails on a particular driver.
-      }
-      if (!active) return;
-      setQualityCompiled(true);
-      invalidate();
-    };
-
-    void warmQuality();
-    return () => {
-      active = false;
-    };
-  }, [fullQualityMounted, gl, invalidate, renderScene, camera]);
+  }, [textureByLabel, gl, invalidate, renderScene, camera]);
 
   return (
     <>
       <ambientLight intensity={0.5} />
       <directionalLight
-        castShadow={qualityCompiled}
+        castShadow
         position={lightPosition}
         intensity={0.8}
         shadow-bias={-0.0001}
@@ -1027,9 +999,7 @@ function CartridgeSceneModel({
               scene={scene}
               position={[c.position[0], yPositions[i], c.position[2]]}
               color={c.color}
-              labelTexture={
-                fullQualityMounted ? labelTextures?.get(c.label) : undefined
-              }
+              labelTexture={textureByLabel.get(c.label)!}
               restingYaw={c.restingYaw}
               restingRoll={c.restingRoll}
               restingPitch={c.restingPitch}
@@ -1045,8 +1015,6 @@ function CartridgeSceneModel({
                 (layout.length - 1 - i) * ENTRANCE_STAGGER_SEC
               }
               entranceReady={entranceReady}
-              qualityReady={qualityCompiled}
-              onEntranceComplete={() => handleEntranceComplete(i)}
             />
           ))}
           {!cameraPreset.compactLabels && sideLabelIndex !== null && (
@@ -1081,79 +1049,13 @@ function CartridgeSceneModel({
           )}
         </group>
       </FixedCameraRig>
-      {fullQualityMounted && (
-        <Environment environmentIntensity={0.6} resolution={128}>
-          <Lightformer intensity={3} position={[0, 5, 2]} scale={[5, 5]} />
-          <Lightformer intensity={1.5} position={[-5, 1, 1]} scale={[3, 5]} />
-          <Lightformer intensity={1} position={[5, -1, 1]} scale={[3, 5]} />
-        </Environment>
-      )}
+      <Environment environmentIntensity={0.6} resolution={128}>
+        <Lightformer intensity={3} position={[0, 5, 2]} scale={[5, 5]} />
+        <Lightformer intensity={1.5} position={[-5, 1, 1]} scale={[3, 5]} />
+        <Lightformer intensity={1} position={[5, -1, 1]} scale={[3, 5]} />
+      </Environment>
     </>
   );
-}
-
-function nextBrowserFrame() {
-  return new Promise<void>((resolve) => {
-    window.requestAnimationFrame(() => resolve());
-  });
-}
-
-function CartridgeLabelLoader({
-  labelUrls,
-  onReady,
-}: {
-  labelUrls: readonly string[];
-  onReady: (textures: ReadonlyMap<string, THREE.Texture>) => void;
-}) {
-  const { gl, invalidate } = useThree();
-
-  useEffect(() => {
-    let active = true;
-    let failed = false;
-    const loadedTextures = new Set<THREE.Texture>();
-    const loader = new THREE.TextureLoader();
-
-    const loadTexture = async (url: string) => {
-      const texture = await loader.loadAsync(url);
-      if (!active || failed) {
-        texture.dispose();
-        return null;
-      }
-      loadedTextures.add(texture);
-      return { texture, url };
-    };
-
-    const loadLabels = async () => {
-      try {
-        const loaded = await Promise.all(labelUrls.map(loadTexture));
-        if (!active || loaded.some((entry) => entry === null)) return;
-
-        const textureMap = new Map<string, THREE.Texture>();
-        for (const entry of loaded) {
-          if (!entry) continue;
-          // Spread synchronous GPU uploads across frames so label readiness
-          // cannot introduce one large main-thread stall during the entrance.
-          await nextBrowserFrame();
-          if (!active) return;
-          configureLabelTexture(entry.texture, gl);
-          textureMap.set(entry.url, entry.texture);
-          invalidate();
-        }
-        if (active) onReady(textureMap);
-      } catch {
-        failed = true;
-        for (const texture of loadedTextures) texture.dispose();
-      }
-    };
-
-    void loadLabels();
-    return () => {
-      active = false;
-      for (const texture of loadedTextures) texture.dispose();
-    };
-  }, [labelUrls, onReady, gl, invalidate]);
-
-  return null;
 }
 
 export function CartridgeScene({
@@ -1175,36 +1077,23 @@ export function CartridgeScene({
   hoverLift?: number;
   detailLift?: number;
 }) {
-  const [labelTextures, setLabelTextures] = useState<
-    ReadonlyMap<string, THREE.Texture> | null
-  >(null);
-  const handleLabelsReady = useCallback(
-    (textures: ReadonlyMap<string, THREE.Texture>) => {
-      setLabelTextures(textures);
-    },
-    []
+  const labelUrls = useMemo(
+    () => [...new Set(layout.map((c) => c.label))],
+    [layout]
   );
 
   return (
-    <>
-      <CartridgeLabelLoader
-        labelUrls={LABEL_URLS}
-        onReady={handleLabelsReady}
-      />
-      <Suspense fallback={null}>
-        <CartridgeSceneModel
-          cameraPreset={cameraPreset}
-          layout={layout}
-          labelTextures={labelTextures}
-          shadowOpacity={shadowOpacity}
-          shadowPlanePosition={shadowPlanePosition}
-          lightPosition={lightPosition}
-          motion={motion}
-          hoverLift={hoverLift}
-          detailLift={detailLift}
-        />
-      </Suspense>
-    </>
+    <CartridgeSceneTextures
+      cameraPreset={cameraPreset}
+      layout={layout}
+      labelUrls={labelUrls}
+      shadowOpacity={shadowOpacity}
+      shadowPlanePosition={shadowPlanePosition}
+      lightPosition={lightPosition}
+      motion={motion}
+      hoverLift={hoverLift}
+      detailLift={detailLift}
+    />
   );
 }
 
@@ -1227,91 +1116,6 @@ const FROSTED_SHELL_IOR = 1.46;
 // Preserve the requested shell hue in the frost while lifting it enough for
 // dark plastics to continue transmitting the scene behind them.
 const FROSTED_SHELL_TINT_LIFT = 0.02;
-
-function createCartridgeInstance(
-  source: Object3D,
-  color: string,
-  renderOrderBase: number,
-  gl?: THREE.WebGLRenderer,
-  labelTexture?: THREE.Texture,
-  shellOpacity?: number
-) {
-  const clone = source.clone();
-  const maxAniso = gl?.capabilities.getMaxAnisotropy();
-  const pixelRatio = gl?.getPixelRatio();
-
-  clone.traverse((object) => {
-    if (!(object instanceof THREE.Mesh)) return;
-
-    object.castShadow = true;
-    object.receiveShadow = true;
-    object.raycast = () => null;
-    const materials = Array.isArray(object.material)
-      ? object.material
-      : [object.material];
-    const hasArtwork = materials.some(isLabelArtworkMaterial);
-    const isShell = materials.some(
-      (material) => material.name === "Cartridge Shell"
-    );
-    const prepare = (material: THREE.Material) =>
-      gl && labelTexture && maxAniso !== undefined && pixelRatio !== undefined
-        ? prepareMaterial(
-            material,
-            color,
-            maxAniso,
-            pixelRatio,
-            labelTexture,
-            shellOpacity
-          )
-        : prepareEntranceMaterial(material, color);
-
-    object.material = Array.isArray(object.material)
-      ? materials.map(prepare)
-      : prepare(materials[0]);
-
-    if (hasArtwork) {
-      object.renderOrder = renderOrderBase + 1;
-      object.castShadow = false;
-      object.receiveShadow = false;
-    } else if (
-      gl &&
-      isShell &&
-      shellOpacity != null &&
-      shellOpacity < 1
-    ) {
-      object.castShadow = false;
-      object.renderOrder = renderOrderBase;
-    }
-  });
-
-  return clone;
-}
-
-function prepareEntranceMaterial(material: THREE.Material, color: string) {
-  if (material.name === "Label (Paper)") {
-    const hidden = new THREE.MeshBasicMaterial();
-    hidden.name = material.name;
-    hidden.visible = false;
-    return hidden;
-  }
-
-  const materialColor =
-    "color" in material && material.color instanceof THREE.Color
-      ? material.color
-      : new THREE.Color(0x777777);
-  const entranceColor =
-    material.name === "Cartridge Shell"
-      ? new THREE.Color(color)
-      : isLabelArtworkMaterial(material)
-        ? new THREE.Color(color).lerp(new THREE.Color(0xffffff), 0.65)
-        : materialColor;
-  const entranceMaterial = new THREE.MeshLambertMaterial({
-    color: entranceColor,
-    side: material.side,
-  });
-  entranceMaterial.name = material.name;
-  return entranceMaterial;
-}
 
 function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
   material.onBeforeCompile = (shader) => {
@@ -1487,6 +1291,7 @@ function sharpenTextures(material: THREE.Material, maxAniso: number) {
 }
 
 useGLTF.preload("/models/famicom_cartridge.glb");
+useTexture.preload(LABEL_URLS);
 
 export default function CartridgeViewer({
   cameraPreset = CAMERA_PRESET_LARGE,
