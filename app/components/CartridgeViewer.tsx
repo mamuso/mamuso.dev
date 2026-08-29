@@ -91,13 +91,13 @@ const STACK_AXIS = new THREE.Vector3(
 // enough perspective for the hover and opening motions to read as depth.
 const CAMERA_FOV_DEGREES = 14;
 
-// Hero entrance: build the stack from the bottom up so each falling cartridge
-// lands above the previous one instead of passing through it.
-const ENTRANCE_OFFSET_Y = 0.4;
-const ENTRANCE_OFFSET_Z = 0.5;
-const ENTRANCE_PITCH_OFFSET = -45 * DEG;
-const ENTRANCE_DURATION_SEC = 1.15;
-const ENTRANCE_STAGGER_SEC = 0.1;
+// Hero entrance: begin above the settled stack and drop directly into each
+// cartridge's final resting position without moving through depth.
+const ENTRANCE_OFFSET_Y = 0.28;
+const ENTRANCE_OFFSET_Z = 0;
+const ENTRANCE_PITCH_OFFSET = -60 * DEG;
+const ENTRANCE_DURATION_SEC = 1;
+const ENTRANCE_STAGGER_SEC = 0.12;
 const TAP_MAX_MOVEMENT_PX = 8;
 
 // Intro reveal: hold, then gently lift + tilt into place.
@@ -174,7 +174,7 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
   openTopOffsetPx: 240,
 };
 export const CAMERA_PRESET_SMALL: CameraPreset = {
-  margin: 1.24,
+  margin: 1.12,
   aspect: 390 / 580,
   panFraction: 0,
   verticalPanFraction: 0.1,
@@ -462,11 +462,11 @@ function CartridgeInner({
         0,
         1
       );
-      // Smootherstep has zero velocity and acceleration at both ends, avoiding
-      // the abrupt launch of ease-out while still settling without a bounce.
+      // Quintic acceleration and deceleration with a decisive midpoint.
       const eased =
-        progress * progress * progress *
-        (progress * (progress * 6 - 15) + 10);
+        progress < 0.5
+          ? 16 * Math.pow(progress, 5)
+          : 1 - Math.pow(-2 * progress + 2, 5) / 2;
 
       positionY.current =
         positionYTarget.current + ENTRANCE_OFFSET_Y * (1 - eased);
@@ -828,9 +828,9 @@ function FixedCameraRig({
     camera.position.copy(camPos);
     camera.near = Math.max(
       0.01,
-      distance - maxSize - ENTRANCE_OFFSET_Z
+      distance - maxSize - Math.abs(ENTRANCE_OFFSET_Z)
     );
-    camera.far = distance + maxSize * 4;
+    camera.far = distance + maxSize * 4 + Math.abs(ENTRANCE_OFFSET_Z);
     camera.updateProjectionMatrix();
     camera.lookAt(target);
     invalidate();
