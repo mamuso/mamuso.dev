@@ -281,6 +281,7 @@ function CartridgeInner({
   isOpen = false,
   onToggleOpen,
   entranceDelaySec,
+  entranceReady = true,
 }: {
   scene: Object3D;
   position: [number, number, number];
@@ -298,6 +299,7 @@ function CartridgeInner({
   isOpen?: boolean;
   onToggleOpen?: () => void;
   entranceDelaySec?: number;
+  entranceReady?: boolean;
 }) {
   const { gl, invalidate } = useThree();
   const isRock = motion === "rock";
@@ -452,6 +454,10 @@ function CartridgeInner({
     if (isFrozen) return;
 
     if (!entranceComplete.current) {
+      // Keep the starting pose parked until texture uploads and asynchronous
+      // shader compilation finish. The animation clock starts on the first
+      // frame after warm-up, so cold-load work cannot consume its duration.
+      if (!entranceReady) return;
       if (entranceStart.current === null) {
         entranceStart.current = state.clock.elapsedTime;
       }
@@ -863,9 +869,16 @@ function CartridgeSceneTextures({
 }) {
   const { scene } = useGLTF("/models/famicom_cartridge.glb");
   const textures = useTexture(labelUrls);
-  const { gl, invalidate, camera, size } = useThree();
+  const {
+    gl,
+    invalidate,
+    camera,
+    size,
+    scene: renderScene,
+  } = useThree();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [entranceReady, setEntranceReady] = useState(false);
 
   // Each closed slot comes from that cartridge's transformed bounds, so the
   // randomized poses retain a hard physical gap. The open cartridge gets a
@@ -922,11 +935,32 @@ function CartridgeSceneTextures({
   }, [textures, labelUrls]);
 
   useLayoutEffect(() => {
+    let active = true;
+
     for (const texture of textureByLabel.values()) {
       configureLabelTexture(texture, gl);
     }
+    uploadSceneTextures(renderScene, gl);
     invalidate();
-  }, [textureByLabel, gl, invalidate]);
+
+    const warmScene = async () => {
+      try {
+        await gl.compileAsync(renderScene, camera);
+      } catch {
+        // Compilation is an optimization rather than a correctness
+        // requirement. If a driver rejects the warm-up, continue through
+        // Three.js's normal lazy path.
+      }
+      if (!active) return;
+      setEntranceReady(true);
+      invalidate();
+    };
+
+    void warmScene();
+    return () => {
+      active = false;
+    };
+  }, [textureByLabel, gl, invalidate, renderScene, camera]);
 
   return (
     <>
@@ -980,6 +1014,7 @@ function CartridgeSceneTextures({
               entranceDelaySec={
                 (layout.length - 1 - i) * ENTRANCE_STAGGER_SEC
               }
+              entranceReady={entranceReady}
             />
           ))}
           {!cameraPreset.compactLabels && sideLabelIndex !== null && (
@@ -1218,6 +1253,30 @@ function configureLabelTexture(texture: THREE.Texture, gl: THREE.WebGLRenderer) 
   texture.magFilter = THREE.LinearFilter;
   texture.needsUpdate = true;
   gl.initTexture(texture);
+}
+
+function uploadSceneTextures(
+  scene: THREE.Scene,
+  gl: THREE.WebGLRenderer
+) {
+  const textures = new Set<THREE.Texture>();
+
+  if (scene.background instanceof THREE.Texture) textures.add(scene.background);
+  if (scene.environment) textures.add(scene.environment);
+
+  scene.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+    const materials = Array.isArray(object.material)
+      ? object.material
+      : [object.material];
+    for (const material of materials) {
+      for (const value of Object.values(material)) {
+        if (value instanceof THREE.Texture) textures.add(value);
+      }
+    }
+  });
+
+  for (const texture of textures) gl.initTexture(texture);
 }
 
 function sharpenTextures(material: THREE.Material, maxAniso: number) {
