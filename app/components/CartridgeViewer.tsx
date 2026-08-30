@@ -16,8 +16,8 @@ import * as stylex from "@stylexjs/stylex";
 import CartridgeBackdrop from "./CartridgeBackdrop";
 
 // Matches the cartridge model's footprint in local space (X unaffected by
-// the resting pitch, which only rotates around X) — used both as the
-// pointer hit target and to offset the hover label clear of the shell.
+// the resting pitch, which only rotates around X) — used for the pointer hit
+// target.
 const CARTRIDGE_WIDTH = 0.11;
 const CARTRIDGE_HEIGHT = 0.072;
 const CARTRIDGE_DEPTH = 0.02;
@@ -26,7 +26,6 @@ const CARTRIDGE_HITBOX_GEOMETRY = new THREE.BoxGeometry(
   CARTRIDGE_HEIGHT,
   CARTRIDGE_DEPTH
 );
-const HOVER_LABEL_GAP = 0.02;
 
 // Vertical room a cartridge needs once clicked open to show its front (its
 // natural, unpitched height) instead of just its spine thickness, plus a
@@ -160,7 +159,6 @@ export type CameraPreset = {
   verticalPanFraction?: number;
   openTopOffsetPx?: number;
   openBottomGapPx?: number;
-  compactLabels?: boolean;
 };
 // The large composition deliberately prioritizes scale and its rightward pan
 // over being fully crop-safe at the narrowest widths in this breakpoint.
@@ -172,6 +170,8 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
   verticalPanFraction: -0.22,
   // 100px lower than the OPEN_TOP_OFFSET_PX default.
   openTopOffsetPx: 240,
+  // Reserve room for the company/years label below the open cartridge.
+  openBottomGapPx: 50,
 };
 export const CAMERA_PRESET_SMALL: CameraPreset = {
   margin: 1.12,
@@ -181,13 +181,9 @@ export const CAMERA_PRESET_SMALL: CameraPreset = {
   // Mobile's cartridges rest lower in frame than desktop's, so an opened
   // cartridge needs more headroom to land clear of the stack below it.
   openTopOffsetPx: 200,
-  // Room below the opened cartridge, clear of the cartridges beneath it, to
-  // later hold text — mobile only.
+  // Room below the opened cartridge, clear of the cartridges beneath it, for
+  // the company/years label.
   openBottomGapPx: 50,
-  // Mobile shows the company/years label under the open cartridge instead
-  // of beside the hovered one — there's no room for a side label, and hover
-  // isn't a mobile concept anyway.
-  compactLabels: true,
 };
 
 import { CARTRIDGES } from "@/data/cartridges";
@@ -277,7 +273,6 @@ function CartridgeInner({
   detailLift = DETAIL_LIFT,
   shellOpacity,
   renderOrderBase = 0,
-  onHoverChange,
   isOpen = false,
   onToggleOpen,
   entranceDelaySec,
@@ -295,7 +290,6 @@ function CartridgeInner({
   detailLift?: number;
   shellOpacity?: number;
   renderOrderBase?: number;
-  onHoverChange?: (hovered: boolean) => void;
   isOpen?: boolean;
   onToggleOpen?: () => void;
   entranceDelaySec?: number;
@@ -389,7 +383,6 @@ function CartridgeInner({
     restingY + (entranceDelaySec === undefined ? 0 : ENTRANCE_OFFSET_Y)
   );
   const positionYTarget = useRef(restingY);
-  const hovered = useRef(false);
   const hoverMotion = useRef(false);
   const entranceStart = useRef<number | null>(null);
   const entranceComplete = useRef(entranceDelaySec === undefined);
@@ -702,19 +695,17 @@ function CartridgeInner({
       }}
     >
       <primitive object={instance} position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]} />
-      {(onHoverChange || onToggleOpen) && (
+      {onToggleOpen && (
         <mesh
           geometry={CARTRIDGE_HITBOX_GEOMETRY}
           onPointerEnter={(event) => {
             event.stopPropagation();
             if (!entranceComplete.current) return;
             gl.domElement.style.cursor = "pointer";
-            onHoverChange?.(true);
           }}
           onPointerLeave={(event) => {
             event.stopPropagation();
             gl.domElement.style.cursor = "auto";
-            onHoverChange?.(false);
           }}
           onClick={(event) => {
             event.stopPropagation();
@@ -797,7 +788,7 @@ function FixedCameraRig({
       });
       object.position.y = cameraPositionY;
       object.position.z = cameraPositionZ;
-      if (preset.compactLabels) object.rotation.x = cameraRotationX;
+      object.rotation.x = cameraRotationX;
     });
     const box3 = new THREE.Box3().setFromObject(groupRef.current);
     for (const { object, y, z, rotationX } of animatedTransforms) {
@@ -874,7 +865,6 @@ function CartridgeSceneTextures({
     size,
     scene: renderScene,
   } = useThree();
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [entranceReady, setEntranceReady] = useState(false);
 
@@ -907,9 +897,10 @@ function CartridgeSceneTextures({
     if (openIndex === null) return { yPositions: centered, openLabelY: 0 };
     const openWorldY = pixelYToWorldY(camera, openTopOffsetPx, size.height, 0);
     const shift = openWorldY - centered[openIndex];
-    // Keep the compact label close to the cartridge while leaving most of the
-    // reserved gap available before the cartridges below it.
-    const labelY = centered[openIndex] - OPEN_HEIGHT / 2 - extraBottomGap * 0.1 + shift;
+    // Tuck the label toward the cartridge while leaving the reserved gap
+    // available before the cartridges below it.
+    const labelY =
+      centered[openIndex] - OPEN_HEIGHT / 2 + extraBottomGap * 0.35 + shift;
     return { yPositions: centered.map((y) => y + shift), openLabelY: labelY };
   }, [
     layout,
@@ -919,11 +910,6 @@ function CartridgeSceneTextures({
     cameraPreset.openTopOffsetPx,
     cameraPreset.openBottomGapPx,
   ]);
-
-  // On non-compact (larger) breakpoints, the side label sticks to whichever
-  // cartridge is open even once the pointer leaves it — hover still takes
-  // over for previewing a different cartridge in the meantime.
-  const sideLabelIndex = hoveredIndex ?? openIndex;
 
   const textureByLabel = useMemo(() => {
     const list = Array.isArray(textures) ? textures : [textures];
@@ -1006,7 +992,6 @@ function CartridgeSceneTextures({
               detailLift={detailLift}
               shellOpacity={c.shellOpacity}
               renderOrderBase={i * 10}
-              onHoverChange={(hovered) => setHoveredIndex(hovered ? i : null)}
               isOpen={i === openIndex}
               onToggleOpen={() => setOpenIndex((cur) => (cur === i ? null : i))}
               entranceDelaySec={
@@ -1015,24 +1000,7 @@ function CartridgeSceneTextures({
               entranceReady={entranceReady}
             />
           ))}
-          {!cameraPreset.compactLabels && sideLabelIndex !== null && (
-            <Html
-              position={[
-                layout[sideLabelIndex].position[0] - CARTRIDGE_WIDTH / 2 - HOVER_LABEL_GAP,
-                yPositions[sideLabelIndex],
-                0,
-              ]}
-              style={{ pointerEvents: "none" }}
-            >
-              <div {...stylex.props(styles.label, styles.sideLabel)}>
-                {layout[sideLabelIndex].company}
-                <span {...stylex.props(styles.period)}>
-                  {layout[sideLabelIndex].period ?? "0000 - 0000"}
-                </span>
-              </div>
-            </Html>
-          )}
-          {cameraPreset.compactLabels && openIndex !== null && (
+          {openIndex !== null && (
             <Html
               position={[layout[openIndex].position[0], openLabelY, 0]}
               style={{ pointerEvents: "none" }}
@@ -1040,7 +1008,7 @@ function CartridgeSceneTextures({
               <div {...stylex.props(styles.label, styles.compactLabel)}>
                 {layout[openIndex].company}
                 <span {...stylex.props(styles.period)}>
-                  {layout[openIndex].period ?? "0000 - 0000"}
+                  {layout[openIndex].period ?? "0000-0000"}
                 </span>
               </div>
             </Html>
@@ -1408,10 +1376,6 @@ const styles = stylex.create({
   period: {
     display: 'block',
     fontVariantNumeric: 'tabular-nums',
-  },
-  sideLabel: {
-    textAlign: 'right',
-    transform: 'translate(-100%, -50%)',
   },
   compactLabel: {
     textAlign: 'center',
