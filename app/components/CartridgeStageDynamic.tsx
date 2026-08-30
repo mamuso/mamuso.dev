@@ -15,10 +15,12 @@ export default CartridgeStageDynamic
 const styles = stylex.create({
   stage: {
     height: {
-      default: 580,
-      '@media (min-width: 720px)': 760,
+      default: 640,
+      '@media (min-width: 720px)': 920,
     },
     left: '50%',
+    marginBlockEnd: 51,
+    marginBlockStart: -51,
     marginInline: '-50vw',
     position: 'relative',
     right: '50%',

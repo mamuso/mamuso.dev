@@ -6,22 +6,9 @@ body {
 }
 
 :root {
-  --font-body: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro', sans-serif;
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
   font-family: var(--font-body);
-}
-
-:root[data-platform='non-apple'] {
-  --font-body: 'SF Pro Web', system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro', sans-serif;
-}
-
-@font-face {
-  font-family: 'SF Pro Web';
-  src: url('/fonts/SFPro.woff2') format('woff2');
-  font-weight: 1 1000;
-  font-stretch: 30% 150%;
-  font-style: normal;
-  font-display: swap;
 }

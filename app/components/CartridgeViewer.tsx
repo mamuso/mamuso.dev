@@ -144,7 +144,7 @@ const CAMERA_PAN_FRACTION = 0.5;
 // a POSITIVE fraction makes it appear lower.
 // Tunable per preset since the same fraction reads as a much bigger gap on
 // a taller canvas (world-space framing is unchanged, but it's stretched
-// over more pixels) — see CartridgeViewer's h-[580px] lg:h-[760px].
+// over more pixels) — see CartridgeViewer's 640px/920px responsive heights.
 const CAMERA_VERTICAL_PAN_FRACTION = -0.15;
 
 // Camera framing is computed once from a fixed reference aspect ratio per
@@ -159,31 +159,35 @@ export type CameraPreset = {
   verticalPanFraction?: number;
   openTopOffsetPx?: number;
   openBottomGapPx?: number;
+  openLabelInsetFraction?: number;
 };
 // The large composition deliberately prioritizes scale and its rightward pan
 // over being fully crop-safe at the narrowest widths in this breakpoint.
 // Lowering the margin moves the fixed camera closer and enlarges the stack.
 export const CAMERA_PRESET_LARGE: CameraPreset = {
   margin: 1.25,
-  aspect: 720 / 760,
+  aspect: 720 / 920,
   panFraction: 0.75,
-  verticalPanFraction: -0.22,
-  // 100px lower than the OPEN_TOP_OFFSET_PX default.
-  openTopOffsetPx: 240,
+  verticalPanFraction: -0.12,
+  // 80px lower than the OPEN_TOP_OFFSET_PX default.
+  openTopOffsetPx: 220,
   // Reserve room for the company/years label below the open cartridge.
   openBottomGapPx: 50,
+  openLabelInsetFraction: 0.35,
 };
 export const CAMERA_PRESET_SMALL: CameraPreset = {
   margin: 1.12,
-  aspect: 390 / 580,
+  aspect: 390 / 640,
   panFraction: 0,
-  verticalPanFraction: 0.1,
+  verticalPanFraction: 0,
   // Mobile's cartridges rest lower in frame than desktop's, so an opened
   // cartridge needs more headroom to land clear of the stack below it.
-  openTopOffsetPx: 200,
+  openTopOffsetPx: 180,
   // Room below the opened cartridge, clear of the cartridges beneath it, for
   // the company/years label.
   openBottomGapPx: 50,
+  // Keep a little more breathing room below the cartridge on small screens.
+  openLabelInsetFraction: 0.15,
 };
 
 import { CARTRIDGES } from "@/data/cartridges";
@@ -878,6 +882,7 @@ function CartridgeSceneTextures({
   const { yPositions, openLabelY } = useMemo(() => {
     const openTopOffsetPx = cameraPreset.openTopOffsetPx ?? OPEN_TOP_OFFSET_PX;
     const openBottomGapPx = cameraPreset.openBottomGapPx ?? 0;
+    const openLabelInsetFraction = cameraPreset.openLabelInsetFraction ?? 0;
     const extraBottomGap =
       openIndex !== null && openBottomGapPx > 0
         ? pixelYToWorldY(camera, openTopOffsetPx, size.height, 0) -
@@ -900,8 +905,14 @@ function CartridgeSceneTextures({
     // Tuck the label toward the cartridge while leaving the reserved gap
     // available before the cartridges below it.
     const labelY =
-      centered[openIndex] - OPEN_HEIGHT / 2 + extraBottomGap * 0.35 + shift;
-    return { yPositions: centered.map((y) => y + shift), openLabelY: labelY };
+      centered[openIndex] -
+      OPEN_HEIGHT / 2 +
+      extraBottomGap * openLabelInsetFraction +
+      shift;
+    return {
+      yPositions: centered.map((y) => y + shift),
+      openLabelY: labelY,
+    };
   }, [
     layout,
     openIndex,
@@ -909,6 +920,7 @@ function CartridgeSceneTextures({
     size.height,
     cameraPreset.openTopOffsetPx,
     cameraPreset.openBottomGapPx,
+    cameraPreset.openLabelInsetFraction,
   ]);
 
   const textureByLabel = useMemo(() => {
@@ -1357,10 +1369,12 @@ export default function CartridgeViewer({
 const styles = stylex.create({
   viewer: {
     height: {
-      default: 580,
-      '@media (min-width: 720px)': 760,
+      default: 640,
+      '@media (min-width: 720px)': 920,
     },
     left: '50%',
+    marginBlockEnd: 51,
+    marginBlockStart: -51,
     marginInline: '-50vw',
     overflow: 'hidden',
     position: 'relative',

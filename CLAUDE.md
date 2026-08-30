@@ -61,7 +61,7 @@ Script-only modules use `.ts` or `.tsx` under `lib/`. There is no Sass.
 
 ## Styling
 
-Do not add SCSS, CSS modules, Tailwind, or a webfont other than the one already in the repo.
+Do not add SCSS, CSS modules, Tailwind, or webfonts.
 
 StyleX is the component styling system:
 
@@ -73,7 +73,7 @@ StyleX is the component styling system:
 
 Chrome you own (layout, header, nav, cards, the cartridge frame) gets StyleX. Markdown bodies in `Post.tsx` are `markdown-to-jsx` with no overrides, so StyleX cannot style descendant `p` / `h2` / `img`. Article prose and content classes such as `photo-gallery` and `video-embed` belong in CSS (put that CSS in a named `@layer` so it does not silently beat StyleX atoms). `postcss.config.js` `useCSSLayers: true` emits StyleX inside `@layer priority*`. Unlayered rules in `globals.css` outrank every StyleX class.
 
-The body font is the platform system font on Apple devices and `/fonts/SFPro.woff2` (`SF Pro Web`) elsewhere. `app/layout.tsx` sets `document.documentElement.dataset.platform` before hydration. There is no Geist font and no `geist` package.
+The body uses the native system font stack on every platform. There is no Geist font and no `geist` package.
 
 A few files already use StyleX (`app/layout.tsx`, `CartridgeStageDynamic.tsx`, `CartridgeViewer.tsx`). Header, Footer, Post, PostHome, PhotoMeta, Pagination, and the page templates are still unstyled HTML.
 

@@ -6,13 +6,13 @@ import { layout, typography } from '../styles/site'
 export default function Header() {
   return (
     <header {...stylex.props(styles.header)}>
-      <h1 {...stylex.props(typography.heading)}>
+      <h1 {...stylex.props(typography.heading, styles.interactive)}>
         <Link href="/" {...stylex.props(typography.link, styles.brand)}>
           <Image src="/images/logo.svg" width={20} height={20} alt="" aria-hidden="true" />
           mamuso
         </Link>
       </h1>
-      <nav>
+      <nav {...stylex.props(styles.interactive)}>
         <ul {...stylex.props(layout.list, styles.navigation)}>
           <li>
             <Link href="/notes/" {...stylex.props(typography.mutedLink)}>notes</Link>
@@ -29,8 +29,17 @@ export default function Header() {
 const styles = stylex.create({
   header: {
     alignItems: 'center',
+    borderColor: '#ff00ff',
+    borderStyle: 'solid',
+    borderWidth: 2,
     display: 'flex',
     justifyContent: 'space-between',
+    pointerEvents: 'none',
+    position: 'relative',
+    zIndex: 1,
+  },
+  interactive: {
+    pointerEvents: 'auto',
   },
   brand: {
     alignItems: 'center',
