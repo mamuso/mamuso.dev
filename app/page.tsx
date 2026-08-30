@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { getRecentPosts } from '@/lib/api'
 import PostHome from '@/app/components/PostHome'
 import CartridgeStage from '@/app/components/CartridgeStageDynamic'
+import * as stylex from '@stylexjs/stylex'
+import { layout, typography } from '@/app/styles/site'
 
 export const metadata = {
   metadataBase: new URL('https://mamuso.dev'),
@@ -45,27 +47,32 @@ const Home: NextPage = () => {
   return (
     <>
       <CartridgeStage />
-      <section>
-        <h2>Manuel Muñoz Solera</h2>
-        <p>Crayon holder and key stroker.</p>
+      <section {...stylex.props(layout.section, layout.stack)}>
+        <h2 {...stylex.props(typography.heading)}>Manuel Muñoz Solera</h2>
+        <p {...stylex.props(typography.muted, styles.copy)}>Crayon holder and key stroker.</p>
       </section>
 
-      <section>
-        <h2>Journal</h2>
-        <ul>
+      <section {...stylex.props(layout.section, layout.stack)}>
+        <h2 {...stylex.props(typography.heading)}>Journal</h2>
+        <ul {...stylex.props(layout.list, layout.stack)}>
           {recentPosts.map((post) => (
             <li key={post.slug}>
               <PostHome post={post} />
             </li>
           ))}
         </ul>
-        <p>
-          <Link href="/notes">View more →</Link>
+        <p {...stylex.props(styles.copy)}>
+          <Link href="/notes" {...stylex.props(typography.mutedLink)}>View more →</Link>
         </p>
       </section>
-
     </>
   )
 }
 
 export default Home
+
+const styles = stylex.create({
+  copy: {
+    marginBlock: 0,
+  },
+})

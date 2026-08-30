@@ -3,6 +3,7 @@ import * as stylex from '@stylexjs/stylex'
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../lib/constants'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import { typography } from './styles/site'
 import './globals.css'
 
 const platformDetectionScript = `
@@ -42,10 +43,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {platformDetectionScript}
         </Script>
       </head>
-      <body {...stylex.props(styles.body)}>
+      <body {...stylex.props(typography.root, styles.body)}>
         <div {...stylex.props(styles.page)}>
           <Header />
-          <main>{children}</main>
+          <main {...stylex.props(styles.main)}>{children}</main>
           <Footer />
         </div>
       </body>
@@ -55,9 +56,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 const styles = stylex.create({
   body: {
-    margin: 0,
-  },
-  page: {
     backgroundBlendMode: 'normal, multiply',
     backgroundColor: '#e5e5e5',
     backgroundImage:
@@ -65,13 +63,22 @@ const styles = stylex.create({
     backgroundRepeat: 'no-repeat, repeat',
     backgroundSize: 'auto, 20%',
     boxSizing: 'border-box',
+    margin: 0,
+    minHeight: '100vh',
+  },
+  page: {
+    boxSizing: 'border-box',
     marginInline: 'auto',
     minHeight: '100vh',
+    maxWidth: 608,
     paddingBlock: 24,
     paddingInline: {
       default: 24,
       '@media (min-width: 640px)': 32,
     },
     width: '100%',
+  },
+  main: {
+    minWidth: 0,
   },
 })

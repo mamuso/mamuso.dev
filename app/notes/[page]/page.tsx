@@ -2,6 +2,8 @@ import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
 import { getAllPosts, getPostBySlug } from '@/lib/api'
 import Post from '@/app/components/Post'
 import Pagination from '@/app/components/Pagination'
+import * as stylex from '@stylexjs/stylex'
+import { layout } from '@/app/styles/site'
 
 export const metadata = {
   title: `Notes – ${BLOG_TITLE}`,
@@ -57,14 +59,25 @@ export default async function Posts(props: { params: Promise<{ page: number }> }
   )
 
   return (
-    <>
+    <section {...stylex.props(layout.section)}>
       {pagePosts.map((post) => (
         <div key={post.slug}>
           <Post post={post} link={true} />
-          <hr />
+          <hr {...stylex.props(styles.rule)} />
         </div>
       ))}
       <Pagination page={page} totalPages={totalPages} />
-    </>
+    </section>
   )
 }
+
+const styles = stylex.create({
+  rule: {
+    borderBlockEndWidth: 0,
+    borderBlockStartColor: '#d4d4d8',
+    borderBlockStartStyle: 'solid',
+    borderBlockStartWidth: 1,
+    borderInlineWidth: 0,
+    marginBlock: 48,
+  },
+})
