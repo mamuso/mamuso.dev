@@ -14,6 +14,7 @@ import type { Group, Object3D } from "three";
 import * as stylex from "@stylexjs/stylex";
 
 import CartridgeBackdrop from "./CartridgeBackdrop";
+import { colors } from "../styles/tokens.stylex";
 
 // Matches the cartridge model's footprint in local space (X unaffected by
 // the resting pitch, which only rotates around X) — used for the pointer hit
@@ -144,7 +145,7 @@ const CAMERA_PAN_FRACTION = 0.5;
 // a POSITIVE fraction makes it appear lower.
 // Tunable per preset since the same fraction reads as a much bigger gap on
 // a taller canvas (world-space framing is unchanged, but it's stretched
-// over more pixels) — see CartridgeViewer's 640px/920px responsive heights.
+// over more pixels) — see CartridgeViewer's responsive canvas heights.
 const CAMERA_VERTICAL_PAN_FRACTION = -0.15;
 
 // Camera framing is computed once from a fixed reference aspect ratio per
@@ -165,10 +166,12 @@ export type CameraPreset = {
 // over being fully crop-safe at the narrowest widths in this breakpoint.
 // Lowering the margin moves the fixed camera closer and enlarges the stack.
 export const CAMERA_PRESET_LARGE: CameraPreset = {
-  margin: 1.25,
+  margin: 1.35,
+  // Keep the established 920px framing while the provisional shorter canvas
+  // crops the composition instead of scaling the cartridges down again.
   aspect: 720 / 920,
   panFraction: 0.75,
-  verticalPanFraction: -0.12,
+  verticalPanFraction: -0.27,
   // 80px lower than the OPEN_TOP_OFFSET_PX default.
   openTopOffsetPx: 220,
   // Reserve room for the company/years label below the open cartridge.
@@ -1368,13 +1371,29 @@ export default function CartridgeViewer({
 
 const styles = stylex.create({
   viewer: {
+    borderBlockEndColor: {
+      default: 'transparent',
+      '@media (min-width: 720px)': '#ff00ff',
+    },
+    borderBlockEndStyle: 'solid',
+    borderBlockEndWidth: {
+      default: 0,
+      '@media (min-width: 720px)': 2,
+    },
+    boxSizing: 'border-box',
     height: {
       default: 640,
-      '@media (min-width: 720px)': 920,
+      '@media (min-width: 720px)': 800,
     },
     left: '50%',
-    marginBlockEnd: 51,
-    marginBlockStart: -51,
+    marginBlockEnd: {
+      default: 52,
+      '@media (min-width: 720px)': 148,
+    },
+    marginBlockStart: {
+      default: -52,
+      '@media (min-width: 720px)': -148,
+    },
     marginInline: '-50vw',
     overflow: 'hidden',
     position: 'relative',
@@ -1382,6 +1401,7 @@ const styles = stylex.create({
     width: '100vw',
   },
   label: {
+    color: colors.textPrimary,
     fontSize: 14,
     fontWeight: 500,
     lineHeight: 1.25,
@@ -1390,6 +1410,7 @@ const styles = stylex.create({
   period: {
     display: 'block',
     fontVariantNumeric: 'tabular-nums',
+    opacity: 0.65,
   },
   compactLabel: {
     textAlign: 'center',

@@ -14,13 +14,29 @@ export default CartridgeStageDynamic
 
 const styles = stylex.create({
   stage: {
+    borderBlockEndColor: {
+      default: 'transparent',
+      '@media (min-width: 720px)': '#ff00ff',
+    },
+    borderBlockEndStyle: 'solid',
+    borderBlockEndWidth: {
+      default: 0,
+      '@media (min-width: 720px)': 2,
+    },
+    boxSizing: 'border-box',
     height: {
       default: 640,
-      '@media (min-width: 720px)': 920,
+      '@media (min-width: 720px)': 800,
     },
     left: '50%',
-    marginBlockEnd: 51,
-    marginBlockStart: -51,
+    marginBlockEnd: {
+      default: 52,
+      '@media (min-width: 720px)': 148,
+    },
+    marginBlockStart: {
+      default: -52,
+      '@media (min-width: 720px)': -148,
+    },
     marginInline: '-50vw',
     position: 'relative',
     right: '50%',
