@@ -200,7 +200,7 @@ export const CAMERA_PRESET_SMALL: CameraPreset = {
   aspect: 390 / 640,
   panFraction: 0,
   verticalPanFraction: 0,
-  verticalPanPx: 10,
+  verticalPanPx: 48,
   openInPlace: true,
   // When a lower cartridge opens, keep the top cartridge below the header.
   openInPlaceTopInsetPx: 100,
