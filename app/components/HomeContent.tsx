@@ -42,7 +42,7 @@ const styles = stylex.create({
   },
   intro: {
     marginBlockStart: {
-      default: 96,
+      default: 80,
       '@media (min-width: 720px)': 24,
     },
     maxWidth: {
@@ -67,10 +67,7 @@ const styles = stylex.create({
     },
   },
   introCopy: {
-    fontSize: {
-      default: 20,
-      '@media (min-width: 640px)': 24,
-    },
+    fontSize: 24,
     letterSpacing: '-0.01em',
     lineHeight: 1.2,
     marginBlock: 0,

@@ -177,6 +177,7 @@ export type CameraPreset = {
   openLabelInsetFraction?: number;
   openInPlace?: boolean;
   openInPlaceTopInsetPx?: number;
+  openInPlaceOpenLiftPx?: number;
 };
 // The large composition deliberately prioritizes scale and its rightward pan
 // over being fully crop-safe at the narrowest widths in this breakpoint.
@@ -199,10 +200,12 @@ export const CAMERA_PRESET_SMALL: CameraPreset = {
   aspect: 390 / 640,
   panFraction: 0,
   verticalPanFraction: 0,
-  verticalPanPx: 21,
+  verticalPanPx: 10,
   openInPlace: true,
-  // Keep the top of the expanded stack clear of the fixed mobile header.
+  // When a lower cartridge opens, keep the top cartridge below the header.
   openInPlaceTopInsetPx: 100,
+  // Nudge the first open cartridge slightly up instead of settling lower.
+  openInPlaceOpenLiftPx: 16,
   // Room below the opened cartridge, clear of the cartridges beneath it, for
   // the company/years label.
   openBottomGapPx: 28,
@@ -963,7 +966,7 @@ function CartridgeSceneTextures({
         extraBottomGap * openLabelInsetFraction;
 
       const openInPlaceTopInsetPx = cameraPreset.openInPlaceTopInsetPx ?? 0;
-      if (openInPlaceTopInsetPx > 0) {
+      if (openInPlaceTopInsetPx > 0 && openIndex > 0) {
         const planeZ = 0;
         let topPixelY = Infinity;
         for (let i = 0; i < yPositions.length; i++) {
@@ -983,6 +986,16 @@ function CartridgeSceneTextures({
           yPositions = yPositions.map((y) => y + worldShift);
           openLabelY += worldShift;
         }
+      }
+
+      const openInPlaceOpenLiftPx = cameraPreset.openInPlaceOpenLiftPx ?? 0;
+      if (openInPlaceOpenLiftPx > 0 && openIndex === 0) {
+        const planeZ = 0;
+        const worldLift =
+          pixelYToWorldY(camera, 0, size.height, planeZ) -
+          pixelYToWorldY(camera, openInPlaceOpenLiftPx, size.height, planeZ);
+        yPositions = yPositions.map((y) => y + worldLift);
+        openLabelY += worldLift;
       }
 
       return { yPositions, openLabelY };
@@ -1015,6 +1028,7 @@ function CartridgeSceneTextures({
     cameraPreset.openLabelInsetFraction,
     cameraPreset.openInPlace,
     cameraPreset.openInPlaceTopInsetPx,
+    cameraPreset.openInPlaceOpenLiftPx,
   ]);
 
   const textureByLabel = useMemo(() => {
