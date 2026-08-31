@@ -158,9 +158,11 @@ export type CameraPreset = {
   aspect: number;
   panFraction?: number;
   verticalPanFraction?: number;
+  verticalPanPx?: number;
   openTopOffsetPx?: number;
   openBottomGapPx?: number;
   openLabelInsetFraction?: number;
+  openInPlace?: boolean;
 };
 // The large composition deliberately prioritizes scale and its rightward pan
 // over being fully crop-safe at the narrowest widths in this breakpoint.
@@ -175,7 +177,7 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
   // 80px lower than the OPEN_TOP_OFFSET_PX default.
   openTopOffsetPx: 220,
   // Reserve room for the company/years label below the open cartridge.
-  openBottomGapPx: 50,
+  openBottomGapPx: 28,
   openLabelInsetFraction: 0.35,
 };
 export const CAMERA_PRESET_SMALL: CameraPreset = {
@@ -183,12 +185,11 @@ export const CAMERA_PRESET_SMALL: CameraPreset = {
   aspect: 390 / 640,
   panFraction: 0,
   verticalPanFraction: 0,
-  // Mobile's cartridges rest lower in frame than desktop's, so an opened
-  // cartridge needs more headroom to land clear of the stack below it.
-  openTopOffsetPx: 180,
+  verticalPanPx: 5,
+  openInPlace: true,
   // Room below the opened cartridge, clear of the cartridges beneath it, for
   // the company/years label.
-  openBottomGapPx: 50,
+  openBottomGapPx: 28,
   // Keep a little more breathing room below the cartridge on small screens.
   openLabelInsetFraction: 0.15,
 };
@@ -762,6 +763,7 @@ function FixedCameraRig({
 }) {
   const groupRef = useRef<Group>(null);
   const camera = useThree((state) => state.camera) as THREE.PerspectiveCamera;
+  const size = useThree((state) => state.size);
   const invalidate = useThree((state) => state.invalidate);
 
   // Mount-only: content is static, and re-running this on later renders
@@ -805,8 +807,8 @@ function FixedCameraRig({
     }
     if (box3.isEmpty()) return;
     const center = box3.getCenter(new THREE.Vector3());
-    const size = box3.getSize(new THREE.Vector3());
-    const maxSize = Math.max(size.x, size.y, size.z);
+    const boxSize = box3.getSize(new THREE.Vector3());
+    const maxSize = Math.max(boxSize.x, boxSize.y, boxSize.z);
 
     const halfFov = (camera.fov * DEG) / 2;
     const fitHeightDistance = maxSize / (2 * Math.tan(halfFov));
@@ -835,6 +837,24 @@ function FixedCameraRig({
     camera.far = distance + maxSize * 4 + Math.abs(ENTRANCE_OFFSET_Z);
     camera.updateProjectionMatrix();
     camera.lookAt(target);
+
+    const verticalPanPx = preset.verticalPanPx ?? 0;
+    if (verticalPanPx !== 0) {
+      const canvasHeightPx = size.height;
+      const planeZ = center.z;
+      const worldAtTop = pixelYToWorldY(camera, 0, canvasHeightPx, planeZ);
+      const worldAtOffset = pixelYToWorldY(
+        camera,
+        verticalPanPx,
+        canvasHeightPx,
+        planeZ
+      );
+      const worldDelta = worldAtOffset - worldAtTop;
+      camera.position.y += worldDelta;
+      target.y += worldDelta;
+      camera.lookAt(target);
+    }
+
     invalidate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -846,6 +866,7 @@ function CartridgeSceneTextures({
   cameraPreset,
   layout,
   labelUrls,
+  onOpenChange,
   shadowOpacity = 0.2,
   shadowPlanePosition = [0, 0, -0.027] as [number, number, number],
   lightPosition = [1, 1, 5] as [number, number, number],
@@ -856,6 +877,7 @@ function CartridgeSceneTextures({
   cameraPreset: CameraPreset;
   layout: CartridgeLayoutEntry[];
   labelUrls: string[];
+  onOpenChange?: (isOpen: boolean) => void;
   shadowOpacity?: number;
   shadowPlanePosition?: [number, number, number];
   lightPosition?: [number, number, number];
@@ -875,34 +897,61 @@ function CartridgeSceneTextures({
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [entranceReady, setEntranceReady] = useState(false);
 
+  useEffect(() => {
+    onOpenChange?.(openIndex !== null);
+  }, [openIndex, onOpenChange]);
+
   // Each closed slot comes from that cartridge's transformed bounds, so the
   // randomized poses retain a hard physical gap. The open cartridge gets a
   // taller slot and the rest spring apart to make room. Closed, the whole
-  // stack is centered; open, the whole arrangement is shifted so the open
-  // cartridge always lands at the same fixed pixel offset from the canvas
-  // top. On presets with openBottomGapPx set, an extra gap is inserted right
-  // after the open cartridge for compact label text.
+  // stack is centered; open, either the stack shifts so the open cartridge
+  // lands at a fixed pixel offset (desktop), or it expands in place around
+  // the clicked cartridge (mobile).
   const { yPositions, openLabelY } = useMemo(() => {
     const openTopOffsetPx = cameraPreset.openTopOffsetPx ?? OPEN_TOP_OFFSET_PX;
     const openBottomGapPx = cameraPreset.openBottomGapPx ?? 0;
     const openLabelInsetFraction = cameraPreset.openLabelInsetFraction ?? 0;
+    const openInPlace = cameraPreset.openInPlace ?? false;
     const extraBottomGap =
       openIndex !== null && openBottomGapPx > 0
         ? pixelYToWorldY(camera, openTopOffsetPx, size.height, 0) -
           pixelYToWorldY(camera, openTopOffsetPx + openBottomGapPx, size.height, 0)
         : 0;
+    const closedHeights = layout.map((entry) => entry.closedHeight);
+    const stackCentered = (heights: number[], gapAfterOpen = 0) => {
+      const total = heights.reduce((sum, h) => sum + h, 0) + gapAfterOpen;
+      let cursor = total / 2;
+      return heights.map((h, i) => {
+        const center = cursor - h / 2;
+        cursor -= h;
+        if (openIndex !== null && i === openIndex) cursor -= gapAfterOpen;
+        return center;
+      });
+    };
+
+    if (openIndex === null) {
+      return { yPositions: stackCentered(closedHeights), openLabelY: 0 };
+    }
+
+    if (openInPlace) {
+      const closedPositions = stackCentered(closedHeights);
+      const heightDelta = OPEN_HEIGHT - closedHeights[openIndex];
+      const yPositions = closedPositions.map((y, i) => {
+        if (i === openIndex) return y;
+        if (i < openIndex) return y + heightDelta / 2;
+        return y - heightDelta / 2 - extraBottomGap;
+      });
+      const labelY =
+        yPositions[openIndex] -
+        OPEN_HEIGHT / 2 +
+        extraBottomGap * openLabelInsetFraction;
+      return { yPositions, openLabelY: labelY };
+    }
+
     const heights = layout.map((entry, i) =>
       i === openIndex ? OPEN_HEIGHT : entry.closedHeight
     );
-    const total = heights.reduce((sum, h) => sum + h, 0) + extraBottomGap;
-    let cursor = total / 2;
-    const centered = heights.map((h, i) => {
-      const center = cursor - h / 2;
-      cursor -= h;
-      if (i === openIndex) cursor -= extraBottomGap;
-      return center;
-    });
-    if (openIndex === null) return { yPositions: centered, openLabelY: 0 };
+    const centered = stackCentered(heights, extraBottomGap);
     const openWorldY = pixelYToWorldY(camera, openTopOffsetPx, size.height, 0);
     const shift = openWorldY - centered[openIndex];
     // Tuck the label toward the cartridge while leaving the reserved gap
@@ -924,6 +973,7 @@ function CartridgeSceneTextures({
     cameraPreset.openTopOffsetPx,
     cameraPreset.openBottomGapPx,
     cameraPreset.openLabelInsetFraction,
+    cameraPreset.openInPlace,
   ]);
 
   const textureByLabel = useMemo(() => {
@@ -1042,6 +1092,7 @@ function CartridgeSceneTextures({
 export function CartridgeScene({
   cameraPreset,
   layout,
+  onOpenChange,
   shadowOpacity = 0.2,
   shadowPlanePosition,
   lightPosition,
@@ -1051,6 +1102,7 @@ export function CartridgeScene({
 }: {
   cameraPreset: CameraPreset;
   layout: CartridgeLayoutEntry[];
+  onOpenChange?: (isOpen: boolean) => void;
   shadowOpacity?: number;
   shadowPlanePosition?: [number, number, number];
   lightPosition?: [number, number, number];
@@ -1068,6 +1120,7 @@ export function CartridgeScene({
       cameraPreset={cameraPreset}
       layout={layout}
       labelUrls={labelUrls}
+      onOpenChange={onOpenChange}
       shadowOpacity={shadowOpacity}
       shadowPlanePosition={shadowPlanePosition}
       lightPosition={lightPosition}
@@ -1276,8 +1329,10 @@ useTexture.preload(LABEL_URLS);
 
 export default function CartridgeViewer({
   cameraPreset = CAMERA_PRESET_LARGE,
+  onOpenChange,
 }: {
   cameraPreset?: CameraPreset;
+  onOpenChange?: (isOpen: boolean) => void;
 }) {
   // Fine label typography needs a 2x render target even on standard-DPI
   // displays. The grain now lives in cartridge materials, so this no longer
@@ -1362,7 +1417,11 @@ export default function CartridgeViewer({
         }}
       >
         <Suspense fallback={null}>
-          <CartridgeScene cameraPreset={cameraPreset} layout={layout} />
+          <CartridgeScene
+            cameraPreset={cameraPreset}
+            layout={layout}
+            onOpenChange={onOpenChange}
+          />
         </Suspense>
       </Canvas>
     </div>
@@ -1371,34 +1430,18 @@ export default function CartridgeViewer({
 
 const styles = stylex.create({
   viewer: {
-    borderBlockEndColor: {
-      default: 'transparent',
-      '@media (min-width: 720px)': '#ff00ff',
-    },
-    borderBlockEndStyle: 'solid',
-    borderBlockEndWidth: {
-      default: 0,
-      '@media (min-width: 720px)': 2,
-    },
     boxSizing: 'border-box',
     height: {
       default: 640,
       '@media (min-width: 720px)': 800,
     },
-    left: '50%',
-    marginBlockEnd: {
-      default: 52,
-      '@media (min-width: 720px)': 128,
-    },
-    marginBlockStart: {
-      default: -52,
-      '@media (min-width: 720px)': -128,
-    },
+    insetInlineStart: '50%',
     marginInline: '-50vw',
     overflow: 'hidden',
-    position: 'relative',
-    right: '50%',
+    position: 'absolute',
+    top: 0,
     width: '100vw',
+    zIndex: 0,
   },
   label: {
     color: colors.textPrimary,

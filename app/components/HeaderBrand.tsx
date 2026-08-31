@@ -11,7 +11,7 @@ export default function HeaderBrand() {
   const isHome = pathname === '/'
 
   return (
-    <h1 {...stylex.props(typography.heading, styles.interactive, isHome && styles.home)}>
+    <h1 {...stylex.props(typography.heading, styles.interactive)}>
       <Link
         href="/"
         aria-label={isHome ? 'Home' : undefined}
@@ -34,12 +34,6 @@ export default function HeaderBrand() {
 const styles = stylex.create({
   interactive: {
     pointerEvents: 'auto',
-  },
-  home: {
-    paddingBlockStart: {
-      default: 0,
-      '@media (min-width: 720px)': 76,
-    },
   },
   brand: {
     alignItems: 'center',

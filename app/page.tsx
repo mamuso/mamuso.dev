@@ -3,8 +3,7 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import { getRecentPosts } from '@/lib/api'
 import PostHome from '@/app/components/PostHome'
-import CartridgeStage from '@/app/components/CartridgeStageDynamic'
-import AnimatedName from '@/app/components/AnimatedName'
+import HomeContent from '@/app/components/HomeContent'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
 
@@ -67,13 +66,7 @@ const Journal = () => {
 const Home: NextPage = () => {
   return (
     <>
-      <section {...stylex.props(styles.intro)}>
-        <h2 {...stylex.props(typography.heading, styles.introCopy)}>
-          <span {...stylex.props(typography.muted, styles.tagline)}>I'm </span>
-          <AnimatedName /><span {...stylex.props(typography.muted, styles.tagline)}>, a designer, based in Oakland, having a lot of fun building at SpaceXAI.</span>
-        </h2>
-      </section>
-      <CartridgeStage />
+      <HomeContent />
       {SHOW_JOURNAL ? <Journal /> : null}
     </>
   )
@@ -82,28 +75,7 @@ const Home: NextPage = () => {
 export default Home
 
 const styles = stylex.create({
-  intro: {
-    insetInlineStart: 0,
-    maxWidth: {
-      default: '100%',
-      '@media (min-width: 720px)': 340,
-    },
-    pointerEvents: 'none',
-    position: 'absolute',
-    top: 24,
-    width: '100%',
-    zIndex: 1,
-  },
   copy: {
     marginBlock: 0,
-  },
-  introCopy: {
-    fontSize: 24,
-    letterSpacing: '-0.01em',
-    lineHeight: 1.2,
-    marginBlock: 0,
-  },
-  tagline: {
-    fontWeight: 400,
   },
 })

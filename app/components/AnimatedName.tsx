@@ -69,7 +69,7 @@ const styles = stylex.create({
     cursor: 'pointer',
     display: 'inline-flex',
     fontFamily: 'inherit',
-    fontSize: 24,
+    fontSize: 'inherit',
     fontWeight: 'inherit',
     letterSpacing: '-0.01em',
     lineHeight: 'inherit',

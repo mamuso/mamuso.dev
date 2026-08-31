@@ -13,7 +13,11 @@ const LARGE_STAGE_QUERY = "(min-width: 720px)";
 // small ones, but never recalculated as the window resizes within a
 // breakpoint. Only crossing the 720px breakpoint swaps the preset (matches
 // CartridgeViewer's 720px StyleX media query and CAMERA_PRESET_LARGE's aspect).
-export default function CartridgeStage() {
+export default function CartridgeStage({
+  onOpenChange,
+}: {
+  onOpenChange?: (isOpen: boolean) => void;
+}) {
   // This stage is loaded with `ssr: false`, so the real viewport is available
   // on the first render. Starting with the correct preset avoids mounting the
   // small canvas and immediately replacing it with a fresh large canvas.
@@ -33,6 +37,7 @@ export default function CartridgeStage() {
     <CartridgeViewer
       key={isLarge ? "lg" : "sm"}
       cameraPreset={isLarge ? CAMERA_PRESET_LARGE : CAMERA_PRESET_SMALL}
+      onOpenChange={onOpenChange}
     />
   );
 }

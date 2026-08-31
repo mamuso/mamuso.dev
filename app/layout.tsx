@@ -34,24 +34,52 @@ const styles = stylex.create({
     alignContent: 'start',
     boxSizing: 'border-box',
     columnGap: 16,
-    display: 'grid',
+    display: {
+      default: 'flex',
+      '@media (min-width: 640px)': 'grid',
+    },
+    flexDirection: {
+      default: 'column',
+    },
+    gap: {
+      default: 24,
+      '@media (min-width: 640px)': 0,
+    },
     gridTemplateColumns: {
-      default: 'repeat(4, minmax(0, 1fr))',
       '@media (min-width: 640px)': 'repeat(8, minmax(0, 1fr))',
     },
+    gridTemplateRows: {
+      '@media (min-width: 640px)': 'auto 1fr auto',
+    },
     marginInline: 'auto',
-    minHeight: '100vh',
+    minHeight: '100dvh',
     maxWidth: 744,
     paddingBlock: 24,
     paddingInline: {
-      default: 16,
+      default: 24,
+      '@media (min-width: 640px)': 32,
+    },
+    position: 'relative',
+    rowGap: {
       '@media (min-width: 640px)': 32,
     },
     width: '100%',
   },
   main: {
-    gridColumn: '1 / -1',
+    display: 'flex',
+    flex: {
+      default: 1,
+      '@media (min-width: 640px)': 'unset',
+    },
+    flexDirection: 'column',
+    gridColumn: {
+      '@media (min-width: 640px)': '1 / -1',
+    },
+    minHeight: 0,
     minWidth: 0,
-    position: 'relative',
+    paddingBlockStart: {
+      default: 52,
+      '@media (min-width: 640px)': 0,
+    },
   },
 })

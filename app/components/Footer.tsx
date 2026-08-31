@@ -15,8 +15,11 @@ export default function Footer() {
 
 const styles = stylex.create({
   footer: {
-    gridColumn: '1 / -1',
-    marginBlockStart: 80,
+    gridColumn: {
+      '@media (min-width: 640px)': '1 / -1',
+    },
+    position: 'relative',
+    zIndex: 1,
   },
   copy: {
     marginBlock: 0,
