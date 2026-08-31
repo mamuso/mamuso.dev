@@ -64,6 +64,19 @@ function pixelYToWorldY(
   return point.y;
 }
 
+/** Pixel Y (from canvas top) for a world Y on the world-X=0/world-Z=planeZ plane. */
+function worldYToPixelY(
+  camera: THREE.Camera,
+  worldY: number,
+  canvasHeightPx: number,
+  planeZ: number
+) {
+  camera.updateMatrixWorld();
+  if (camera instanceof THREE.PerspectiveCamera) camera.updateProjectionMatrix();
+  const projected = new THREE.Vector3(0, worldY, planeZ).project(camera);
+  return ((1 - projected.y) * canvasHeightPx) / 2;
+}
+
 const HOVER_LIFT = 0.1;
 const DETAIL_LIFT = 0.19;
 const DETAIL_HOVER_LIFT = 0.28;
@@ -163,6 +176,7 @@ export type CameraPreset = {
   openBottomGapPx?: number;
   openLabelInsetFraction?: number;
   openInPlace?: boolean;
+  openInPlaceTopInsetPx?: number;
 };
 // The large composition deliberately prioritizes scale and its rightward pan
 // over being fully crop-safe at the narrowest widths in this breakpoint.
@@ -185,8 +199,10 @@ export const CAMERA_PRESET_SMALL: CameraPreset = {
   aspect: 390 / 640,
   panFraction: 0,
   verticalPanFraction: 0,
-  verticalPanPx: 5,
+  verticalPanPx: 21,
   openInPlace: true,
+  // Keep the top of the expanded stack clear of the fixed mobile header.
+  openInPlaceTopInsetPx: 100,
   // Room below the opened cartridge, clear of the cartridges beneath it, for
   // the company/years label.
   openBottomGapPx: 28,
@@ -936,16 +952,40 @@ function CartridgeSceneTextures({
     if (openInPlace) {
       const closedPositions = stackCentered(closedHeights);
       const heightDelta = OPEN_HEIGHT - closedHeights[openIndex];
-      const yPositions = closedPositions.map((y, i) => {
+      let yPositions = closedPositions.map((y, i) => {
         if (i === openIndex) return y;
         if (i < openIndex) return y + heightDelta / 2;
         return y - heightDelta / 2 - extraBottomGap;
       });
-      const labelY =
+      let openLabelY =
         yPositions[openIndex] -
         OPEN_HEIGHT / 2 +
         extraBottomGap * openLabelInsetFraction;
-      return { yPositions, openLabelY: labelY };
+
+      const openInPlaceTopInsetPx = cameraPreset.openInPlaceTopInsetPx ?? 0;
+      if (openInPlaceTopInsetPx > 0) {
+        const planeZ = 0;
+        let topPixelY = Infinity;
+        for (let i = 0; i < yPositions.length; i++) {
+          const height = i === openIndex ? OPEN_HEIGHT : closedHeights[i];
+          const pixelY = worldYToPixelY(
+            camera,
+            yPositions[i] + height / 2,
+            size.height,
+            planeZ
+          );
+          if (pixelY < topPixelY) topPixelY = pixelY;
+        }
+        if (topPixelY < openInPlaceTopInsetPx) {
+          const worldShift =
+            pixelYToWorldY(camera, openInPlaceTopInsetPx, size.height, planeZ) -
+            pixelYToWorldY(camera, topPixelY, size.height, planeZ);
+          yPositions = yPositions.map((y) => y + worldShift);
+          openLabelY += worldShift;
+        }
+      }
+
+      return { yPositions, openLabelY };
     }
 
     const heights = layout.map((entry, i) =>
@@ -974,6 +1014,7 @@ function CartridgeSceneTextures({
     cameraPreset.openBottomGapPx,
     cameraPreset.openLabelInsetFraction,
     cameraPreset.openInPlace,
+    cameraPreset.openInPlaceTopInsetPx,
   ]);
 
   const textureByLabel = useMemo(() => {
