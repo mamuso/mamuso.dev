@@ -69,7 +69,8 @@ const Home: NextPage = () => {
     <>
       <section {...stylex.props(styles.intro)}>
         <h2 {...stylex.props(typography.heading, styles.introCopy)}>
-          <AnimatedName />.<span {...stylex.props(typography.muted, styles.tagline)}> crayon holder and key stroker.</span>
+          <span {...stylex.props(typography.muted, styles.tagline)}>I'm </span>
+          <AnimatedName /><span {...stylex.props(typography.muted, styles.tagline)}>, a designer, based in Oakland, having a lot of fun building at SpaceXAI.</span>
         </h2>
       </section>
       <CartridgeStage />

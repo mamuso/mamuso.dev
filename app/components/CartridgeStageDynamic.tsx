@@ -31,11 +31,11 @@ const styles = stylex.create({
     left: '50%',
     marginBlockEnd: {
       default: 52,
-      '@media (min-width: 720px)': 148,
+      '@media (min-width: 720px)': 128,
     },
     marginBlockStart: {
       default: -52,
-      '@media (min-width: 720px)': -148,
+      '@media (min-width: 720px)': -128,
     },
     marginInline: '-50vw',
     position: 'relative',

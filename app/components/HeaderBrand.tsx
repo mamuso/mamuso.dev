@@ -38,7 +38,7 @@ const styles = stylex.create({
   home: {
     paddingBlockStart: {
       default: 0,
-      '@media (min-width: 720px)': 96,
+      '@media (min-width: 720px)': 76,
     },
   },
   brand: {

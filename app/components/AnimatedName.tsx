@@ -4,10 +4,24 @@ import { useState } from 'react'
 import * as stylex from '@stylexjs/stylex'
 
 const NAME_PARTS = [
-  { prefix: 'ma', extension: 'nuel' },
-  { prefix: 'mu', extension: 'ñoz' },
-  { prefix: 'so', extension: 'lera' },
-]
+  { prefix: 'ma', extension: 'nuel', extensionWidth: '4.25ch' },
+  { prefix: 'mu', extension: 'ñoz', extensionWidth: '3.65ch' },
+  { prefix: 'so', extension: 'lera', extensionWidth: '4.15ch' },
+] as const
+
+const STAGGER_MS = 48
+const DURATION_MS = 320
+
+function extensionDelay(index: number, expanded: boolean) {
+  const step = expanded ? index : NAME_PARTS.length - 1 - index
+  return `${step * STAGGER_MS}ms`
+}
+
+function gapDelay(index: number, expanded: boolean) {
+  if (index === 0) return '0ms'
+  const step = expanded ? index : NAME_PARTS.length - index
+  return expanded ? `${step * STAGGER_MS + 36}ms` : `${step * 20}ms`
+}
 
 export default function AnimatedName() {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -18,22 +32,27 @@ export default function AnimatedName() {
       aria-label={isExpanded ? 'show mamuso' : 'show manuel muñoz solera'}
       aria-pressed={isExpanded}
       onClick={() => setIsExpanded((expanded) => !expanded)}
-      {...stylex.props(styles.trigger, isExpanded && styles.expandedTrigger)}
+      {...stylex.props(styles.trigger)}
     >
-      {NAME_PARTS.map((part) => (
+      {NAME_PARTS.map((part, index) => (
         <span
           key={part.prefix}
           aria-hidden="true"
-          {...stylex.props(styles.word, isExpanded && styles.expandedWord)}
+          {...stylex.props(styles.word, index > 0 && styles.spacedWord)}
+          style={{
+            marginInlineStart: index > 0 ? (isExpanded ? '0.28em' : 0) : undefined,
+            transitionDelay: gapDelay(index, isExpanded),
+          }}
         >
           <span>{part.prefix}</span>
           <span
-            {...stylex.props(styles.extensionSlot, isExpanded && styles.visibleExtension)}
+            {...stylex.props(styles.extension)}
+            style={{
+              maxWidth: isExpanded ? part.extensionWidth : 0,
+              transitionDelay: extensionDelay(index, isExpanded),
+            }}
           >
-            <span {...stylex.props(styles.extensionMeasure)}>{part.extension}</span>
-            <span {...stylex.props(styles.extension)}>
-              {part.extension}
-            </span>
+            {part.extension}
           </span>
         </span>
       ))}
@@ -47,7 +66,6 @@ const styles = stylex.create({
     backgroundColor: 'transparent',
     borderWidth: 0,
     color: 'inherit',
-    columnGap: 0,
     cursor: 'pointer',
     display: 'inline-flex',
     fontFamily: 'inherit',
@@ -59,54 +77,29 @@ const styles = stylex.create({
     padding: 0,
     pointerEvents: 'auto',
     textAlign: 'start',
-    transitionDuration: {
-      default: '220ms',
-      '@media (prefers-reduced-motion: reduce)': '0ms',
-    },
-    transitionProperty: 'column-gap',
-    transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
-  },
-  expandedTrigger: {
-    columnGap: '0.28em',
   },
   word: {
-    display: 'inline-grid',
-    gridTemplateColumns: 'auto 0fr',
-    transitionDuration: {
-      default: '220ms',
-      '@media (prefers-reduced-motion: reduce)': '0ms',
-    },
-    transitionProperty: 'grid-template-columns',
-    transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    display: 'inline-flex',
     whiteSpace: 'nowrap',
   },
-  expandedWord: {
-    gridTemplateColumns: 'auto 1fr',
-  },
-  extensionSlot: {
-    maskImage: 'linear-gradient(black, black), linear-gradient(to right, black, transparent)',
-    maskPosition: 'left top, right top',
-    maskRepeat: 'no-repeat',
-    maskSize: '45% 100%, 55% 100%',
-    minWidth: 0,
-    overflow: 'hidden',
-    position: 'relative',
+  spacedWord: {
     transitionDuration: {
-      default: '220ms',
+      default: `${DURATION_MS}ms`,
       '@media (prefers-reduced-motion: reduce)': '0ms',
     },
-    transitionProperty: 'mask-size',
+    transitionProperty: 'margin-inline-start',
     transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
   },
-  visibleExtension: {
-    maskSize: '100% 100%, 0% 100%',
-  },
-  extensionMeasure: {
-    visibility: 'hidden',
-  },
   extension: {
-    insetInlineStart: 0,
-    position: 'absolute',
-    top: 0,
+    display: 'inline-block',
+    maxWidth: 0,
+    overflow: 'hidden',
+    transitionDuration: {
+      default: `${DURATION_MS}ms`,
+      '@media (prefers-reduced-motion: reduce)': '0ms',
+    },
+    transitionProperty: 'max-width',
+    transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    verticalAlign: 'baseline',
   },
 })
