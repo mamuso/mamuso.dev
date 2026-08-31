@@ -42,18 +42,26 @@ const styles = stylex.create({
     minHeight: '100vh',
   },
   page: {
+    alignContent: 'start',
     boxSizing: 'border-box',
+    columnGap: 16,
+    display: 'grid',
+    gridTemplateColumns: {
+      default: 'repeat(4, minmax(0, 1fr))',
+      '@media (min-width: 640px)': 'repeat(8, minmax(0, 1fr))',
+    },
     marginInline: 'auto',
     minHeight: '100vh',
-    maxWidth: 608,
+    maxWidth: 744,
     paddingBlock: 24,
     paddingInline: {
-      default: 24,
+      default: 16,
       '@media (min-width: 640px)': 32,
     },
     width: '100%',
   },
   main: {
+    gridColumn: '1 / -1',
     minWidth: 0,
   },
 })

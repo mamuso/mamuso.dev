@@ -15,6 +15,7 @@ export default function Footer() {
 
 const styles = stylex.create({
   footer: {
+    gridColumn: '1 / -1',
     marginBlockStart: 80,
   },
   copy: {

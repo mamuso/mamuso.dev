@@ -33,6 +33,7 @@ const styles = stylex.create({
     borderStyle: 'solid',
     borderWidth: 2,
     display: 'flex',
+    gridColumn: '1 / -1',
     justifyContent: 'space-between',
     pointerEvents: 'none',
     position: 'relative',
