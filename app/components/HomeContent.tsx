@@ -42,7 +42,7 @@ const styles = stylex.create({
   },
   intro: {
     marginBlockStart: {
-      default: 64,
+      default: 48,
       '@media (min-width: 720px)': 24,
     },
     maxWidth: {

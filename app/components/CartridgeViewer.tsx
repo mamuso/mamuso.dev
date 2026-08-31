@@ -204,8 +204,8 @@ export const CAMERA_PRESET_SMALL: CameraPreset = {
   openInPlace: true,
   // When a lower cartridge opens, keep the top cartridge below the header.
   openInPlaceTopInsetPx: 100,
-  // Nudge the first open cartridge slightly up instead of settling lower.
-  openInPlaceOpenLiftPx: 16,
+  // Shift the first open cartridge down so it sits below the header.
+  openInPlaceOpenLiftPx: -32,
   // Room below the opened cartridge, clear of the cartridges beneath it, for
   // the company/years label.
   openBottomGapPx: 28,
@@ -989,7 +989,7 @@ function CartridgeSceneTextures({
       }
 
       const openInPlaceOpenLiftPx = cameraPreset.openInPlaceOpenLiftPx ?? 0;
-      if (openInPlaceOpenLiftPx > 0 && openIndex === 0) {
+      if (openInPlaceOpenLiftPx !== 0 && openIndex === 0) {
         const planeZ = 0;
         const worldLift =
           pixelYToWorldY(camera, 0, size.height, planeZ) -
