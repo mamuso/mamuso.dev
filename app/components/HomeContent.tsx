@@ -17,10 +17,17 @@ export default function HomeContent() {
         {...stylex.props(styles.intro, cartridgeOpen && styles.introOpen)}
       >
         <h2 {...stylex.props(typography.heading, styles.introCopy)}>
-          <span {...stylex.props(typography.muted, styles.tagline)}>I'm </span>
-          <AnimatedName />
-          <span {...stylex.props(typography.muted, styles.tagline)}>
-            , a designer, based in Oakland, having a lot of fun building at SpaceXAI.
+          <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealLead)}>
+            I&apos;m{' '}
+          </span>
+          <span {...stylex.props(styles.reveal, styles.revealName)}>
+            <AnimatedName />
+          </span>
+          <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealDetails)}>
+            , a designer, based in Oakland,{' '}
+          </span>
+          <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealClosing)}>
+            having a lot of fun building at SpaceXAI.
           </span>
         </h2>
       </section>
@@ -28,9 +35,22 @@ export default function HomeContent() {
   )
 }
 
+const introReveal = stylex.keyframes({
+  from: {
+    filter: 'blur(2px)',
+    opacity: 0,
+    top: 6,
+  },
+  to: {
+    filter: 'blur(0)',
+    opacity: 1,
+    top: 0,
+  },
+})
+
 const styles = stylex.create({
   content: {
-    flex: 1,
+    flex: '1',
     minHeight: 0,
     width: '100%',
   },
@@ -74,5 +94,30 @@ const styles = stylex.create({
   },
   tagline: {
     fontWeight: 400,
+  },
+  reveal: {
+    animationDuration: {
+      default: '520ms',
+      '@media (prefers-reduced-motion: reduce)': '0ms',
+    },
+    animationFillMode: 'backwards',
+    animationName: {
+      default: introReveal,
+      '@media (prefers-reduced-motion: reduce)': 'none',
+    },
+    animationTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    position: 'relative',
+  },
+  revealLead: {
+    animationDelay: '100ms',
+  },
+  revealName: {
+    animationDelay: '145ms',
+  },
+  revealDetails: {
+    animationDelay: '190ms',
+  },
+  revealClosing: {
+    animationDelay: '235ms',
   },
 })
