@@ -97,7 +97,7 @@ const styles = stylex.create({
   },
   reveal: {
     animationDuration: {
-      default: '520ms',
+      default: '650ms',
       '@media (prefers-reduced-motion: reduce)': '0ms',
     },
     animationFillMode: 'backwards',
