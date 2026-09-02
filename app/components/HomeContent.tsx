@@ -37,14 +37,12 @@ export default function HomeContent() {
 
 const introReveal = stylex.keyframes({
   from: {
-    filter: 'blur(2px)',
+    filter: 'blur(1.5px)',
     opacity: 0,
-    top: 6,
   },
   to: {
     filter: 'blur(0)',
     opacity: 1,
-    top: 0,
   },
 })
 
@@ -105,8 +103,7 @@ const styles = stylex.create({
       default: introReveal,
       '@media (prefers-reduced-motion: reduce)': 'none',
     },
-    animationTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
-    position: 'relative',
+    animationTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
   },
   revealLead: {
     animationDelay: '250ms',
