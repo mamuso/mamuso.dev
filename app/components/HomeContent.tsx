@@ -97,7 +97,7 @@ const styles = stylex.create({
   },
   reveal: {
     animationDuration: {
-      default: '650ms',
+      default: '900ms',
       '@media (prefers-reduced-motion: reduce)': '0ms',
     },
     animationFillMode: 'backwards',
@@ -109,15 +109,15 @@ const styles = stylex.create({
     position: 'relative',
   },
   revealLead: {
-    animationDelay: '100ms',
+    animationDelay: '250ms',
   },
   revealName: {
-    animationDelay: '145ms',
+    animationDelay: '315ms',
   },
   revealDetails: {
-    animationDelay: '190ms',
+    animationDelay: '380ms',
   },
   revealClosing: {
-    animationDelay: '235ms',
+    animationDelay: '445ms',
   },
 })
