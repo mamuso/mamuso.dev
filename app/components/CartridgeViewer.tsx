@@ -183,14 +183,14 @@ export type CameraPreset = {
 // over being fully crop-safe at the narrowest widths in this breakpoint.
 // Lowering the margin moves the fixed camera closer and enlarges the stack.
 export const CAMERA_PRESET_LARGE: CameraPreset = {
-  margin: 1.35,
+  margin: 1.25,
   // Keep the established 920px framing while the provisional shorter canvas
   // crops the composition instead of scaling the cartridges down again.
   aspect: 720 / 920,
-  panFraction: 0.75,
+  panFraction: 0.85,
   verticalPanFraction: -0.27,
-  // 80px lower than the OPEN_TOP_OFFSET_PX default.
-  openTopOffsetPx: 220,
+  // 110px lower than the OPEN_TOP_OFFSET_PX default.
+  openTopOffsetPx: 250,
   // Reserve room for the company/years label below the open cartridge.
   openBottomGapPx: 28,
   openLabelInsetFraction: 0.35,

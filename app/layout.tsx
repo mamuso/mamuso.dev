@@ -42,11 +42,11 @@ const styles = stylex.create({
     gridTemplateRows: 'auto 1fr auto',
     marginInline: 'auto',
     minHeight: '100dvh',
-    maxWidth: 744,
+    maxWidth: 1080,
     paddingBlock: 24,
     paddingInline: {
       default: 24,
-      '@media (min-width: 640px)': 32,
+      '@media (min-width: 640px)': 60,
     },
     position: 'relative',
     rowGap: {
