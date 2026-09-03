@@ -32,6 +32,6 @@ const styles = stylex.create({
     position: 'absolute',
     top: 0,
     width: '100vw',
-    zIndex: 0,
+    zIndex: 1,
   },
 })

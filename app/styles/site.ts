@@ -48,6 +48,20 @@ export const typography = stylex.create({
 })
 
 export const layout = stylex.create({
+  container: {
+    boxSizing: 'border-box',
+    marginInline: 'auto',
+    maxWidth: 1080,
+    paddingInline: {
+      default: 24,
+      '@media (min-width: 640px)': 60,
+    },
+    width: '100%',
+  },
+  fullBleed: {
+    marginInline: 'calc(50% - 50vw)',
+    width: '100vw',
+  },
   section: {
     marginBlockStart: 48,
   },

@@ -1,35 +1,35 @@
-'use client'
-
-import { usePathname } from 'next/navigation'
 import * as stylex from '@stylexjs/stylex'
+import { layout } from '../styles/site'
 import HeaderBrand from './HeaderBrand'
 
 export default function Header() {
-  const isHome = usePathname() === '/'
-
   return (
-    <header {...stylex.props(styles.header, isHome && styles.home)}>
-      <HeaderBrand />
+    <header {...stylex.props(layout.fullBleed, styles.header)}>
+      <div {...stylex.props(layout.container, styles.inner)}>
+        <HeaderBrand />
+      </div>
     </header>
   )
 }
 
 const styles = stylex.create({
   header: {
-    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderBlockEndColor: 'rgba(0, 0, 0, 0.3)',
+    borderBlockEndStyle: 'solid',
+    borderBlockEndWidth: 0.5,
     boxSizing: 'border-box',
-    display: 'flex',
     gridColumn: '1 / -1',
-    minHeight: 28,
-    paddingBlock: 2,
+    height: 56,
+    marginBlockStart: -24,
     pointerEvents: 'none',
     position: 'relative',
-    zIndex: 1,
   },
-  home: {
-    marginBlockStart: {
-      default: 16,
-      '@media (min-width: 640px)': 48,
-    },
+  inner: {
+    alignItems: 'center',
+    display: 'flex',
+    height: '100%',
+    position: 'relative',
+    zIndex: 2,
   },
 })

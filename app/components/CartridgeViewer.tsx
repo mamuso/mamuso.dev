@@ -188,7 +188,7 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
   // crops the composition instead of scaling the cartridges down again.
   aspect: 720 / 920,
   panFraction: 0.85,
-  verticalPanFraction: -0.27,
+  verticalPanFraction: -0.32,
   // 110px lower than the OPEN_TOP_OFFSET_PX default.
   openTopOffsetPx: 250,
   // Reserve room for the company/years label below the open cartridge.
@@ -1496,7 +1496,7 @@ const styles = stylex.create({
     position: 'absolute',
     top: 0,
     width: '100vw',
-    zIndex: 0,
+    zIndex: 1,
   },
   label: {
     color: colors.textPrimary,

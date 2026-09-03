@@ -67,6 +67,11 @@ const Home: NextPage = () => {
   return (
     <>
       <HomeContent />
+      <section {...stylex.props(layout.fullBleed, styles.content)}>
+        <div {...stylex.props(layout.container)}>
+          <p {...stylex.props(styles.copy)}>content</p>
+        </div>
+      </section>
       {SHOW_JOURNAL ? <Journal /> : null}
     </>
   )
@@ -75,6 +80,10 @@ const Home: NextPage = () => {
 export default Home
 
 const styles = stylex.create({
+  content: {
+    backgroundColor: 'red',
+    paddingBlock: 64,
+  },
   copy: {
     marginBlock: 0,
   },
