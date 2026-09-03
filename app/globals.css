@@ -7,7 +7,7 @@ body {
 
 :root {
   --font-body: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --app-background: #ebebeb;
+  --app-background: #f0f0f0;
 }
 
 body {

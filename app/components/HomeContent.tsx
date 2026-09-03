@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import * as stylex from '@stylexjs/stylex'
-import { typography } from '@/app/styles/site'
+import { layout, typography } from '@/app/styles/site'
 import AnimatedName from '@/app/components/AnimatedName'
 import CartridgeStage from '@/app/components/CartridgeStageDynamic'
 
@@ -10,28 +10,28 @@ export default function HomeContent() {
   const [cartridgeOpen, setCartridgeOpen] = useState(false)
 
   return (
-    <div {...stylex.props(styles.content)}>
+    <section {...stylex.props(layout.fullBleed, styles.hero)}>
       <CartridgeStage onOpenChange={setCartridgeOpen} />
-      <div {...stylex.props(styles.stageSpacer)} aria-hidden="true" />
-      <section
-        {...stylex.props(styles.intro, cartridgeOpen && styles.introOpen)}
-      >
-        <h2 {...stylex.props(typography.heading, styles.introCopy)}>
-          <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealLead)}>
-            I&apos;m{' '}
-          </span>
-          <span {...stylex.props(styles.reveal, styles.revealName)}>
-            <AnimatedName />
-          </span>
-          <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealDetails)}>
-            , a designer, based in Oakland,{' '}
-          </span>
-          <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealClosing)}>
-            having a lot of fun building at SpaceXAI.
-          </span>
-        </h2>
-      </section>
-    </div>
+      <div {...stylex.props(layout.container, styles.inner)}>
+        <div {...stylex.props(styles.stageSpacer)} aria-hidden="true" />
+        <div {...stylex.props(styles.intro, cartridgeOpen && styles.introOpen)}>
+          <h2 {...stylex.props(typography.heading, styles.introCopy)}>
+            <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealLead)}>
+              I&apos;m{' '}
+            </span>
+            <span {...stylex.props(styles.reveal, styles.revealName)}>
+              <AnimatedName />
+            </span>
+            <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealDetails)}>
+              , a designer, based in Oakland,{' '}
+            </span>
+            <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealClosing)}>
+              having a lot of fun building at SpaceXAI.
+            </span>
+          </h2>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -47,10 +47,15 @@ const introReveal = stylex.keyframes({
 })
 
 const styles = stylex.create({
-  content: {
+  hero: {
     flex: '1',
-    minHeight: 0,
-    width: '100%',
+    minHeight: {
+      default: 560,
+      '@media (min-width: 720px)': 712,
+    },
+  },
+  inner: {
+    minHeight: '100%',
   },
   stageSpacer: {
     height: {
