@@ -25,7 +25,7 @@ export default function Header() {
 
 const styles = stylex.create({
   header: {
-    backgroundColor: 'var(--app-background)',
+    backgroundColor: 'transparent',
     borderBlockEndColor: '#ADADAD',
     borderBlockEndStyle: 'solid',
     borderBlockEndWidth: 0.5,

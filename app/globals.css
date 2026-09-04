@@ -8,6 +8,7 @@ body {
 :root {
   --font-body: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --app-background: #f0f0f0;
+  background-color: var(--app-background);
 }
 
 body {
@@ -80,7 +81,27 @@ body {
   }
 
   ::view-transition {
+    background-color: var(--app-background);
     pointer-events: none;
+  }
+
+  ::view-transition-old(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-new(root) {
+    animation: page-fade-in 250ms ease both;
+    mix-blend-mode: normal;
+  }
+
+  @keyframes page-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
