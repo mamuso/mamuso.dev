@@ -38,7 +38,7 @@ const styles = stylex.create({
   },
   homeHeader: {
     borderBlockEndColor: 'rgba(173, 173, 173, 0)',
-    height: 152,
+    height: 192,
   },
   inner: {
     alignItems: 'center',

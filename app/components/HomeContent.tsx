@@ -68,6 +68,7 @@ const styles = stylex.create({
     },
   },
   intro: {
+    insetBlockStart: -40,
     marginBlockStart: {
       default: 48,
       '@media (min-width: 720px)': 24,

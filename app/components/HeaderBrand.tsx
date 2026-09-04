@@ -11,7 +11,7 @@ export default function HeaderBrand() {
   const logoSize = isHome ? 24 : 20
 
   return (
-    <h1 {...stylex.props(typography.heading, styles.interactive)}>
+    <h1 data-header-brand {...stylex.props(typography.heading, styles.interactive)}>
       <Link
         href="/"
         aria-label="mamuso — Home"
@@ -52,6 +52,7 @@ const styles = stylex.create({
     color: 'inherit',
     display: 'flex',
     height: 24,
+    width: 24,
     position: 'relative',
     textDecorationLine: {
       default: 'none',

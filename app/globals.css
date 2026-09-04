@@ -21,6 +21,10 @@ body {
 }
 
 @layer transitions {
+  [data-header-brand] {
+    view-transition-group: contain;
+  }
+
   ::view-transition-group(site-header),
   ::view-transition-group(site-header-brand),
   ::view-transition-group(site-header-label) {
@@ -28,18 +32,24 @@ body {
     animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
   }
 
+  ::view-transition-group-children(site-header-brand) {
+    animation-duration: 350ms;
+    animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
+  }
+
   ::view-transition-old(site-header-label),
   ::view-transition-new(site-header-label) {
-    animation-delay: 100ms;
     animation-fill-mode: both;
     animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
   }
 
   ::view-transition-old(site-header-label) {
+    animation-delay: 0ms;
     animation-name: header-label-out;
   }
 
   ::view-transition-new(site-header-label) {
+    animation-delay: 100ms;
     animation-name: header-label-in;
   }
 
@@ -74,6 +84,11 @@ body {
   }
 
   @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group-children(site-header-brand) {
+      animation-duration: 0s !important;
+      animation-delay: 0s !important;
+    }
+
     ::view-transition-group(*),
     ::view-transition-old(*),
     ::view-transition-new(*) {
