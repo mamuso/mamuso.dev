@@ -29,6 +29,20 @@ export default function HomeContent() {
               having a lot of fun building at SpaceXAI.
             </span>
           </h2>
+          <h2 {...stylex.props(typography.heading, styles.introCopy, styles.smoothedCopy)}>
+            <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealLead)}>
+              I&apos;m{' '}
+            </span>
+            <span {...stylex.props(styles.reveal, styles.revealName)}>
+              <AnimatedName />
+            </span>
+            <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealDetails)}>
+              , a designer, based in Oakland,{' '}
+            </span>
+            <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealClosing)}>
+              having a lot of fun building at SpaceXAI.
+            </span>
+          </h2>
         </div>
       </div>
     </section>
@@ -94,6 +108,13 @@ const styles = stylex.create({
     letterSpacing: '-0.01em',
     lineHeight: 1.2,
     marginBlock: 0,
+  },
+  smoothedCopy: {
+    letterSpacing: '-0.015em',
+    marginBlockStart: 24,
+    textRendering: 'optimizeLegibility',
+    WebkitFontSmoothing: 'antialiased',
+    MozOsxFontSmoothing: 'grayscale',
   },
   tagline: {
     fontWeight: 400,
