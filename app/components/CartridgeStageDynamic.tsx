@@ -28,7 +28,7 @@ const styles = stylex.create({
     boxSizing: 'border-box',
     height: {
       default: 640,
-      '@media (min-width: 720px)': 640,
+      '@media (min-width: 720px)': 680,
     },
     insetInlineStart: '50%',
     marginInline: '-50vw',

@@ -59,7 +59,7 @@ const styles = stylex.create({
     minHeight: {
       default: 560,
       // Canvas height minus the home header and the layout's row gap.
-      '@media (min-width: 720px)': 'calc(640px - 192px - 32px)',
+      '@media (min-width: 720px)': 'calc(680px - 192px - 32px)',
     },
   },
   inner: {

@@ -190,7 +190,7 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
   panFraction: 1.05,
   verticalPanFraction: -0.32,
   // Lower the composition inside the canvas while keeping its top at page Y=0.
-  verticalPanPx: -92,
+  verticalPanPx: -112,
   // 134px lower than the OPEN_TOP_OFFSET_PX default.
   openTopOffsetPx: 274,
   // Reserve room for the company/years label below the open cartridge.
@@ -1493,7 +1493,7 @@ const styles = stylex.create({
     boxSizing: 'border-box',
     height: {
       default: 640,
-      '@media (min-width: 720px)': 640,
+      '@media (min-width: 720px)': 680,
     },
     insetInlineStart: '50%',
     marginInline: '-50vw',
