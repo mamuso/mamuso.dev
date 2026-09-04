@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
 import AnimatedName from '@/app/components/AnimatedName'
@@ -29,6 +30,9 @@ export default function HomeContent() {
               having a lot of fun building at SpaceXAI.
             </span>
           </h2>
+          <Link href="/photos" {...stylex.props(typography.link, styles.photosLink)}>
+            Photos →
+          </Link>
         </div>
       </div>
     </section>
@@ -97,6 +101,11 @@ const styles = stylex.create({
   },
   tagline: {
     fontWeight: 400,
+  },
+  photosLink: {
+    display: 'inline-block',
+    marginBlockStart: 24,
+    pointerEvents: 'auto',
   },
   reveal: {
     animationDuration: {

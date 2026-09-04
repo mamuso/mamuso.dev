@@ -189,8 +189,10 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
   aspect: 720 / 920,
   panFraction: 0.85,
   verticalPanFraction: -0.32,
-  // 110px lower than the OPEN_TOP_OFFSET_PX default.
-  openTopOffsetPx: 250,
+  // Lower the composition inside the canvas while keeping its top at page Y=0.
+  verticalPanPx: -48,
+  // 134px lower than the OPEN_TOP_OFFSET_PX default.
+  openTopOffsetPx: 274,
   // Reserve room for the company/years label below the open cartridge.
   openBottomGapPx: 28,
   openLabelInsetFraction: 0.35,
@@ -200,10 +202,10 @@ export const CAMERA_PRESET_SMALL: CameraPreset = {
   aspect: 390 / 640,
   panFraction: 0,
   verticalPanFraction: 0,
-  verticalPanPx: 48,
+  verticalPanPx: 24,
   openInPlace: true,
   // When a lower cartridge opens, keep the top cartridge below the header.
-  openInPlaceTopInsetPx: 100,
+  openInPlaceTopInsetPx: 124,
   // Shift the first open cartridge down so it sits below the header.
   openInPlaceOpenLiftPx: -32,
   // Room below the opened cartridge, clear of the cartridges beneath it, for

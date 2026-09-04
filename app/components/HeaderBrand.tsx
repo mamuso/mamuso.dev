@@ -1,31 +1,38 @@
 'use client'
 
-import Image from 'next/image'
+import { ViewTransition } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import * as stylex from '@stylexjs/stylex'
 import { typography } from '../styles/site'
 
 export default function HeaderBrand() {
-  const pathname = usePathname()
-  const isHome = pathname === '/'
+  const isHome = usePathname() === '/'
 
   return (
     <h1 {...stylex.props(typography.heading, styles.interactive)}>
       <Link
         href="/"
-        aria-label={isHome ? 'Home' : undefined}
-        {...stylex.props(typography.link, styles.brand)}
+        aria-label="mamuso — Home"
+        {...stylex.props(styles.brand)}
       >
-        <Image
-          src="/images/logo.svg"
-          width={24}
-          height={24}
-          alt=""
-          aria-hidden="true"
-          {...stylex.props(!isHome && styles.mutedLogo)}
-        />
-        {isHome ? null : 'mamuso'}
+        <svg width={24} height={24} viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+          <path
+            d="m13.5517 15.6551-.6347-.2132-.2836.6065-1.217 2.6035c-.2275-.104-.5065-.2401-.8197-.4101-.86846-.4713-1.98337-1.1946-2.99347-2.2061-.09382-.0939-.18629-.1922-.27736-.2944l-.51186-.5743-.56109.5263-.06658.0624c-.69835.6535-1.30037 1.2244-1.7279 1.632-.0676.0644-.13084.1248-.18942.1807-.03138-.0295-.06399-.0607-.09774-.0934-.36107-.3505-.84983-.883-1.34472-1.5986-.98796-1.4286-1.999515-3.5846-2.075068-6.49472-.033804-1.30207.511968-2.48658 1.432218-3.56355.92465-1.08211 2.19482-2.01474 3.5098-2.78205 1.30977-.76428 2.63052-1.34532 3.62759-1.73593.49737-.19485.9114-.341231 1.1996-.438441.0787-.026538.1479-.049394.2068-.068553.1361.05376.3295.1336.5668.240814.5023.22696 1.1978.57484 1.9628 1.0553 1.5395.96685 3.3091 2.43838 4.3886 4.49339 1.0869 2.06892 1.4742 4.77834 1.5748 7.03374.0498 1.1164.0286 2.0986-.0051 2.8008-.0068.1419-.0141.2722-.0214.3897-.3231-.0288-.7424-.0732-1.2311-.1408-1.1904-.1645-2.7786-.4643-4.3889-1.0036z"
+            fill="none"
+            stroke="#18181b"
+            strokeWidth={0.5}
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+        <ViewTransition name="site-header-label">
+          <span
+            aria-hidden="true"
+            {...stylex.props(styles.label, isHome && styles.hiddenLabel)}
+          >
+            mamuso
+          </span>
+        </ViewTransition>
       </Link>
     </h1>
   )
@@ -37,10 +44,23 @@ const styles = stylex.create({
   },
   brand: {
     alignItems: 'center',
+    color: 'inherit',
     display: 'flex',
-    gap: 8,
+    position: 'relative',
+    textDecorationLine: {
+      default: 'none',
+      ':focus-visible': 'underline',
+    },
+    textUnderlineOffset: 3,
   },
-  mutedLogo: {
-    opacity: 0.65,
+  label: {
+    fontWeight: 400,
+    insetInlineStart: 40,
+    opacity: 1,
+    position: 'absolute',
+    whiteSpace: 'nowrap',
+  },
+  hiddenLabel: {
+    opacity: 0,
   },
 })
