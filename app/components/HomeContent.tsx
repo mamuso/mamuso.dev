@@ -24,7 +24,15 @@ export default function HomeContent() {
               <AnimatedName />
             </span>
             <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealDetails)}>
-              , a designer, based in Oakland,{' '}
+              , a designer, based in{' '}
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Oakland%2C%20California"
+                {...stylex.props(styles.oaklandLink)}
+              >
+                Oakland
+                <span aria-hidden="true" {...stylex.props(styles.handDrawnUnderline)} />
+              </a>
+              ,{' '}
             </span>
             <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealClosing)}>
               having a lot of fun building at SpaceXAI.
@@ -111,6 +119,24 @@ const styles = stylex.create({
     display: 'inline-block',
     marginBlockStart: 24,
     pointerEvents: 'auto',
+  },
+  oaklandLink: {
+    color: 'inherit',
+    display: 'inline-block',
+    pointerEvents: 'auto',
+    position: 'relative',
+    textDecorationLine: 'none',
+  },
+  handDrawnUnderline: {
+    backgroundColor: '#fff',
+    bottom: -3,
+    height: 6,
+    insetInline: -2,
+    maskImage: 'url(/images/hand-drawn-underline.svg)',
+    maskRepeat: 'no-repeat',
+    maskSize: '100% 100%',
+    pointerEvents: 'none',
+    position: 'absolute',
   },
   reveal: {
     animationDuration: {
