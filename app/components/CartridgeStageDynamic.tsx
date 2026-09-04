@@ -22,10 +22,13 @@ export default function CartridgeStageDynamic({
 
 const styles = stylex.create({
   stage: {
+    borderBlockEndColor: '#ADADAD',
+    borderBlockEndStyle: 'solid',
+    borderBlockEndWidth: 0.5,
     boxSizing: 'border-box',
     height: {
       default: 640,
-      '@media (min-width: 720px)': 800,
+      '@media (min-width: 720px)': 640,
     },
     insetInlineStart: '50%',
     marginInline: '-50vw',

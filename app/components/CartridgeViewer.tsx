@@ -183,14 +183,14 @@ export type CameraPreset = {
 // over being fully crop-safe at the narrowest widths in this breakpoint.
 // Lowering the margin moves the fixed camera closer and enlarges the stack.
 export const CAMERA_PRESET_LARGE: CameraPreset = {
-  margin: 1.25,
-  // Keep the established 920px framing while the provisional shorter canvas
-  // crops the composition instead of scaling the cartridges down again.
+  margin: 0.95,
+  // Keep a fixed reference aspect; the tighter margin compensates for the
+  // shorter desktop canvas so the cartridges remain prominent.
   aspect: 720 / 920,
-  panFraction: 0.85,
+  panFraction: 0.95,
   verticalPanFraction: -0.32,
   // Lower the composition inside the canvas while keeping its top at page Y=0.
-  verticalPanPx: -48,
+  verticalPanPx: -92,
   // 134px lower than the OPEN_TOP_OFFSET_PX default.
   openTopOffsetPx: 274,
   // Reserve room for the company/years label below the open cartridge.
@@ -1487,10 +1487,13 @@ export default function CartridgeViewer({
 
 const styles = stylex.create({
   viewer: {
+    borderBlockEndColor: '#ADADAD',
+    borderBlockEndStyle: 'solid',
+    borderBlockEndWidth: 0.5,
     boxSizing: 'border-box',
     height: {
       default: 640,
-      '@media (min-width: 720px)': 800,
+      '@media (min-width: 720px)': 640,
     },
     insetInlineStart: '50%',
     marginInline: '-50vw',

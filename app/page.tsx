@@ -81,7 +81,6 @@ export default Home
 
 const styles = stylex.create({
   content: {
-    backgroundColor: 'red',
     paddingBlock: 64,
   },
   copy: {

@@ -52,10 +52,14 @@ const introReveal = stylex.keyframes({
 
 const styles = stylex.create({
   hero: {
-    flex: '1',
+    flex: {
+      default: '1',
+      '@media (min-width: 720px)': '0 0 auto',
+    },
     minHeight: {
       default: 560,
-      '@media (min-width: 720px)': 712,
+      // Canvas height minus the home header and the layout's row gap.
+      '@media (min-width: 720px)': 'calc(640px - 192px - 32px)',
     },
   },
   inner: {
