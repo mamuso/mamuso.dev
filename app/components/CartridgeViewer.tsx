@@ -187,7 +187,7 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
   // Keep a fixed reference aspect; the tighter margin compensates for the
   // shorter desktop canvas so the cartridges remain prominent.
   aspect: 720 / 920,
-  panFraction: 0.95,
+  panFraction: 1.05,
   verticalPanFraction: -0.32,
   // Lower the composition inside the canvas while keeping its top at page Y=0.
   verticalPanPx: -92,
