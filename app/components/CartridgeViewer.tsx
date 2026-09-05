@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Environment,
@@ -17,6 +17,7 @@ import CartridgeBackdrop from "./CartridgeBackdrop";
 import CartridgePresentation from "./CartridgePresentation";
 import CartridgeQuality from "./CartridgeQuality";
 import { stageDeparture } from "./cartridgeStagePolicy";
+import { blendClosedPose, mobileClosedPose, mobileRackSpacing, mobileOpenDisplacement, MOBILE_ROW_DEPTH } from "./cartridgeMobileLayout";
 import { addCartridgeGrain } from "./cartridgeGrain";
 import { CARTRIDGE_LABEL_FINISH } from "./cartridgeLabelFinish";
 import CartridgeSticker, { STICKER_APPROACH_DISTANCE } from "./CartridgeSticker";
@@ -68,19 +69,6 @@ function pixelYToWorldY(
   const point = new THREE.Vector3();
   raycaster.ray.intersectPlane(plane, point);
   return point.y;
-}
-
-/** Pixel Y (from canvas top) for a world Y on the world-X=0/world-Z=planeZ plane. */
-function worldYToPixelY(
-  camera: THREE.Camera,
-  worldY: number,
-  canvasHeightPx: number,
-  planeZ: number
-) {
-  camera.updateMatrixWorld();
-  if (camera instanceof THREE.PerspectiveCamera) camera.updateProjectionMatrix();
-  const projected = new THREE.Vector3(0, worldY, planeZ).project(camera);
-  return ((1 - projected.y) * canvasHeightPx) / 2;
 }
 
 const HOVER_LIFT = 0.1;
@@ -179,8 +167,6 @@ export type CameraPreset = {
   openLabelInsetFraction?: number;
   openInPlace?: boolean;
   desktopBlend?: number;
-  openInPlaceTopInsetPx?: number;
-  openInPlaceOpenLiftPx?: number;
 };
 // The large composition deliberately prioritizes scale and its rightward pan
 // over being fully crop-safe at the narrowest widths in this breakpoint.
@@ -207,10 +193,6 @@ export const CAMERA_PRESET_SMALL: CameraPreset = {
   verticalPanFraction: 0,
   verticalPanPx: 24,
   openInPlace: true,
-  // When a lower cartridge opens, keep the top cartridge below the header.
-  openInPlaceTopInsetPx: 124,
-  // Shift the first open cartridge down so it sits below the header.
-  openInPlaceOpenLiftPx: -32,
   // Room below the opened cartridge, clear of the cartridges beneath it, for
   // the company/years label.
   openBottomGapPx: 28,
@@ -317,10 +299,16 @@ function CartridgeInner({
   onToggleOpen,
   entranceDelaySec,
   entranceReady = true,
+  mobileEntranceY = 0,
   caption,
   captionOffset = -OPEN_HEIGHT / 2,
   neighborDistance = 0,
   accessibleName,
+  desktopBlend = 1,
+  cameraPose,
+  openYaw = restingYaw,
+  openRoll = restingRoll,
+  isRackOpen = false,
 }: {
   scene: Object3D;
   position: [number, number, number];
@@ -340,10 +328,16 @@ function CartridgeInner({
   onToggleOpen?: () => void;
   entranceDelaySec?: number;
   entranceReady?: boolean;
+  mobileEntranceY?: number;
   caption?: { company: string; period?: string };
   captionOffset?: number;
   neighborDistance?: number;
   accessibleName?: string;
+  desktopBlend?: number;
+  cameraPose?: CartridgeLayoutEntry;
+  openYaw?: number;
+  openRoll?: number;
+  isRackOpen?: boolean;
 }) {
   const { gl, invalidate } = useThree();
   const isRock = motion === "rock";
@@ -351,7 +345,10 @@ function CartridgeInner({
   const isFrozen = motion === "frozen";
   const isIntro = motion === "intro";
   const isDetailPose = isRock || isStatic || isFrozen;
-  const [positionX, restingY, restingZ] = position;
+  const [restingX, restingY, restingZ] = position;
+  const entranceY = THREE.MathUtils.lerp(mobileEntranceY, ENTRANCE_OFFSET_Y, desktopBlend);
+  const entrancePitch = THREE.MathUtils.lerp(8 * DEG, ENTRANCE_PITCH_OFFSET, desktopBlend);
+  const entranceDepth = THREE.MathUtils.lerp(-0.006, ENTRANCE_OFFSET_Z, desktopBlend);
 
   const instance = useMemo(() => {
     const maxAniso = gl.capabilities.getMaxAnisotropy();
@@ -408,6 +405,8 @@ function CartridgeInner({
   const stickerBusy = useRef(false);
   const reducedMotion = useRef(false);
   const reflowWait = useRef(0);
+  const reflowElapsed = useRef(0);
+  const returning = useRef(false);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -429,25 +428,29 @@ function CartridgeInner({
     isRock
       ? ROCK_PITCH_START
       : restingPitch +
-          (entranceDelaySec === undefined ? 0 : ENTRANCE_PITCH_OFFSET)
+          (entranceDelaySec === undefined ? 0 : entrancePitch)
   );
   const pitchTarget = useRef(isRock ? ROCK_PITCH_START : restingPitch);
   const depthVelocity = useRef(0);
   const depthPosition = useRef(
     restingZ +
       (isDetailPose ? detailLift : 0) +
-      (entranceDelaySec === undefined ? 0 : ENTRANCE_OFFSET_Z)
+      (entranceDelaySec === undefined ? 0 : entranceDepth)
   );
   const depthTarget = useRef(
     restingZ + (isDetailPose ? detailLift : 0)
   );
+  const positionXVelocity = useRef(0);
+  const positionX = useRef(restingX);
+  const positionXTarget = useRef(restingX);
   const positionYVelocity = useRef(0);
   const positionY = useRef(
-    restingY + (entranceDelaySec === undefined ? 0 : ENTRANCE_OFFSET_Y)
+    restingY + (entranceDelaySec === undefined ? 0 : entranceY)
   );
   const positionYTarget = useRef(restingY);
   const hoverMotion = useRef(false);
   const entranceStart = useRef<number | null>(null);
+  const entranceDelay = useRef(entranceDelaySec);
   const entranceComplete = useRef(entranceDelaySec === undefined);
   const restedRef = useRef(
     entranceDelaySec === undefined && (isStatic || !isRock)
@@ -460,26 +463,30 @@ function CartridgeInner({
     if (!pivotRef.current || isRock) return;
     pivotRef.current.rotation.set(
       pitchAngle.current,
-      restingYaw,
-      restingRoll
+      yawAngle.current,
+      rollAngle.current
     );
+    pivotRef.current.position.x = positionX.current;
     pivotRef.current.position.z = depthPosition.current;
     pivotRef.current.position.y = positionY.current;
     invalidate();
-  }, [isRock, isDetailPose, detailLift, restingPitch, restingYaw, restingRoll, invalidate]);
+  }, [isRock, invalidate]);
 
   // The selected cartridge gains a little clearance while it turns. Keep
   // velocities on interruption; neighboring slots yield with a short lag.
   useEffect(() => {
+    if (isOpen) returning.current = false;
+    else if (wasOpen.current) returning.current = true;
     if (isOpen && !wasOpen.current) {
       openRollOffset.current =
         (Math.random() * 2 - 1) * OPEN_ROLL_JITTER_DEG * DEG;
     } else if (!isOpen) {
       openRollOffset.current = 0;
     }
+    yawTarget.current = isOpen ? openYaw : restingYaw;
     pitchTarget.current = isOpen ? OPEN_PITCH : restingPitch;
     rollTarget.current = isOpen
-      ? restingRoll + openRollOffset.current
+      ? openRoll + openRollOffset.current
       : restingRoll;
     depthTarget.current = restingZ + (isDetailPose ? detailLift : isOpen ? OPEN_DEPTH : 0);
     wasOpen.current = isOpen;
@@ -487,6 +494,9 @@ function CartridgeInner({
     invalidate();
   }, [
     isOpen,
+    restingYaw,
+    openYaw,
+    openRoll,
     restingPitch,
     restingRoll,
     restingZ,
@@ -495,15 +505,20 @@ function CartridgeInner({
     invalidate,
   ]);
 
-  // Whichever cartridge is open makes the whole stack reflow — every
-  // cartridge (open or not) springs to its newly assigned Y slot.
+  // Retarget every slot together, preserving velocity during selection and
+  // responsive changes. X and Y use the same spring as the existing reflow.
   useEffect(() => {
-    reflowWait.current = isOpen ? 0 : 0.025 + Math.min(neighborDistance, 3) * 0.012;
+    const mobileLag = isRackOpen ? 0.018 + Math.max(0, Math.min(neighborDistance - 1, 3)) * 0.007 : 0;
+    reflowWait.current = isOpen ? 0 : THREE.MathUtils.lerp(
+      returning.current ? 0 : mobileLag, 0.025 + (isRackOpen ? Math.min(neighborDistance, 3) * 0.012 : 0), desktopBlend,
+    );
+    reflowElapsed.current = 0;
+    positionXTarget.current = restingX;
     positionYTarget.current = restingY;
     depthTarget.current = restingZ + (isDetailPose ? detailLift : isOpen ? OPEN_DEPTH : 0);
     restedRef.current = false;
     invalidate();
-  }, [restingY, restingZ, isDetailPose, detailLift, isOpen, neighborDistance, invalidate]);
+  }, [restingX, restingY, restingZ, isDetailPose, detailLift, isOpen, isRackOpen, neighborDistance, desktopBlend, invalidate]);
 
   useFrame((state, delta) => {
     if (!pivotRef.current) return;
@@ -518,8 +533,8 @@ function CartridgeInner({
         entranceStart.current = state.clock.elapsedTime;
       }
       const elapsed =
-        state.clock.elapsedTime - entranceStart.current - (entranceDelaySec ?? 0);
-      const entranceDuration = ENTRANCE_DURATION_SEC + Math.sin(renderOrderBase * 0.7) * 0.025;
+        state.clock.elapsedTime - entranceStart.current - (entranceDelay.current ?? 0);
+      const entranceDuration = THREE.MathUtils.lerp(0.56, ENTRANCE_DURATION_SEC, desktopBlend) + Math.sin(renderOrderBase * 0.7) * 0.025;
       const progress = reducedMotion.current ? 1 : THREE.MathUtils.clamp(
         elapsed / entranceDuration,
         0,
@@ -529,16 +544,22 @@ function CartridgeInner({
       // entrance look stalled even after the renderer is ready.
       const eased = 1 - Math.pow(1 - progress, 3);
 
+      positionX.current = positionXTarget.current;
+      pivotRef.current.position.x = positionX.current;
       positionY.current =
-        positionYTarget.current + ENTRANCE_OFFSET_Y * (1 - eased);
+        positionYTarget.current + entranceY * (1 - eased);
       pivotRef.current.position.y = positionY.current;
       depthPosition.current =
-        depthTarget.current + ENTRANCE_OFFSET_Z * (1 - eased);
+        depthTarget.current + entranceDepth * (1 - eased);
       pivotRef.current.position.z = depthPosition.current;
       // Translation leads; the final rotation softly catches up without bounce.
-      const angularProgress = THREE.MathUtils.clamp(progress / 1.36, 0, 1);
+      const angularProgress = THREE.MathUtils.clamp(progress / THREE.MathUtils.lerp(1, 1.36, desktopBlend), 0, 1);
       const angularEase = 1 - Math.pow(1 - angularProgress, 3);
-      pitchAngle.current = restingPitch + ENTRANCE_PITCH_OFFSET * (1 - angularEase);
+      pitchAngle.current = pitchTarget.current + entrancePitch * (1 - angularEase);
+      yawAngle.current = yawTarget.current;
+      rollAngle.current = rollTarget.current;
+      pivotRef.current.rotation.y = yawAngle.current;
+      pivotRef.current.rotation.z = rollAngle.current;
       pivotRef.current.rotation.x = pitchAngle.current;
 
       if (progress < 1) {
@@ -680,18 +701,21 @@ function CartridgeInner({
       rollAngle.current = rollTarget.current;
       pitchAngle.current = pitchTarget.current;
       depthPosition.current = depthTarget.current;
+      positionX.current = positionXTarget.current;
       positionY.current = positionYTarget.current;
       yawVelocity.current = rollVelocity.current = pitchVelocity.current = 0;
-      depthVelocity.current = positionYVelocity.current = 0;
+      depthVelocity.current = positionXVelocity.current = positionYVelocity.current = 0;
       pivotRef.current.rotation.set(pitchAngle.current, yawAngle.current, rollAngle.current);
-      pivotRef.current.position.set(positionX, positionY.current, depthPosition.current);
+      pivotRef.current.position.set(positionX.current, positionY.current, depthPosition.current);
+      returning.current = false;
       restedRef.current = true;
       return;
     }
     const dt = Math.min(delta, 1 / 30);
     reflowWait.current = Math.max(0, reflowWait.current - dt);
-    const stiffness = isOpen ? 230 : 280;
-    const damping = isOpen ? 26 : 29;
+    reflowElapsed.current += dt;
+    const stiffness = THREE.MathUtils.lerp(isOpen ? 205 : returning.current ? 310 : 260, isOpen ? 230 : 280, desktopBlend);
+    const damping = THREE.MathUtils.lerp(isOpen ? 27 : returning.current ? 34 : 30, isOpen ? 26 : 29, desktopBlend);
     const motionStiffness = hoverMotion.current ? 160 : stiffness;
     const motionDamping = hoverMotion.current ? 18 : damping;
 
@@ -714,14 +738,27 @@ function CartridgeInner({
     pivotRef.current.rotation.x = pitchAngle.current;
 
     const depthDisplacement = depthPosition.current - depthTarget.current;
+    const depthStiffness = THREE.MathUtils.lerp(isOpen ? 410 : returning.current ? 210 : 300, 330, desktopBlend);
+    const depthDamping = THREE.MathUtils.lerp(isOpen ? 38 : 31, 32, desktopBlend);
     depthVelocity.current +=
-      (-330 * depthDisplacement - 32 * depthVelocity.current) * dt;
+      (-depthStiffness * depthDisplacement - depthDamping * depthVelocity.current) * dt;
     depthPosition.current += depthVelocity.current * dt;
     pivotRef.current.position.z = depthPosition.current;
 
+    const mobilePositionStiffness = isOpen ? 275 : returning.current ? 240 : isRackOpen
+      ? 215 - Math.min(neighborDistance - 1, 3) * 14
+      : THREE.MathUtils.lerp(105, 260, THREE.MathUtils.smoothstep(reflowElapsed.current, 0.03, 0.24));
+    const positionStiffness = THREE.MathUtils.lerp(mobilePositionStiffness, isOpen ? 290 : 220, desktopBlend);
+    const positionXDisplacement = positionX.current - positionXTarget.current;
+    if (reflowWait.current === 0) {
+      positionXVelocity.current +=
+        (-positionStiffness * positionXDisplacement - 29 * positionXVelocity.current) * dt;
+      positionX.current += positionXVelocity.current * dt;
+    }
+    pivotRef.current.position.x = positionX.current;
+
     const positionYDisplacement = positionY.current - positionYTarget.current;
     if (reflowWait.current === 0) {
-      const positionStiffness = isOpen ? 290 : 220;
       positionYVelocity.current +=
         (-positionStiffness * positionYDisplacement - 29 * positionYVelocity.current) * dt;
       positionY.current += positionYVelocity.current * dt;
@@ -739,6 +776,8 @@ function CartridgeInner({
       Math.abs(pitchVelocity.current) < EPS_VEL &&
       Math.abs(depthDisplacement) < EPS_POS &&
       Math.abs(depthVelocity.current) < EPS_VEL &&
+      Math.abs(positionXDisplacement) < EPS_POS &&
+      Math.abs(positionXVelocity.current) < EPS_VEL &&
       Math.abs(positionYDisplacement) < EPS_POS &&
       Math.abs(positionYVelocity.current) < EPS_VEL;
 
@@ -748,7 +787,9 @@ function CartridgeInner({
         rollAngle.current = rollTarget.current;
         pitchAngle.current = pitchTarget.current;
         depthPosition.current = depthTarget.current;
+        positionX.current = positionXTarget.current;
         positionY.current = positionYTarget.current;
+        pivotRef.current.position.x = positionX.current;
         pivotRef.current.rotation.y = yawAngle.current;
         pivotRef.current.rotation.z = rollAngle.current;
         pivotRef.current.rotation.x = pitchAngle.current;
@@ -756,6 +797,7 @@ function CartridgeInner({
         pivotRef.current.position.y = positionY.current;
         hoverMotion.current = false;
         restedRef.current = true;
+        returning.current = false;
         invalidate();
       }
     } else {
@@ -767,11 +809,14 @@ function CartridgeInner({
   return (
     <group
       ref={pivotRef}
-      position-x={positionX}
+      visible={desktopBlend === 1 || entranceReady}
       userData={{
-        cameraPositionY: restingY,
-        cameraPositionZ: restingZ + (isDetailPose ? detailLift : 0),
-        cameraRotationX: restingPitch,
+        cameraPositionX: cameraPose?.position[0] ?? restingX,
+        cameraPositionY: cameraPose?.position[1] ?? restingY,
+        cameraPositionZ: (cameraPose?.position[2] ?? restingZ) + (isDetailPose ? detailLift : 0),
+        cameraRotationX: cameraPose?.restingPitch ?? restingPitch,
+        cameraRotationY: cameraPose?.restingYaw ?? restingYaw,
+        cameraRotationZ: cameraPose?.restingRoll ?? restingRoll,
       }}
     >
       <CartridgePresentation
@@ -782,6 +827,8 @@ function CartridgeInner({
         isOpen={isOpen}
         caption={caption}
         captionOffset={captionOffset}
+        openYaw={openYaw}
+        desktopBlend={desktopBlend}
       >
       <primitive object={instance} position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]} />
       {stickerTexture && stickerApplied && (
@@ -793,6 +840,7 @@ function CartridgeInner({
           appliedRef={stickerApplied}
           busyRef={stickerBusy}
           renderOrder={renderOrderBase + 2}
+          desktopBlend={desktopBlend}
         />
       )}
       </CartridgePresentation>
@@ -881,9 +929,8 @@ function frameCartridges(
   // the settled layout so the camera remains fixed while they fall in.
   const animatedTransforms: Array<{
     object: Object3D;
-    y: number;
-    z: number;
-    rotationX: number;
+    position: THREE.Vector3;
+    rotation: THREE.Euler;
   }> = [];
   group.traverse((object) => {
     const cameraPositionY = object.userData.cameraPositionY;
@@ -896,26 +943,32 @@ function frameCartridges(
     ) return;
     animatedTransforms.push({
       object,
-      y: object.position.y,
-      z: object.position.z,
-      rotationX: object.rotation.x,
+      position: object.position.clone(),
+      rotation: object.rotation.clone(),
     });
+    object.position.x = object.userData.cameraPositionX;
+    object.rotation.y = object.userData.cameraRotationY;
+    object.rotation.z = object.userData.cameraRotationZ;
     object.position.y = cameraPositionY;
     object.position.z = cameraPositionZ;
     object.rotation.x = cameraRotationX;
   });
   const box3 = settledBounds ?? new THREE.Box3().setFromObject(group);
-  for (const { object, y, z, rotationX } of animatedTransforms) {
-    object.position.y = y;
-    object.position.z = z;
-    object.rotation.x = rotationX;
+  for (const { object, position, rotation } of animatedTransforms) {
+    object.position.copy(position);
+    object.rotation.copy(rotation);
   }
   if (box3.isEmpty()) return;
   const center = box3.getCenter(new THREE.Vector3());
   const boxSize = box3.getSize(new THREE.Vector3());
   const maxSize = Math.max(boxSize.x, boxSize.y, boxSize.z);
 
-  const halfFov = (camera.fov * DEG) / 2;
+  const halfFov = (CAMERA_FOV_DEGREES * DEG) / 2;
+  // A shorter mobile viewport crops empty space instead of shrinking objects.
+  // Keep camera distance/perspective, narrowing the vertical viewing angle.
+  const desktopBlend = preset.desktopBlend ?? (preset.openInPlace ? 0 : 1);
+  const heightScale = THREE.MathUtils.lerp(canvasHeight / 640, 1, desktopBlend);
+  camera.fov = 2 * Math.atan(Math.tan(halfFov) * heightScale) / DEG;
   const fitHeightDistance = maxSize / (2 * Math.tan(halfFov));
   const fitWidthDistance = fitHeightDistance / preset.aspect;
   const distance = preset.margin * Math.max(fitHeightDistance, fitWidthDistance);
@@ -990,8 +1043,8 @@ function ResponsiveCameraRig({
     const firstFrame = target.current === null;
     target.current = next;
     if (firstFrame) {
-      camera.position.copy(next.position);
-      camera.quaternion.copy(next.quaternion);
+      camera.copy(next);
+      camera.updateProjectionMatrix();
     }
     // Layout constraints use the destination, not a stale intermediate camera.
     onFrame(next);
@@ -1027,11 +1080,12 @@ function ResponsiveCameraRig({
     destination.current.copy(next.position);
     destination.current.z += next.position.z * departure.current;
     const response = reduced.current ? 1 : 1 - Math.exp(-12 * Math.min(delta, 0.05));
+    camera.fov = THREE.MathUtils.lerp(camera.fov, next.fov, response);
     camera.position.lerp(destination.current, response);
     camera.quaternion.slerp(next.quaternion, response);
     camera.near = next.near;
     camera.far = next.far + next.position.z * departure.current;
-    if (camera.position.distanceToSquared(destination.current) > 1e-12) invalidate();
+    if (camera.position.distanceToSquared(destination.current) > 1e-12 || Math.abs(camera.fov - next.fov) > 0.0001) invalidate();
     else camera.position.copy(destination.current);
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld();
@@ -1075,8 +1129,15 @@ function CartridgeSceneTextures({
     scene: renderScene,
   } = useThree();
   const [compositionCamera, setCompositionCamera] = useState(() => camera.clone());
+  const [cameraReady, setCameraReady] = useState(false);
+  const handleCameraFrame = useCallback((framedCamera: THREE.PerspectiveCamera) => {
+    setCompositionCamera(framedCamera);
+    setCameraReady(true);
+  }, []);
   const localStickerApplied = useRef(false);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [lastOpenIndex, setLastOpenIndex] = useState<number | null>(null);
+  const desktopBlend = cameraPreset.desktopBlend ?? (cameraPreset.openInPlace ? 0 : 1);
   const [entranceReady, setEntranceReady] = useState(false);
 
   useEffect(() => {
@@ -1094,9 +1155,9 @@ function CartridgeSceneTextures({
   // Each closed slot comes from that cartridge's transformed bounds, so the
   // randomized poses retain a hard physical gap. The open cartridge gets a
   // taller slot and the rest spring apart to make room. Closed, the whole
-  // stack is centered; open, either the stack shifts so the open cartridge
-  // lands at a fixed pixel offset (desktop), or it expands in place around
-  // the clicked cartridge (mobile).
+  // desktop stack stays centered and reflows around its open slot. Mobile
+  // uses a shared focal position for every selected cartridge; closed
+  // mobile neighbors are laid out separately along X below.
   const { yPositions, openLabelY } = useMemo(() => {
     const camera = compositionCamera;
     const openTopOffsetPx = cameraPreset.openTopOffsetPx ?? OPEN_TOP_OFFSET_PX;
@@ -1128,51 +1189,15 @@ function CartridgeSceneTextures({
     let mobileLayout: { yPositions: number[]; openLabelY: number } | undefined;
     if (desktopBlend < 1) {
       const closedPositions = stackCentered(closedHeights);
-      const heightDelta = OPEN_HEIGHT - closedHeights[openIndex];
-      let yPositions = closedPositions.map((y, i) => {
-        if (i === openIndex) return y;
-        if (i < openIndex) return y + heightDelta / 2;
-        return y - heightDelta / 2 - extraBottomGap;
-      });
-      let openLabelY =
-        yPositions[openIndex] -
-        OPEN_HEIGHT / 2 +
-        extraBottomGap * openLabelInsetFraction;
-
-      const openInPlaceTopInsetPx = cameraPreset.openInPlaceTopInsetPx ?? 0;
-      if (openInPlaceTopInsetPx > 0 && openIndex > 0) {
-        const planeZ = 0;
-        let topPixelY = Infinity;
-        for (let i = 0; i < yPositions.length; i++) {
-          const height = i === openIndex ? OPEN_HEIGHT : closedHeights[i];
-          const pixelY = worldYToPixelY(
-            camera,
-            yPositions[i] + height / 2,
-            size.height,
-            planeZ
-          );
-          if (pixelY < topPixelY) topPixelY = pixelY;
-        }
-        if (topPixelY < openInPlaceTopInsetPx) {
-          const worldShift =
-            pixelYToWorldY(camera, openInPlaceTopInsetPx, size.height, planeZ) -
-            pixelYToWorldY(camera, topPixelY, size.height, planeZ);
-          yPositions = yPositions.map((y) => y + worldShift);
-          openLabelY += worldShift;
-        }
-      }
-
-      const openInPlaceOpenLiftPx = cameraPreset.openInPlaceOpenLiftPx ?? 0;
-      if (openInPlaceOpenLiftPx !== 0 && openIndex === 0) {
-        const planeZ = 0;
-        const worldLift =
-          pixelYToWorldY(camera, 0, size.height, planeZ) -
-          pixelYToWorldY(camera, openInPlaceOpenLiftPx, size.height, planeZ);
-        yPositions = yPositions.map((y) => y + worldLift);
-        openLabelY += worldLift;
-      }
-
-      mobileLayout = { yPositions, openLabelY };
+      // Reserve a shared focal position inside the compact mobile viewport.
+      // The camera preserves object size; only the available space changes.
+      const focalY = pixelYToWorldY(
+        camera, size.height * 0.39, size.height, layout[openIndex].position[2] + OPEN_DEPTH,
+      );
+      mobileLayout = {
+        yPositions: closedPositions.map((y, index) => index === openIndex ? focalY : y),
+        openLabelY: focalY - OPEN_HEIGHT / 2 + extraBottomGap * openLabelInsetFraction,
+      };
       if (desktopBlend === 0) return mobileLayout;
     }
 
@@ -1203,10 +1228,47 @@ function CartridgeSceneTextures({
     cameraPreset.openBottomGapPx,
     cameraPreset.openLabelInsetFraction,
     cameraPreset.openInPlace,
-    cameraPreset.openInPlaceTopInsetPx,
-    cameraPreset.openInPlaceOpenLiftPx,
   ]);
 
+  const rowY = pixelYToWorldY(compositionCamera, size.height * 0.43, size.height, MOBILE_ROW_DEPTH);
+  // Start with the entire mobile silhouette below the canvas, including its shadow.
+  const mobileEntranceY = pixelYToWorldY(
+    compositionCamera, size.height * 1.3, size.height, MOBILE_ROW_DEPTH,
+  ) - rowY;
+  const worldPerPixel = 2 * Math.abs(compositionCamera.position.z - MOBILE_ROW_DEPTH) *
+    Math.tan((compositionCamera as THREE.PerspectiveCamera).fov * DEG / 2) / size.height;
+  const slotSpacing = mobileRackSpacing(layout.length, Math.max(0, size.width - 48) * worldPerPixel);
+  const activePosition = openIndex === null ? null : layout[openIndex].position;
+  const projectionRatio = activePosition === null ? 1 :
+    (compositionCamera.position.z - MOBILE_ROW_DEPTH) /
+    (compositionCamera.position.z - activePosition[2] - OPEN_DEPTH);
+  const openCenterX = activePosition === null ? 0 : compositionCamera.position.x +
+    (activePosition[0] - compositionCamera.position.x) * projectionRatio;
+  const poses = layout.map((entry, index) => {
+    const desktop = {
+      position: [entry.position[0], yPositions[index], entry.position[2]] as [number, number, number],
+      pitch: entry.restingPitch ?? 0,
+      yaw: entry.restingYaw,
+      roll: entry.restingRoll,
+    };
+    const mobile = mobileClosedPose(index, layout.length, rowY, slotSpacing, compositionCamera.position);
+    mobile.position[0] += mobileOpenDisplacement(
+      index, layout.length, slotSpacing, openIndex, openCenterX,
+      CARTRIDGE_WIDTH * projectionRatio, size.width * worldPerPixel,
+    );
+    const closed = blendClosedPose(
+      mobile,
+      desktop,
+      desktopBlend,
+    );
+    // Preserve the existing selected position, depth, yaw and roll exactly.
+    // CartridgeInner supplies the shared open pitch and depth lift.
+    return index === openIndex ? { ...closed, position: desktop.position } : closed;
+  });
+  const selectCartridge = (index: number) => {
+    setLastOpenIndex(index);
+    setOpenIndex((current) => current === index ? null : index);
+  };
   const textureByLabel = useMemo(() => {
     const list = Array.isArray(textures) ? textures : [textures];
     const map = new Map<string, THREE.Texture>();
@@ -1247,12 +1309,16 @@ function CartridgeSceneTextures({
       <ambientLight intensity={0.42} />
       <directionalLight
         castShadow
-        position={lightPosition}
+        position={[
+          THREE.MathUtils.lerp(-0.25, lightPosition[0], desktopBlend),
+          THREE.MathUtils.lerp(0.3, lightPosition[1], desktopBlend),
+          lightPosition[2],
+        ]}
         intensity={0.8}
         shadow-bias={-0.0001}
         shadow-normalBias={0.00018}
         shadow-mapSize={[1024, 1024]}
-        shadow-radius={7}
+        shadow-radius={THREE.MathUtils.lerp(15, 7, desktopBlend)}
         shadow-camera-left={-0.26}
         shadow-camera-right={0.26}
         shadow-camera-top={0.55}
@@ -1260,24 +1326,29 @@ function CartridgeSceneTextures({
         shadow-camera-near={0.1}
         shadow-camera-far={8}
       />
-      <mesh position={shadowPlanePosition} receiveShadow>
+      <mesh position={[
+        shadowPlanePosition[0], shadowPlanePosition[1],
+        THREE.MathUtils.lerp(-0.117, shadowPlanePosition[2], desktopBlend),
+      ]} receiveShadow>
         <planeGeometry args={[0.8, 0.8]} />
-        <shadowMaterial transparent opacity={shadowOpacity} depthWrite={false} />
+        <shadowMaterial transparent opacity={THREE.MathUtils.lerp(shadowOpacity * 0.82, shadowOpacity, desktopBlend)} depthWrite={false} />
       </mesh>
       {/* Click-catcher behind everything: clicking empty canvas closes whichever
           cartridge is open. Cartridge hitboxes stopPropagation, so this only
           fires on genuine misses. */}
-      <mesh position={[0, 0, -1]} onClick={() => setOpenIndex(null)}>
+      <mesh position={[0, 0, -1]} onClick={(event) => {
+        if (event.delta <= TAP_MAX_MOVEMENT_PX) setOpenIndex(null);
+      }}>
         <planeGeometry args={[20, 20]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
-      <ResponsiveCameraRig preset={cameraPreset} onFrame={setCompositionCamera}>
+      <ResponsiveCameraRig preset={cameraPreset} onFrame={handleCameraFrame}>
         <group>
           {layout.map((c, i) => (
             <CartridgeInner
               key={i}
               scene={scene}
-              position={[c.position[0], yPositions[i], c.position[2]]}
+              position={poses[i].position}
               color={c.color}
               labelTexture={textureByLabel.get(c.label)!}
               stickerTexture={
@@ -1286,34 +1357,33 @@ function CartridgeSceneTextures({
                   : undefined
               }
               stickerApplied={stickerApplied ?? localStickerApplied}
-              restingYaw={c.restingYaw}
-              restingRoll={c.restingRoll}
-              restingPitch={c.restingPitch}
+              restingYaw={poses[i].yaw}
+              restingRoll={poses[i].roll}
+              restingPitch={poses[i].pitch}
+              openYaw={c.restingYaw}
+              openRoll={c.restingRoll}
+              desktopBlend={desktopBlend}
+              cameraPose={c}
               motion={motion}
               hoverLift={hoverLift}
               detailLift={detailLift}
               shellOpacity={c.shellOpacity}
               renderOrderBase={i * 10}
               isOpen={i === openIndex}
-              onToggleOpen={() => setOpenIndex((cur) => (cur === i ? null : i))}
+              isRackOpen={openIndex !== null}
+              onToggleOpen={() => selectCartridge(i)}
               entranceDelaySec={
-                (layout.length - 1 - i) * ENTRANCE_STAGGER_SEC
+                THREE.MathUtils.lerp(i * 0.018, (layout.length - 1 - i) * ENTRANCE_STAGGER_SEC, desktopBlend)
               }
-              entranceReady={entranceReady}
+              entranceReady={entranceReady && cameraReady}
+              mobileEntranceY={mobileEntranceY}
               accessibleName={c.company}
-              caption={i === openIndex ? { company: c.company, period: c.period } : undefined}
-              captionOffset={openLabelY - yPositions[i]}
-              neighborDistance={openIndex === null ? 0 : Math.abs(i - openIndex)}
+              caption={i === openIndex || (desktopBlend < 1 && openIndex === null && i === lastOpenIndex) ? { company: c.company, period: c.period } : undefined}
+              captionOffset={openLabelY - poses[i].position[1]}
+              neighborDistance={Math.abs(i - (openIndex ?? lastOpenIndex ?? i))}
             />
           ))}
 
-          {openIndex === null && entranceReady && <Html center position={[
-            0,
-            yPositions[layout.length - 1] - layout[layout.length - 1].closedHeight / 2 - 0.012,
-            0,
-          ]} style={{ pointerEvents: "none" }}>
-            <span {...stylex.props(styles.touchHint)}>Tap a cartridge</span>
-          </Html>}
         </group>
       </ResponsiveCameraRig>
       <Environment environmentIntensity={0.7} resolution={128}>
@@ -1632,15 +1702,9 @@ const styles = stylex.create({
     fontSize: 13,
     whiteSpace: 'nowrap',
   },
-  touchHint: {
-    display: { default: 'block', '@media (hover: hover) and (pointer: fine)': 'none' },
-    color: '#666',
-    fontSize: 12,
-    whiteSpace: 'nowrap',
-  },
   viewer: {
     boxSizing: 'border-box',
-    height: 'clamp(640px, calc(27.777778vw + 395.555556px), 680px)',
+    height: 'clamp(360px, calc(222.222222vw - 1595.555556px), 680px)',
     insetInlineStart: '50%',
     marginInline: '-50vw',
     overflow: 'hidden',

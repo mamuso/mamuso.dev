@@ -8,7 +8,7 @@ import * as THREE from "three";
 /** Small, interruptible handling offsets, independent of the main stack springs.
  * The hitbox stays on the parent so the response cannot chase its own pointer. */
 export default function CartridgePresentation({
-  children, pivot, hovered, pointerPosition, stickerBusy, isOpen, caption, captionOffset,
+  children, pivot, hovered, pointerPosition, stickerBusy, isOpen, caption, captionOffset, openYaw = 0, desktopBlend = 1,
 }: {
   children: ReactNode;
   pivot: RefObject<THREE.Group | null>;
@@ -18,6 +18,8 @@ export default function CartridgePresentation({
   isOpen: boolean;
   caption?: { company: string; period?: string };
   captionOffset: number;
+  openYaw?: number;
+  desktopBlend?: number;
 }) {
   const handling = useRef<THREE.Group>(null);
   const captionAnchor = useRef<THREE.Group>(null);
@@ -26,6 +28,8 @@ export default function CartridgePresentation({
   const reduceMotion = useRef(false);
   const inverse = useRef(new THREE.Quaternion());
   const lift = useRef(0);
+  const captionOpacity = useRef(0);
+  const lastCaptionOffset = useRef(captionOffset);
   const invalidate = useThree((state) => state.invalidate);
 
   useEffect(() => {
@@ -50,7 +54,8 @@ export default function CartridgePresentation({
     if (!object || !pivot.current) return;
     const active = canHover.current && hovered.current && !reduceMotion.current && !stickerBusy.current;
     // Wait until the open face is readable before responding to examination.
-    const available = THREE.MathUtils.smoothstep(1 - Math.abs(pivot.current.rotation.x) / 1.4, 0.85, 1);
+    const turnRemaining = Math.max(Math.abs(pivot.current.rotation.x), Math.abs(pivot.current.rotation.y - openYaw));
+    const available = THREE.MathUtils.smoothstep(1 - turnRemaining / 1.4, 0.85, 1);
     const targetX = active ? (isOpen ? -pointerPosition.current.y * 0.022 * available : -0.028) : 0;
     const targetY = active && isOpen ? pointerPosition.current.x * 0.032 * available : 0;
     const targetLift = active && !isOpen ? 0.0015 : 0;
@@ -69,8 +74,17 @@ export default function CartridgePresentation({
     if (captionAnchor.current && captionElement.current) {
       // Cancel the cartridge rotation for the offset: text stays below it in
       // screen space while tracking its actual, animated position.
-      captionAnchor.current.position.set(0, captionOffset, 0).applyQuaternion(inverse.current);
-      const opacity = reduceMotion.current ? 1 : THREE.MathUtils.smoothstep(available, 0.05, 0.95);
+      if (isOpen || desktopBlend === 1) lastCaptionOffset.current = captionOffset;
+      captionAnchor.current.position.set(0, lastCaptionOffset.current, 0).applyQuaternion(inverse.current);
+      const readable = THREE.MathUtils.smoothstep(available, 0.05, 0.95);
+      const targetOpacity = isOpen ? readable : 0;
+      captionOpacity.current = reduceMotion.current ? targetOpacity : THREE.MathUtils.lerp(
+        captionOpacity.current, targetOpacity, 1 - Math.exp(-22 * Math.min(delta, 0.05)),
+      );
+      if (Math.abs(captionOpacity.current - targetOpacity) < 0.001) captionOpacity.current = targetOpacity;
+      else if (desktopBlend < 1) invalidate();
+      const opacity = desktopBlend === 1 ? (reduceMotion.current ? 1 : readable) : captionOpacity.current;
+      captionElement.current.setAttribute('aria-hidden', opacity < 0.01 ? 'true' : 'false');
       captionElement.current.style.opacity = String(opacity);
       captionElement.current.style.transform = `translateY(${(1 - opacity) * 4}px)`;
     }

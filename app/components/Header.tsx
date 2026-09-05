@@ -41,7 +41,10 @@ const styles = stylex.create({
     position: 'relative',
   },
   homeHeader: {
-    height: 192,
+    height: {
+      default: 104,
+      '@media (min-width: 1024px)': 192,
+    },
   },
   divider: {
     borderBlockEndColor: '#ADADAD',

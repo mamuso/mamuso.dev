@@ -31,7 +31,7 @@ export default function CartridgeStageDynamic({
 const styles = stylex.create({
   stage: {
     boxSizing: 'border-box',
-    height: 'clamp(640px, calc(27.777778vw + 395.555556px), 680px)',
+    height: 'clamp(360px, calc(222.222222vw - 1595.555556px), 680px)',
     insetInlineStart: '50%',
     marginInline: '-50vw',
     position: 'absolute',
@@ -44,7 +44,7 @@ const styles = stylex.create({
     insetInline: 0,
     pointerEvents: 'none',
     position: 'absolute',
-    top: 'clamp(640px, calc(27.777778vw + 395.555556px), 680px)',
+    top: 'clamp(360px, calc(222.222222vw - 1595.555556px), 680px)',
     zIndex: 2,
   },
   divider: {

@@ -119,6 +119,7 @@ export function deformSticker(
   elapsed: number,
   rotation = 0,
   motion: StickerMotion = NEUTRAL_MOTION,
+  approachDistance = STICKER_APPROACH_DISTANCE,
 ) {
   const positions = geometry.getAttribute("position") as THREE.BufferAttribute;
   const progress = THREE.MathUtils.clamp(elapsed / DURATION, 0, 1);
@@ -146,7 +147,7 @@ export function deformSticker(
   const contact = travelSpan * (travel - firstContactTravel) / (1 - firstContactTravel);
   const landing = THREE.MathUtils.smootherstep(progress, 0, FIRST_CONTACT_PROGRESS);
   const airborne = 1 - landing;
-  const liftZ = STICKER_APPROACH_DISTANCE * airborne;
+  const liftZ = approachDistance * airborne;
   // Separate angular responses instead of driving all rotation with landing.
   // The airborne envelope only enforces the leading corner's contact constraint.
   const pitch = (-6 + 3 * motion.lean + 2 * elasticResponse(elapsed, 5.2, 3)) * Math.PI / 180 * airborne;
@@ -250,6 +251,7 @@ export default function CartridgeSticker({
   appliedRef,
   busyRef,
   renderOrder,
+  desktopBlend = 1,
 }: {
   scene: THREE.Object3D;
   center: THREE.Vector3;
@@ -258,6 +260,7 @@ export default function CartridgeSticker({
   appliedRef: RefObject<boolean>;
   busyRef?: RefObject<boolean>;
   renderOrder: number;
+  desktopBlend?: number;
 }) {
   const invalidate = useThree((state) => state.invalidate);
   const gl = useThree((state) => state.gl);
@@ -288,6 +291,15 @@ export default function CartridgeSticker({
     invalidate();
   }, [gl, invalidate]);
   const elapsed = useRef<number | null>(null);
+  const settings = useRef({ rate: 1, delay: OPEN_DELAY, approach: STICKER_APPROACH_DISTANCE });
+  const activeSettings = useRef({ rate: 1, delay: OPEN_DELAY, approach: STICKER_APPROACH_DISTANCE });
+  useLayoutEffect(() => {
+    settings.current = {
+      rate: DURATION / THREE.MathUtils.lerp(1.65, DURATION, desktopBlend),
+      delay: THREE.MathUtils.lerp(0.55, OPEN_DELAY, desktopBlend),
+      approach: THREE.MathUtils.lerp(0.12, STICKER_APPROACH_DISTANCE, desktopBlend),
+    };
+  }, [desktopBlend]);
   const reducedMotion = useRef(false);
   const rotationRef = useRef(0);
   const motionRef = useRef(NEUTRAL_MOTION);
@@ -332,7 +344,8 @@ export default function CartridgeSticker({
       }
       if (mesh.current) mesh.current.visible = appliedRef.current;
     } else if (!appliedRef.current) {
-      elapsed.current = -OPEN_DELAY;
+      activeSettings.current = settings.current;
+      elapsed.current = -activeSettings.current.delay * activeSettings.current.rate;
     }
     invalidate();
     return () => { elapsed.current = null; if (busyRef) busyRef.current = false; };
@@ -348,12 +361,12 @@ export default function CartridgeSticker({
 
   useFrame((_, delta) => {
     if (!isOpen || elapsed.current === null || !mesh.current) return;
-    elapsed.current += Math.min(delta, 1 / 30);
+    elapsed.current += Math.min(delta, 1 / 30) * activeSettings.current.rate;
     if (elapsed.current >= 0) {
       appliedRef.current = true;
       if (reducedMotion.current) elapsed.current = DURATION;
       mesh.current.visible = true;
-      deformSticker(geometry, seated, width, elapsed.current, rotationRef.current, motionRef.current);
+      deformSticker(geometry, seated, width, elapsed.current, rotationRef.current, motionRef.current, activeSettings.current.approach);
     }
     if (elapsed.current >= DURATION) {
       elapsed.current = null;

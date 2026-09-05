@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
@@ -8,14 +7,10 @@ import AnimatedName from '@/app/components/AnimatedName'
 import CartridgeStage from '@/app/components/CartridgeStageDynamic'
 
 export default function HomeContent() {
-  const [cartridgeOpen, setCartridgeOpen] = useState(false)
-
   return (
     <section {...stylex.props(layout.fullBleed, styles.hero)}>
-      <CartridgeStage onOpenChange={setCartridgeOpen} />
       <div {...stylex.props(layout.container, styles.inner)}>
-        <div {...stylex.props(styles.stageSpacer)} aria-hidden="true" />
-        <div {...stylex.props(styles.intro, cartridgeOpen && styles.introOpen)}>
+        <div {...stylex.props(styles.intro)}>
           <h2 {...stylex.props(typography.heading, styles.introCopy)}>
             <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealLead)}>
               I&apos;m{' '}
@@ -35,6 +30,9 @@ export default function HomeContent() {
           </Link>
         </div>
       </div>
+      <div {...stylex.props(styles.stage)}>
+        <CartridgeStage />
+      </div>
     </section>
   )
 }
@@ -52,30 +50,54 @@ const introReveal = stylex.keyframes({
 
 const styles = stylex.create({
   hero: {
+    marginBlockStart: {
+      default: -32,
+      '@media (min-width: 1024px)': 0,
+    },
     flex: {
       default: '1',
       '@media (min-width: 1024px)': '0 0 auto',
     },
     minHeight: {
-      default: 560,
+      default: 0,
       // Canvas height minus the home header and the layout's row gap.
       '@media (min-width: 1024px)': 'calc(680px - 192px - 32px)',
     },
   },
   inner: {
-    minHeight: '100%',
+    minHeight: {
+      default: 0,
+      '@media (min-width: 1024px)': '100%',
+    },
   },
-  stageSpacer: {
+  stage: {
+    // Pull the canvas's empty top band closer without changing its camera.
+    marginBlockStart: {
+      default: -24,
+      '@media (min-width: 1024px)': 0,
+    },
+    zIndex: {
+      default: 0,
+      '@media (min-width: 1024px)': 'auto',
+    },
+    // Mobile reserves its own canvas below the copy. Desktop keeps the
+    // existing page-anchored canvas beside the introduction.
+    position: {
+      default: 'relative',
+      '@media (min-width: 1024px)': 'static',
+    },
     height: {
-      // Reserve clearance as the stack grows before copy moves beside it.
-      default: 'clamp(310px, calc(83.333333vw - 423.333333px), 430px)',
+      default: 'clamp(360px, calc(222.222222vw - 1595.555556px), 680px)',
       '@media (min-width: 1024px)': 0,
     },
   },
   intro: {
-    insetBlockStart: -40,
+    insetBlockStart: {
+      default: 0,
+      '@media (min-width: 1024px)': -40,
+    },
     marginBlockStart: {
-      default: 48,
+      default: 0,
       '@media (min-width: 1024px)': 24,
     },
     maxWidth: {
@@ -84,20 +106,8 @@ const styles = stylex.create({
     },
     pointerEvents: 'none',
     position: 'relative',
-    zIndex: 1,
-    transitionDuration: {
-      default: '250ms',
-      '@media (min-width: 1024px)': '0ms',
-      '@media (prefers-reduced-motion: reduce)': '0ms',
-    },
-    transitionProperty: 'margin-block-start',
-    transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
-  },
-  introOpen: {
-    marginBlockStart: {
-      default: 164,
-      '@media (min-width: 1024px)': 24,
-    },
+    // Keep text interactions above the page-wide desktop canvas.
+    zIndex: 2,
   },
   introCopy: {
     fontSize: 24,
