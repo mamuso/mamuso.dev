@@ -1,9 +1,9 @@
 'use client'
 
-import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
 import AnimatedName from '@/app/components/AnimatedName'
+import PlacePhoto from '@/app/components/PlacePhoto'
 import CartridgeStage from '@/app/components/CartridgeStageDynamic'
 
 export default function HomeContent() {
@@ -19,15 +19,13 @@ export default function HomeContent() {
               <AnimatedName />
             </span>
             <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealDetails)}>
-              , a designer, based in Oakland,{' '}
+              , a designer from <PlacePhoto label="Villena, Alicante" image="/images/villena.jpg" />, based in beautiful{' '}
+              <PlacePhoto label="California" image="/images/california.jpg" />,{' '}
             </span>
             <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealClosing)}>
-              having a lot of fun building at SpaceXAI.
+              building fun things at SpaceXAI.
             </span>
           </h2>
-          <Link href="/photos" {...stylex.props(typography.link, styles.photosLink)}>
-            temp link to photos
-          </Link>
         </div>
       </div>
       <div {...stylex.props(styles.stage)}>
@@ -119,11 +117,6 @@ const styles = stylex.create({
   },
   tagline: {
     fontWeight: 400,
-  },
-  photosLink: {
-    display: 'inline-block',
-    marginBlockStart: 24,
-    pointerEvents: 'auto',
   },
   reveal: {
     animationDuration: {

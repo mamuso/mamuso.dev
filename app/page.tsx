@@ -69,7 +69,9 @@ const Home: NextPage = () => {
       <HomeContent />
       <section {...stylex.props(layout.fullBleed, styles.content)}>
         <div {...stylex.props(layout.container)}>
-          <p {...stylex.props(styles.copy)}>content</p>
+          <p {...stylex.props(styles.copy)}>
+            <Link href="/photos" {...stylex.props(typography.link)}>temp link to photos</Link>
+          </p>
         </div>
       </section>
       {SHOW_JOURNAL ? <Journal /> : null}

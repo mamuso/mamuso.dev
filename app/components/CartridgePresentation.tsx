@@ -5,6 +5,10 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
 
+export const CAPTION_FONT_SIZE = 14;
+export const CAPTION_LINE_HEIGHT = 1.25;
+export const CAPTION_HEIGHT = CAPTION_FONT_SIZE * CAPTION_LINE_HEIGHT * 2;
+
 /** Small, interruptible handling offsets, independent of the main stack springs.
  * The hitbox stays on the parent so the response cannot chase its own pointer. */
 export default function CartridgePresentation({
@@ -95,7 +99,7 @@ export default function CartridgePresentation({
     <group ref={handling}>{children}</group>
     {caption && <group ref={captionAnchor}>
       <Html center style={{ pointerEvents: "none" }}>
-        <div ref={captionElement} style={{ opacity: 0, textAlign: "center", whiteSpace: "nowrap", fontSize: 14, fontWeight: 500, lineHeight: 1.25 }}>
+        <div ref={captionElement} style={{ opacity: 0, textAlign: "center", whiteSpace: "nowrap", fontSize: CAPTION_FONT_SIZE, fontWeight: 500, lineHeight: CAPTION_LINE_HEIGHT }}>
           {caption.company}
           <span style={{ display: "block", opacity: 0.65, fontVariantNumeric: "tabular-nums" }}>{caption.period}</span>
         </div>

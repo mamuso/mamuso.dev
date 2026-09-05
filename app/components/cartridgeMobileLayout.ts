@@ -24,7 +24,7 @@ export function mobileOpenDisplacement(
   if (activeIndex === null || index === activeIndex) return 0;
   const side = index < activeIndex ? -1 : 1;
   const nearestSlot = (activeIndex + side - (count - 1) / 2) * spacing + rackOffset;
-  const clearance = Math.min(0.006, viewportWidth * 0.025);
+  const clearance = Math.min(0.012, viewportWidth * 0.055);
   const edge = openCenterX + side * (openWidth / 2 + 0.03 / 2 + clearance);
   const displacement = side < 0 ? Math.min(0, edge - nearestSlot) : Math.max(0, edge - nearestSlot);
   const distance = Math.abs(index - activeIndex);

@@ -14,7 +14,7 @@ import type { Group, Object3D } from "three";
 import * as stylex from "@stylexjs/stylex";
 
 import CartridgeBackdrop from "./CartridgeBackdrop";
-import CartridgePresentation from "./CartridgePresentation";
+import CartridgePresentation, { CAPTION_HEIGHT } from "./CartridgePresentation";
 import CartridgeQuality from "./CartridgeQuality";
 import { stageDeparture } from "./cartridgeStagePolicy";
 import { blendClosedPose, mobileClosedPose, mobileRackSpacing, mobileOpenDisplacement, MOBILE_ROW_DEPTH } from "./cartridgeMobileLayout";
@@ -187,7 +187,7 @@ export const CAMERA_PRESET_LARGE: CameraPreset = {
   openLabelInsetFraction: 0.53,
 };
 export const CAMERA_PRESET_SMALL: CameraPreset = {
-  margin: 1.12,
+  margin: 1.0,
   aspect: 390 / 640,
   panFraction: 0,
   verticalPanFraction: 0,
@@ -1152,6 +1152,15 @@ function CartridgeSceneTextures({
     onOpenChange?.(openIndex !== null);
   }, [openIndex, onOpenChange]);
 
+  const rowY = pixelYToWorldY(compositionCamera, size.height * 0.43, size.height, MOBILE_ROW_DEPTH);
+  const worldPerPixel = 2 * Math.abs(compositionCamera.position.z - MOBILE_ROW_DEPTH) *
+    Math.tan((compositionCamera as THREE.PerspectiveCamera).fov * DEG / 2) / size.height;
+  const slotSpacing = mobileRackSpacing(layout.length, Math.max(0, size.width - 48) * worldPerPixel);
+  const modelHalfSize = useMemo(
+    () => new THREE.Box3().setFromObject(scene).getSize(new THREE.Vector3()).multiplyScalar(0.5),
+    [scene],
+  );
+
   // Each closed slot comes from that cartridge's transformed bounds, so the
   // randomized poses retain a hard physical gap. The open cartridge gets a
   // taller slot and the rest spring apart to make room. Closed, the whole
@@ -1189,14 +1198,29 @@ function CartridgeSceneTextures({
     let mobileLayout: { yPositions: number[]; openLabelY: number } | undefined;
     if (desktopBlend < 1) {
       const closedPositions = stackCentered(closedHeights);
-      // Reserve a shared focal position inside the compact mobile viewport.
-      // The camera preserves object size; only the available space changes.
-      const focalY = pixelYToWorldY(
-        camera, size.height * 0.39, size.height, layout[openIndex].position[2] + OPEN_DEPTH,
+      // Align the year line with the rack's lower silhouette, accounting for
+      // the model's local axes, perspective and the caption's fixed CSS size.
+      const bottoms = layout.map((_, index) => {
+        const pose = mobileClosedPose(index, layout.length, rowY, slotSpacing, camera.position);
+        const rotation = new THREE.Euler(pose.pitch, pose.yaw, pose.roll);
+        const position = new THREE.Vector3(...pose.position);
+        let bottom = -Infinity;
+        for (const x of [-1, 1]) for (const y of [-1, 1]) for (const z of [-1, 1]) {
+          const corner = new THREE.Vector3(x * modelHalfSize.x, y * modelHalfSize.y, z * modelHalfSize.z)
+            .applyEuler(rotation).add(position).project(camera);
+          bottom = Math.max(bottom, (1 - corner.y) * size.height / 2);
+        }
+        return bottom;
+      }).filter((_, index) => layout.length === 1 || index !== openIndex).sort((a, b) => a - b);
+      const rackBottom = bottoms[Math.floor(bottoms.length / 2)];
+      const labelOffset = -OPEN_HEIGHT / 2 + extraBottomGap * openLabelInsetFraction;
+      const labelY = pixelYToWorldY(
+        camera, rackBottom - CAPTION_HEIGHT / 2, size.height, layout[openIndex].position[2] + OPEN_DEPTH,
       );
+      const focalY = labelY - labelOffset;
       mobileLayout = {
         yPositions: closedPositions.map((y, index) => index === openIndex ? focalY : y),
-        openLabelY: focalY - OPEN_HEIGHT / 2 + extraBottomGap * openLabelInsetFraction,
+        openLabelY: labelY,
       };
       if (desktopBlend === 0) return mobileLayout;
     }
@@ -1228,16 +1252,15 @@ function CartridgeSceneTextures({
     cameraPreset.openBottomGapPx,
     cameraPreset.openLabelInsetFraction,
     cameraPreset.openInPlace,
+    rowY,
+    slotSpacing,
+    modelHalfSize,
   ]);
 
-  const rowY = pixelYToWorldY(compositionCamera, size.height * 0.43, size.height, MOBILE_ROW_DEPTH);
   // Start with the entire mobile silhouette below the canvas, including its shadow.
   const mobileEntranceY = pixelYToWorldY(
     compositionCamera, size.height * 1.3, size.height, MOBILE_ROW_DEPTH,
   ) - rowY;
-  const worldPerPixel = 2 * Math.abs(compositionCamera.position.z - MOBILE_ROW_DEPTH) *
-    Math.tan((compositionCamera as THREE.PerspectiveCamera).fov * DEG / 2) / size.height;
-  const slotSpacing = mobileRackSpacing(layout.length, Math.max(0, size.width - 48) * worldPerPixel);
   const activePosition = openIndex === null ? null : layout[openIndex].position;
   const projectionRatio = activePosition === null ? 1 :
     (compositionCamera.position.z - MOBILE_ROW_DEPTH) /
