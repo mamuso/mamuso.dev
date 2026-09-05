@@ -4,6 +4,7 @@ export type CartridgeDefinition = {
   period?: string;
   color: string;
   label: string;
+  applicationLabel?: string;
   shellOpacity?: number;
 };
 
@@ -14,6 +15,7 @@ export const CARTRIDGES: CartridgeDefinition[] = [
     period: "2026-now",
     color: "#303236",
     label: "/labels/cursor.webp",
+    applicationLabel: "/labels/spacexai.webp",
   },
   {
     name: "Vercel",

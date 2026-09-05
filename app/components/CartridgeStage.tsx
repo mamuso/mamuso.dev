@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CartridgeViewer, {
   CAMERA_PRESET_LARGE,
   CAMERA_PRESET_SMALL,
@@ -18,6 +18,8 @@ export default function CartridgeStage({
 }: {
   onOpenChange?: (isOpen: boolean) => void;
 }) {
+  // Keep the applied sticker when the responsive camera remounts its canvas.
+  const stickerApplied = useRef(false);
   // This stage is loaded with `ssr: false`, so the real viewport is available
   // on the first render. Starting with the correct preset avoids mounting the
   // small canvas and immediately replacing it with a fresh large canvas.
@@ -38,6 +40,7 @@ export default function CartridgeStage({
       key={isLarge ? "lg" : "sm"}
       cameraPreset={isLarge ? CAMERA_PRESET_LARGE : CAMERA_PRESET_SMALL}
       onOpenChange={onOpenChange}
+      stickerApplied={stickerApplied}
     />
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Environment,
@@ -14,6 +14,9 @@ import type { Group, Object3D } from "three";
 import * as stylex from "@stylexjs/stylex";
 
 import CartridgeBackdrop from "./CartridgeBackdrop";
+import { addCartridgeGrain } from "./cartridgeGrain";
+import { CARTRIDGE_LABEL_FINISH } from "./cartridgeLabelFinish";
+import CartridgeSticker, { STICKER_APPROACH_DISTANCE } from "./CartridgeSticker";
 import { colors } from "../styles/tokens.stylex";
 
 // Matches the cartridge model's footprint in local space (X unaffected by
@@ -217,7 +220,9 @@ export const CAMERA_PRESET_SMALL: CameraPreset = {
 
 import { CARTRIDGES } from "@/data/cartridges";
 
-const LABEL_URLS = CARTRIDGES.map((c) => c.label);
+const LABEL_URLS = CARTRIDGES.flatMap((c) =>
+  c.applicationLabel ? [c.label, c.applicationLabel] : [c.label]
+);
 export type CartridgeMotion = "still" | "hover" | "rock" | "static" | "frozen" | "intro";
 
 /** Resting pose jitter: tilt ranges in degrees, shift as max X offset. */
@@ -294,6 +299,8 @@ function CartridgeInner({
   position,
   color,
   labelTexture,
+  stickerTexture,
+  stickerApplied,
   restingYaw,
   restingRoll,
   restingPitch = 0,
@@ -311,6 +318,8 @@ function CartridgeInner({
   position: [number, number, number];
   color: string;
   labelTexture: THREE.Texture;
+  stickerTexture?: THREE.Texture;
+  stickerApplied?: RefObject<boolean>;
   restingYaw: number;
   restingRoll: number;
   restingPitch?: number;
@@ -724,6 +733,16 @@ function CartridgeInner({
       }}
     >
       <primitive object={instance} position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]} />
+      {stickerTexture && stickerApplied && (
+        <CartridgeSticker
+          scene={scene}
+          center={modelCenter}
+          texture={stickerTexture}
+          isOpen={isOpen}
+          appliedRef={stickerApplied}
+          renderOrder={renderOrderBase + 2}
+        />
+      )}
       {onToggleOpen && (
         <mesh
           geometry={CARTRIDGE_HITBOX_GEOMETRY}
@@ -758,6 +777,7 @@ export type CartridgeLayoutEntry = {
   period?: string;
   color: string;
   label: string;
+  applicationLabel?: string;
   position: [number, number, number];
   restingYaw: number;
   restingRoll: number;
@@ -851,9 +871,10 @@ function FixedCameraRig({
     target.y += verticalOffset;
 
     camera.position.copy(camPos);
+    // Include the sticker's high-Z approach without changing the framing.
     camera.near = Math.max(
       0.01,
-      distance - maxSize - Math.abs(ENTRANCE_OFFSET_Z)
+      distance - maxSize - Math.abs(ENTRANCE_OFFSET_Z) - STICKER_APPROACH_DISTANCE
     );
     camera.far = distance + maxSize * 4 + Math.abs(ENTRANCE_OFFSET_Z);
     camera.updateProjectionMatrix();
@@ -888,6 +909,7 @@ function CartridgeSceneTextures({
   layout,
   labelUrls,
   onOpenChange,
+  stickerApplied,
   shadowOpacity = 0.2,
   shadowPlanePosition = [0, 0, -0.027] as [number, number, number],
   lightPosition = [1, 1, 5] as [number, number, number],
@@ -899,6 +921,7 @@ function CartridgeSceneTextures({
   layout: CartridgeLayoutEntry[];
   labelUrls: string[];
   onOpenChange?: (isOpen: boolean) => void;
+  stickerApplied?: RefObject<boolean>;
   shadowOpacity?: number;
   shadowPlanePosition?: [number, number, number];
   lightPosition?: [number, number, number];
@@ -915,6 +938,7 @@ function CartridgeSceneTextures({
     size,
     scene: renderScene,
   } = useThree();
+  const localStickerApplied = useRef(false);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [entranceReady, setEntranceReady] = useState(false);
 
@@ -1106,6 +1130,12 @@ function CartridgeSceneTextures({
               position={[c.position[0], yPositions[i], c.position[2]]}
               color={c.color}
               labelTexture={textureByLabel.get(c.label)!}
+              stickerTexture={
+                i === 0 && c.applicationLabel
+                  ? textureByLabel.get(c.applicationLabel)
+                  : undefined
+              }
+              stickerApplied={stickerApplied ?? localStickerApplied}
               restingYaw={c.restingYaw}
               restingRoll={c.restingRoll}
               restingPitch={c.restingPitch}
@@ -1150,6 +1180,7 @@ export function CartridgeScene({
   cameraPreset,
   layout,
   onOpenChange,
+  stickerApplied,
   shadowOpacity = 0.2,
   shadowPlanePosition,
   lightPosition,
@@ -1160,6 +1191,7 @@ export function CartridgeScene({
   cameraPreset: CameraPreset;
   layout: CartridgeLayoutEntry[];
   onOpenChange?: (isOpen: boolean) => void;
+  stickerApplied?: RefObject<boolean>;
   shadowOpacity?: number;
   shadowPlanePosition?: [number, number, number];
   lightPosition?: [number, number, number];
@@ -1168,7 +1200,9 @@ export function CartridgeScene({
   detailLift?: number;
 }) {
   const labelUrls = useMemo(
-    () => [...new Set(layout.map((c) => c.label))],
+    () => [...new Set(layout.flatMap((c, i) =>
+      i === 0 && c.applicationLabel ? [c.label, c.applicationLabel] : [c.label]
+    ))],
     [layout]
   );
 
@@ -1178,6 +1212,7 @@ export function CartridgeScene({
       layout={layout}
       labelUrls={labelUrls}
       onOpenChange={onOpenChange}
+      stickerApplied={stickerApplied}
       shadowOpacity={shadowOpacity}
       shadowPlanePosition={shadowPlanePosition}
       lightPosition={lightPosition}
@@ -1195,7 +1230,6 @@ function isLabelArtworkMaterial(material: THREE.Material) {
   );
 }
 
-const CARTRIDGE_GRAIN_INTENSITY = 0.02;
 const CARTRIDGE_SHELL_ROUGHNESS = 0.6;
 const CARTRIDGE_SHELL_ENV_MAP_INTENSITY = 0.85;
 // Keep translucent shells visibly frosted without turning them milky. The
@@ -1208,58 +1242,6 @@ const FROSTED_SHELL_IOR = 1.46;
 // dark plastics to continue transmitting the scene behind them.
 const FROSTED_SHELL_TINT_LIFT = 0.02;
 
-function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
-  material.onBeforeCompile = (shader) => {
-    shader.fragmentShader = shader.fragmentShader
-      .replace(
-        "void main() {",
-        /* glsl */ `
-          float cartridgeGrainRandom(vec2 coordinates) {
-            vec3 value = fract(vec3(coordinates.xyx) * 0.1031);
-            value += dot(value, value.yzx + 33.33);
-            return fract((value.x + value.y) * value.z);
-          }
-
-          void main() {
-        `
-      )
-      .replace(
-        "#include <opaque_fragment>",
-        /* glsl */ `
-          #include <opaque_fragment>
-
-          float cartridgeGrainPixelRatio = min(${pixelRatio.toFixed(2)}, 2.0);
-          float cartridgeGrain =
-            cartridgeGrainRandom(
-              floor(gl_FragCoord.xy / cartridgeGrainPixelRatio)
-            ) - 0.5;
-          float cartridgeLuminance = dot(
-            gl_FragColor.rgb,
-            vec3(0.2126, 0.7152, 0.0722)
-          );
-          float cartridgeMidtone =
-            1.0 - abs(cartridgeLuminance * 2.0 - 1.0);
-          float cartridgeGrainResponse = mix(
-            0.35,
-            1.0,
-            smoothstep(0.0, 1.0, cartridgeMidtone)
-          );
-          float cartridgeDprResponse = cartridgeGrainPixelRatio * 0.5;
-
-          gl_FragColor.rgb +=
-            cartridgeGrain *
-            ${CARTRIDGE_GRAIN_INTENSITY.toFixed(3)} *
-            cartridgeDprResponse *
-            cartridgeGrainResponse *
-            gl_FragColor.a;
-        `
-      );
-  };
-  material.customProgramCacheKey = () =>
-    `cartridge-grain-v2-${pixelRatio.toFixed(2)}`;
-  material.needsUpdate = true;
-  return material;
-}
 
 function prepareMaterial(
   material: THREE.Material,
@@ -1305,15 +1287,12 @@ function prepareMaterial(
     return sharpenTextures(paper, maxAniso);
   }
   if (isLabelArtworkMaterial(material)) {
-    // Let the label respond to scene lighting while bypassing tone mapping to
-    // preserve fine typography, and retain the cartridge's procedural grain.
+    // Match the applied sticker's matte coated-paper finish and retain grain.
     return addCartridgeGrain(
-      new THREE.MeshStandardMaterial({
+      new THREE.MeshPhysicalMaterial({
+        ...CARTRIDGE_LABEL_FINISH,
         map: labelTexture,
         color: 0xffffff,
-        metalness: 0,
-        roughness: 0.85,
-        toneMapped: false,
         transparent: true,
         depthWrite: false,
         side: THREE.DoubleSide,
@@ -1387,9 +1366,11 @@ useTexture.preload(LABEL_URLS);
 export default function CartridgeViewer({
   cameraPreset = CAMERA_PRESET_LARGE,
   onOpenChange,
+  stickerApplied,
 }: {
   cameraPreset?: CameraPreset;
   onOpenChange?: (isOpen: boolean) => void;
+  stickerApplied?: RefObject<boolean>;
 }) {
   // Fine label typography needs a 2x render target even on standard-DPI
   // displays. The grain now lives in cartridge materials, so this no longer
@@ -1478,6 +1459,7 @@ export default function CartridgeViewer({
             cameraPreset={cameraPreset}
             layout={layout}
             onOpenChange={onOpenChange}
+            stickerApplied={stickerApplied}
           />
         </Suspense>
       </Canvas>
