@@ -1,8 +1,10 @@
 import { PostType } from '@/lib/types'
+import * as stylex from '@stylexjs/stylex'
+import { layout, typography } from '../styles/site'
 
 export default function PhotoMeta({ post }: { post: PostType }) {
   return (
-    <ul>
+    <ul {...stylex.props(layout.list, typography.muted, styles.metadata)}>
       {post.colorPalette && <li>Colors: {post.colorPalette.join(', ')}</li>}
       {post.camera && <li>{post.camera}</li>}
       {post.fnumber && <li>ƒ/{post.fnumber}</li>}
@@ -17,3 +19,12 @@ export default function PhotoMeta({ post }: { post: PostType }) {
     </ul>
   )
 }
+
+const styles = stylex.create({
+  metadata: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginBlock: 16,
+  },
+})

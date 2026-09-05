@@ -1,25 +1,68 @@
-import Link from 'next/link'
-import Image from 'next/image'
+'use client'
+
+import { ViewTransition } from 'react'
+import type {} from 'react/canary'
+import { usePathname } from 'next/navigation'
+import * as stylex from '@stylexjs/stylex'
+import { layout } from '../styles/site'
+import HeaderBrand from './HeaderBrand'
 
 export default function Header() {
+  const isHome = usePathname() === '/'
+
   return (
-    <header>
-      <h1>
-        <Link href="/">
-          <Image src="/images/logo.svg" width={20} height={20} alt="" aria-hidden="true" />
-          mamuso
-        </Link>
-      </h1>
-      <nav>
-        <ul>
-          <li>
-            <Link href="/notes/">notes</Link>
-          </li>
-          <li>
-            <Link href="/photos/">pics</Link>
-          </li>
-        </ul>
-      </nav>
-    </header>
+    <ViewTransition name="site-header">
+      <header
+        {...stylex.props(
+          layout.fullBleed,
+          styles.header,
+          isHome && styles.homeHeader,
+        )}
+      >
+        <div {...stylex.props(layout.container, styles.inner)}>
+          <ViewTransition name="site-header-brand">
+            <HeaderBrand />
+          </ViewTransition>
+          {!isHome && <span aria-hidden="true" {...stylex.props(styles.divider)} />}
+        </div>
+      </header>
+    </ViewTransition>
   )
 }
+
+const styles = stylex.create({
+  header: {
+    backgroundColor: 'transparent',
+    boxSizing: 'border-box',
+    gridColumn: '1 / -1',
+    height: 56,
+    marginBlockStart: -24,
+    pointerEvents: 'none',
+    position: 'relative',
+  },
+  homeHeader: {
+    height: {
+      default: 104,
+      '@media (min-width: 1024px)': 192,
+    },
+  },
+  divider: {
+    borderBlockEndColor: '#ADADAD',
+    borderBlockEndStyle: 'solid',
+    borderBlockEndWidth: 0.5,
+    bottom: 0,
+    insetInline: {
+      default: 24,
+      '@media (min-width: 640px)': 60,
+    },
+    pointerEvents: 'none',
+    position: 'absolute',
+  },
+  inner: {
+    alignItems: 'center',
+    display: 'flex',
+    height: '100%',
+    position: 'relative',
+    zIndex: 2,
+  },
+})

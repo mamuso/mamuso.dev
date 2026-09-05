@@ -38,3 +38,5 @@ next-env.d.ts
 /public/rss.xml
 /public/og
 /public/assets
+
+.pnpm-store

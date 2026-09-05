@@ -1,27 +1,110 @@
-@import "tailwindcss";
+@stylex;
 
 html,
 body {
   overflow-x: hidden;
 }
 
-@theme {
-  --font-sans: var(--font-body);
-}
-
 :root {
-  --font-body: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro', sans-serif;
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --app-background: #f0f0f0;
+  background-color: var(--app-background);
 }
 
-:root[data-platform='non-apple'] {
-  --font-body: 'SF Pro Web', system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro', sans-serif;
+body {
+  font-family: var(--font-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--app-background);
 }
 
-@font-face {
-  font-family: 'SF Pro Web';
-  src: url('/fonts/SFPro.woff2') format('woff2');
-  font-weight: 1 1000;
-  font-stretch: 30% 150%;
-  font-style: normal;
-  font-display: swap;
+@layer transitions {
+  [data-header-brand] {
+    view-transition-group: contain;
+  }
+
+  ::view-transition-group(site-header),
+  ::view-transition-group(site-header-brand),
+  ::view-transition-group(site-header-label) {
+    animation-duration: 350ms;
+    animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
+  }
+
+  ::view-transition-old(site-header-label),
+  ::view-transition-new(site-header-label) {
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
+  }
+
+  ::view-transition-old(site-header-label) {
+    animation-delay: 0ms;
+    animation-name: header-label-out;
+  }
+
+  ::view-transition-new(site-header-label) {
+    animation-delay: 100ms;
+    animation-name: header-label-in;
+  }
+
+  @keyframes header-label-in {
+    from {
+      opacity: 0;
+      filter: blur(3px);
+      transform: translateX(12px);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes header-label-out {
+    from {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      filter: blur(3px);
+      transform: translateX(12px);
+    }
+  }
+
+  ::view-transition {
+    background-color: var(--app-background);
+    pointer-events: none;
+  }
+
+  ::view-transition-old(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-new(root) {
+    animation: page-fade-in 250ms ease both;
+    mix-blend-mode: normal;
+  }
+
+  @keyframes page-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation-duration: 0s !important;
+      animation-delay: 0s !important;
+    }
+  }
 }
