@@ -56,7 +56,6 @@ export default function AnimatedName() {
           </span>
         </span>
       ))}
-      <span aria-hidden="true" {...stylex.props(styles.handDrawnUnderline)} />
     </button>
   )
 }
@@ -77,20 +76,8 @@ const styles = stylex.create({
     margin: 0,
     padding: 0,
     pointerEvents: 'auto',
-    position: 'relative',
     textAlign: 'start',
     userSelect: 'text',
-  },
-  handDrawnUnderline: {
-    backgroundColor: '#fff',
-    bottom: -3,
-    height: 6,
-    insetInline: -2,
-    maskImage: 'url(/images/hand-drawn-underline.svg)',
-    maskRepeat: 'repeat-x',
-    maskSize: '100px 100%',
-    pointerEvents: 'none',
-    position: 'absolute',
   },
   word: {
     display: 'inline-flex',

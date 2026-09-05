@@ -1639,9 +1639,6 @@ const styles = stylex.create({
     whiteSpace: 'nowrap',
   },
   viewer: {
-    borderBlockEndColor: '#ADADAD',
-    borderBlockEndStyle: 'solid',
-    borderBlockEndWidth: { default: 0, '@media (min-width: 1024px)': 0.5 },
     boxSizing: 'border-box',
     height: 'clamp(640px, calc(27.777778vw + 395.555556px), 680px)',
     insetInlineStart: '50%',

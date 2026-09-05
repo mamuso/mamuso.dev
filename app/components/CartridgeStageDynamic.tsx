@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import * as stylex from '@stylexjs/stylex'
+import { layout } from '../styles/site'
 
 const CartridgeStage = dynamic(() => import('./CartridgeStage'), {
   ssr: false,
@@ -17,14 +18,18 @@ type CartridgeStageDynamicProps = {
 export default function CartridgeStageDynamic({
   onOpenChange,
 }: CartridgeStageDynamicProps) {
-  return <CartridgeStage onOpenChange={onOpenChange} />
+  return (
+    <>
+      <CartridgeStage onOpenChange={onOpenChange} />
+      <div aria-hidden="true" {...stylex.props(layout.container, styles.dividerContainer)}>
+        <div {...stylex.props(styles.divider)} />
+      </div>
+    </>
+  )
 }
 
 const styles = stylex.create({
   stage: {
-    borderBlockEndColor: '#ADADAD',
-    borderBlockEndStyle: 'solid',
-    borderBlockEndWidth: { default: 0, '@media (min-width: 1024px)': 0.5 },
     boxSizing: 'border-box',
     height: 'clamp(640px, calc(27.777778vw + 395.555556px), 680px)',
     insetInlineStart: '50%',
@@ -33,5 +38,18 @@ const styles = stylex.create({
     top: 0,
     width: '100vw',
     zIndex: 1,
+  },
+  dividerContainer: {
+    display: { default: 'none', '@media (min-width: 1024px)': 'block' },
+    insetInline: 0,
+    pointerEvents: 'none',
+    position: 'absolute',
+    top: 'clamp(640px, calc(27.777778vw + 395.555556px), 680px)',
+    zIndex: 2,
+  },
+  divider: {
+    borderBlockEndColor: '#ADADAD',
+    borderBlockEndStyle: 'solid',
+    borderBlockEndWidth: 0.5,
   },
 })
