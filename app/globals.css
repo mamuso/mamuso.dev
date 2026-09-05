@@ -33,11 +33,6 @@ body {
     animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
   }
 
-  ::view-transition-group-children(site-header-brand) {
-    animation-duration: 350ms;
-    animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
-  }
-
   ::view-transition-old(site-header-label),
   ::view-transition-new(site-header-label) {
     animation-fill-mode: both;
@@ -105,11 +100,6 @@ body {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    ::view-transition-group-children(site-header-brand) {
-      animation-duration: 0s !important;
-      animation-delay: 0s !important;
-    }
-
     ::view-transition-group(*),
     ::view-transition-old(*),
     ::view-transition-new(*) {

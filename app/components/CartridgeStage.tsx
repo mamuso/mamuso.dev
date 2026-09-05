@@ -1,44 +1,53 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import CartridgeViewer, {
   CAMERA_PRESET_LARGE,
   CAMERA_PRESET_SMALL,
 } from "./CartridgeViewer";
+import { stageBlend } from "./cartridgeStagePolicy";
 
-const LARGE_STAGE_QUERY = "(min-width: 720px)";
-
-// Camera framing is fixed per preset (computed from a fixed reference aspect
-// ratio, not the live canvas size) — tighter on large screens, roomier on
-// small ones, but never recalculated as the window resizes within a
-// breakpoint. Only crossing the 720px breakpoint swaps the preset (matches
-// CartridgeViewer's 720px StyleX media query and CAMERA_PRESET_LARGE's aspect).
 export default function CartridgeStage({
   onOpenChange,
 }: {
   onOpenChange?: (isOpen: boolean) => void;
 }) {
-  // Keep the applied sticker when the responsive camera remounts its canvas.
   const stickerApplied = useRef(false);
-  // This stage is loaded with `ssr: false`, so the real viewport is available
-  // on the first render. Starting with the correct preset avoids mounting the
-  // small canvas and immediately replacing it with a fresh large canvas.
-  const [isLarge, setIsLarge] = useState(() =>
-    window.matchMedia(LARGE_STAGE_QUERY).matches
-  );
-
+  // This component is client-only; use the correct composition on first paint.
+  const [blend, setBlend] = useState(() => stageBlend(window.innerWidth));
   useEffect(() => {
-    const mq = window.matchMedia(LARGE_STAGE_QUERY);
-    const update = (event: MediaQueryListEvent) => setIsLarge(event.matches);
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
+    let frame = 0;
+    const update = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => setBlend(stageBlend(window.innerWidth)));
+    };
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
-  // Remount on breakpoint change so the camera rig re-applies the new preset.
+  const cameraPreset = useMemo(() => {
+    const small = CAMERA_PRESET_SMALL;
+    const large = CAMERA_PRESET_LARGE;
+    const mix = (a: number, b: number) => a + (b - a) * blend;
+    return {
+      ...small,
+      margin: mix(small.margin, large.margin),
+      aspect: mix(small.aspect, large.aspect),
+      panFraction: mix(small.panFraction!, large.panFraction!),
+      verticalPanFraction: mix(small.verticalPanFraction!, large.verticalPanFraction!),
+      verticalPanPx: mix(small.verticalPanPx!, large.verticalPanPx!),
+      openTopOffsetPx: large.openTopOffsetPx,
+      openLabelInsetFraction: mix(small.openLabelInsetFraction!, large.openLabelInsetFraction!),
+      desktopBlend: blend,
+    };
+  }, [blend]);
+
   return (
     <CartridgeViewer
-      key={isLarge ? "lg" : "sm"}
-      cameraPreset={isLarge ? CAMERA_PRESET_LARGE : CAMERA_PRESET_SMALL}
+      cameraPreset={cameraPreset}
       onOpenChange={onOpenChange}
       stickerApplied={stickerApplied}
     />

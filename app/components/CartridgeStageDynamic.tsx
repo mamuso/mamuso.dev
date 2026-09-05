@@ -24,12 +24,9 @@ const styles = stylex.create({
   stage: {
     borderBlockEndColor: '#ADADAD',
     borderBlockEndStyle: 'solid',
-    borderBlockEndWidth: 0.5,
+    borderBlockEndWidth: { default: 0, '@media (min-width: 1024px)': 0.5 },
     boxSizing: 'border-box',
-    height: {
-      default: 640,
-      '@media (min-width: 720px)': 680,
-    },
+    height: 'clamp(640px, calc(27.777778vw + 395.555556px), 680px)',
     insetInlineStart: '50%',
     marginInline: '-50vw',
     position: 'absolute',

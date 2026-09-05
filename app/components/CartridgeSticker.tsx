@@ -248,6 +248,7 @@ export default function CartridgeSticker({
   texture,
   isOpen,
   appliedRef,
+  busyRef,
   renderOrder,
 }: {
   scene: THREE.Object3D;
@@ -255,6 +256,7 @@ export default function CartridgeSticker({
   texture: THREE.Texture;
   isOpen: boolean;
   appliedRef: RefObject<boolean>;
+  busyRef?: RefObject<boolean>;
   renderOrder: number;
 }) {
   const invalidate = useThree((state) => state.invalidate);
@@ -268,8 +270,8 @@ export default function CartridgeSticker({
     // so its artwork reads correctly when looking directly at the back.
     map.repeat.set(-1, 1);
     map.offset.set(1, 0);
-    map.generateMipmaps = false;
-    map.minFilter = THREE.LinearFilter;
+    map.generateMipmaps = true;
+    map.minFilter = THREE.LinearMipmapLinearFilter;
     map.magFilter = THREE.LinearFilter;
     map.anisotropy = gl.capabilities.getMaxAnisotropy();
     map.needsUpdate = true;
@@ -319,6 +321,7 @@ export default function CartridgeSticker({
   }, [appliedRef, invalidate]);
 
   useLayoutEffect(() => {
+    if (busyRef) busyRef.current = isOpen && !appliedRef.current;
     if (!isOpen) {
       // Closing during the wait cancels it without consuming the one-shot.
       // Once application has begun, finish flush immediately on close rather
@@ -332,8 +335,8 @@ export default function CartridgeSticker({
       elapsed.current = -OPEN_DELAY;
     }
     invalidate();
-    return () => { elapsed.current = null; };
-  }, [isOpen, appliedRef, geometry, seated, width, invalidate]);
+    return () => { elapsed.current = null; if (busyRef) busyRef.current = false; };
+  }, [isOpen, appliedRef, busyRef, geometry, seated, width, invalidate]);
 
   useLayoutEffect(() => {
     gl.initTexture(backTexture);
@@ -352,7 +355,11 @@ export default function CartridgeSticker({
       mesh.current.visible = true;
       deformSticker(geometry, seated, width, elapsed.current, rotationRef.current, motionRef.current);
     }
-    if (elapsed.current >= DURATION) elapsed.current = null;
+    if (elapsed.current >= DURATION) {
+      elapsed.current = null;
+      if (busyRef) busyRef.current = false;
+      invalidate();
+    }
     else invalidate();
   });
 
@@ -364,6 +371,7 @@ export default function CartridgeSticker({
       visible={false}
       frustumCulled={false}
       receiveShadow
+      castShadow
       renderOrder={renderOrder}
       raycast={() => null}
     >

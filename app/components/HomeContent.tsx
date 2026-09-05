@@ -62,12 +62,12 @@ const styles = stylex.create({
   hero: {
     flex: {
       default: '1',
-      '@media (min-width: 720px)': '0 0 auto',
+      '@media (min-width: 1024px)': '0 0 auto',
     },
     minHeight: {
       default: 560,
       // Canvas height minus the home header and the layout's row gap.
-      '@media (min-width: 720px)': 'calc(680px - 192px - 32px)',
+      '@media (min-width: 1024px)': 'calc(680px - 192px - 32px)',
     },
   },
   inner: {
@@ -75,26 +75,27 @@ const styles = stylex.create({
   },
   stageSpacer: {
     height: {
-      default: 380,
-      '@media (min-width: 720px)': 0,
+      // Reserve clearance as the stack grows before copy moves beside it.
+      default: 'clamp(310px, calc(83.333333vw - 423.333333px), 430px)',
+      '@media (min-width: 1024px)': 0,
     },
   },
   intro: {
     insetBlockStart: -40,
     marginBlockStart: {
       default: 48,
-      '@media (min-width: 720px)': 24,
+      '@media (min-width: 1024px)': 24,
     },
     maxWidth: {
       default: '100%',
-      '@media (min-width: 720px)': 340,
+      '@media (min-width: 1024px)': 340,
     },
     pointerEvents: 'none',
     position: 'relative',
     zIndex: 1,
     transitionDuration: {
       default: '250ms',
-      '@media (min-width: 720px)': '0ms',
+      '@media (min-width: 1024px)': '0ms',
       '@media (prefers-reduced-motion: reduce)': '0ms',
     },
     transitionProperty: 'margin-block-start',
@@ -102,8 +103,8 @@ const styles = stylex.create({
   },
   introOpen: {
     marginBlockStart: {
-      default: 192,
-      '@media (min-width: 720px)': 24,
+      default: 164,
+      '@media (min-width: 1024px)': 24,
     },
   },
   introCopy: {
