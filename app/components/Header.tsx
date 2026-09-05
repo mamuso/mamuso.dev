@@ -12,11 +12,18 @@ export default function Header() {
 
   return (
     <ViewTransition name="site-header">
-      <header {...stylex.props(layout.fullBleed, styles.header, isHome && styles.homeHeader)}>
+      <header
+        {...stylex.props(
+          layout.fullBleed,
+          styles.header,
+          isHome && styles.homeHeader,
+        )}
+      >
         <div {...stylex.props(layout.container, styles.inner)}>
           <ViewTransition name="site-header-brand">
             <HeaderBrand />
           </ViewTransition>
+          {!isHome && <span aria-hidden="true" {...stylex.props(styles.handDrawnUnderline)} />}
         </div>
       </header>
     </ViewTransition>
@@ -26,9 +33,6 @@ export default function Header() {
 const styles = stylex.create({
   header: {
     backgroundColor: 'transparent',
-    borderBlockEndColor: '#ADADAD',
-    borderBlockEndStyle: 'solid',
-    borderBlockEndWidth: 0.5,
     boxSizing: 'border-box',
     gridColumn: '1 / -1',
     height: 56,
@@ -37,8 +41,21 @@ const styles = stylex.create({
     position: 'relative',
   },
   homeHeader: {
-    borderBlockEndColor: 'rgba(173, 173, 173, 0)',
     height: 192,
+  },
+  handDrawnUnderline: {
+    backgroundColor: '#fff',
+    bottom: -3,
+    height: 4,
+    insetInline: {
+      default: 24,
+      '@media (min-width: 640px)': 60,
+    },
+    maskImage: 'url(/images/hand-drawn-underline.svg)',
+    maskRepeat: 'repeat-x',
+    maskSize: '100px 100%',
+    pointerEvents: 'none',
+    position: 'absolute',
   },
   inner: {
     alignItems: 'center',

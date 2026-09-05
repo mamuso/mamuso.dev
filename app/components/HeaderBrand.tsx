@@ -8,7 +8,7 @@ import { typography } from '../styles/site'
 
 export default function HeaderBrand() {
   const isHome = usePathname() === '/'
-  const logoSize = isHome ? 24 : 20
+  const logoSize = isHome ? 24 : 16
 
   return (
     <h1 data-header-brand {...stylex.props(typography.heading, styles.interactive)}>
