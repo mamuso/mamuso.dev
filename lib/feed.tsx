@@ -16,6 +16,7 @@ interface FeedPost {
 }
 
 const posts = readPostIndex().posts
+  .filter(({ data }) => data.category !== 'photo')
   .map(({ data, content, slug, fileSlug }) => {
     return { ...data, slug, fileSlug, body: content } as FeedPost
   })
