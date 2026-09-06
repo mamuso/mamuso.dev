@@ -48,54 +48,55 @@ const styles = stylex.create({
   hero: {
     marginBlockStart: {
       default: -32,
-      '@media (min-width: 1024px)': 0,
+      '@media (min-width: 880px)': 0,
     },
     flex: '0 0 auto',
     minHeight: {
       default: 0,
       // Canvas height minus the home header and the layout's row gap.
-      '@media (min-width: 1024px)': 'calc(680px - 192px - 32px)',
+      '@media (min-width: 880px)': 'calc(640px - 192px - 32px)',
     },
   },
   inner: {
     minHeight: {
       default: 0,
-      '@media (min-width: 1024px)': '100%',
+      '@media (min-width: 880px)': '100%',
     },
   },
   stage: {
     // Keep a little space between the introduction and mobile canvas.
     marginBlockStart: {
       default: 16,
-      '@media (min-width: 1024px)': 0,
+      '@media (min-width: 880px)': 0,
     },
     zIndex: {
       default: 0,
-      '@media (min-width: 1024px)': 'auto',
+      '@media (min-width: 880px)': 'auto',
     },
     // Mobile reserves its own canvas below the copy. Desktop keeps the
     // existing page-anchored canvas beside the introduction.
     position: {
       default: 'relative',
-      '@media (min-width: 1024px)': 'static',
+      '@media (min-width: 880px)': 'static',
     },
     height: {
-      default: 'clamp(360px, calc(222.222222vw - 1595.555556px), 680px)',
-      '@media (min-width: 1024px)': 0,
+      default: 360,
+      '@media (min-width: 880px)': 0,
     },
   },
   intro: {
     insetBlockStart: {
       default: 0,
-      '@media (min-width: 1024px)': -40,
+      '@media (min-width: 880px)': -40,
     },
     marginBlockStart: {
       default: 0,
-      '@media (min-width: 1024px)': 24,
+      '@media (min-width: 880px)': 24,
     },
     maxWidth: {
       default: '100%',
-      '@media (min-width: 1024px)': 340,
+      '@media (min-width: 880px)': 320,
+      '@media (min-width: 1024px)': 380,
     },
     pointerEvents: 'none',
     position: 'relative',

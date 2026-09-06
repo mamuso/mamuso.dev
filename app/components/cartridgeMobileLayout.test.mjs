@@ -74,16 +74,13 @@ test('both sides yield clearance for every selection without changing rack slots
   }
 });
 
-test('responsive blend preserves exact desktop transforms and has continuous endpoints', () => {
+test('responsive layout uses complete rack poses on both sides of the home breakpoint', () => {
   const desktop = { position: [0.004, 0.02, -0.01], pitch: 1.4, yaw: 0.03, roll: -0.01 };
   const mobile = mobileClosedPose(2, 6, 0.1);
-  assert.equal(blendClosedPose(mobile, desktop, stageBlend(390)), mobile);
-  assert.equal(blendClosedPose(mobile, desktop, stageBlend(1024)), desktop);
-  assert.equal(blendClosedPose(mobile, desktop, stageBlend(1440)), desktop);
-  const middle = blendClosedPose(mobile, desktop, stageBlend(952));
-  assert.ok(Math.abs(middle.position[0] - (mobile.position[0] + desktop.position[0]) / 2) < 1e-12);
-  for (const width of [880, 881, 952, 1023, 1024, 881, 390]) {
-    const pose = blendClosedPose(mobile, desktop, stageBlend(width));
-    assert.ok([...pose.position, pose.pitch, pose.yaw, pose.roll].every(Number.isFinite));
+  for (const width of [390, 844, 879, 879.9]) {
+    assert.equal(blendClosedPose(mobile, desktop, stageBlend(width)), mobile);
+  }
+  for (const width of [880, 881, 952, 1023, 1024, 1440]) {
+    assert.equal(blendClosedPose(mobile, desktop, stageBlend(width)), desktop);
   }
 });

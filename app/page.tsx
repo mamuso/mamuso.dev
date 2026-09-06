@@ -85,7 +85,7 @@ const styles = stylex.create({
   content: {
     flex: {
       default: '1',
-      '@media (min-width: 1024px)': '0 1 auto',
+      '@media (min-width: 880px)': '0 1 auto',
     },
     paddingBlock: 64,
   },

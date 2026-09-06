@@ -43,7 +43,7 @@ const styles = stylex.create({
   homeHeader: {
     height: {
       default: 104,
-      '@media (min-width: 1024px)': 192,
+      '@media (min-width: 880px)': 192,
     },
   },
   divider: {

@@ -168,18 +168,14 @@ export type CameraPreset = {
   openInPlace?: boolean;
   desktopBlend?: number;
 };
-// The large composition deliberately prioritizes scale and its rightward pan
-// over being fully crop-safe at the narrowest widths in this breakpoint.
-// Lowering the margin moves the fixed camera closer and enlarges the stack.
+// Give the desktop stack breathing room with a slight upward resting offset.
 export const CAMERA_PRESET_LARGE: CameraPreset = {
-  margin: 0.95,
-  // Keep a fixed reference aspect; the tighter margin compensates for the
-  // shorter desktop canvas so the cartridges remain prominent.
+  margin: 1.02,
+  // Keep the reference aspect stable across desktop viewport sizes.
   aspect: 720 / 920,
   panFraction: 1.05,
-  verticalPanFraction: -0.32,
-  // Lower the composition inside the canvas while keeping its top at page Y=0.
-  verticalPanPx: -112,
+  verticalPanFraction: 0,
+  verticalPanPx: 4,
   // 134px lower than the OPEN_TOP_OFFSET_PX default.
   openTopOffsetPx: 274,
   // Reserve room for the company/years label below the open cartridge.
@@ -1727,7 +1723,7 @@ const styles = stylex.create({
   },
   viewer: {
     boxSizing: 'border-box',
-    height: 'clamp(360px, calc(222.222222vw - 1595.555556px), 680px)',
+    height: { default: 360, '@media (min-width: 880px)': 640 },
     insetInlineStart: '50%',
     marginInline: '-50vw',
     overflow: 'hidden',

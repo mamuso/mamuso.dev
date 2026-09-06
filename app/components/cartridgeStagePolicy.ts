@@ -1,7 +1,6 @@
-/** Finish moving right before the desktop copy enters beside the stage. */
+/** Match the home layout breakpoint: never leave the rack in a hybrid pose. */
 export function stageBlend(width: number) {
-  const t = Math.max(0, Math.min(1, (width - 880) / 144));
-  return t * t * (3 - 2 * t);
+  return width >= 880 ? 1 : 0;
 }
 
 /** A small departure only as the canvas leaves the viewport. */
