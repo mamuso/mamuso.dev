@@ -81,7 +81,7 @@ export default function CartridgePresentation({
       if (isOpen || desktopBlend === 1) lastCaptionOffset.current = captionOffset;
       captionAnchor.current.position.set(0, lastCaptionOffset.current, 0).applyQuaternion(inverse.current);
       const readable = THREE.MathUtils.smoothstep(available, 0.05, 0.95);
-      const targetOpacity = isOpen ? readable : 0;
+      const targetOpacity = isOpen && !(desktopBlend < 1 && stickerBusy.current) ? readable : 0;
       captionOpacity.current = reduceMotion.current ? targetOpacity : THREE.MathUtils.lerp(
         captionOpacity.current, targetOpacity, 1 - Math.exp(-22 * Math.min(delta, 0.05)),
       );

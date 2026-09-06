@@ -14,6 +14,7 @@ const OPEN_DELAY = 0.9;
 export const STICKER_APPROACH_DISTANCE = 0.55;
 const DURATION = 2.4;
 const FIRST_CONTACT_PROGRESS = 0.2;
+const MOBILE_FIRST_CONTACT_PROGRESS = 0.34;
 const PEEL_DIRECTION = -16 * Math.PI / 180;
 const PAPER_CLEARANCE = 0.000065;
 const BACK_LABEL_URL = "/labels/spacexaiback.webp";
@@ -120,6 +121,7 @@ export function deformSticker(
   rotation = 0,
   motion: StickerMotion = NEUTRAL_MOTION,
   approachDistance = STICKER_APPROACH_DISTANCE,
+  mobilePlacement = 0,
 ) {
   const positions = geometry.getAttribute("position") as THREE.BufferAttribute;
   const progress = THREE.MathUtils.clamp(elapsed / DURATION, 0, 1);
@@ -137,17 +139,23 @@ export function deformSticker(
 
   const bottomLeft = HEIGHT_SEGMENTS * (WIDTH_SEGMENTS + 1) * 3;
   const height = Math.hypot(seated[bottomLeft] - seated[0], seated[bottomLeft + 1] - seated[1]);
-  const directionX = Math.cos(PEEL_DIRECTION);
-  const directionY = Math.sin(PEEL_DIRECTION);
+  const peelDirection = THREE.MathUtils.lerp(PEEL_DIRECTION, -8 * Math.PI / 180, mobilePlacement);
+  const directionX = Math.cos(peelDirection);
+  const directionY = Math.sin(peelDirection);
   const travelSpan = width * directionX + height * Math.abs(directionY);
   // The hand advances continuously through first contact, independent of the
   // sheet's angular response. The last few millimeters catch up gently.
   const travel = THREE.MathUtils.smoothstep(progress, 0, 1);
-  const firstContactTravel = THREE.MathUtils.smoothstep(FIRST_CONTACT_PROGRESS, 0, 1);
+  const firstContact = THREE.MathUtils.lerp(FIRST_CONTACT_PROGRESS, MOBILE_FIRST_CONTACT_PROGRESS, mobilePlacement);
+  const firstContactTravel = THREE.MathUtils.smoothstep(firstContact, 0, 1);
   const contact = travelSpan * (travel - firstContactTravel) / (1 - firstContactTravel);
-  const landing = THREE.MathUtils.smootherstep(progress, 0, FIRST_CONTACT_PROGRESS);
+  const landing = THREE.MathUtils.smootherstep(progress, 0, firstContact);
   const airborne = 1 - landing;
   const liftZ = approachDistance * airborne;
+  // Start close to the surface, slightly below-left. Most of the motion
+  // belongs to smoothing the paper, with only a short hand-placement approach.
+  const entryX = -width * 0.08 * mobilePlacement * airborne;
+  const entryY = -height * 0.12 * mobilePlacement * airborne;
   // Separate angular responses instead of driving all rotation with landing.
   // The airborne envelope only enforces the leading corner's contact constraint.
   const pitch = (-6 + 3 * motion.lean + 2 * elasticResponse(elapsed, 5.2, 3)) * Math.PI / 180 * airborne;
@@ -156,22 +164,36 @@ export function deformSticker(
   const cosPitch = Math.cos(pitch), sinPitch = Math.sin(pitch);
   const cosYaw = Math.cos(yaw), sinYaw = Math.sin(yaw);
   const cosRoll = Math.cos(roll), sinRoll = Math.sin(roll);
-  const cosRotation = Math.cos(rotation + PEEL_DIRECTION);
-  const sinRotation = Math.sin(rotation + PEEL_DIRECTION);
+  const cosRotation = Math.cos(rotation + peelDirection);
+  const sinRotation = Math.sin(rotation + peelDirection);
   const step = travelSpan / PEEL_SAMPLES;
 
   // One angle for the free sheet, with a modest, quickly damped follow-through.
   // Flex evolves during descent; there is no separate peel-start transition.
-  const peelAngle = (84 + 42 * Math.sin(progress * Math.PI * 0.9)
+  const desktopPeelAngle = (84 + 42 * Math.sin(progress * Math.PI * 0.9)
     - 28 * progress + 3 * motion.lean * (1 - progress)
     + 3 * elasticResponse(elapsed - 0.25, 5, 3)) * Math.PI / 180;
-  const bendSpan = width * (0.34 + 0.035 * travel);
+  // Let the free sheet lag as the hand decelerates, then relax through
+  // contact. A broad bend keeps this reading as paper rather than a hinge.
+  const bendAge = elapsed - firstContact * DURATION + 0.12;
+  const paperResponse = elasticResponse(bendAge, 8, 3.2)
+    * THREE.MathUtils.smootherstep(bendAge, 0, 0.12);
+  // Use one bend profile from flight through adhesion. Switching from a
+  // shallow approach to a tighter peel at contact made the free edge whip.
+  const mobilePeelAngle = (80 + 34 * Math.sin(progress * Math.PI * 0.9)
+    - 24 * progress + 2 * motion.lean * (1 - progress)
+    + 2 * paperResponse) * Math.PI / 180;
+  const peelAngle = THREE.MathUtils.lerp(desktopPeelAngle, mobilePeelAngle, mobilePlacement);
+  const desktopBendSpan = 0.34 + 0.035 * travel;
+  const mobileBendSpan = 0.38 + 0.035 * travel;
+  const bendSpan = width * THREE.MathUtils.lerp(desktopBendSpan, mobileBendSpan, mobilePlacement);
   const freeLength = travelSpan - Math.max(0, contact);
   const tipStart = Math.max(bendSpan, freeLength * 0.72);
   const tipEnd = Math.max(tipStart + width * 0.001, freeLength);
-  const tipAngle = 7 * Math.PI / 180 * (1 - travel * 0.5);
+  const tipAngle = THREE.MathUtils.lerp(7, 6 + 3 * paperResponse, mobilePlacement) * Math.PI / 180 * (1 - travel * 0.5);
   const twist = ((3 + 1.5 * motion.twist) * Math.exp(-elapsed * 1.1)
-    + 2 * elasticResponse(elapsed - 0.25, 4.6, 2.7)) * Math.PI / 180;
+    + 2 * elasticResponse(elapsed - 0.25, 4.6, 2.7)) * Math.PI / 180
+      * THREE.MathUtils.lerp(1, 0.65, mobilePlacement);
   const sinTwist = Math.sin(twist), cosTwist = Math.cos(twist);
   buffers.x[0] = 0;
   buffers.z[0] = 0;
@@ -213,14 +235,40 @@ export function deformSticker(
       positions.setXYZ(
         i,
         seated[0] + yawedX * cosRoll - pitchedY * sinRoll
-          + motion.sway * (width * 0.09 * airborne + curlZ * 0.1 * (1 - progress)),
-        seated[1] + yawedX * sinRoll + pitchedY * cosRoll,
+          + motion.sway * (width * THREE.MathUtils.lerp(0.09, 0.02, mobilePlacement) * airborne + curlZ * 0.1 * (1 - progress)) + entryX,
+        seated[1] + yawedX * sinRoll + pitchedY * cosRoll + entryY,
         seated[i * 3 + 2] + yawedZ + liftZ,
       );
     }
   }
   positions.needsUpdate = true;
   geometry.computeVertexNormals();
+}
+
+/** Put the whole deformed sheet below the mobile viewport, using its actual
+ * camera projection rather than a fixed local-Y distance. */
+function belowFrameOffset(mesh: THREE.Mesh, camera: THREE.Camera, canvasHeight: number) {
+  mesh.updateWorldMatrix(true, false);
+  const bounds = new THREE.Box3().setFromBufferAttribute(
+    mesh.geometry.getAttribute("position") as THREE.BufferAttribute,
+  );
+  let shiftY = 0;
+  for (const x of [bounds.min.x, bounds.max.x]) {
+    for (const y of [bounds.min.y, bounds.max.y]) {
+      for (const z of [bounds.min.z, bounds.max.z]) {
+        const corner = new THREE.Vector3(x, y, z).applyMatrix4(mesh.matrixWorld);
+        const target = corner.clone().project(camera);
+        target.y = -1 - 48 / canvasHeight;
+        target.unproject(camera);
+        shiftY = Math.min(shiftY, target.y - corner.y);
+      }
+    }
+  }
+  const offset = new THREE.Vector3(0, shiftY, 0);
+  if (mesh.parent) {
+    offset.applyMatrix3(new THREE.Matrix3().setFromMatrix4(mesh.parent.matrixWorld).invert());
+  }
+  return offset;
 }
 
 /** A shared cutout rounds both physical faces without stretching their artwork
@@ -291,13 +339,16 @@ export default function CartridgeSticker({
     invalidate();
   }, [gl, invalidate]);
   const elapsed = useRef<number | null>(null);
-  const settings = useRef({ rate: 1, delay: OPEN_DELAY, approach: STICKER_APPROACH_DISTANCE });
-  const activeSettings = useRef({ rate: 1, delay: OPEN_DELAY, approach: STICKER_APPROACH_DISTANCE });
+  const flightOffset = useRef(new THREE.Vector3());
+  const flightPrepared = useRef(false);
+  const settings = useRef({ rate: 1, delay: OPEN_DELAY, approach: STICKER_APPROACH_DISTANCE, mobilePlacement: 0 });
+  const activeSettings = useRef({ rate: 1, delay: OPEN_DELAY, approach: STICKER_APPROACH_DISTANCE, mobilePlacement: 0 });
   useLayoutEffect(() => {
     settings.current = {
       rate: DURATION / THREE.MathUtils.lerp(1.65, DURATION, desktopBlend),
       delay: THREE.MathUtils.lerp(0.55, OPEN_DELAY, desktopBlend),
-      approach: THREE.MathUtils.lerp(0.12, STICKER_APPROACH_DISTANCE, desktopBlend),
+      approach: THREE.MathUtils.lerp(0.008, STICKER_APPROACH_DISTANCE, desktopBlend),
+      mobilePlacement: 1 - desktopBlend,
     };
   }, [desktopBlend]);
   const reducedMotion = useRef(false);
@@ -334,6 +385,9 @@ export default function CartridgeSticker({
 
   useLayoutEffect(() => {
     if (busyRef) busyRef.current = isOpen && !appliedRef.current;
+    flightPrepared.current = false;
+    flightOffset.current.set(0, 0, 0);
+    if (mesh.current) mesh.current.position.set(0, 0, 0);
     if (!isOpen) {
       // Closing during the wait cancels it without consuming the one-shot.
       // Once application has begun, finish flush immediately on close rather
@@ -359,14 +413,30 @@ export default function CartridgeSticker({
   useLayoutEffect(() => () => geometry.dispose(), [geometry]);
   useLayoutEffect(() => () => cornerMask.dispose(), [cornerMask]);
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     if (!isOpen || elapsed.current === null || !mesh.current) return;
-    elapsed.current += Math.min(delta, 1 / 30) * activeSettings.current.rate;
+    const mobilePlacement = activeSettings.current.mobilePlacement;
+    const contact = THREE.MathUtils.lerp(FIRST_CONTACT_PROGRESS, MOBILE_FIRST_CONTACT_PROGRESS, mobilePlacement);
+    // Preserve the rise-in speed, easing into desktop's slower adhesion pace.
+    const adhesionPace = THREE.MathUtils.smootherstep(elapsed.current / DURATION, contact - 0.12, contact + 0.18);
+    const playbackRate = THREE.MathUtils.lerp(activeSettings.current.rate, 1, adhesionPace * mobilePlacement);
+    elapsed.current += Math.min(delta, 1 / 30) * playbackRate;
     if (elapsed.current >= 0) {
       appliedRef.current = true;
       if (reducedMotion.current) elapsed.current = DURATION;
+      const mobile = activeSettings.current.mobilePlacement;
+      if (!flightPrepared.current) {
+        if (mobile > 0 && !reducedMotion.current) {
+          deformSticker(geometry, seated, width, 0, rotationRef.current, motionRef.current, activeSettings.current.approach, mobile);
+          flightOffset.current.copy(belowFrameOffset(mesh.current, state.camera, state.size.height)).multiplyScalar(mobile);
+        }
+        flightPrepared.current = true;
+      }
+      const contactProgress = THREE.MathUtils.lerp(FIRST_CONTACT_PROGRESS, MOBILE_FIRST_CONTACT_PROGRESS, mobile);
+      const flight = 1 - THREE.MathUtils.smootherstep(elapsed.current / DURATION, 0, contactProgress);
+      mesh.current.position.copy(flightOffset.current).multiplyScalar(flight);
       mesh.current.visible = true;
-      deformSticker(geometry, seated, width, elapsed.current, rotationRef.current, motionRef.current, activeSettings.current.approach);
+      deformSticker(geometry, seated, width, elapsed.current, rotationRef.current, motionRef.current, activeSettings.current.approach, mobile);
     }
     if (elapsed.current >= DURATION) {
       elapsed.current = null;
