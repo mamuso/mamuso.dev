@@ -3,7 +3,6 @@
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
 import AnimatedName from '@/app/components/AnimatedName'
-import PlacePhoto from '@/app/components/PlacePhoto'
 import CartridgeStage from '@/app/components/CartridgeStageDynamic'
 
 export default function HomeContent() {
@@ -19,8 +18,7 @@ export default function HomeContent() {
               <AnimatedName />
             </span>
             <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealDetails)}>
-              , a designer from <PlacePhoto label="Villena, Alicante" image="/images/villena.jpg" />, based in beautiful{' '}
-              <PlacePhoto label="California" image="/images/california.jpg" />,{' '}
+              , a designer from Villena, Alicante, based in beautiful California,{' '}
             </span>
             <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealClosing)}>
               building fun things at SpaceXAI.
@@ -69,9 +67,9 @@ const styles = stylex.create({
     },
   },
   stage: {
-    // Pull the canvas's empty top band closer without changing its camera.
+    // Keep a little space between the introduction and mobile canvas.
     marginBlockStart: {
-      default: -24,
+      default: 16,
       '@media (min-width: 1024px)': 0,
     },
     zIndex: {
