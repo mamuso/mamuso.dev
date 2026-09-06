@@ -108,3 +108,24 @@ body {
     }
   }
 }
+
+/* Keep captions still while the framed photos respond to their shared link. */
+@layer photo-interactions {
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    [data-photo-link]:hover [data-photo-stack] {
+      transform: translateY(-2px) rotate(var(--photo-tilt, 0deg)) scale(1.035);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-photo-link]:focus-visible [data-photo-stack] {
+      transform: translateY(-2px) rotate(var(--photo-tilt, 0deg)) scale(1.035);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-photo-stack] {
+      transition: none;
+    }
+  }
+}

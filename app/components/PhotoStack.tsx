@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
+import { colors } from '../styles/tokens.stylex'
 
 export interface PhotoPrint {
   basename: string
@@ -13,9 +14,12 @@ export interface PhotoPrint {
 export default function PhotoStack({ photos, href, title }: { photos: PhotoPrint[]; href: string; title: string }) {
   if (!photos.length) return null
   const visible = photos.slice(0, 3)
+  // Stable pseudo-random tilt: identical on the server and on every render.
+  const hash = Array.from(href).reduce((value, character) => (Math.imul(value, 31) + character.charCodeAt(0)) | 0, 0)
+  const tilt = ((hash >>> 0) % 801) / 100 - 4
   return (
-    <Link href={href} aria-label={photos.length > 1 ? `${title} · ${photos.length} photos` : title} {...stylex.props(styles.link)}>
-      <span {...stylex.props(styles.stack)}>
+    <Link data-photo-link href={href} aria-label={photos.length > 1 ? `${title} · ${photos.length} photos` : title} {...stylex.props(styles.link, styles.tilt(tilt))}>
+      <span data-photo-stack {...stylex.props(styles.stack)}>
         {visible.map((photo, index) => (
           <span key={`${photo.basename}-${index}`} {...stylex.props(styles.print, index === 0 ? styles.cover : index === 1 ? styles.middle : styles.back)}>
             <Image
@@ -29,6 +33,7 @@ export default function PhotoStack({ photos, href, title }: { photos: PhotoPrint
           </span>
         ))}
       </span>
+      <span {...stylex.props(styles.title)}>{title}</span>
       {photos.length > 1 && <span aria-hidden="true" {...stylex.props(styles.count)}>{photos.length} photos</span>}
     </Link>
   )
@@ -46,14 +51,25 @@ const styles = stylex.create({
     borderRadius: 4,
     outline: { default: 'none', ':focus-visible': '2px solid currentColor' },
     outlineOffset: 6,
-    transform: { default: 'translateY(0)', ':hover': 'translateY(-3px)', ':focus-visible': 'translateY(-3px)' },
-    transition: { default: 'transform 180ms ease', '@media (prefers-reduced-motion: reduce)': 'none' },
+    color: colors.textPrimary,
+    gap: 12,
+  },
+  tilt: (angle: number) => ({ '--photo-tilt': `${angle}deg` }),
+  title: {
+    fontSize: 13,
+    lineHeight: 1.4,
+    textAlign: 'center',
+    maxWidth: 180,
+    paddingInline: 4,
+    overflowWrap: 'anywhere',
+    textWrap: 'pretty',
   },
   stack: {
     display: 'grid',
     placeItems: 'center',
     width: '100%',
     isolation: 'isolate',
+    transition: 'transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1)',
   },
   print: {
     gridArea: '1 / 1',
@@ -73,8 +89,7 @@ const styles = stylex.create({
     maxHeight: { default: 120, '@media (min-width: 480px)': 160 },
   },
   count: {
-    position: 'absolute',
-    bottom: 0,
+    marginBlockStart: -8,
     color: '#62626a',
     fontSize: 12,
   },
