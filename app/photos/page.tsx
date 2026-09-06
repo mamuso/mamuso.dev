@@ -1,8 +1,7 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
 import { getPhotoPosts } from '@/lib/api'
 import { PostType } from '@/lib/types'
-import Link from 'next/link'
-import Image from 'next/image'
+import PhotoStack from '@/app/components/PhotoStack'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
 
@@ -46,9 +45,7 @@ export default function Photos() {
       <ul {...stylex.props(layout.list, styles.gallery)}>
         {photoPosts.map((post) => (
           <li key={post.slug}>
-            <Link href={`/note/${post.slug}`} {...stylex.props(styles.photoLink)}>
-              <Image src={`/assets/feed/gallery-${post.basename}`} width={post.width / 4} height={post.height / 4} alt={post.title} {...stylex.props(styles.photo)} />
-            </Link>
+            <PhotoStack photos={[post]} href={`/note/${post.slug}`} title={post.title} />
           </li>
         ))}
       </ul>
@@ -59,18 +56,14 @@ export default function Photos() {
 const styles = stylex.create({
   gallery: {
     display: 'grid',
-    gap: 16,
+    columnGap: { default: 16, '@media (min-width: 480px)': 32 },
+    rowGap: { default: 24, '@media (min-width: 480px)': 40 },
+    marginBlockStart: 28,
+    paddingBlockEnd: 32,
     gridTemplateColumns: {
-      default: '1fr',
-      '@media (min-width: 480px)': 'repeat(2, minmax(0, 1fr))',
+      default: 'repeat(2, minmax(0, 1fr))',
+      '@media (min-width: 640px)': 'repeat(3, minmax(0, 1fr))',
+      '@media (min-width: 960px)': 'repeat(4, minmax(0, 1fr))',
     },
-  },
-  photoLink: {
-    display: 'block',
-  },
-  photo: {
-    display: 'block',
-    height: 'auto',
-    width: '100%',
   },
 })

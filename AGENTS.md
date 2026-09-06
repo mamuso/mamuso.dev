@@ -28,7 +28,7 @@ Standard commands are defined in `package.json`:
 - `pnpm lint`: run `eslint .`.
 - `pnpm run assets`: replace `public/assets` with a copy of `content/assets`.
 - `pnpm run rss`: generate `public/feed.xml` (Atom despite the script name).
-- `pnpm run photos`: import new originals from `content/assets/originals/`.
+- `pnpm run photos`: prepare originals from local `photo-inbox/` into `.photo-import/` drafts; see `docs/photo-import.md`.
 - `pnpm run shader:check`: validate component WGSL shaders with vgpu.
 - `node --test lib/post-index.test.mjs app/components/cartridgeMobileLayout.test.mjs`: run the existing content-index and cartridge-layout tests.
 
@@ -43,7 +43,7 @@ build also runs the content pipeline and updates the submodule checkout.
 - Markdown uses gray-matter frontmatter. `lib/post-index.ts` validates explicit slugs and rejects collisions with canonical URLs or filename aliases. `lib/api.tsx` wraps reads in React `cache()` and selects requested fields.
 - Photo posts use `category: photo`, `basename`, image dimensions, and optional camera/EXIF, GPS, and palette fields. A non-photo note can also have a `basename` image; it will not appear in the photo gallery. Notes lists include all non-photo entries, including legacy `code` and uncategorized posts.
 - Keep published explicit slugs fixed when editing titles. Markdown filenames also remain stable: photo import uses them for duplicate detection. `/note/<filename>` permanently redirects to `/note/<slug>` when an explicit slug exists; otherwise the filename remains the URL.
-- Photo import writes web/gallery images to `content/assets/feed/` and matching Markdown, skipping already processed basenames. Give imported photos a title and descriptive explicit slug before publishing; see `content/_/photo.md`.
+- Photo import deduplicates originals by SHA-256 and preserves draft edits. `pnpm photos --review` collects title, slug and date; `pnpm photos --publish ID` (or `all`) installs reviewed drafts and images into content and refreshes assets/feed. Originals and raw EXIF stay local. See `docs/photo-import.md`.
 - Feed links use canonical `/note/<slug>` URLs, while entry IDs retain historical `/post/<filename>` URLs to preserve subscriber history.
 - `PostType` in `lib/types.tsx` declares many fields required, but `getPostBySlug` returns only requested fields via a cast. Do not assume EXIF or unrequested fields are present.
 

@@ -40,3 +40,7 @@ next-env.d.ts
 /public/assets
 
 .pnpm-store
+
+# Local photo originals and unpublished drafts
+/photo-inbox/
+/.photo-import/
