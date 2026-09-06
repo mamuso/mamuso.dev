@@ -1152,7 +1152,7 @@ function CartridgeSceneTextures({
     onOpenChange?.(openIndex !== null);
   }, [openIndex, onOpenChange]);
 
-  const rowY = pixelYToWorldY(compositionCamera, size.height * 0.43, size.height, MOBILE_ROW_DEPTH);
+  const rowY = pixelYToWorldY(compositionCamera, size.height * 0.43 + 20, size.height, MOBILE_ROW_DEPTH);
   const worldPerPixel = 2 * Math.abs(compositionCamera.position.z - MOBILE_ROW_DEPTH) *
     Math.tan((compositionCamera as THREE.PerspectiveCamera).fov * DEG / 2) / size.height;
   const slotSpacing = mobileRackSpacing(layout.length, Math.max(0, size.width - 48) * worldPerPixel);

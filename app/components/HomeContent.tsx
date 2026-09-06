@@ -50,10 +50,7 @@ const styles = stylex.create({
       default: -32,
       '@media (min-width: 1024px)': 0,
     },
-    flex: {
-      default: '1',
-      '@media (min-width: 1024px)': '0 0 auto',
-    },
+    flex: '0 0 auto',
     minHeight: {
       default: 0,
       // Canvas height minus the home header and the layout's row gap.

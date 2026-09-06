@@ -40,7 +40,7 @@ const styles = stylex.create({
     zIndex: 1,
   },
   dividerContainer: {
-    display: { default: 'none', '@media (min-width: 1024px)': 'block' },
+    display: 'block',
     insetInline: 0,
     pointerEvents: 'none',
     position: 'absolute',
