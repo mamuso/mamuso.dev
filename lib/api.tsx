@@ -1,20 +1,24 @@
-import fs from 'fs-extra'
-import { join } from 'path'
 import { cache } from 'react'
 import { PostType } from './types'
-import matter from 'gray-matter'
+import { readPostIndex } from './post-index'
 
-const postsDirectory = join(process.cwd(), 'content/posts/')
+const getPostIndex = cache(() => readPostIndex())
 
-const getPostSlugs = cache(() => fs.readdirSync(postsDirectory))
+const getPostSlugs = cache(() => getPostIndex().posts.map((post) => post.slug))
+
+export function resolvePostSlug(slug: string): string | undefined {
+  return getPostIndex().bySlug.get(slug)?.slug
+}
+
+export function getPostRouteSlugs(): string[] {
+  return [...getPostIndex().bySlug.keys()]
+}
 
 // Cache raw file read per request to avoid duplicate filesystem reads
 const getPostData = cache((slug: string) => {
-  const realSlug = slug.replace(/\.md$/, '')
-  const fullPath = join(postsDirectory, `${realSlug}.md`)
-  const fileContents = fs.readFileSync(fullPath, 'utf8')
-  const { data, content } = matter(fileContents)
-  return { realSlug, data, content }
+  const post = getPostIndex().bySlug.get(slug.replace(/\.md$/, ''))
+  if (!post) throw new Error(`Post not found: ${slug}`)
+  return { realSlug: post.slug, data: post.data, content: post.content }
 })
 
 type PostSummary = { slug: string; date: string }
@@ -51,6 +55,13 @@ export function getPostBySlug(slug: string, fields: string[] = []): PostType {
 
 export function getAllPosts(fields: string[]): PostType[] {
   return getSortedPostSummaries().map(({ slug }) => getPostBySlug(slug, fields))
+}
+
+export function getNotePosts(fields: string[]): PostType[] {
+  // Writing includes legacy code posts and entries without a category.
+  return getSortedPostSummaries()
+    .filter(({ slug }) => getPostData(slug).data.category !== 'photo')
+    .map(({ slug }) => getPostBySlug(slug, fields))
 }
 
 export function getRecentPosts(count: number, fields: string[]): PostType[] {

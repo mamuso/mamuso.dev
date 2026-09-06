@@ -22,7 +22,7 @@ caveats are captured here.
 
 - All posts/photos/assets come from the `content/` git submodule (`github.com/mamuso/mamuso.dev.content.git`, public).
 - The app reads `content/posts/` at render time, so pages error with `ENOENT` if the submodule is not populated.
-- The update script runs `git submodule update --init --remote` to populate it; re-run that command manually if `content/` is ever empty.
+- Run `git submodule update --init` if `content/` is empty. Builds use the parent repo's pinned content revision; do not advance it to the remote default branch during a build.
 
 ### Node version gotcha (important)
 

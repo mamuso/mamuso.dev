@@ -31,7 +31,7 @@ pnpm run assets
 pnpm dev
 ```
 
-`pnpm build` runs `git submodule init && git submodule update --remote`. That advances the submodule to the remote default branch. Do not assume the parent repo's pinned gitlink is what production will read unless that pointer was committed after the update.
+`pnpm build` runs `git submodule update --init` to use the parent repo's pinned content revision. After committing content changes, stage the updated `content` gitlink in the parent repo before building. Push the content commit before pushing the parent commit so deployments can fetch it.
 
 ## Routes and rendering
 
@@ -53,9 +53,13 @@ React Strict Mode is off (`reactStrictMode: false` in `next.config.js`).
 
 Markdown files in `content/posts/` use gray-matter frontmatter. `lib/api.tsx` reads them with field lists and React `cache()`. Photo posts use `category: photo` plus `basename`, dimensions, camera/EXIF, GPS, and a color palette. A post can have a `basename` image without being a photo (screenshot notes). Those appear in the article but not on `/photos`.
 
+Photo public URLs use an explicit `slug` in frontmatter, normally `YYYY-MM-DD-descriptive-title`. Keep published slugs fixed when editing titles. Markdown filenames remain stable identifiers for image-import duplicate detection and future collection references. `lib/post-index.ts` validates explicit slugs and rejects collisions with either canonical URLs or filename aliases. `/note/<filename>` permanently redirects to `/note/<slug>`; notes without an explicit slug retain their filename URLs. The notes archive and pagination include all non-photo entries, including legacy `code` and uncategorized writing.
+
 `pnpm run photos` reads new files from `content/assets/originals/`, writes web/gallery images to `content/assets/feed/`, and creates matching Markdown. Already processed basenames are skipped.
 
-`lib/assets.tsx` replaces `public/assets` with a copy of the submodule assets. `lib/feed.tsx` renders Markdown and writes Atom to `public/feed.xml`. Feed item links still use `/post/<slug>` and rely on the redirect.
+After importing a photo, give it a title and an explicit descriptive `slug` before publishing; `content/_/photo.md` shows the fields. Slugs are deliberately not derived from titles at render time. Imported photos without a slug temporarily retain their filename URL.
+
+`lib/assets.tsx` replaces `public/assets` with a copy of the submodule assets. `lib/feed.tsx` uses the shared post index, renders Markdown, and writes Atom to `public/feed.xml`. Feed links use canonical `/note/<slug>` URLs, while entry IDs retain historical `/post/<filename>` URLs to preserve subscriber history.
 
 Script-only modules use `.ts` or `.tsx` under `lib/`. There is no Sass.
 

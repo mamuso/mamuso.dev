@@ -1,5 +1,6 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
-import { getAllPosts, getPostBySlug } from '@/lib/api'
+import { getNotePosts, getPostBySlug } from '@/lib/api'
+import { notFound } from 'next/navigation'
 import Post from '@/app/components/Post'
 import Pagination from '@/app/components/Pagination'
 import * as stylex from '@stylexjs/stylex'
@@ -40,17 +41,21 @@ export const metadata = {
 const POSTS_PER_PAGE = 20
 
 export async function generateStaticParams() {
-  const allPosts = getAllPosts(['slug'])
+  const allPosts = getNotePosts(['slug'])
   const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE)
   return Array.from({ length: totalPages }, (_, i) => ({ page: String(i + 1) }))
 }
 
-export default async function Posts(props: { params: Promise<{ page: number }> }) {
+export default async function Posts(props: { params: Promise<{ page: string }> }) {
   const params = await props.params
-  const page: number = params.page
+  const page = Number(params.page)
 
-  const allPostsMinimal = getAllPosts(['slug', 'date'])
+  const allPostsMinimal = getNotePosts(['slug', 'date'])
   const totalPages = Math.ceil(allPostsMinimal.length / POSTS_PER_PAGE)
+
+  if (!Number.isInteger(page) || page < 1 || page > totalPages) {
+    notFound()
+  }
 
   const pagePostSlugs = allPostsMinimal.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE)
 
