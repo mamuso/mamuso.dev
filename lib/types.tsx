@@ -5,6 +5,9 @@ export interface PostType {
   content: string
   summary: string
   category: string
+  photoStack?: string
+  photoStackTitle?: string
+  photoStackOrder?: number
   basename: string
   camera: string
   iso: string

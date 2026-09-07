@@ -38,14 +38,29 @@ export const metadata = {
 }
 
 export default function Photos() {
-  const photoPosts: PostType[] = getPhotoPosts(['title', 'date', 'slug', 'category', 'basename', 'width', 'height'])
+  const photoPosts: PostType[] = getPhotoPosts(['title', 'date', 'slug', 'category', 'basename', 'width', 'height', 'photoStack', 'photoStackTitle', 'photoStackOrder'])
+  const groups = new Map<string, PostType[]>()
+  for (const post of photoPosts) {
+    const key = post.photoStack ? `stack:${post.photoStack}` : `photo:${post.slug}`
+    const group = groups.get(key)
+    if (group) group.push(post)
+    else groups.set(key, [post])
+  }
+  // Sort only within each stack so its position in the gallery stays date-based.
+  for (const photos of groups.values()) {
+    photos.sort((a, b) => {
+      const orderA = Number.isFinite(a.photoStackOrder) ? a.photoStackOrder! : Infinity
+      const orderB = Number.isFinite(b.photoStackOrder) ? b.photoStackOrder! : Infinity
+      return orderA === orderB ? 0 : orderA < orderB ? -1 : 1
+    })
+  }
   return (
     <section {...stylex.props(layout.section, layout.stack)}>
       <h2 {...stylex.props(typography.heading)}>Say Cheese</h2>
       <ul {...stylex.props(layout.list, styles.gallery)}>
-        {photoPosts.map((post) => (
-          <li key={post.slug}>
-            <PhotoStack photos={[post]} href={`/note/${post.slug}`} title={post.title} />
+        {Array.from(groups, ([key, photos]) => (
+          <li key={key}>
+            <PhotoStack photos={photos} href={`/note/${photos[0].slug}`} title={photos[0].photoStackTitle ?? photos[0].title} />
           </li>
         ))}
       </ul>

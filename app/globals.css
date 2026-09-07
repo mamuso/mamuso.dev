@@ -112,14 +112,17 @@ body {
 /* Keep captions still while the framed photos respond to their shared link. */
 @layer photo-interactions {
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    [data-photo-link]:hover [data-photo-print] {
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.12), 0 7px 14px rgba(0, 0, 0, 0.11);
+    }
     [data-photo-link]:hover [data-photo-stack] {
-      transform: translateY(-2px) rotate(var(--photo-tilt, 0deg)) scale(1.035);
+      transform: perspective(900px) translateY(-3px) rotateX(6deg) rotateY(var(--photo-tilt, 0deg));
     }
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    [data-photo-link]:focus-visible [data-photo-stack] {
-      transform: translateY(-2px) rotate(var(--photo-tilt, 0deg)) scale(1.035);
+    [data-photo-link]:focus-within [data-photo-stack] {
+      transform: perspective(900px) translateY(-3px) rotateX(6deg) rotateY(var(--photo-tilt, 0deg));
     }
   }
 
@@ -127,5 +130,20 @@ body {
     [data-photo-stack] {
       transition: none;
     }
+  }
+}
+
+@layer photo-interactions {
+  [data-photo-group]:focus-within { z-index: 1; }
+  [data-photo-group]:focus-within [data-photo-print] { transform: var(--print-open); }
+  @media (hover: hover) {
+    [data-photo-group]:hover { z-index: 1; }
+    [data-photo-group]:hover [data-photo-print] { transform: var(--print-open); }
+  }
+  @media (hover: none) {
+    [data-photo-group] [data-photo-print] { transform: var(--print-open); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-photo-print] { transition: none; }
   }
 }

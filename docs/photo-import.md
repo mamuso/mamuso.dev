@@ -29,3 +29,42 @@ Publishing installs images before Markdown and refuses to overwrite differing de
 Existing published photos are unchanged. For old originals, the new hash registry has no historical mapping: do not copy the entire legacy originals archive into the inbox without reviewing for already published photos.
 
 Run `pnpm photos:test` for orientation, EXIF, palette, duplicate and publication recovery checks. Test real camera exports before publishing a large batch. The Atom feed currently excludes photo posts; this importer preserves that existing policy.
+
+## Gallery stacks
+
+To group photos in `/photos`, add the same stack ID and display title to their
+published Markdown frontmatter in `content/posts/`:
+
+```yaml
+photoStack: slide-ranch-2026-08-29
+photoStackTitle: Slide Ranch
+```
+
+The three imports titled “Follow me!”, “Sunset hits different in California”,
+and “Wifi!” demonstrate this. Use a different ID for each stack; omit these
+fields for individual prints. Keep groups to two or three photos. Grouping does
+not change titles, slugs, individual pages or dates. The newest member determines
+where the stack appears. By default, it also supplies its cover and display title.
+
+To choose a cover, add this optional field only to that photo:
+
+```yaml
+photoStackOrder: 1
+```
+
+Photos with a numeric `photoStackOrder` come first, in ascending order. Unnumbered
+photos follow in their existing date order; ties preserve their existing order.
+You can number just the cover, a few photos, or all of them. The first photo after
+sorting supplies the cover and display title. This does not move the stack in
+the gallery. Use YAML numbers (without quotes); nonnumeric values are ignored.
+
+`app/photos/page.tsx` groups the posts by `photoStack`.
+`app/components/PhotoStack.tsx` gives each print a deterministic variation based
+on its cover URL: different stacks get different angles and offsets without
+jumping on reload. Each print keeps its original proportions. Hover or keyboard focus gently
+separates the prints and tilts them in CSS perspective; each print links
+to its own photo. Touch devices show the fan already open. Reduced-motion
+preferences disable the transition.
+
+Edit the published Markdown after importing (or add the fields to the draft
+before publishing). Rebuild to publish gallery changes.
