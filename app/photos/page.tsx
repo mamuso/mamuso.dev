@@ -1,6 +1,7 @@
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
 import { getPhotoPosts } from '@/lib/api'
 import { PostType } from '@/lib/types'
+import { comparePhotoStackOrder } from '@/lib/photo-stacks'
 import PhotoStack from '@/app/components/PhotoStack'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
@@ -46,21 +47,14 @@ export default function Photos() {
     if (group) group.push(post)
     else groups.set(key, [post])
   }
-  // Sort only within each stack so its position in the gallery stays date-based.
-  for (const photos of groups.values()) {
-    photos.sort((a, b) => {
-      const orderA = Number.isFinite(a.photoStackOrder) ? a.photoStackOrder! : Infinity
-      const orderB = Number.isFinite(b.photoStackOrder) ? b.photoStackOrder! : Infinity
-      return orderA === orderB ? 0 : orderA < orderB ? -1 : 1
-    })
-  }
+  for (const photos of groups.values()) photos.sort(comparePhotoStackOrder)
   return (
-    <section {...stylex.props(layout.section, layout.stack)}>
-      <h2 {...stylex.props(typography.heading)}>Say Cheese</h2>
+    <section {...stylex.props(layout.section, layout.stack, styles.section)}>
+      <h2 {...stylex.props(typography.heading, typography.muted, styles.title)}>Say Cheese</h2>
       <ul {...stylex.props(layout.list, styles.gallery)}>
         {Array.from(groups, ([key, photos]) => (
           <li key={key}>
-            <PhotoStack photos={photos} href={`/note/${photos[0].slug}`} title={photos[0].photoStackTitle ?? photos[0].title} />
+            <PhotoStack photos={photos} collectionHref={photos[0].photoStack ? `/photos/stack/${encodeURIComponent(photos[0].photoStack)}` : undefined} href={`/note/${photos[0].slug}`} title={photos[0].photoStackTitle ?? photos[0].title} />
           </li>
         ))}
       </ul>
@@ -69,11 +63,20 @@ export default function Photos() {
 }
 
 const styles = stylex.create({
+  section: {
+    marginBlockStart: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 400,
+    letterSpacing: '-0.015em',
+    lineHeight: 1.2,
+  },
   gallery: {
     display: 'grid',
     columnGap: { default: 16, '@media (min-width: 480px)': 32 },
     rowGap: { default: 24, '@media (min-width: 480px)': 40 },
-    marginBlockStart: 28,
+    marginBlockStart: 52,
     paddingBlockEnd: 32,
     gridTemplateColumns: {
       default: 'repeat(2, minmax(0, 1fr))',

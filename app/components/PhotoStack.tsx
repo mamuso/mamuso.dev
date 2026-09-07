@@ -11,10 +11,10 @@ export interface PhotoPrint {
   title: string
 }
 
-/** First photo is the cover; up to two other photos peek out behind it. */
-export default function PhotoStack({ photos, href, title }: { photos: PhotoPrint[]; href: string; title: string }) {
+/** Up to six prints suggest the collection; its title and count open every photo. */
+export default function PhotoStack({ photos, href, title, collectionHref }: { photos: PhotoPrint[]; href: string; title: string; collectionHref?: string }) {
   if (!photos.length) return null
-  const visible = photos.slice(0, 3)
+  const visible = collectionHref ? photos.slice(0, 6) : photos
   // Stable pseudo-random tilt: identical on the server and on every render.
   const hash = Array.from(href).reduce((value, character) => (Math.imul(value, 31) + character.charCodeAt(0)) | 0, 0)
   const tilt = ((hash >>> 0) % 2 === 0 ? -1 : 1) * (3 + ((hash >>> 0) % 101) / 100)
@@ -22,7 +22,7 @@ export default function PhotoStack({ photos, href, title }: { photos: PhotoPrint
     <div data-photo-link data-photo-group={photos.length > 1 ? true : undefined} {...stylex.props(styles.link, styles.tilt(tilt))}>
       <span data-photo-stack {...stylex.props(styles.stack)}>
         {visible.map((photo, index) => (
-          <Link href={photo.slug ? `/note/${photo.slug}` : href} aria-label={photo.title} data-photo-print key={`${photo.basename}-${index}`} {...stylex.props(styles.print, styles.pose(index, ((hash >>> (index * 5)) % 101) / 100))}>
+          <Link href={photo.slug ? `/note/${photo.slug}` : href} aria-label={photo.title} data-photo-print key={`${photo.basename}-${index}`} {...stylex.props(styles.print, styles.pose(index, ((hash >>> (index * 5)) % 101) / 100, visible.length))}>
             <Image
               src={`/assets/feed/gallery-${photo.basename}`}
               width={photo.width}
@@ -34,8 +34,12 @@ export default function PhotoStack({ photos, href, title }: { photos: PhotoPrint
           </Link>
         ))}
       </span>
-      <Link href={href} {...stylex.props(styles.title)}>{title}</Link>
-      {photos.length > 1 && <span aria-hidden="true" {...stylex.props(styles.count)}>{photos.length} photos</span>}
+      <Link href={collectionHref ?? href} {...stylex.props(styles.title)}>{title}</Link>
+      {photos.length > 1 && (
+        <Link href={collectionHref ?? href} aria-label={`View all ${photos.length} photos in ${title}`} {...stylex.props(styles.count)}>
+          {photos.length} photos
+        </Link>
+      )}
     </div>
   )
 }
@@ -87,14 +91,14 @@ const styles = stylex.create({
     backgroundColor: '#fff',
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.1)',
   },
-  pose: (index: number, variation: number) => ({
-    zIndex: 3 - index,
+  pose: (index: number, variation: number, count: number) => ({
+    zIndex: { default: count - index, ':focus-visible': count + 1 },
     '--print-rest': index === 0
       ? `rotate(${variation * 1.5 - 0.75}deg)`
-      : `translate(${(index === 1 ? -1 : 1) * (2 + variation * 2)}px, ${-index * 6}px) rotate(${(index === 1 ? -1 : 1) * (2 + variation * 2)}deg)`,
+      : `translate(${(index % 2 === 1 ? -1 : 1) * (2 + variation * 2)}px, ${-index * 6 / Math.max(1, (count - 1) / 3)}px) rotate(${(index % 2 === 1 ? -1 : 1) * (2 + variation * 2)}deg)`,
     '--print-open': index === 0
       ? `translate(0px, -1px) rotate(${variation * 1.5 - 0.75}deg)`
-      : `translate(${(index === 1 ? -1 : 1) * (12 + variation * 3)}px, ${-index * 8}px) rotate(${(index === 1 ? -1 : 1) * (4 + variation * 2)}deg)`,
+      : `translate(${(index % 2 === 1 ? -1 : 1) * (12 + Math.floor((index - 1) / 2) * 10 / Math.max(1, (count - 1) / 3) + variation * 3)}px, ${-index * 8 / Math.max(1, (count - 1) / 3)}px) rotate(${(index % 2 === 1 ? -1 : 1) * (4 + variation * 2)}deg)`,
   }),
   image: {
     display: 'block',
@@ -104,6 +108,8 @@ const styles = stylex.create({
     maxHeight: { default: 120, '@media (min-width: 480px)': 160 },
   },
   count: {
+    textDecoration: { default: 'none', ':hover': 'underline', ':focus-visible': 'underline' },
+    textUnderlineOffset: 3,
     marginBlockStart: -8,
     color: '#62626a',
     fontSize: 12,

@@ -1,0 +1,66 @@
+import Image from 'next/image'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import * as stylex from '@stylexjs/stylex'
+import { getPhotoPosts } from '@/lib/api'
+import { comparePhotoStackOrder } from '@/lib/photo-stacks'
+import { BLOG_TITLE } from '@/lib/constants'
+import { layout, typography } from '@/app/styles/site'
+
+type Props = { params: Promise<{ stack: string }> }
+
+function getStack(stack: string) {
+  const photos = getPhotoPosts(['title', 'slug', 'date', 'basename', 'width', 'height', 'photoStack', 'photoStackTitle', 'photoStackOrder'])
+    .filter((photo) => photo.photoStack === stack)
+    .sort(comparePhotoStackOrder)
+  if (!photos.length) notFound()
+  return photos
+}
+
+export function generateStaticParams() {
+  return [...new Set(getPhotoPosts(['photoStack']).map((photo) => photo.photoStack).filter(Boolean))]
+    .map((stack) => ({ stack }))
+}
+
+export async function generateMetadata({ params }: Props) {
+  const { stack } = await params
+  const [cover] = getStack(stack)
+  return { title: `${cover.photoStackTitle ?? cover.title} – Photos – ${BLOG_TITLE}` }
+}
+
+export default async function PhotoCollection({ params }: Props) {
+  const { stack } = await params
+  const photos = getStack(stack)
+  return (
+    <section {...stylex.props(layout.section, layout.stack)}>
+      <Link href="/photos" {...stylex.props(typography.mutedLink)}>← All photos</Link>
+      <header {...stylex.props(styles.header)}>
+        <h2 {...stylex.props(typography.heading)}>{photos[0].photoStackTitle ?? photos[0].title}</h2>
+        <span {...stylex.props(typography.muted)}>{photos.length} photos</span>
+      </header>
+      <ul {...stylex.props(layout.list, styles.grid)}>
+        {photos.map((photo, index) => (
+          <li key={photo.slug}>
+            <Link href={`/note/${photo.slug}`} {...stylex.props(styles.photo, typography.link)}>
+              <span {...stylex.props(styles.frame)}>
+                <Image src={`/assets/feed/${photo.basename}`} width={photo.width} height={photo.height}
+                  alt={photo.title} sizes="(max-width: 639px) calc(100vw - 48px), (max-width: 1079px) calc((100vw - 152px) / 2), 464px"
+                  preload={index === 0} {...stylex.props(styles.image)} />
+              </span>
+              <span {...stylex.props(styles.caption)}>{photo.title}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+const styles = stylex.create({
+  header: { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, marginBlockStart: 20 },
+  grid: { display: 'grid', gridTemplateColumns: { default: '1fr', '@media (min-width: 640px)': 'repeat(2, minmax(0, 1fr))' }, gap: 32, marginBlockStart: 24 },
+  photo: { display: 'flex', flexDirection: 'column', gap: 12, height: '100%', outlineOffset: 6 },
+  frame: { display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 },
+  image: { display: 'block', maxWidth: '100%', width: 'auto', height: 'auto', maxHeight: 560, boxSizing: 'border-box', borderWidth: 6, borderStyle: 'solid', borderColor: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' },
+  caption: { fontSize: 13, textAlign: 'center' },
+})

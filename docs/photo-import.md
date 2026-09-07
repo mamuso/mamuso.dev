@@ -42,7 +42,9 @@ photoStackTitle: Slide Ranch
 
 The three imports titled “Follow me!”, “Sunset hits different in California”,
 and “Wifi!” demonstrate this. Use a different ID for each stack; omit these
-fields for individual prints. Keep groups to two or three photos. Grouping does
+fields for individual prints. The gallery shows up to six preview prints per stack. The title and photo
+count open `/photos/stack/<photoStack>`, where every member is shown at a larger
+size and links to its individual post. Grouping does
 not change titles, slugs, individual pages or dates. The newest member determines
 where the stack appears. By default, it also supplies its cover and display title.
 
@@ -68,3 +70,15 @@ preferences disable the transition.
 
 Edit the published Markdown after importing (or add the fields to the draft
 before publishing). Rebuild to publish gallery changes.
+
+## Replacing migrated images with originals
+
+Apple Park, Stroll and River and beach were split from older embedded galleries.
+Their numbered posts retain the original camera filename in the Markdown filename
+and `basename`, making it possible to match higher-resolution originals later.
+Keep the existing Markdown filenames, slugs and stack fields when replacing them.
+Regenerate the matching `content/assets/feed/<basename>` and
+`content/assets/feed/gallery-<basename>` files and update dimensions, palette and
+verified EXIF in the existing post, then refresh assets. Do not publish them as
+new imports: different original bytes have different hashes and would create
+new posts rather than replace these existing photos.
