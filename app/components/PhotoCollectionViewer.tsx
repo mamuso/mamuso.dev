@@ -1,16 +1,11 @@
 import PhotoViewerImage from './PhotoViewerImage'
-import { notFound } from 'next/navigation'
 import * as stylex from '@stylexjs/stylex'
-import { getPhotoPosts } from '@/lib/api'
-import { comparePhotoStackOrder } from '@/lib/photo-stacks'
+import { getPhotoStack } from '@/lib/get-photo-stack'
 import PhotoQuickLook from '@/app/components/PhotoQuickLook'
 
 export default async function CollectionViewer({ params }: { params: Promise<{ stack: string }> }) {
   const { stack } = await params
-  const photos = getPhotoPosts(['title', 'slug', 'basename', 'width', 'height', 'photoStack', 'photoStackTitle', 'photoStackOrder'])
-    .filter((photo) => photo.photoStack === stack)
-    .sort(comparePhotoStackOrder)
-  if (!photos.length) notFound()
+  const photos = getPhotoStack(stack)
 
   return (
     <PhotoQuickLook collection title={photos[0].photoStackTitle ?? photos[0].title} href={`/photos/stack/${stack}`}>

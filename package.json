@@ -13,7 +13,8 @@
     "rss": "ts-node --project ./node.tsconfig.json lib/feed",
     "assets": "ts-node --project ./node.tsconfig.json lib/assets",
     "photos": "node scripts/photos.mjs",
-    "photos:test": "node --test lib/photo-import.test.mjs"
+    "photos:test": "node --test lib/photo-import.test.mjs",
+    "photos:interaction:test": "node --test app/components/photoInteraction.test.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",

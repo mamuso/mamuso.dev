@@ -1,21 +1,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 import * as stylex from '@stylexjs/stylex'
 import { getPhotoPosts } from '@/lib/api'
-import { comparePhotoStackOrder } from '@/lib/photo-stacks'
+import { getPhotoStack } from '@/lib/get-photo-stack'
 import { BLOG_TITLE } from '@/lib/constants'
 import { layout, typography } from '@/app/styles/site'
 
 type Props = { params: Promise<{ stack: string }> }
-
-function getStack(stack: string) {
-  const photos = getPhotoPosts(['title', 'slug', 'date', 'basename', 'width', 'height', 'photoStack', 'photoStackTitle', 'photoStackOrder'])
-    .filter((photo) => photo.photoStack === stack)
-    .sort(comparePhotoStackOrder)
-  if (!photos.length) notFound()
-  return photos
-}
 
 export function generateStaticParams() {
   return [...new Set(getPhotoPosts(['photoStack']).map((photo) => photo.photoStack).filter(Boolean))]
@@ -24,13 +15,13 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { stack } = await params
-  const [cover] = getStack(stack)
+  const [cover] = getPhotoStack(stack)
   return { title: `${cover.photoStackTitle ?? cover.title} – Photos – ${BLOG_TITLE}` }
 }
 
 export default async function PhotoCollection({ params }: Props) {
   const { stack } = await params
-  const photos = getStack(stack)
+  const photos = getPhotoStack(stack)
   return (
     <section {...stylex.props(layout.section, layout.stack)}>
       <Link href="/photos" {...stylex.props(typography.mutedLink)}>← All photos</Link>

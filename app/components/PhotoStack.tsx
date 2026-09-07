@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import PhotoStackMotion from './PhotoStackMotion'
+import { photoMotion } from './photoInteraction'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '../styles/tokens.stylex'
@@ -30,7 +31,7 @@ export default function PhotoStack({ photos, href, title, collectionHref }: { ph
     <div data-photo-link data-photo-group={photos.length > 1 ? true : undefined} {...stylex.props(styles.link)}>
       <PhotoStackMotion data-photo-stack {...stylex.props(styles.stack)}>
         {visible.map((photo, index) => (
-          <Link scroll={false} href={collectionHref ?? (photo.slug ? `/note/${photo.slug}` : href)} aria-label={photo.title} data-photo-print key={`${photo.basename}-${index}`} {...stylex.props(styles.print, styles.pose(index, visible.length, (sample(hash, index, 0) - 0.5) * 36, (sample(hash, index, 1) - 0.5) * 24 - 4, (sample(hash, index, 2) - 0.5) * 12))}>
+          <Link scroll={false} href={collectionHref ?? (photo.slug ? `/note/${photo.slug}` : href)} aria-label={photo.title} data-photo-print key={`${photo.basename}-${index}`} {...stylex.props(styles.print, styles.pose(index, visible.length, (sample(hash, index, 0) - 0.5) * photoMotion.initial.x, (sample(hash, index, 1) - 0.5) * photoMotion.initial.y + photoMotion.initial.yOffset, (sample(hash, index, 2) - 0.5) * photoMotion.initial.angle))}>
             <Image
               src={`/assets/feed/gallery-${photo.basename}`}
               width={photo.width}
