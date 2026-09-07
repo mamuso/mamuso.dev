@@ -112,38 +112,66 @@ body {
 /* Keep captions still while the framed photos respond to their shared link. */
 @layer photo-interactions {
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    [data-photo-link]:hover [data-photo-print] {
+    [data-photo-print]:hover {
       box-shadow: 0 2px 3px rgba(0, 0, 0, 0.12), 0 7px 14px rgba(0, 0, 0, 0.11);
-    }
-    [data-photo-link]:hover [data-photo-stack] {
-      transform: perspective(900px) translateY(-3px) rotateX(6deg) rotateY(var(--photo-tilt, 0deg));
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    [data-photo-link]:focus-within [data-photo-stack] {
-      transform: perspective(900px) translateY(-3px) rotateX(6deg) rotateY(var(--photo-tilt, 0deg));
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    [data-photo-stack] {
-      transition: none;
     }
   }
 }
 
 @layer photo-interactions {
   [data-photo-group]:focus-within { z-index: 1; }
-  [data-photo-group]:focus-within [data-photo-print] { transform: var(--print-open); }
+  [data-photo-group]:focus-within [data-photo-print],
+  [data-photo-group] [data-photo-stack][data-opened] > [data-photo-print] {
+    transform: var(--print-open);
+  }
   @media (hover: hover) {
     [data-photo-group]:hover { z-index: 1; }
-    [data-photo-group]:hover [data-photo-print] { transform: var(--print-open); }
   }
   @media (hover: none) {
     [data-photo-group] [data-photo-print] { transform: var(--print-open); }
   }
   @media (prefers-reduced-motion: reduce) {
     [data-photo-print] { transition: none; }
+  }
+}
+
+@layer photo-viewer {
+  [data-photo-quick-look][open] { display: flex; }
+  [data-photo-quick-look]::backdrop {
+    background: rgba(240, 240, 240, 0.82);
+  }
+}
+
+
+/* Opening the viewer should not animate the surrounding page either. */
+@layer photo-viewer {
+  html:has([data-photo-quick-look][open])::view-transition-group(*),
+  html:has([data-photo-quick-look][open])::view-transition-old(*),
+  html:has([data-photo-quick-look][open])::view-transition-new(*) {
+    animation: none;
+  }
+}
+
+
+@layer photo-interactions {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-photo-stack] > [data-photo-print] {
+      translate: calc(var(--print-drift-x, 0px) * var(--print-response, 1)) calc(var(--print-drift-y, 0px) * var(--print-response, 1));
+      rotate: calc(var(--print-drift-angle, 0deg) * var(--print-response, 1));
+      transition: translate var(--print-follow-duration, 420ms) cubic-bezier(0.22, 1, 0.36, 1),
+        rotate var(--print-follow-duration, 420ms) cubic-bezier(0.22, 1, 0.36, 1),
+        transform 220ms cubic-bezier(0.25, 0.1, 0.25, 1),
+        box-shadow 420ms ease;
+    }
+    [data-photo-stack][data-tracking] {
+      --print-follow-duration: 140ms;
+    }
+  }
+}
+
+@layer photo-interactions {
+  [data-photo-stack][data-dragging] { cursor: grabbing; --print-follow-duration: 60ms; }
+  [data-photo-stack][data-dragging] > [data-photo-print] {
+    cursor: grabbing;
   }
 }

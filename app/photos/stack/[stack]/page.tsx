@@ -41,7 +41,7 @@ export default async function PhotoCollection({ params }: Props) {
       <ul {...stylex.props(layout.list, styles.grid)}>
         {photos.map((photo, index) => (
           <li key={photo.slug}>
-            <Link href={`/note/${photo.slug}`} {...stylex.props(styles.photo, typography.link)}>
+            <Link scroll={false} href={`/note/${photo.slug}`} {...stylex.props(styles.photo, typography.link)}>
               <span {...stylex.props(styles.frame)}>
                 <Image src={`/assets/feed/${photo.basename}`} width={photo.width} height={photo.height}
                   alt={photo.title} sizes="(max-width: 639px) calc(100vw - 48px), (max-width: 1079px) calc((100vw - 152px) / 2), 464px"

@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import PhotoStackMotion from './PhotoStackMotion'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '../styles/tokens.stylex'
@@ -11,18 +12,25 @@ export interface PhotoPrint {
   title: string
 }
 
+// Independent, deterministic samples keep each print's position stable across renders.
+function sample(seed: number, index: number, axis: number) {
+  let value = seed ^ Math.imul(index + 1, 0x9e3779b9) ^ Math.imul(axis + 1, 0x85ebca6b)
+  value = Math.imul(value ^ (value >>> 16), 0x21f0aaad)
+  value = Math.imul(value ^ (value >>> 15), 0x735a2d97)
+  return ((value ^ (value >>> 15)) >>> 0) / 4294967296
+}
+
 /** Up to six prints suggest the collection; its title and count open every photo. */
 export default function PhotoStack({ photos, href, title, collectionHref }: { photos: PhotoPrint[]; href: string; title: string; collectionHref?: string }) {
   if (!photos.length) return null
   const visible = collectionHref ? photos.slice(0, 6) : photos
-  // Stable pseudo-random tilt: identical on the server and on every render.
+  // Seed the arrangement from the collection URL.
   const hash = Array.from(href).reduce((value, character) => (Math.imul(value, 31) + character.charCodeAt(0)) | 0, 0)
-  const tilt = ((hash >>> 0) % 2 === 0 ? -1 : 1) * (3 + ((hash >>> 0) % 101) / 100)
   return (
-    <div data-photo-link data-photo-group={photos.length > 1 ? true : undefined} {...stylex.props(styles.link, styles.tilt(tilt))}>
-      <span data-photo-stack {...stylex.props(styles.stack)}>
+    <div data-photo-link data-photo-group={photos.length > 1 ? true : undefined} {...stylex.props(styles.link)}>
+      <PhotoStackMotion data-photo-stack {...stylex.props(styles.stack)}>
         {visible.map((photo, index) => (
-          <Link href={photo.slug ? `/note/${photo.slug}` : href} aria-label={photo.title} data-photo-print key={`${photo.basename}-${index}`} {...stylex.props(styles.print, styles.pose(index, ((hash >>> (index * 5)) % 101) / 100, visible.length))}>
+          <Link scroll={false} href={collectionHref ?? (photo.slug ? `/note/${photo.slug}` : href)} aria-label={photo.title} data-photo-print key={`${photo.basename}-${index}`} {...stylex.props(styles.print, styles.pose(index, visible.length, (sample(hash, index, 0) - 0.5) * 36, (sample(hash, index, 1) - 0.5) * 24 - 4, (sample(hash, index, 2) - 0.5) * 12))}>
             <Image
               src={`/assets/feed/gallery-${photo.basename}`}
               width={photo.width}
@@ -33,10 +41,10 @@ export default function PhotoStack({ photos, href, title, collectionHref }: { ph
             />
           </Link>
         ))}
-      </span>
-      <Link href={collectionHref ?? href} {...stylex.props(styles.title)}>{title}</Link>
+      </PhotoStackMotion>
+      <Link scroll={false} href={collectionHref ?? href} {...stylex.props(styles.title)}>{title}</Link>
       {photos.length > 1 && (
-        <Link href={collectionHref ?? href} aria-label={`View all ${photos.length} photos in ${title}`} {...stylex.props(styles.count)}>
+        <Link scroll={false} href={collectionHref ?? href} aria-label={`View all ${photos.length} photos in ${title}`} {...stylex.props(styles.count)}>
           {photos.length} photos
         </Link>
       )}
@@ -59,7 +67,6 @@ const styles = stylex.create({
     color: colors.textPrimary,
     gap: 12,
   },
-  tilt: (angle: number) => ({ '--photo-tilt': `${angle}deg` }),
   title: {
     fontSize: 13,
     lineHeight: 1.4,
@@ -76,9 +83,8 @@ const styles = stylex.create({
     placeItems: 'center',
     width: '100%',
     isolation: 'isolate',
-    transform: 'perspective(900px) translateY(0) rotateX(0deg) rotateY(0deg)',
-    transformOrigin: '50% 65%',
-    transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1)',
+    touchAction: 'pan-y pinch-zoom',
+    userSelect: 'none',
   },
   print: {
     gridArea: '1 / 1',
@@ -91,14 +97,15 @@ const styles = stylex.create({
     backgroundColor: '#fff',
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.1)',
   },
-  pose: (index: number, variation: number, count: number) => ({
+  pose: (index: number, count: number, x: number, y: number, angle: number) => ({
+    '--print-response': 1 / (1 + index * 0.6),
     zIndex: { default: count - index, ':focus-visible': count + 1 },
     '--print-rest': index === 0
-      ? `rotate(${variation * 1.5 - 0.75}deg)`
-      : `translate(${(index % 2 === 1 ? -1 : 1) * (2 + variation * 2)}px, ${-index * 6 / Math.max(1, (count - 1) / 3)}px) rotate(${(index % 2 === 1 ? -1 : 1) * (2 + variation * 2)}deg)`,
+      ? `rotate(${angle / 8}deg)`
+      : `translate(${x * 0.2}px, ${y * 0.2 - index * 2}px) rotate(${angle * 0.5}deg)`,
     '--print-open': index === 0
-      ? `translate(0px, -1px) rotate(${variation * 1.5 - 0.75}deg)`
-      : `translate(${(index % 2 === 1 ? -1 : 1) * (12 + Math.floor((index - 1) / 2) * 10 / Math.max(1, (count - 1) / 3) + variation * 3)}px, ${-index * 8 / Math.max(1, (count - 1) / 3)}px) rotate(${(index % 2 === 1 ? -1 : 1) * (4 + variation * 2)}deg)`,
+      ? `translate(0px, -1px) rotate(${angle / 8}deg)`
+      : `translate(${x}px, ${y}px) rotate(${angle}deg)`,
   }),
   image: {
     display: 'block',
