@@ -2,7 +2,6 @@
 I grew up in a house above a shoe factory.
 My favorite food is tortilla de patatas. I like it runny. No onions, please.
 I studied industrial design, then ended up designing software.
-My camera roll is full of signs, packaging, textures, and stickers I find on the street.
 I draw a comic book about my family.
 We roast coffee at home. And I drink too much of it.
 My favorite summer drink is barley tea.
