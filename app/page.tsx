@@ -6,8 +6,10 @@ import PostHome from '@/app/components/PostHome'
 import HomeContent from '@/app/components/HomeContent'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
+import { getRandomFact } from '@/lib/random-fact'
 
 export const metadata = pageMetadata({ title: 'mamuso - manuel muñoz solera', path: '/' })
+export const revalidate = 180
 
 const POSTS_PER_PAGE = 10
 const SHOW_JOURNAL = false
@@ -35,7 +37,7 @@ const Journal = () => {
 const Home: NextPage = () => {
   return (
     <>
-      <HomeContent />
+      <HomeContent randomFact={getRandomFact()} />
       <section {...stylex.props(layout.fullBleed, styles.content)}>
         <div {...stylex.props(layout.container)}>
           <p {...stylex.props(styles.copy)}>

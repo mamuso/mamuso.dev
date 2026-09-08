@@ -5,7 +5,7 @@ import { layout, typography } from '@/app/styles/site'
 import AnimatedName from '@/app/components/AnimatedName'
 import CartridgeStage from '@/app/components/CartridgeStageDynamic'
 
-export default function HomeContent() {
+export default function HomeContent({ randomFact }: { randomFact: string | null }) {
   return (
     <section {...stylex.props(layout.fullBleed, styles.hero)}>
       <div {...stylex.props(layout.container, styles.inner)}>
@@ -24,6 +24,11 @@ export default function HomeContent() {
               building fun things at SpaceXAI.
             </span>
           </h2>
+          {randomFact ? (
+            <p {...stylex.props(typography.muted, styles.introCopy, styles.tagline, styles.factCopy, styles.reveal, styles.revealClosing)}>
+              A random thing about me: {randomFact}
+            </p>
+          ) : null}
         </div>
       </div>
       <div {...stylex.props(styles.stage)}>
@@ -87,7 +92,7 @@ const styles = stylex.create({
   intro: {
     insetBlockStart: {
       default: 0,
-      '@media (min-width: 880px)': -40,
+      '@media (min-width: 880px)': -56,
     },
     marginBlockStart: {
       default: 0,
@@ -113,6 +118,9 @@ const styles = stylex.create({
   },
   tagline: {
     fontWeight: 400,
+  },
+  factCopy: {
+    marginBlockStart: 24,
   },
   reveal: {
     animationDuration: {
