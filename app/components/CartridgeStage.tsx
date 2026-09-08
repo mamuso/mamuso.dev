@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import CartridgeViewer, {
-  CAMERA_PRESET_LARGE,
-  CAMERA_PRESET_SMALL,
-} from "./CartridgeViewer";
+import CartridgeViewer from "./CartridgeViewer";
+import { CAMERA_PRESET_LARGE, CAMERA_PRESET_SMALL } from "./cartridgeConfig";
 import { stageBlend } from "./cartridgeStagePolicy";
 
 export default function CartridgeStage({

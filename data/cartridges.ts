@@ -56,11 +56,3 @@ export const CARTRIDGES: CartridgeDefinition[] = [
     shellOpacity: 0.8,
   },
 ];
-
-export const TUENTI_CARTRIDGE = CARTRIDGES.find(
-  (cartridge) => cartridge.label === "/labels/tuenti.webp"
-)!;
-
-export const VERCEL_CARTRIDGE = CARTRIDGES.find(
-  (cartridge) => cartridge.label === "/labels/vercel.webp"
-)!;

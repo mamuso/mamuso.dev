@@ -64,7 +64,7 @@ build also runs the content pipeline and updates the submodule checkout.
 
 Use `/notes` and `/note/<slug>` in new links. `next.config.js` permanently redirects
 legacy `/posts/:path*` and `/post/:slug` URLs to those routes. React Strict Mode is
-currently disabled in that config.
+enabled in that config. Resource effects must tolerate development setup/cleanup replay.
 
 The `/notes` archive holds its post list at module scope: restart the dev server
 after Markdown changes to refresh it. The homepage's optional journal, paginated
@@ -89,6 +89,7 @@ modules, Tailwind, or webfonts. The site uses the native system font stack.
 - The Three.js/React Three Fiber/Drei cartridge scene is a temporary compatibility baseline. Do not remove it until a vgpu renderer loads the same GLB and passes visual-parity checks; do not add another rendering stack.
 - Keep GPU features progressively enhanced: the page and content must remain usable when WebGPU is unavailable.
 - The homepage loads the scene via `HomeContent` → `CartridgeStageDynamic` (`ssr: false`) → `CartridgeStage` → `CartridgeViewer`. Keep the scene and its assets scoped to the homepage. Cartridge definitions are in `data/cartridges.ts`, with label textures in `public/labels/`.
+- The viewer composes focused camera, layout, motion and material modules. See `docs/cartridge-architecture.md` for ownership rules and verification.
 - WGSL loaders are configured for both Turbopack and Webpack in `next.config.js`.
 
 ## TypeScript

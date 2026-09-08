@@ -5,9 +5,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
 
-export const CAPTION_FONT_SIZE = 14;
-export const CAPTION_LINE_HEIGHT = 1.25;
-export const CAPTION_HEIGHT = CAPTION_FONT_SIZE * CAPTION_LINE_HEIGHT * 2;
+import { CAPTION_FONT_SIZE, CAPTION_LINE_HEIGHT, CAPTION_HEIGHT } from "./cartridgeConfig";
 
 /** Small, interruptible handling offsets, independent of the main stack springs.
  * The hitbox stays on the parent so the response cannot chase its own pointer. */

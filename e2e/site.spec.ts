@@ -169,6 +169,55 @@ test('photo navigation animates image geometry and captures the header', async (
   expect(errors).toEqual([])
 })
 
+test('cartridges retain pointer, keyboard and resize interaction', async ({ page, isMobile }) => {
+  await page.goto('/')
+  const controls = page.getByRole('button', { name: /^View .* cartridge$/ })
+  await expect(controls).toHaveCount(6)
+  let previous: number[] = []
+  let stableSince = 0
+  // Wait for the entrance to finish in frame, rather than clicking its parked hitboxes.
+  await expect.poll(async () => {
+    const canvas = await page.locator('canvas').last().boundingBox()
+    const boxes = await controls.evaluateAll(elements => elements.map(element => {
+      const rect = element.getBoundingClientRect()
+      return [rect.x + rect.width / 2, rect.y + rect.height / 2]
+    }))
+    const values = boxes.flat()
+    if (!canvas || boxes.some(([x, y]) => x < canvas.x || x > canvas.x + canvas.width || y < canvas.y || y > canvas.y + canvas.height)) return false
+    if (!previous.length || values.some((value, index) => Math.abs(value - previous[index]) > 0.25)) stableSince = Date.now()
+    previous = values
+    return Date.now() - stableSince > 300
+  }, { timeout: 30_000 }).toBe(true)
+  const box = (await controls.nth(2).boundingBox())!
+  if (isMobile) await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2)
+  else await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
+  await expect(controls.nth(2)).toHaveAttribute('aria-expanded', 'true')
+  // Interrupt the open spring with a different selection using the keyboard.
+  await controls.nth(1).focus()
+  await page.keyboard.press('Enter')
+  await expect(controls.nth(1)).toHaveAttribute('aria-expanded', 'true')
+  await expect(controls.nth(2)).toHaveAttribute('aria-expanded', 'false')
+  await page.locator('canvas').last().evaluate(canvas => canvas.setAttribute('data-retained-canvas', 'true'))
+  await page.setViewportSize({ width: isMobile ? 440 : 820, height: 900 })
+  await expect(page.locator('canvas[data-retained-canvas]')).toHaveCount(1)
+  await expect(controls.nth(1)).toHaveAttribute('aria-expanded', 'true')
+  await page.keyboard.press('Escape')
+  await expect(controls.nth(1)).toHaveAttribute('aria-expanded', 'false')
+  if (isMobile) {
+    await page.setViewportSize({ width: 440, height: 640 })
+    const session = await page.context().newCDPSession(page)
+    await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 220, y: 550 }] })
+    for (const y of [520, 480, 440, 400, 350]) {
+      await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 220, y }] })
+    }
+    await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0)
+    await expect(page.locator('button[aria-expanded=true]')).toHaveCount(0)
+    await session.detach()
+  }
+})
+
+
 test('photo detail retains its thumbnail while the full image loads', async ({ page }) => {
   let releaseImage!: () => void
   const imageGate = new Promise<void>((resolve) => { releaseImage = resolve })
