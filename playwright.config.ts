@@ -7,7 +7,9 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   workers: 1,
   retries: 0,
-  timeout: 45_000,
+  // Includes browser-context setup, which can be slow after software WebGL on CI.
+  // Individual assertions keep their existing 15-second budget.
+  timeout: 90_000,
   expect: { timeout: 15_000 },
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {

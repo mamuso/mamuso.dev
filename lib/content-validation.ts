@@ -1,9 +1,8 @@
-import fs from 'node:fs'
-import { join, basename } from 'node:path'
+import { basename } from 'node:path'
 import { parseEditorialDate } from './editorial-date.ts'
 import type { PostType } from './types'
 
-export function validatePost(raw: Record<string, unknown>, file: string, slug: string, content: string, assetsDirectory: string): PostType {
+export function validatePost(raw: Record<string, unknown>, file: string, slug: string, content: string): PostType {
   const fail = (field: string, reason: string): never => { throw new Error(`${file}: ${field} ${reason}`) }
   const string = (field: string, required = false): string | undefined => {
     const value = raw[field]
@@ -28,7 +27,6 @@ export function validatePost(raw: Record<string, unknown>, file: string, slug: s
     if (basename(image) !== image || image.includes('\\') || image === '.' || image === '..') fail('basename', 'must be a filename without path components')
     const width = number('width', 1), height = number('height', 1)
     if (!Number.isInteger(width) || !Number.isInteger(height)) fail('width/height', 'must be positive integer image dimensions')
-    if (!fs.existsSync(join(assetsDirectory, image)) || !fs.statSync(join(assetsDirectory, image)).isFile()) fail('basename', `references a missing image: ${image}`)
     dimensions = { basename: image, width: width!, height: height! }
   } else if (raw.width !== undefined || raw.height !== undefined) fail('basename', 'is required when dimensions are provided')
 

@@ -6,7 +6,7 @@
   "packageManager": "pnpm@10.17.1",
   "scripts": {
     "dev": "next dev",
-    "build": "git submodule update --init && pnpm run assets && pnpm run rss && next build",
+    "build": "git submodule update --init && pnpm content:check && pnpm run assets && pnpm run rss && next build",
     "start": "next start",
     "lint": "eslint .",
     "shader:check": "VGPU_DAWN_FLAGS=backend=null vgpu check app/components/*.wgsl --require-validation",
@@ -15,7 +15,7 @@
     "photos": "node scripts/photos.mjs",
     "photos:test": "node --test lib/photo-import.test.mjs",
     "photos:interaction:test": "node --test app/components/photoInteraction.test.mjs",
-    "metadata:test": "node --test scripts/metadata.test.mjs",
+    "metadata:test": "node --test scripts/metadata.test.mjs scripts/function-size.test.mjs",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "node --test lib/*.test.mjs app/components/*.test.mjs tests/*.test.mjs",
     "content:check": "node scripts/content-check.mjs",

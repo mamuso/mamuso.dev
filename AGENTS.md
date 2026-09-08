@@ -50,7 +50,7 @@ build also runs the content pipeline and updates the submodule checkout.
 - Photo import deduplicates originals by SHA-256 and preserves draft edits. `pnpm photos --review` collects title, slug and date; `pnpm photos --publish ID` (or `all`) installs reviewed drafts and images into content and refreshes assets/feed. Originals and raw EXIF stay local. See `docs/photo-import.md`.
 - Feed links use canonical `/note/<slug>` URLs, while entry IDs retain historical `/post/<filename>` URLs to preserve subscriber history.
 - `lib/types.ts` distinguishes notes and photos. API field selections expose only requested keys; optional data has an `undefined` value. Use `POST_DETAIL_FIELDS` for full-post rendering. EXIF numbers are numeric; unavailable legacy GPS `"NaN"` values normalize to absence.
-- `pnpm content:check` validates frontmatter, calendar dates, positive image dimensions, referenced feed assets and consistent stack titles. It runs first in `pnpm check`; runtime index reads enforce the same contract.
+- `pnpm content:check` validates frontmatter, calendar dates, positive image dimensions, referenced feed assets and consistent stack titles. It runs in `pnpm check` and before every build. Runtime index reads validate frontmatter; asset existence checks stay in the build gate to avoid bundling photo binaries into server functions.
 
 ## Routes and rendering
 

@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import matter from 'gray-matter'
 import { validatePost } from './content-validation.ts'
 
-export function readPostIndex(directory = join(process.cwd(), 'content/posts'), assetsDirectory = join(directory, '../assets/feed')) {
+export function readPostIndex(directory = join(process.cwd(), 'content/posts')) {
   const posts = fs.readdirSync(directory)
     .filter((file) => file.endsWith('.md'))
     .map((file) => {
@@ -16,7 +16,7 @@ export function readPostIndex(directory = join(process.cwd(), 'content/posts'), 
       if (data.slug !== undefined && (typeof slug !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))) {
         throw new Error(`Invalid slug in ${file}`)
       }
-      return { fileSlug, slug: slug as string, data: validatePost(data, file, slug, content, assetsDirectory), content }
+      return { fileSlug, slug: slug as string, data: validatePost(data, file, slug, content), content }
     })
 
   const bySlug = new Map<string, (typeof posts)[number]>()

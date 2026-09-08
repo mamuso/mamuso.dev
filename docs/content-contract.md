@@ -1,7 +1,9 @@
 # Content contract
 
-`pnpm content:check` validates the same index used by the application. It runs
-first in `pnpm check`, so CI and Vercel fail before building invalid content.
+`pnpm content:check` validates the same frontmatter index used by the application
+and checks referenced files. It runs first in `pnpm check` and before every build.
+Asset existence checks run only in this gate, keeping image binaries out of
+server-function traces. Runtime index reads still enforce the frontmatter contract.
 Errors identify the Markdown filename and field. Images are checked in
 `content/assets/feed`, not the generated `public/assets` copy.
 

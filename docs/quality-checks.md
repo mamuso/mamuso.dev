@@ -22,7 +22,8 @@ pnpm exec playwright install chromium
 pnpm verify
 ```
 
-`pnpm verify` runs `check`, a production build, the full HTTP metadata/image audit,
+`pnpm verify` runs `check`, a production build, a 200 MiB per-function trace
+budget, the full HTTP metadata/image audit,
 and Chromium smoke tests at desktop and mobile viewport sizes. It requires a
 populated content submodule and installs no browsers implicitly. The build uses
 the parent's pinned content revision, never `git submodule update --remote`.
@@ -46,7 +47,9 @@ Smoke coverage:
 Browser failures retain a trace, screenshot, and HTML report. Inspect them with
 `pnpm exec playwright show-report`; CI uploads them for seven days. There are no
 automatic test retries, skipped smoke tests, or `continue-on-error` steps.
-Software WebGL makes the smoke suite independent of a physical GPU. The mobile
+Software WebGL makes the smoke suite independent of a physical GPU. The overall
+90-second test timeout includes browser-context setup; assertions retain their
+15-second timeout (30 seconds for model decoding). The mobile
 project emulates a viewport and touch input; it is not a physical-device test.
 
 ## GitHub and Vercel
