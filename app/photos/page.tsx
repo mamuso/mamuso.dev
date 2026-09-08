@@ -1,63 +1,46 @@
-import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
-import { getPhotoPosts } from '@/lib/api'
-import { PostType } from '@/lib/types'
-import { comparePhotoStackOrder } from '@/lib/photo-stacks'
+import { getPhotoGroups } from '@/lib/photo-gallery'
+import { photoGalleryWindow } from '@/lib/photo-gallery-window'
+import { pageMetadata } from '@/lib/metadata'
+import { BLOG_TITLE } from '@/lib/constants'
+import { notFound } from 'next/navigation'
+import GalleryInfiniteScroll from '@/app/components/GalleryInfiniteScroll'
 import PhotoStack from '@/app/components/PhotoStack'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
 
-export const metadata = {
-  title: `Photos – ${BLOG_TITLE}`,
-  description: BLOG_SUBTITLE,
-  canonical: `${BLOG_URL}`,
-  openGraph: {
-    url: `${BLOG_URL}`,
-    title: `Photos – ${BLOG_TITLE}`,
-    description: `Mamuso has a camera`,
-    images: [
-      {
-        url: `${BLOG_URL}/og/Photos/${BLOG_TITLE}/opengraph-image`,
-        width: 1200,
-        height: 600,
-        alt: `Photos – ${BLOG_TITLE}`,
-      },
-    ],
-    site_name: `${BLOG_TITLE}`,
-  },
-  twitter: {
-    handle: '@mamuso',
-    site: '@mamuso',
-    cardType: 'summary_large_image',
-  },
-  icons: {
-    icon: {
-      url: '/images/favicon.png',
-      type: 'image/png',
-    },
-    shortcut: { url: '/images/favicon.png', type: 'image/png' },
-  },
+type Props = { searchParams: Promise<{ page?: string | string[] }> }
+
+async function galleryPage(searchParams: Props['searchParams']) {
+  const { page } = await searchParams
+  const groups = getPhotoGroups()
+  const window = photoGalleryWindow(page, groups.length)
+  if (!window) notFound()
+  return { groups, ...window }
 }
 
-export default function Photos() {
-  const photoPosts: PostType[] = getPhotoPosts(['title', 'date', 'slug', 'category', 'basename', 'width', 'height', 'photoStack', 'photoStackTitle', 'photoStackOrder'])
-  const groups = new Map<string, PostType[]>()
-  for (const post of photoPosts) {
-    const key = post.photoStack ? `stack:${post.photoStack}` : `photo:${post.slug}`
-    const group = groups.get(key)
-    if (group) group.push(post)
-    else groups.set(key, [post])
-  }
-  for (const photos of groups.values()) photos.sort(comparePhotoStackOrder)
+export async function generateMetadata({ searchParams }: Props) {
+  const { page } = await galleryPage(searchParams)
+  return pageMetadata({
+    title: `Photos – ${BLOG_TITLE}`,
+    path: page === 1 ? '/photos' : `/photos?page=${page}`,
+    description: 'Mamuso has a camera',
+  })
+}
+
+export default async function Photos({ searchParams }: Props) {
+  const { groups, page, totalPages, visibleCount } = await galleryPage(searchParams)
+  const visible = groups.slice(0, visibleCount)
   return (
     <section {...stylex.props(layout.section, layout.stack, styles.section)}>
       <h2 {...stylex.props(typography.heading, typography.muted, styles.title)}>Say Cheese</h2>
       <ul {...stylex.props(layout.list, styles.gallery)}>
-        {Array.from(groups, ([key, photos]) => (
-          <li key={key}>
+        {visible.map(({ key, photos }) => (
+          <li key={key} data-gallery-card>
             <PhotoStack photos={photos} collectionHref={photos[0].photoStack ? `/photos/stack/${encodeURIComponent(photos[0].photoStack)}` : undefined} href={`/note/${photos[0].slug}`} title={photos[0].photoStackTitle ?? photos[0].title} />
           </li>
         ))}
       </ul>
+      <GalleryInfiniteScroll page={page} hasMore={page < totalPages} visibleCount={visible.length} totalCount={groups.length} />
     </section>
   )
 }

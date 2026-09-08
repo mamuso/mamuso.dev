@@ -38,7 +38,7 @@ export default function PhotoStack({ photos, href, title, collectionHref }: { ph
               height={photo.height}
               alt=""
               sizes="(max-width: 479px) 120px, 160px"
-              {...stylex.props(styles.image)}
+              {...stylex.props(styles.image(photo.width / Math.max(photo.width, photo.height), photo.height / Math.max(photo.width, photo.height)))}
             />
           </Link>
         ))}
@@ -108,13 +108,13 @@ const styles = stylex.create({
       ? `translate(0px, -1px) rotate(${angle / 8}deg)`
       : `translate(${x}px, ${y}px) rotate(${angle}deg)`,
   }),
-  image: {
+  // Reserve the final content size before the image decoder knows its intrinsic dimensions.
+  image: (width: number, height: number) => ({
     display: 'block',
-    width: 'auto',
-    height: 'auto',
-    maxWidth: { default: 120, '@media (min-width: 480px)': 160 },
-    maxHeight: { default: 120, '@media (min-width: 480px)': 160 },
-  },
+    flexShrink: 0,
+    width: { default: width * 120, '@media (min-width: 480px)': width * 160 },
+    height: { default: height * 120, '@media (min-width: 480px)': height * 160 },
+  }),
   count: {
     textDecoration: { default: 'none', ':hover': 'underline', ':focus-visible': 'underline' },
     textUnderlineOffset: 3,

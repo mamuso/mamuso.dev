@@ -1,4 +1,4 @@
-import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
+import { pageMetadata } from '@/lib/metadata'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { getRecentPosts } from '@/lib/api'
@@ -7,38 +7,7 @@ import HomeContent from '@/app/components/HomeContent'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
 
-export const metadata = {
-  metadataBase: new URL('https://mamuso.dev'),
-  title: 'mamuso - manuel muñoz solera',
-  description: BLOG_SUBTITLE,
-  canonical: `/`,
-  openGraph: {
-    url: `${BLOG_URL}`,
-    title: `${BLOG_TITLE}`,
-    description: `${BLOG_SUBTITLE}`,
-    images: [
-      {
-        url: `${BLOG_URL}/og/${BLOG_TITLE}/${BLOG_SUBTITLE}/opengraph-image`,
-        width: 1200,
-        height: 600,
-        alt: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
-      },
-    ],
-    site_name: `${BLOG_TITLE}`,
-  },
-  twitter: {
-    handle: '@mamuso',
-    site: '@mamuso',
-    cardType: 'summary_large_image',
-  },
-  icons: {
-    icon: {
-      url: '/images/favicon.png',
-      type: 'image/png',
-    },
-    shortcut: { url: '/images/favicon.png', type: 'image/png' },
-  },
-}
+export const metadata = pageMetadata({ title: 'mamuso - manuel muñoz solera', path: '/' })
 
 const POSTS_PER_PAGE = 10
 const SHOW_JOURNAL = false

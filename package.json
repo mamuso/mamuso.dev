@@ -14,7 +14,8 @@
     "assets": "ts-node --project ./node.tsconfig.json lib/assets",
     "photos": "node scripts/photos.mjs",
     "photos:test": "node --test lib/photo-import.test.mjs",
-    "photos:interaction:test": "node --test app/components/photoInteraction.test.mjs"
+    "photos:interaction:test": "node --test app/components/photoInteraction.test.mjs",
+    "metadata:test": "node --test scripts/metadata.test.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",

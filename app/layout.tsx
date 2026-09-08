@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import * as stylex from '@stylexjs/stylex'
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../lib/constants'
 import Header from './components/Header'
@@ -6,11 +7,14 @@ import { layout, typography } from './styles/site'
 import './globals.css'
 
 export const metadata = {
-  title: {
-    default: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
+  metadataBase: new URL(BLOG_URL),
+  title: `${BLOG_TITLE} – ${BLOG_SUBTITLE}`,
+  description: BLOG_SUBTITLE,
+  icons: {
+    icon: { url: '/images/favicon.png', type: 'image/png' },
+    shortcut: { url: '/images/favicon.png', type: 'image/png' },
   },
-  description: { default: BLOG_SUBTITLE },
-}
+} satisfies Metadata
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

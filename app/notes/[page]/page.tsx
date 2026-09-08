@@ -1,4 +1,5 @@
-import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
+import { pageMetadata } from '@/lib/metadata'
+import { BLOG_TITLE } from '@/lib/constants'
 import { getNotePosts, getPostBySlug } from '@/lib/api'
 import { notFound } from 'next/navigation'
 import Post from '@/app/components/Post'
@@ -6,36 +7,9 @@ import Pagination from '@/app/components/Pagination'
 import * as stylex from '@stylexjs/stylex'
 import { layout } from '@/app/styles/site'
 
-export const metadata = {
-  title: `Notes – ${BLOG_TITLE}`,
-  description: BLOG_SUBTITLE,
-  canonical: `${BLOG_URL}`,
-  openGraph: {
-    url: `${BLOG_URL}`,
-    title: `Notes – ${BLOG_TITLE}`,
-    description: `${BLOG_SUBTITLE}`,
-    images: [
-      {
-        url: `${BLOG_URL}/og/Notes/${BLOG_TITLE}/opengraph-image`,
-        width: 1200,
-        height: 600,
-        alt: `Notes – ${BLOG_TITLE}`,
-      },
-    ],
-    site_name: `${BLOG_TITLE}`,
-  },
-  twitter: {
-    handle: '@mamuso',
-    site: '@mamuso',
-    cardType: 'summary_large_image',
-  },
-  icons: {
-    icon: {
-      url: '/images/favicon.png',
-      type: 'image/png',
-    },
-    shortcut: { url: '/images/favicon.png', type: 'image/png' },
-  },
+export async function generateMetadata({ params }: { params: Promise<{ page: string }> }) {
+  const { page } = await params
+  return pageMetadata({ title: `Notes – Page ${Number(page)} – ${BLOG_TITLE}`, path: `/notes/${Number(page)}` })
 }
 
 const POSTS_PER_PAGE = 20

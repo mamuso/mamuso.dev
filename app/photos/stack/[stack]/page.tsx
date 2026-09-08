@@ -1,3 +1,4 @@
+import { pageMetadata, photoSocialImage } from '@/lib/metadata'
 import Image from 'next/image'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
@@ -15,8 +16,15 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { stack } = await params
-  const [cover] = getPhotoStack(stack)
-  return { title: `${cover.photoStackTitle ?? cover.title} – Photos – ${BLOG_TITLE}` }
+  const photos = getPhotoStack(stack)
+  const cover = photos[0]
+  const title = cover.photoStackTitle ?? cover.title
+  return pageMetadata({
+    title: `${title} – Photos – ${BLOG_TITLE}`,
+    path: `/photos/stack/${encodeURIComponent(stack)}`,
+    description: `${title} — ${photos.length} photos by Mamuso.`,
+    image: photoSocialImage(cover.basename, title),
+  })
 }
 
 export default async function PhotoCollection({ params }: Props) {
@@ -36,7 +44,7 @@ export default async function PhotoCollection({ params }: Props) {
               <span {...stylex.props(styles.frame)}>
                 <Image src={`/assets/feed/${photo.basename}`} width={photo.width} height={photo.height}
                   alt={photo.title} sizes="(max-width: 639px) calc(100vw - 48px), (max-width: 1079px) calc((100vw - 152px) / 2), 464px"
-                  preload={index === 0} {...stylex.props(styles.image)} />
+                  preload={index === 0} {...stylex.props(styles.image(photo.width / photo.height))} />
               </span>
               <span {...stylex.props(styles.caption)}>{photo.title}</span>
             </Link>
@@ -52,6 +60,6 @@ const styles = stylex.create({
   grid: { display: 'grid', gridTemplateColumns: { default: '1fr', '@media (min-width: 640px)': 'repeat(2, minmax(0, 1fr))' }, gap: 32, marginBlockStart: 24 },
   photo: { display: 'flex', flexDirection: 'column', gap: 12, height: '100%', outlineOffset: 6 },
   frame: { display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 },
-  image: { display: 'block', maxWidth: '100%', width: 'auto', height: 'auto', maxHeight: 560, boxSizing: 'border-box', borderWidth: 6, borderStyle: 'solid', borderColor: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' },
+  image: (ratio: number) => ({ display: 'block', maxWidth: 'calc(100% - 12px)', width: `min(calc(100% - 12px), ${548 * ratio}px)`, aspectRatio: ratio, height: 'auto', boxSizing: 'content-box', borderWidth: 6, borderStyle: 'solid', borderColor: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }),
   caption: { fontSize: 13, textAlign: 'center' },
 })

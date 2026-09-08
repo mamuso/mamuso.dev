@@ -1,3 +1,4 @@
+export { generateMetadata } from '@/app/note/[slug]/page'
 import PhotoViewerImage from '@/app/components/PhotoViewerImage'
 import { notFound } from 'next/navigation'
 import { getPostBySlug, resolvePostSlug } from '@/lib/api'
