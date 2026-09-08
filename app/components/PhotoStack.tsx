@@ -33,7 +33,7 @@ export default function PhotoStack({ photos, href, title, collectionHref, eager 
       <PhotoStackMotion data-photo-stack {...stylex.props(styles.stack)}>
         {visible.map((photo, index) => (
           <Link href={collectionHref ?? (photo.slug ? `/note/${photo.slug}` : href)} aria-label={photo.title} data-photo-print key={`${photo.basename}-${index}`} {...stylex.props(styles.print, styles.pose(index, visible.length, (sample(hash, index, 0) - 0.5) * photoMotion.initial.x, (sample(hash, index, 1) - 0.5) * photoMotion.initial.y + photoMotion.initial.yOffset, (sample(hash, index, 2) - 0.5) * photoMotion.initial.angle))}>
-            <PhotoTransition slug={photo.slug}>
+            <PhotoTransition slug={index === 0 ? photo.slug : undefined}>
               <Image
                 src={`/assets/feed/gallery-${photo.basename}`}
                 width={photo.width}
