@@ -1,5 +1,6 @@
 import { pageMetadata, photoSocialImage } from '@/lib/metadata'
-import Image from 'next/image'
+import ProgressivePhoto from '@/app/components/ProgressivePhoto'
+import PhotoTransition from '@/app/components/PhotoTransition'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { getPhotoPosts } from '@/lib/api'
@@ -40,11 +41,13 @@ export default async function PhotoCollection({ params }: Props) {
       <ul {...stylex.props(layout.list, styles.grid)}>
         {photos.map((photo, index) => (
           <li key={photo.slug}>
-            <Link scroll={false} href={`/note/${photo.slug}`} {...stylex.props(styles.photo, typography.link)}>
+            <Link href={`/note/${photo.slug}`} {...stylex.props(styles.photo, typography.link)}>
               <span {...stylex.props(styles.frame)}>
-                <Image src={`/assets/feed/${photo.basename}`} width={photo.width} height={photo.height}
-                  alt={photo.title} sizes="(max-width: 639px) calc(100vw - 48px), (max-width: 1079px) calc((100vw - 152px) / 2), 464px"
-                  loading={index < 2 ? 'eager' : 'lazy'} {...stylex.props(styles.image(photo.width / photo.height))} />
+                <PhotoTransition slug={photo.slug}>
+                  <ProgressivePhoto basename={photo.basename} width={photo.width} height={photo.height}
+                    title={photo.title} sizes="(max-width: 639px) calc(100vw - 48px), (max-width: 1079px) calc((100vw - 152px) / 2), 464px"
+                    eager={index < 2} {...stylex.props(styles.image(photo.width / photo.height))} />
+                </PhotoTransition>
               </span>
               <span {...stylex.props(styles.caption)}>{photo.title}</span>
             </Link>

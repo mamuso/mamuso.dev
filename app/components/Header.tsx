@@ -11,27 +11,26 @@ export default function Header() {
   const isHome = usePathname() === '/'
 
   return (
-    <ViewTransition name="site-header">
-      <header
-        {...stylex.props(
-          layout.fullBleed,
-          styles.header,
-          isHome && styles.homeHeader,
-        )}
-      >
-        <div {...stylex.props(layout.container, styles.inner)}>
-          <ViewTransition name="site-header-brand">
-            <HeaderBrand />
-          </ViewTransition>
-          {!isHome && <span aria-hidden="true" {...stylex.props(styles.divider)} />}
-        </div>
-      </header>
-    </ViewTransition>
+    <header
+      {...stylex.props(
+        layout.fullBleed,
+        styles.header,
+        isHome && styles.homeHeader,
+      )}
+    >
+      <div {...stylex.props(layout.container, styles.inner)}>
+        <ViewTransition name="site-header-brand">
+          <HeaderBrand />
+        </ViewTransition>
+        {!isHome && <span aria-hidden="true" {...stylex.props(styles.divider)} />}
+      </div>
+    </header>
   )
 }
 
 const styles = stylex.create({
   header: {
+    viewTransitionName: 'site-header',
     backgroundColor: 'transparent',
     boxSizing: 'border-box',
     gridColumn: '1 / -1',

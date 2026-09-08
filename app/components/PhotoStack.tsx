@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import PhotoTransition from './PhotoTransition'
 import PhotoStackMotion from './PhotoStackMotion'
 import { photoMotion } from './photoInteraction'
 import Link from 'next/link'
@@ -31,22 +32,24 @@ export default function PhotoStack({ photos, href, title, collectionHref, eager 
     <div data-photo-link data-photo-group={photos.length > 1 ? true : undefined} {...stylex.props(styles.link)}>
       <PhotoStackMotion data-photo-stack {...stylex.props(styles.stack)}>
         {visible.map((photo, index) => (
-          <Link scroll={false} href={collectionHref ?? (photo.slug ? `/note/${photo.slug}` : href)} aria-label={photo.title} data-photo-print key={`${photo.basename}-${index}`} {...stylex.props(styles.print, styles.pose(index, visible.length, (sample(hash, index, 0) - 0.5) * photoMotion.initial.x, (sample(hash, index, 1) - 0.5) * photoMotion.initial.y + photoMotion.initial.yOffset, (sample(hash, index, 2) - 0.5) * photoMotion.initial.angle))}>
-            <Image
-              src={`/assets/feed/gallery-${photo.basename}`}
-              width={photo.width}
-              height={photo.height}
-              loading={eager ? 'eager' : 'lazy'}
-              alt=""
-              sizes="(max-width: 479px) 120px, 160px"
-              {...stylex.props(styles.image(photo.width / Math.max(photo.width, photo.height), photo.height / Math.max(photo.width, photo.height)))}
-            />
+          <Link href={collectionHref ?? (photo.slug ? `/note/${photo.slug}` : href)} aria-label={photo.title} data-photo-print key={`${photo.basename}-${index}`} {...stylex.props(styles.print, styles.pose(index, visible.length, (sample(hash, index, 0) - 0.5) * photoMotion.initial.x, (sample(hash, index, 1) - 0.5) * photoMotion.initial.y + photoMotion.initial.yOffset, (sample(hash, index, 2) - 0.5) * photoMotion.initial.angle))}>
+            <PhotoTransition slug={photo.slug}>
+              <Image
+                src={`/assets/feed/gallery-${photo.basename}`}
+                width={photo.width}
+                height={photo.height}
+                loading={eager ? 'eager' : 'lazy'}
+                alt=""
+                sizes="(max-width: 479px) 120px, 160px"
+                {...stylex.props(styles.image(photo.width / Math.max(photo.width, photo.height), photo.height / Math.max(photo.width, photo.height)))}
+              />
+            </PhotoTransition>
           </Link>
         ))}
       </PhotoStackMotion>
-      <Link scroll={false} href={collectionHref ?? href} {...stylex.props(styles.title)}>{title}</Link>
+      <Link href={collectionHref ?? href} {...stylex.props(styles.title)}>{title}</Link>
       {photos.length > 1 && (
-        <Link scroll={false} href={collectionHref ?? href} aria-label={`View all ${photos.length} photos in ${title}`} {...stylex.props(styles.count)}>
+        <Link href={collectionHref ?? href} aria-label={`View all ${photos.length} photos in ${title}`} {...stylex.props(styles.count)}>
           {photos.length} photos
         </Link>
       )}

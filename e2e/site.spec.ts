@@ -28,7 +28,7 @@ test('notes archive and individual writing remain navigable', async ({ page }) =
   await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', `https://mamuso.dev/note/${note.slug}`)
 })
 
-test('infinite gallery preserves cards, scroll and viewer history', async ({ page }) => {
+test('infinite gallery preserves cards and scroll across photo navigation', async ({ page }) => {
   await page.goto('/photos')
   const cards = page.locator('[data-gallery-card]')
   await expect(cards).toHaveCount(24)
@@ -46,27 +46,30 @@ test('infinite gallery preserves cards, scroll and viewer history', async ({ pag
   const photo = cards.locator('> div > a[href^="/note/"]').first()
   await photo.scrollIntoViewIfNeeded()
   const scrollBefore = await page.evaluate(() => scrollY)
+  const href = await photo.getAttribute('href')
   await photo.click()
-  await expect(page.locator('dialog')).toBeVisible()
-  await expect(page.locator('html')).toHaveCSS('overflow', 'hidden')
-  await page.getByRole('button', { name: 'Close photo' }).click()
+  await expect(page).toHaveURL(href!)
+  await expect(page.locator('main article img:not([aria-hidden])')).toBeVisible()
+  await expect(page.locator('dialog')).toHaveCount(0)
+  await page.goBack()
   await expect(page).toHaveURL('/photos?page=2')
   await expect(cards).toHaveCount(48)
-  await expect(photo).toBeFocused()
   expect(await page.evaluate(() => scrollY)).toBe(scrollBefore)
   await page.reload()
   await expect(cards).toHaveCount(48)
 })
 
-test('collection viewer closes back to its gallery', async ({ page }) => {
+test('collection and photo pages navigate back to the gallery', async ({ page }) => {
   await page.goto('/photos')
   const collection = page.locator('[data-gallery-card] > div > a[href^="/photos/stack/"]').first()
   await collection.click()
-  await expect(page.locator('dialog')).toBeVisible()
-  await expect(page.locator('dialog figure')).not.toHaveCount(0)
-  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL(/\/photos\/stack\//)
+  await expect(page.locator('dialog')).toHaveCount(0)
+  await page.locator('main a[href^="/note/"]').first().click()
+  await expect(page.locator('main article img:not([aria-hidden])')).toBeVisible()
+  await page.goBack()
+  await page.getByRole('link', { name: '← All photos' }).click()
   await expect(page).toHaveURL('/photos')
-  await expect(collection).toBeFocused()
 })
 
 test('image dimensions are reserved before images arrive', async ({ page }) => {
@@ -118,4 +121,76 @@ test('a failed GLB leaves the homepage and work history usable', async ({ page }
   await expect(page.getByRole('button', { name: 'show mamuso' })).toHaveAttribute('aria-pressed', 'true')
   await page.locator('a[href="/photos"]').click()
   await expect(page.getByRole('heading', { name: 'Say Cheese' })).toBeVisible()
+})
+
+
+test('photo navigation animates image geometry and captures the header', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  await page.addInitScript(() => {
+    const start = document.startViewTransition.bind(document)
+    const captures: { header: string; morphs: { name: string; widths: number[]; duration: number }[] }[] = []
+    Object.assign(window, { photoTransitionCaptures: captures })
+    document.startViewTransition = (...args) => {
+      const transition = start(...args)
+      transition.ready.then(() => {
+        captures.push({
+          header: getComputedStyle(document.querySelector('header')!).viewTransitionName,
+          morphs: document.getAnimations().flatMap((animation) => {
+            const effect = animation.effect as KeyframeEffect | null
+            const name = effect?.pseudoElement ?? ''
+            if (!effect || !name.startsWith('::view-transition-group(photo-')) return []
+            return [{
+              name,
+              widths: effect.getKeyframes().map((frame) => Number.parseFloat(String(frame.width))),
+              duration: Number(effect.getTiming().duration),
+            }]
+          }),
+        })
+      }).catch((error) => { throw error })
+      return transition
+    }
+  })
+  await page.goto('/photos')
+  const photo = page.locator('[data-gallery-card] > div > a[href^="/note/"]').first()
+  const href = await photo.getAttribute('href')
+  await photo.click()
+  await expect(page).toHaveURL(href!)
+  const name = `::view-transition-group(photo-${href!.split('/').pop()})`
+  await expect.poll(() => page.evaluate((name) => {
+    const captures = (window as Window & {
+      photoTransitionCaptures?: { header: string; morphs: { name: string; widths: number[]; duration: number }[] }[]
+    }).photoTransitionCaptures ?? []
+    return captures.some((capture) => capture.header === 'site-header' && capture.morphs.some(
+      (morph) => morph.name === name && morph.duration > 0 && morph.widths.length >= 2 &&
+        morph.widths[0] > 0 && morph.widths.at(-1)! > morph.widths[0],
+    ))
+  }, name)).toBe(true)
+  expect(errors).toEqual([])
+})
+
+test('photo detail retains its thumbnail while the full image loads', async ({ page }) => {
+  let releaseImage!: () => void
+  const imageGate = new Promise<void>((resolve) => { releaseImage = resolve })
+  await page.route('**/_next/image?**', async (route) => {
+    const source = new URL(route.request().url()).searchParams.get('url') ?? ''
+    if (source.startsWith('/assets/feed/') && !source.startsWith('/assets/feed/gallery-')) await imageGate
+    await route.continue()
+  })
+  try {
+    await page.goto('/photos')
+    await page.locator('[data-gallery-card] > div > a[href^="/note/"]').first().click()
+    const frame = page.locator('article [data-progressive-photo]')
+    const preview = frame.locator('img[aria-hidden="true"]')
+    const original = frame.locator('img:not([aria-hidden])')
+    await expect(preview).toBeVisible()
+    await expect.poll(() => preview.evaluate((image) => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0)
+    await expect(original).toHaveCSS('opacity', '0')
+    const before = await frame.boundingBox()
+    releaseImage()
+    await expect(original).toHaveCSS('opacity', '1')
+    expect(await frame.boundingBox()).toEqual(before)
+  } finally {
+    releaseImage()
+  }
 })

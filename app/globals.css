@@ -22,6 +22,19 @@ body {
 }
 
 @layer transitions {
+  ::view-transition-group(.photo-morph) {
+    animation-duration: 350ms;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Move the photo without fading either snapshot through the page background. */
+  ::view-transition-old(.photo-morph),
+  ::view-transition-new(.photo-morph) {
+    animation: none;
+    opacity: 1;
+    mix-blend-mode: normal;
+  }
+
   [data-header-brand] {
     view-transition-group: contain;
   }
@@ -149,18 +162,5 @@ body {
   [data-photo-stack][data-dragging] { cursor: grabbing; --print-follow-duration: 60ms; }
   [data-photo-stack][data-dragging] > [data-photo-print] {
     cursor: grabbing;
-  }
-}
-
-@layer photo-viewer {
-  [data-photo-quick-look][open] { display: flex; }
-  [data-photo-quick-look]::backdrop {
-    background: rgba(240, 240, 240, 0.82);
-  }
-
-  html:has([data-photo-quick-look][open])::view-transition-group(*),
-  html:has([data-photo-quick-look][open])::view-transition-old(*),
-  html:has([data-photo-quick-look][open])::view-transition-new(*) {
-    animation: none;
   }
 }

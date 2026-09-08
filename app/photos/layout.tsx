@@ -4,6 +4,6 @@ import type { ReactNode } from 'react'
 
 export const metadata = pageMetadata({ title: `Photos – ${BLOG_TITLE}`, path: '/photos', description: 'Mamuso has a camera' })
 
-export default function PhotosLayout({ children, viewer }: { children: ReactNode; viewer: ReactNode }) {
-  return <>{children}{viewer}</>
+export default function PhotosLayout({ children }: { children: ReactNode }) {
+  return <>{children}</>
 }

@@ -4,6 +4,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Markdown from 'markdown-to-jsx'
 import PhotoMeta from './PhotoMeta'
+import PhotoTransition from './PhotoTransition'
+import ProgressivePhoto from './ProgressivePhoto'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '../styles/site'
 
@@ -22,7 +24,16 @@ export default function Post({ post, link = false, priority = false }: { post: P
       </p>
       {post.basename && (
         <p {...stylex.props(styles.copy)}>
-          <Image src={`/assets/feed/${post.basename}`} width={post.category === 'photo' ? post.width : post.width / 3} height={post.category === 'photo' ? post.height : post.height / 3} alt={post.title || 'This picture is missing a title'} loading={priority ? 'eager' : 'lazy'} {...stylex.props(styles.image)} />
+          <PhotoTransition slug={post.category === 'photo' ? post.slug : undefined}>
+            {post.category === 'photo' ? (
+              <ProgressivePhoto basename={post.basename} width={post.width} height={post.height} title={post.title}
+                eager={priority} sizes="(max-width: 639px) calc(100vw - 58px), (max-width: 1079px) calc(100vw - 132px), 948px"
+                {...stylex.props(styles.image, styles.photoSize(post.width), !link && styles.photoPrint)} />
+            ) : (
+              <Image src={`/assets/feed/${post.basename}`} width={post.width / 3} height={post.height / 3}
+                alt={post.title || 'This picture is missing a title'} loading={priority ? 'eager' : 'lazy'} {...stylex.props(styles.image)} />
+            )}
+          </PhotoTransition>
         </p>
       )}
       <div {...stylex.props(styles.content)}>
@@ -46,6 +57,13 @@ const styles = stylex.create({
     display: 'block',
     height: 'auto',
     maxWidth: '100%',
+  },
+  photoSize: (width: number) => ({ width }),
+  photoPrint: {
+    boxSizing: 'border-box',
+    padding: { default: 5, '@media (min-width: 480px)': 6 },
+    backgroundColor: '#fff',
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.1)',
   },
   content: {
     marginBlockStart: 16,
