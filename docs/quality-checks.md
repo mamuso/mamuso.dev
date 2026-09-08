@@ -8,8 +8,10 @@ pnpm install --frozen-lockfile
 pnpm check
 ```
 
-`pnpm check` runs ESLint, generates current Next route types, checks TypeScript,
-runs all Node contract tests, and validates WGSL. It stops at the first failed
+`pnpm check` validates frontmatter and referenced images, runs ESLint, generates current Next route types, checks TypeScript,
+runs all Node contract tests, and validates WGSL. Shader validation uses Dawn's
+null backend so it requires no physical GPU (including on Vercel). It still
+compiles WGSL and rejects type errors; browser smoke tests exercise actual rendering. It stops at the first failed
 command. Content tests validate published canonical URLs and filename aliases;
 they do not require date prefixes or rename existing URLs.
 

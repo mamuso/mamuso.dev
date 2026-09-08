@@ -3,7 +3,7 @@ import { BLOG_TITLE } from '@/lib/constants'
 import { Metadata } from 'next'
 import { getPostRouteSlugs, getPostBySlug, resolvePostSlug } from '@/lib/api'
 import { notFound, permanentRedirect } from 'next/navigation'
-import { PostType } from '@/lib/types'
+import { POST_DETAIL_FIELDS } from '@/lib/types'
 import Post from '@/app/components/Post'
 
 // Pre-generate all post pages at build time
@@ -31,6 +31,6 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
 export default async function PostPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const post: PostType = getPostBySlug(canonicalSlug(params.slug), ['title', 'date', 'slug', 'content', 'summary', 'category', 'basename', 'camera', 'iso', 'fnumber', 'exposureBiasValue', 'exposureTime', 'GPSLatitude', 'GPSLongitude', 'width', 'height', 'colorPalette'])
+  const post = getPostBySlug(canonicalSlug(params.slug), POST_DETAIL_FIELDS)
   return <Post post={post} priority={true} />
 }

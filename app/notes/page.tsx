@@ -2,7 +2,7 @@ import { editorialYear } from '@/lib/editorial-date'
 import { pageMetadata } from '@/lib/metadata'
 import { BLOG_TITLE } from '@/lib/constants'
 import { getNotePosts } from '@/lib/api'
-import { PostType } from '@/lib/types'
+import { PostSummary } from '@/lib/types'
 import PostHome from '@/app/components/PostHome'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
@@ -10,17 +10,17 @@ import { layout, typography } from '@/app/styles/site'
 
 export const metadata = pageMetadata({ title: `Notes – ${BLOG_TITLE}`, path: '/notes' })
 
-const allPosts: PostType[] = getNotePosts(['title', 'date', 'slug', 'category'])
+const allPosts: PostSummary[] = getNotePosts(['title', 'date', 'slug', 'category'])
 
 export default function Posts() {
-  const postsByYear: { [key: number]: PostType[] } = allPosts.reduce((acc: { [key: number]: PostType[] }, post) => {
+  const postsByYear: { [key: number]: PostSummary[] } = allPosts.reduce((acc: { [key: number]: PostSummary[] }, post) => {
     const year = editorialYear(post.date)
     if (!acc[year]) {
       acc[year] = []
     }
     acc[year].push(post)
     return acc
-  }, {} as { [key: number]: PostType[] })
+  }, {} as { [key: number]: PostSummary[] })
 
   return (
     <section {...stylex.props(layout.section, styles.section)}>

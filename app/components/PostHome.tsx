@@ -1,10 +1,10 @@
-import { PostType } from '@/lib/types'
+import { PostSummary } from '@/lib/types'
 import { formatPostDate } from '@/lib/editorial-date'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { typography } from '../styles/site'
 
-export default function PostHome({ post }: { post: PostType }) {
+export default function PostHome({ post }: { post: PostSummary }) {
   return (
     <Link href={`/note/${post.slug}`} {...stylex.props(typography.link, styles.row)}>
       <span>{post.title}</span>

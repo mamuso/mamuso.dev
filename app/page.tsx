@@ -15,7 +15,7 @@ const POSTS_PER_PAGE = 10
 const SHOW_JOURNAL = false
 
 const Journal = () => {
-  const recentPosts = getRecentPosts(POSTS_PER_PAGE, ['title', 'date', 'slug', 'image', 'category'])
+  const recentPosts = getRecentPosts(POSTS_PER_PAGE, ['title', 'date', 'slug', 'category'])
 
   return (
     <section {...stylex.props(layout.section, layout.stack)}>

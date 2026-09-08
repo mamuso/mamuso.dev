@@ -6,20 +6,10 @@ import { marked } from 'marked'
 import { readPostIndex } from './post-index'
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from './constants'
 
-interface FeedPost {
-  slug: string
-  fileSlug: string
-  body: string
-  title: string
-  date: string
-  basename?: string
-  [key: string]: unknown
-}
-
 const posts = readPostIndex().posts
   .filter(({ data }) => data.category !== 'photo')
   .map(({ data, content, slug, fileSlug }) => {
-    return { ...data, slug, fileSlug, body: content } as FeedPost
+    return { ...data, slug, fileSlug, body: content }
   })
   .sort((a, b) => parseEditorialDate(b.date).getTime() - parseEditorialDate(a.date).getTime())
 

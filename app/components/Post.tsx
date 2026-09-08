@@ -1,4 +1,4 @@
-import { PostType } from '@/lib/types'
+import { PostDetail } from '@/lib/types'
 import { formatPostDate } from '@/lib/editorial-date'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -7,7 +7,7 @@ import PhotoMeta from './PhotoMeta'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '../styles/site'
 
-export default function Post({ post, link = false, priority = false }: { post: PostType; link?: boolean; priority?: boolean }) {
+export default function Post({ post, link = false, priority = false }: { post: PostDetail; link?: boolean; priority?: boolean }) {
   return (
     <article {...stylex.props(layout.section, styles.article)}>
       {link ? (

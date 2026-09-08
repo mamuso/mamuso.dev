@@ -9,7 +9,7 @@
     "build": "git submodule update --init && pnpm run assets && pnpm run rss && next build",
     "start": "next start",
     "lint": "eslint .",
-    "shader:check": "vgpu check app/components/*.wgsl --require-validation",
+    "shader:check": "VGPU_DAWN_FLAGS=backend=null vgpu check app/components/*.wgsl --require-validation",
     "rss": "ts-node --project ./node.tsconfig.json lib/feed",
     "assets": "ts-node --project ./node.tsconfig.json lib/assets",
     "photos": "node scripts/photos.mjs",
@@ -18,7 +18,8 @@
     "metadata:test": "node --test scripts/metadata.test.mjs",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "node --test lib/*.test.mjs app/components/*.test.mjs tests/*.test.mjs",
-    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm shader:check",
+    "content:check": "node scripts/content-check.mjs",
+    "check": "pnpm content:check && pnpm lint && pnpm typecheck && pnpm test && pnpm shader:check",
     "smoke:test": "node scripts/prepare-smoke.mjs && playwright test",
     "verify": "pnpm check && pnpm build && pnpm metadata:test && pnpm smoke:test"
   },

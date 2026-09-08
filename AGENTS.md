@@ -49,7 +49,8 @@ build also runs the content pipeline and updates the submodule checkout.
 - Keep published explicit slugs fixed when editing titles. Markdown filenames also remain stable: photo import uses them for duplicate detection. `/note/<filename>` permanently redirects to `/note/<slug>` when an explicit slug exists; otherwise the filename remains the URL.
 - Photo import deduplicates originals by SHA-256 and preserves draft edits. `pnpm photos --review` collects title, slug and date; `pnpm photos --publish ID` (or `all`) installs reviewed drafts and images into content and refreshes assets/feed. Originals and raw EXIF stay local. See `docs/photo-import.md`.
 - Feed links use canonical `/note/<slug>` URLs, while entry IDs retain historical `/post/<filename>` URLs to preserve subscriber history.
-- `PostType` in `lib/types.tsx` declares many fields required, but `getPostBySlug` returns only requested fields via a cast. Do not assume EXIF or unrequested fields are present.
+- `lib/types.ts` distinguishes notes and photos. API field selections expose only requested keys; optional data has an `undefined` value. Use `POST_DETAIL_FIELDS` for full-post rendering. EXIF numbers are numeric; unavailable legacy GPS `"NaN"` values normalize to absence.
+- `pnpm content:check` validates frontmatter, calendar dates, positive image dimensions, referenced feed assets and consistent stack titles. It runs first in `pnpm check`; runtime index reads enforce the same contract.
 
 ## Routes and rendering
 

@@ -1,3 +1,4 @@
+import { POST_DETAIL_FIELDS } from '@/lib/types'
 import { pageMetadata } from '@/lib/metadata'
 import { BLOG_TITLE } from '@/lib/constants'
 import { getNotePosts, getPostBySlug } from '@/lib/api'
@@ -34,7 +35,7 @@ export default async function Posts(props: { params: Promise<{ page: string }> }
   const pagePostSlugs = allPostsMinimal.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE)
 
   const pagePosts = pagePostSlugs.map((post) =>
-    getPostBySlug(post.slug, ['title', 'date', 'slug', 'content', 'summary', 'category', 'basename', 'camera', 'iso', 'fnumber', 'exposureBiasValue', 'exposureTime', 'GPSLatitude', 'GPSLongitude', 'width', 'height', 'colorPalette'])
+    getPostBySlug(post.slug, POST_DETAIL_FIELDS)
   )
 
   return (
