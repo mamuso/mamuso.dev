@@ -22,7 +22,7 @@ function sample(seed: number, index: number, axis: number) {
 }
 
 /** Up to six prints suggest the collection; its title and count open every photo. */
-export default function PhotoStack({ photos, href, title, collectionHref }: { photos: PhotoPrint[]; href: string; title: string; collectionHref?: string }) {
+export default function PhotoStack({ photos, href, title, collectionHref, eager = false }: { photos: PhotoPrint[]; href: string; title: string; collectionHref?: string; eager?: boolean }) {
   if (!photos.length) return null
   const visible = collectionHref ? photos.slice(0, 6) : photos
   // Seed the arrangement from the collection URL.
@@ -36,6 +36,7 @@ export default function PhotoStack({ photos, href, title, collectionHref }: { ph
               src={`/assets/feed/gallery-${photo.basename}`}
               width={photo.width}
               height={photo.height}
+              loading={eager ? 'eager' : 'lazy'}
               alt=""
               sizes="(max-width: 479px) 120px, 160px"
               {...stylex.props(styles.image(photo.width / Math.max(photo.width, photo.height), photo.height / Math.max(photo.width, photo.height)))}

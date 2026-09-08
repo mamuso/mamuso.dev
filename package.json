@@ -15,7 +15,12 @@
     "photos": "node scripts/photos.mjs",
     "photos:test": "node --test lib/photo-import.test.mjs",
     "photos:interaction:test": "node --test app/components/photoInteraction.test.mjs",
-    "metadata:test": "node --test scripts/metadata.test.mjs"
+    "metadata:test": "node --test scripts/metadata.test.mjs",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "node --test lib/*.test.mjs app/components/*.test.mjs tests/*.test.mjs",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm shader:check",
+    "smoke:test": "node scripts/prepare-smoke.mjs && playwright test",
+    "verify": "pnpm check && pnpm build && pnpm metadata:test && pnpm smoke:test"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
@@ -31,6 +36,7 @@
     "vgpu": "0.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@stylexjs/babel-plugin": "^0.19.0",
     "@stylexjs/eslint-plugin": "^0.19.0",
     "@stylexjs/postcss-plugin": "^0.19.0",

@@ -38,19 +38,13 @@ export default function AnimatedName() {
         <span
           key={part.prefix}
           aria-hidden="true"
-          {...stylex.props(styles.word, index > 0 && styles.spacedWord)}
-          style={{
-            marginInlineStart: index > 0 ? (isExpanded ? '0.28em' : 0) : undefined,
-            transitionDelay: gapDelay(index, isExpanded),
-          }}
+          {...stylex.props(styles.word, index > 0 && styles.spacedWord,
+            styles.wordPosition(index > 0 && isExpanded ? '0.28em' : '0px', gapDelay(index, isExpanded)))}
         >
           <span>{part.prefix}</span>
           <span
-            {...stylex.props(styles.extension)}
-            style={{
-              maxWidth: isExpanded ? part.extensionWidth : 0,
-              transitionDelay: extensionDelay(index, isExpanded),
-            }}
+            {...stylex.props(styles.extension,
+              styles.extensionSize(isExpanded ? part.extensionWidth : '0px', extensionDelay(index, isExpanded)))}
           >
             {part.extension}
           </span>
@@ -83,6 +77,8 @@ const styles = stylex.create({
     display: 'inline-flex',
     whiteSpace: 'nowrap',
   },
+  wordPosition: (margin: string, delay: string) => ({ marginInlineStart: margin, transitionDelay: delay }),
+  extensionSize: (width: string, delay: string) => ({ maxWidth: width, transitionDelay: delay }),
   spacedWord: {
     transitionDuration: {
       default: `${DURATION_MS}ms`,

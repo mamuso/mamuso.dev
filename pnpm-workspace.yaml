@@ -15,3 +15,6 @@ allowBuilds:
   canvas: false
   sharp: true
   unrs-resolver: true
+
+patchedDependencies:
+  next@16.3.0: patches/next@16.3.0.patch

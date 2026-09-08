@@ -1,5 +1,5 @@
 import { PostType } from '@/lib/types'
-import { formatPostDate } from '@/lib/constants'
+import { formatPostDate } from '@/lib/editorial-date'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { typography } from '../styles/site'

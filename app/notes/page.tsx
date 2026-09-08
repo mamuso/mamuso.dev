@@ -1,3 +1,4 @@
+import { editorialYear } from '@/lib/editorial-date'
 import { pageMetadata } from '@/lib/metadata'
 import { BLOG_TITLE } from '@/lib/constants'
 import { getNotePosts } from '@/lib/api'
@@ -13,7 +14,7 @@ const allPosts: PostType[] = getNotePosts(['title', 'date', 'slug', 'category'])
 
 export default function Posts() {
   const postsByYear: { [key: number]: PostType[] } = allPosts.reduce((acc: { [key: number]: PostType[] }, post) => {
-    const year = new Date(post.date).getFullYear()
+    const year = editorialYear(post.date)
     if (!acc[year]) {
       acc[year] = []
     }

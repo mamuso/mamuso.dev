@@ -30,7 +30,10 @@ Standard commands are defined in `package.json`:
 - `pnpm run rss`: generate `public/feed.xml` (Atom despite the script name).
 - `pnpm run photos`: prepare originals from local `photo-inbox/` into `.photo-import/` drafts; see `docs/photo-import.md`.
 - `pnpm run shader:check`: validate component WGSL shaders with vgpu.
-- `node --test lib/post-index.test.mjs app/components/cartridgeMobileLayout.test.mjs`: run the existing content-index and cartridge-layout tests.
+- `pnpm test`: run all Node contract tests.
+- `pnpm check`: lint, route types, TypeScript, Node tests, and shader validation.
+- `pnpm verify`: check, production build, HTTP metadata audit, and desktop/mobile browser smoke tests. Run `pnpm exec playwright install chromium` once first.
+- See `docs/quality-checks.md` for CI, deployment gates, and the version-specific Next OG patch.
 
 Prefer the dev server for development. Run checks relevant to the change; a full
 build also runs the content pipeline and updates the submodule checkout.
@@ -42,6 +45,7 @@ build also runs the content pipeline and updates the submodule checkout.
 - Builds use the parent repository's pinned content revision. Do not advance to the remote default branch during a build. After committing content changes, stage the updated `content` gitlink before building; push the content commit before the parent commit so deployments can fetch it.
 - Markdown uses gray-matter frontmatter. `lib/post-index.ts` validates explicit slugs and rejects collisions with canonical URLs or filename aliases. `lib/api.tsx` wraps reads in React `cache()` and selects requested fields.
 - Photo posts use `category: photo`, `basename`, image dimensions, and optional camera/EXIF, GPS, and palette fields. A non-photo note can also have a `basename` image; it will not appear in the photo gallery. Notes lists include all non-photo entries, including legacy `code` and uncategorized posts.
+- Editorial dates are calendar days in `YYYY-MM-DD` format. Use `lib/editorial-date.ts` for formatting, archive years, and conversion to feed timestamps; never format them in the server's local time zone.
 - Keep published explicit slugs fixed when editing titles. Markdown filenames also remain stable: photo import uses them for duplicate detection. `/note/<filename>` permanently redirects to `/note/<slug>` when an explicit slug exists; otherwise the filename remains the URL.
 - Photo import deduplicates originals by SHA-256 and preserves draft edits. `pnpm photos --review` collects title, slug and date; `pnpm photos --publish ID` (or `all`) installs reviewed drafts and images into content and refreshes assets/feed. Originals and raw EXIF stay local. See `docs/photo-import.md`.
 - Feed links use canonical `/note/<slug>` URLs, while entry IDs retain historical `/post/<filename>` URLs to preserve subscriber history.

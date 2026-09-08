@@ -34,9 +34,9 @@ export default async function Photos({ searchParams }: Props) {
     <section {...stylex.props(layout.section, layout.stack, styles.section)}>
       <h2 {...stylex.props(typography.heading, typography.muted, styles.title)}>Say Cheese</h2>
       <ul {...stylex.props(layout.list, styles.gallery)}>
-        {visible.map(({ key, photos }) => (
+        {visible.map(({ key, photos }, index) => (
           <li key={key} data-gallery-card>
-            <PhotoStack photos={photos} collectionHref={photos[0].photoStack ? `/photos/stack/${encodeURIComponent(photos[0].photoStack)}` : undefined} href={`/note/${photos[0].slug}`} title={photos[0].photoStackTitle ?? photos[0].title} />
+            <PhotoStack eager={index < 4} photos={photos} collectionHref={photos[0].photoStack ? `/photos/stack/${encodeURIComponent(photos[0].photoStack)}` : undefined} href={`/note/${photos[0].slug}`} title={photos[0].photoStackTitle ?? photos[0].title} />
           </li>
         ))}
       </ul>

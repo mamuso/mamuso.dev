@@ -1,5 +1,5 @@
 import { PostType } from '@/lib/types'
-import { formatPostDate } from '@/lib/constants'
+import { formatPostDate } from '@/lib/editorial-date'
 import Link from 'next/link'
 import Image from 'next/image'
 import Markdown from 'markdown-to-jsx'
@@ -22,7 +22,7 @@ export default function Post({ post, link = false, priority = false }: { post: P
       </p>
       {post.basename && (
         <p {...stylex.props(styles.copy)}>
-          <Image src={`/assets/feed/${post.basename}`} width={post.category === 'photo' ? post.width : post.width / 3} height={post.category === 'photo' ? post.height : post.height / 3} alt={post.title || 'This picture is missing a title'} priority={priority} {...stylex.props(styles.image)} />
+          <Image src={`/assets/feed/${post.basename}`} width={post.category === 'photo' ? post.width : post.width / 3} height={post.category === 'photo' ? post.height : post.height / 3} alt={post.title || 'This picture is missing a title'} loading={priority ? 'eager' : 'lazy'} {...stylex.props(styles.image)} />
         </p>
       )}
       <div {...stylex.props(styles.content)}>

@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import CartridgeErrorBoundary from './CartridgeErrorBoundary'
 import * as stylex from '@stylexjs/stylex'
 import { layout } from '../styles/site'
 
@@ -20,7 +21,9 @@ export default function CartridgeStageDynamic({
 }: CartridgeStageDynamicProps) {
   return (
     <>
-      <CartridgeStage onOpenChange={onOpenChange} />
+      <CartridgeErrorBoundary>
+        <CartridgeStage onOpenChange={onOpenChange} />
+      </CartridgeErrorBoundary>
       <div aria-hidden="true" {...stylex.props(layout.container, styles.dividerContainer)}>
         <div {...stylex.props(styles.divider)} />
       </div>

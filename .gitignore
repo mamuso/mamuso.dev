@@ -44,3 +44,7 @@ next-env.d.ts
 # Local photo originals and unpublished drafts
 /photo-inbox/
 /.photo-import/
+
+# Browser test output
+/playwright-report/
+/test-results/

@@ -1,3 +1,4 @@
+import { parseEditorialDate } from './editorial-date'
 import fs from 'fs-extra'
 import { Feed } from 'feed'
 import path from 'path'
@@ -20,7 +21,7 @@ const posts = readPostIndex().posts
   .map(({ data, content, slug, fileSlug }) => {
     return { ...data, slug, fileSlug, body: content } as FeedPost
   })
-  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  .sort((a, b) => parseEditorialDate(b.date).getTime() - parseEditorialDate(a.date).getTime())
 
 const renderer = new marked.Renderer()
 
@@ -72,7 +73,7 @@ const main = () => {
       id: `${BLOG_URL}/post/${post.fileSlug}`,
       title: post.title,
       description: description,
-      date: new Date(post?.date),
+      date: parseEditorialDate(post.date),
       author: [
         {
           name: 'Manuel Muñoz Solera',
