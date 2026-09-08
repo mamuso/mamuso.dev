@@ -1,9 +1,14 @@
 export const photoMotion = {
-  hoverShift: 4, hoverRotation: 0.6, hoverDistance: 60,
+  hoverShift: 2, hoverRotation: 0.3, hoverDistance: 60,
   maxShift: 18, maxRotation: 2, dragThreshold: 6, dragScale: 0.3, dragRotation: 0.025,
-  scatter: { x: 36, y: 28, angle: 14 },
-  initial: { x: 36, y: 24, yOffset: -4, angle: 12 },
+  scatter: { x: 20, y: 16, angle: 10 },
+  initial: { x: 36, y: 24, yOffset: -4, angle: 15 },
 } as const
+
+/** Keep successive prints on opposite sides of the stack. */
+export function alternatePhotoOffset(index: number, offset: number) {
+  return index === 0 ? offset : (index % 2 === 1 ? -1 : 1) * Math.max(2, Math.abs(offset)) * 1.25
+}
 
 export type Position = { x: number; y: number; angle: number }
 type Phase = 'idle' | 'hover' | 'pressed' | 'dragging'

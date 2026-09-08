@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type PointerEvent } from 'react'
-import { createPhotoInteraction, photoMotion, type Position } from './photoInteraction'
+import { alternatePhotoOffset, createPhotoInteraction, photoMotion, type Position } from './photoInteraction'
 
 function printAt(target: EventTarget | null) {
   return target instanceof Element ? target.closest<HTMLElement>('[data-photo-print]') : null
@@ -10,9 +10,9 @@ function printAt(target: EventTarget | null) {
 function scatter(node: HTMLElement) {
   node.querySelectorAll<HTMLElement>('[data-photo-print]').forEach((print, index) => {
     if (index === 0) return
-    const x = (Math.random() - 0.5) * photoMotion.scatter.x
+    const x = alternatePhotoOffset(index, (Math.random() - 0.5) * photoMotion.scatter.x)
     const y = (Math.random() - 0.5) * photoMotion.scatter.y
-    const angle = (Math.random() - 0.5) * photoMotion.scatter.angle
+    const angle = alternatePhotoOffset(index, (Math.random() - 0.5) * photoMotion.scatter.angle)
     print.style.setProperty('--print-open', `translate(${x}px, ${y}px) rotate(${angle}deg)`)
   })
   node.dataset.opened = ''
