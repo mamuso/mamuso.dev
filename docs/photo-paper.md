@@ -14,9 +14,11 @@ sits in a separate unruled footer. No fixed content height, clipping or truncati
 is used. CSS `round()` is required for width snapping.
 
 The paper base is `#E4E4E9` in both WGSL and the CSS fallback, with white grid
-lines. Its six-layer shadow uses the negative-spread values from
+lines. Its six-layer shadow adapts the negative-spread technique from
 [Derek Briggs' CodePen](https://codepen.io/DerekBriggs/pen/bGzXmvL):
-a 1px outline followed by 1, 3, 6, 12 and 24px shadows at 6% black opacity.
+a 1px outline followed by shadows offset 1, 2, 4, 9 and 18px at 4.5% black
+opacity. Grid lines start one cell in from the left and top; no outer line is
+drawn on the left, right or top. The white separator above the date remains.
 
 ## Adjusting the paper
 

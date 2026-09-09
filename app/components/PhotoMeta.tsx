@@ -56,13 +56,16 @@ const styles = stylex.create({
     width: 'round(down, 100%, 24px)', maxWidth: 432, borderRadius: 32, overflow: 'hidden',
     color: '#484640', fontSize: 13, lineHeight: '24px',
     // Derek Briggs' layered shadow with negative spread (see docs/photo-paper.md).
-    boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 1px -0.5px rgba(0, 0, 0, 0.06), 0 3px 3px -1.5px rgba(0, 0, 0, 0.06), 0 6px 6px -3px rgba(0, 0, 0, 0.06), 0 12px 12px -6px rgba(0, 0, 0, 0.06), 0 24px 24px -12px rgba(0, 0, 0, 0.06)',
+    boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.045), 0 1px 1px -0.5px rgba(0, 0, 0, 0.045), 0 2px 3px -1.5px rgba(0, 0, 0, 0.045), 0 4px 6px -3px rgba(0, 0, 0, 0.045), 0 9px 12px -6px rgba(0, 0, 0, 0.045), 0 18px 24px -12px rgba(0, 0, 0, 0.045)',
   },
   grid: {
     position: 'relative', padding: 24,
-    backgroundImage: 'linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)',
-    backgroundSize: '24px 24px',
-    boxShadow: 'inset -1px -1px 0 #fff',
+    // Start each set of lines one cell in, without drawing an outer border.
+    backgroundImage: 'repeating-linear-gradient(to right, #fff 0 1px, transparent 1px 24px), repeating-linear-gradient(to bottom, #fff 0 1px, transparent 1px 24px)',
+    backgroundSize: 'calc(100% - 24px) 100%, 100% calc(100% - 24px)',
+    backgroundPosition: '24px 0, 0 24px',
+    backgroundRepeat: 'no-repeat',
+    boxShadow: 'inset 0 -1px 0 #fff',
   },
   title: { margin: 0, marginBottom: 24, fontSize: 15, fontWeight: 500, lineHeight: '24px', overflowWrap: 'anywhere' },
   metadata: { display: 'grid', gap: 24, margin: 0 },
