@@ -20,5 +20,5 @@ fn hash(p: vec2f) -> f32 {
   let fibers = hash(floor(p * vec2f(0.14, 2.2))) - 0.5;
   let cloud = (hash(floor(p / 18.0)) - 0.5) * 0.002;
   let shade = grain * params.grain + fibers * params.fibers + cloud;
-  return vec4f(vec3f(0.965, 0.958, 0.941) + shade, 1.0);
+  return vec4f(vec3f(228.0, 228.0, 233.0) / 255.0 + shade, 1.0);
 }

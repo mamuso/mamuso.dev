@@ -13,6 +13,11 @@ gaps and total padding are multiples of 24px; wrapping adds whole rows. The date
 sits in a separate unruled footer. No fixed content height, clipping or truncation
 is used. CSS `round()` is required for width snapping.
 
+The paper base is `#E4E4E9` in both WGSL and the CSS fallback, with white grid
+lines. Its six-layer shadow uses the negative-spread values from
+[Derek Briggs' CodePen](https://codepen.io/DerekBriggs/pen/bGzXmvL):
+a 1px outline followed by 1, 3, 6, 12 and 24px shadows at 6% black opacity.
+
 ## Adjusting the paper
 
 Edit `app/components/paper-settings.ts`:
@@ -23,7 +28,7 @@ Edit `app/components/paper-settings.ts`:
 - `textureScale`: grain size in CSS pixels (1).
 - `foldCount`: number of broad creases (4; clamped to 0–8).
 - `foldSize`: nominal crease size in CSS pixels (112; clamped to 24–220).
-- `foldStrength`: crease contrast (0.016; clamped to 0–0.05).
+- `foldStrength`: crease contrast (0.024; clamped to 0–0.05).
 - `dents`: shallow edge wear depth in CSS pixels (0.3; clamped to 0–2).
 
 Set `foldStrength` and `dents` to zero to remove wear; `foldCount: 0` disables

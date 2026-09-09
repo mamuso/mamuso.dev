@@ -55,13 +55,14 @@ const styles = stylex.create({
     position: 'relative', isolation: 'isolate', boxSizing: 'border-box',
     width: 'round(down, 100%, 24px)', maxWidth: 432, borderRadius: 32, overflow: 'hidden',
     color: '#484640', fontSize: 13, lineHeight: '24px',
-    filter: 'drop-shadow(0 2px 2px rgba(40, 36, 28, 0.08)) drop-shadow(0 8px 12px rgba(40, 36, 28, 0.05))',
+    // Derek Briggs' layered shadow with negative spread (see docs/photo-paper.md).
+    boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 1px -0.5px rgba(0, 0, 0, 0.06), 0 3px 3px -1.5px rgba(0, 0, 0, 0.06), 0 6px 6px -3px rgba(0, 0, 0, 0.06), 0 12px 12px -6px rgba(0, 0, 0, 0.06), 0 24px 24px -12px rgba(0, 0, 0, 0.06)',
   },
   grid: {
     position: 'relative', padding: 24,
-    backgroundImage: 'linear-gradient(to right, rgba(87, 83, 73, 0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(87, 83, 73, 0.12) 1px, transparent 1px)',
+    backgroundImage: 'linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)',
     backgroundSize: '24px 24px',
-    boxShadow: 'inset -1px -1px 0 rgba(87, 83, 73, 0.12)',
+    boxShadow: 'inset -1px -1px 0 #fff',
   },
   title: { margin: 0, marginBottom: 24, fontSize: 15, fontWeight: 500, lineHeight: '24px', overflowWrap: 'anywhere' },
   metadata: { display: 'grid', gap: 24, margin: 0 },

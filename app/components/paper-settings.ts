@@ -7,7 +7,7 @@ export const PAPER_SETTINGS = {
   // Subtle wear along the rounded, full-bleed edges.
   foldCount: 4,
   foldSize: 112,
-  foldStrength: 0.016,
+  foldStrength: 0.024,
   dents: 0.3,
 } as const
 

@@ -170,7 +170,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background: #f6f4f0;
+    background: #e4e4e9;
     pointer-events: none;
   }
 
