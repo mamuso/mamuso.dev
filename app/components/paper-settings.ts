@@ -4,10 +4,11 @@ export const PAPER_SETTINGS = {
   grain: 0.035,
   fibers: 0.018,
   textureScale: 1,
-  // Subtle wear along the rounded, full-bleed edges.
+  cornerRadius: 4,
+  // Mix fine creases, broad bulges, corner folds and edge buckles.
   foldCount: 4,
   foldSize: 112,
-  foldStrength: 0.024,
+  foldStrength: 0.03,
   dents: 0.3,
 } as const
 

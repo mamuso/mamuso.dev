@@ -8,6 +8,7 @@ import type { PaperSettings } from './paper-settings'
 let shared: { promise: Promise<Gpu>; users: number } | undefined
 
 export async function mountPaper(canvas: HTMLCanvasElement, settings: PaperSettings, wearSeed: number, signal: AbortSignal) {
+  if (signal.aborted) return
   const lease = shared ??= { promise: init(), users: 0 }
   lease.users++
   let gpu: Gpu | undefined
@@ -22,6 +23,7 @@ export async function mountPaper(canvas: HTMLCanvasElement, settings: PaperSetti
     if (released) return
     released = true
     observer?.disconnect()
+    delete canvas.dataset.ready
     paper?.color.destroy()
     warmup?.color.destroy()
     output?.dispose()
@@ -43,7 +45,8 @@ export async function mountPaper(canvas: HTMLCanvasElement, settings: PaperSetti
     } } })
     edges = effect(gpu, edgeShader, { set: {
       params: { resolution: output.size, seed: wearSeed, foldCount: settings.foldCount,
-        foldSize: settings.foldSize, foldStrength: settings.foldStrength, dents: settings.dents },
+        foldSize: settings.foldSize, foldStrength: settings.foldStrength, dents: settings.dents,
+        cornerRadius: settings.cornerRadius },
       paper, paperSampler: sampler(gpu, { minFilter: 'linear', magFilter: 'linear' }),
     } })
     // This vgpu build only acquires swapchain textures inside frame().
@@ -52,15 +55,21 @@ export async function mountPaper(canvas: HTMLCanvasElement, settings: PaperSetti
     warmup.color.destroy()
     warmup = undefined
     if (signal.aborted) { release(); return }
+    let renderedWidth = 0, renderedHeight = 0
     const render = () => {
       if (released || !gpu || !output || !paper || !texture || !edges) return
       try {
-        const { width, height } = canvas.getBoundingClientRect()
-        output.resize([Math.max(1, Math.round(width)), Math.max(1, Math.round(height))])
+        // Use layout dimensions: the card's rotation changes its screen bounds.
+        const width = Math.max(1, Math.round(canvas.clientWidth))
+        const height = Math.max(1, Math.round(canvas.clientHeight))
+        if (width === renderedWidth && height === renderedHeight) return
+        output.resize([width, height])
         paper.resize(output.size)
         texture.set({ params: { resolution: output.size } })
         edges.set({ params: { resolution: output.size } })
         frame(gpu, (f) => { f.pass(paper!, texture!); f.pass(output!, edges!) })
+        renderedWidth = width
+        renderedHeight = height
         canvas.dataset.ready = 'true'
       } catch (error) {
         if (process.env.NODE_ENV === 'development') console.warn('Paper render unavailable', error)
@@ -71,7 +80,7 @@ export async function mountPaper(canvas: HTMLCanvasElement, settings: PaperSetti
     observer = new ResizeObserver(render)
     observer.observe(canvas)
     render()
-    void gpu.device.gpu.lost.then(() => { delete canvas.dataset.ready; release() })
+    void gpu.device.gpu.lost.then(() => { if (!released) release() })
   } catch (error) {
     if (process.env.NODE_ENV === 'development') console.warn('Paper renderer unavailable', error)
     release()

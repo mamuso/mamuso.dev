@@ -2,47 +2,74 @@ import type { PhotoMetadata } from '@/lib/types'
 import { formatPostDate } from '@/lib/editorial-date'
 import * as stylex from '@stylexjs/stylex'
 import PaperSurface from './PaperSurface'
+import PaletteDab from './PaletteDab'
+import { paletteVariants } from './palette-variants'
+import localFont from 'next/font/local'
+import { PAPER_SETTINGS, paperWearSeed } from './paper-settings'
+
+const courierPrime = localFont({
+  src: [
+    { path: '../fonts/courier-prime/CourierPrime-Regular.ttf', weight: '400', style: 'normal' },
+    { path: '../fonts/courier-prime/CourierPrime-Bold.ttf', weight: '700', style: 'normal' },
+  ],
+  display: 'swap',
+  fallback: ['Courier New', 'Courier', 'monospace'],
+})
 
 type Props = {
-  post: PhotoMetadata & { title: string; slug: string; date: string; width: number; height: number }
+  post: PhotoMetadata & { title: string; slug: string; date: string }
+  orientation?: 'portrait' | 'landscape'
 }
 
-export default function PhotoMeta({ post }: Props) {
+export default function PhotoMeta({ post, orientation = 'portrait' }: Props) {
+  const slotProps = stylex.props(styles.slot)
+  const rotation = (paperWearSeed(`card-rotation:${post.slug}`) / 0xffffffff) * 2 - 1
+  const hasPalette = Boolean(post.colorPalette?.length)
+  const variants = paletteVariants(paperWearSeed(`palette:${post.slug}`))
   const exposure = [
     post.fnumber ? `ƒ/${post.fnumber}` : undefined,
     post.exposureTime ? `${post.exposureTime}s` : undefined,
     post.iso ? `ISO ${post.iso}` : undefined,
     post.exposureBiasValue !== undefined ? `${post.exposureBiasValue > 0 ? '+' : ''}${post.exposureBiasValue} EV` : undefined,
-  ].filter(Boolean).join(' · ')
+  ].filter(Boolean).join(', ')
+  const titleRule = '-'.repeat(Array.from(post.title).length)
 
   return (
-    <div {...stylex.props(styles.slot)}>
-      <section aria-label={`Photo details: ${post.title}`} data-photo-paper {...stylex.props(styles.paper)}>
+    <div {...slotProps} className={`${slotProps.className} ${courierPrime.className}`}>
+      <section aria-label={`Photo details: ${post.title}`} data-photo-paper data-paper-orientation={orientation} {...stylex.props(styles.paper, orientation === 'landscape' && styles.landscape, styles.corners(PAPER_SETTINGS.cornerRadius), styles.rotation(rotation))}>
         <PaperSurface identity={post.slug} />
-        <div data-paper-grid {...stylex.props(styles.grid)}>
-          <h3 {...stylex.props(styles.title)}>{post.title}</h3>
-          <dl {...stylex.props(styles.metadata)}>
-            {post.camera && <div><dt {...stylex.props(styles.label)}>Camera</dt><dd {...stylex.props(styles.value)}>{post.camera}</dd></div>}
-            {exposure && <div><dt {...stylex.props(styles.label)}>Exposure</dt><dd {...stylex.props(styles.value)}>{exposure}</dd></div>}
-            <div><dt {...stylex.props(styles.label)}>Dimensions</dt><dd {...stylex.props(styles.value)}>{post.width} × {post.height} px</dd></div>
-            {post.GPSLatitude !== undefined && post.GPSLongitude !== undefined && (
-              <div><dt {...stylex.props(styles.label)}>Coordinates</dt><dd {...stylex.props(styles.value)}>{post.GPSLatitude}, {post.GPSLongitude}</dd></div>
-            )}
+        <div data-paper-grid {...stylex.props(styles.grid, orientation === 'portrait' ? styles.portraitGrid : styles.landscapeGrid, hasPalette && styles.gridWithPalette)}>
+          <div {...stylex.props(styles.titleColumn, orientation === 'landscape' && styles.landscapeTitle)}>
+            <h3 {...stylex.props(styles.title)}>{post.title}</h3>
+            <div aria-hidden="true" {...stylex.props(styles.rule, orientation === 'landscape' && styles.singleLineRule)}>{titleRule}</div>
+          </div>
+          <div {...stylex.props(styles.detailsColumn, orientation === 'landscape' && styles.landscapeDetails)}>
+            <dl {...stylex.props(styles.metadata, orientation === 'landscape' && styles.landscapeMetadata)}>
+              {(post.camera || exposure) && (
+                <div>
+                  {post.camera && <><dt {...stylex.props(styles.visuallyHidden)}>Camera</dt><dd {...stylex.props(styles.value)}>{post.camera}</dd></>}
+                  {exposure && <><dt {...stylex.props(styles.visuallyHidden)}>Exposure</dt><dd {...stylex.props(styles.value)}>{exposure}</dd></>}
+                </div>
+              )}
+              {post.GPSLatitude !== undefined && post.GPSLongitude !== undefined && (
+                <div><dt {...stylex.props(styles.visuallyHidden)}>Coordinates</dt><dd {...stylex.props(styles.value)}>{post.GPSLatitude}, {post.GPSLongitude}</dd></div>
+              )}
+            </dl>
+            <p data-paper-date {...stylex.props(styles.value, styles.date)}>
+              <time dateTime={post.date}>{formatPostDate(post.date, true)}</time>
+            </p>
             {post.colorPalette && post.colorPalette.length > 0 && (
-              <div><dt {...stylex.props(styles.label)}>Palette</dt><dd {...stylex.props(styles.value, styles.palette)}>
+              <div data-paper-palette {...stylex.props(styles.palette, orientation === 'landscape' && styles.landscapePalette)}>
+                <span {...stylex.props(styles.visuallyHidden)}>Palette</span>
                 {post.colorPalette.map((color, index) => (
-                  <span key={`${color}-${index}`} title={color} {...stylex.props(styles.swatch(color))}>
-                    <span {...stylex.props(styles.visuallyHidden)}>{color}</span>
-                  </span>
+                  <PaletteDab key={`${color}-${index}`} color={color} variant={variants[index % variants.length]}
+                    rotation={(paperWearSeed(`${post.slug}:dab:${index}`) / 0xffffffff) * 4 - 2} />
                 ))}
-              </dd></div>
+              </div>
             )}
-          </dl>
+          </div>
         </div>
-        <footer data-paper-date {...stylex.props(styles.date)}>
-          <span {...stylex.props(styles.label)}>Date</span>
-          <time dateTime={post.date}>{formatPostDate(post.date, true)}</time>
-        </footer>
+        <div aria-hidden="true" data-paper-footer {...stylex.props(styles.footer)} />
       </section>
     </div>
   )
@@ -50,29 +77,42 @@ export default function PhotoMeta({ post }: Props) {
 
 const styles = stylex.create({
   slot: { display: 'grid', justifyItems: 'center', width: '100%', minWidth: 0 },
-  // Full-bleed grid; width and content rhythm still use complete 24px units.
+  // Full-bleed grid; width and content rhythm use complete 24px units.
   paper: {
     position: 'relative', isolation: 'isolate', boxSizing: 'border-box',
-    width: 'round(down, 100%, 24px)', maxWidth: 432, borderRadius: 32, overflow: 'hidden',
-    color: '#484640', fontSize: 13, lineHeight: '24px',
-    // Derek Briggs' layered shadow with negative spread (see docs/photo-paper.md).
+    width: 'round(down, 100%, 24px)', maxWidth: 432, overflow: 'hidden',
+    color: '#000000cc', fontSize: 18, fontWeight: 400, lineHeight: '24px',
     boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.045), 0 1px 1px -0.5px rgba(0, 0, 0, 0.045), 0 2px 3px -1.5px rgba(0, 0, 0, 0.045), 0 4px 6px -3px rgba(0, 0, 0, 0.045), 0 9px 12px -6px rgba(0, 0, 0, 0.045), 0 18px 24px -12px rgba(0, 0, 0, 0.045)',
   },
+  corners: (radius: number) => ({ borderRadius: radius }),
+  rotation: (degrees: number) => ({ transform: `rotate(${degrees}deg)` }),
+  landscape: { maxWidth: { default: 432, '@media (min-width: 1080px)': 720 } },
   grid: {
-    position: 'relative', padding: 24,
+    // Courier Prime's baseline is 16px into a 24px line box at 18px.
+    // Place the first baseline at y=48px and the text at x=24px.
+    position: 'relative', paddingInline: 24, paddingTop: 32, paddingBottom: 40,
     // Start each set of lines one cell in, without drawing an outer border.
-    backgroundImage: 'repeating-linear-gradient(to right, #fff 0 1px, transparent 1px 24px), repeating-linear-gradient(to bottom, #fff 0 1px, transparent 1px 24px)',
+    backgroundImage: 'repeating-linear-gradient(to right, rgba(255, 255, 255, 0.8) 0 1px, transparent 1px 24px), repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 0 1px, transparent 1px 24px)',
     backgroundSize: 'calc(100% - 24px) 100%, 100% calc(100% - 24px)',
     backgroundPosition: '24px 0, 0 24px',
     backgroundRepeat: 'no-repeat',
-    boxShadow: 'inset 0 -1px 0 #fff',
   },
-  title: { margin: 0, marginBottom: 24, fontSize: 15, fontWeight: 500, lineHeight: '24px', overflowWrap: 'anywhere' },
-  metadata: { display: 'grid', gap: 24, margin: 0 },
-  label: { fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#716d64', lineHeight: '24px' },
+  portraitGrid: { paddingLeft: { default: 24, '@media (min-width: 1080px)': 72 } },
+  landscapeGrid: { display: { default: 'block', '@media (min-width: 1080px)': 'grid' }, gridTemplateColumns: { default: 'none', '@media (min-width: 1080px)': '240px minmax(0, 1fr)' }, columnGap: 48, paddingTop: { default: 32, '@media (min-width: 1080px)': 56 } },
+  titleColumn: { minWidth: 0 },
+  landscapeTitle: { paddingLeft: { default: 0, '@media (min-width: 1080px)': 24 } },
+  detailsColumn: { display: 'flow-root', minWidth: 0 },
+  landscapeDetails: { display: { default: 'flow-root', '@media (min-width: 1080px)': 'flex' }, flexDirection: 'column' },
+  landscapeMetadata: { marginTop: { default: 24, '@media (min-width: 1080px)': 0 } },
+  landscapePalette: { marginTop: { default: 16, '@media (min-width: 1080px)': 'auto' }, paddingTop: { default: 0, '@media (min-width: 1080px)': 16 } },
+  singleLineRule: { whiteSpace: { default: 'normal', '@media (min-width: 1080px)': 'nowrap' }, overflow: { default: 'visible', '@media (min-width: 1080px)': 'hidden' } },
+  gridWithPalette: { paddingBottom: 0 },
+  title: { margin: 0, fontSize: 'inherit', fontWeight: 'inherit', lineHeight: '24px', overflowWrap: 'anywhere' },
+  rule: { overflowWrap: 'anywhere' },
+  metadata: { display: 'grid', margin: 0, marginTop: 24 },
   value: { margin: 0, overflowWrap: 'anywhere', fontVariantNumeric: 'tabular-nums' },
-  palette: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', columnGap: 8, rowGap: 0 },
-  swatch: (color: string) => ({ display: 'inline-block', width: 16, height: 16, marginBlock: 4, backgroundColor: color, boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.08)' }),
-  date: { position: 'relative', display: 'flex', flexWrap: 'wrap', columnGap: 12, paddingBlock: 12, paddingInline: 24, lineHeight: '24px', fontVariantNumeric: 'tabular-nums' },
+  date: { marginTop: 24 },
+  palette: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', columnGap: 0, rowGap: 0, marginTop: 16, position: 'relative', zIndex: 1, transform: 'translateY(12px)' },
+  footer: { position: 'relative', height: 48, boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.8)' },
   visuallyHidden: { position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clipPath: 'inset(50%)', whiteSpace: 'nowrap', borderWidth: 0 },
 })

@@ -32,19 +32,21 @@ export default function PhotoStack({ photos, href, title, collectionHref, eager 
     <div data-photo-link data-photo-group={photos.length > 1 ? true : undefined} {...stylex.props(styles.link)}>
       <PhotoStackMotion data-photo-stack {...stylex.props(styles.stack)}>
         {visible.map((photo, index) => (
-          <Link href={collectionHref ?? (photo.slug ? `/note/${photo.slug}` : href)} aria-label={photo.title} data-photo-print key={`${photo.basename}-${index}`} {...stylex.props(styles.print, styles.pose(index, visible.length, alternatePhotoOffset(index, (sample(hash, index, 0) - 0.5) * photoMotion.initial.x), (sample(hash, index, 1) - 0.5) * photoMotion.initial.y + photoMotion.initial.yOffset, alternatePhotoOffset(index, (sample(hash, index, 2) - 0.5) * photoMotion.initial.angle)))}>
-            <PhotoTransition slug={index === 0 ? photo.slug : undefined}>
-              <Image
-                src={`/assets/feed/gallery-${photo.basename}`}
-                width={photo.width}
-                height={photo.height}
-                loading={eager ? 'eager' : 'lazy'}
-                alt=""
-                sizes="(max-width: 479px) 120px, 160px"
-                {...stylex.props(styles.image(photo.width / Math.max(photo.width, photo.height), photo.height / Math.max(photo.width, photo.height)))}
-              />
-            </PhotoTransition>
-          </Link>
+          <PhotoTransition key={`${photo.basename}-${index}`} slug={index === 0 ? photo.slug : undefined}>
+            <Link href={collectionHref ?? (photo.slug ? `/note/${photo.slug}` : href)} aria-label={photo.title} data-photo-print {...stylex.props(styles.print, styles.pose(index, visible.length, alternatePhotoOffset(index, (sample(hash, index, 0) - 0.5) * photoMotion.initial.x), (sample(hash, index, 1) - 0.5) * photoMotion.initial.y + photoMotion.initial.yOffset, alternatePhotoOffset(index, (sample(hash, index, 2) - 0.5) * photoMotion.initial.angle)))}>
+                <span data-photo-transition-frame {...stylex.props(styles.printFrame)}>
+                <Image
+                  src={`/assets/feed/gallery-${photo.basename}`}
+                  width={photo.width}
+                  height={photo.height}
+                  loading={eager ? 'eager' : 'lazy'}
+                  alt=""
+                  sizes="(max-width: 479px) 120px, 160px"
+                  {...stylex.props(styles.image(photo.width / Math.max(photo.width, photo.height), photo.height / Math.max(photo.width, photo.height)))}
+                />
+                </span>
+            </Link>
+          </PhotoTransition>
         ))}
       </PhotoStackMotion>
       <Link href={collectionHref ?? href} {...stylex.props(styles.title)}>{title}</Link>
@@ -98,10 +100,9 @@ const styles = stylex.create({
     outlineOffset: 4,
     outline: { default: 'none', ':focus-visible': '2px solid currentColor' },
     display: 'flex',
-    padding: { default: 5, '@media (min-width: 480px)': 6 },
-    backgroundColor: '#fff',
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.1)',
   },
+  printFrame: { display: 'block', padding: { default: 5, '@media (min-width: 480px)': 6 }, backgroundColor: '#fff' },
   pose: (index: number, count: number, x: number, y: number, angle: number) => ({
     '--print-response': 1 / (1 + index * 0.6),
     zIndex: { default: count - index, ':focus-visible': count + 1 },

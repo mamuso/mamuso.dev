@@ -5,6 +5,7 @@ import { BLOG_TITLE } from '@/lib/constants'
 import { notFound } from 'next/navigation'
 import GalleryInfiniteScroll from '@/app/components/GalleryInfiniteScroll'
 import PhotoStack from '@/app/components/PhotoStack'
+import GalleryNavigation from '@/app/components/GalleryNavigation'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
 
@@ -33,13 +34,13 @@ export default async function Photos({ searchParams }: Props) {
   return (
     <section {...stylex.props(layout.section, layout.stack, styles.section)}>
       <h2 {...stylex.props(typography.heading, typography.muted, styles.title)}>Say Cheese</h2>
-      <ul {...stylex.props(layout.list, styles.gallery)}>
+      <GalleryNavigation page={page} {...stylex.props(layout.list, styles.gallery)}>
         {visible.map(({ key, photos }, index) => (
           <li key={key} data-gallery-card>
             <PhotoStack eager={index < 4} photos={photos} collectionHref={photos[0].photoStack ? `/photos/stack/${encodeURIComponent(photos[0].photoStack)}` : undefined} href={`/note/${photos[0].slug}`} title={photos[0].photoStackTitle ?? photos[0].title} />
           </li>
         ))}
-      </ul>
+      </GalleryNavigation>
       <GalleryInfiniteScroll page={page} hasMore={page < totalPages} visibleCount={visible.length} totalCount={groups.length} />
     </section>
   )

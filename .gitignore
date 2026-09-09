@@ -51,3 +51,5 @@ next-env.d.ts
 
 # Paper shader and browser verification images
 /output/paper/
+
+/output/verification/

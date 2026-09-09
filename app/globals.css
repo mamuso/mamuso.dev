@@ -27,12 +27,17 @@ body {
     animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  /* Move the photo without fading either snapshot through the page background. */
+  /* One complete print moves, including its frame and shadow. Avoid stacking
+     two opaque snapshots: their translucent shadow pixels would double up. */
   ::view-transition-old(.photo-morph),
   ::view-transition-new(.photo-morph) {
     animation: none;
     opacity: 1;
     mix-blend-mode: normal;
+  }
+
+  ::view-transition-old(.photo-morph) {
+    opacity: 0;
   }
 
   [data-header-brand] {
@@ -166,6 +171,11 @@ body {
 }
 
 @layer photo-paper {
+  [data-photo-paper] {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: auto;
+  }
+
   [data-photo-paper]::before {
     content: '';
     position: absolute;

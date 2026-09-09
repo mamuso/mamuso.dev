@@ -17,7 +17,8 @@ try {
   } } })
   const edges = effect(gpu, edgesSource, { set: {
     params: { resolution: [width, height], seed: paperWearSeed('photo-a'), foldCount: settings.foldCount,
-      foldSize: settings.foldSize, foldStrength: settings.foldStrength, dents: settings.dents },
+      foldSize: settings.foldSize, foldStrength: settings.foldStrength, dents: settings.dents,
+      cornerRadius: settings.cornerRadius },
     paper, paperSampler: sampler(gpu, { minFilter: 'linear', magFilter: 'linear' }),
   } })
   await Promise.all([texture.compile(paper), edges.compile(output)])
@@ -35,11 +36,24 @@ try {
     for (let x = 24; x < width - 24; x++) {
       const i = pixel(x, y)
       assert.equal(pixels[i + 3], 255, 'Damage must not enter the text area')
-      for (let c = 0; c < 3; c++) assert.ok(Math.abs(pixels[i + c] - base[i + c]) <= 9, 'Creases stay subtle across the text')
+      for (let c = 0; c < 3; c++) assert.ok(Math.abs(pixels[i + c] - base[i + c]) <= 21, 'Fold contrast stays bounded across the text')
       min = Math.min(min, pixels[i]); max = Math.max(max, pixels[i])
     }
   }
   assert.ok(max - min >= 5, 'Texture contains visible tonal variation')
+  edges.set({ params: { foldStrength: 0.075 } })
+  render()
+  const reference = await output.read()
+  let currentContrast = 0, referenceContrast = 0
+  for (let y = 24; y < height - 24; y++) {
+    for (let x = 24; x < width - 24; x++) {
+      const i = pixel(x, y)
+      currentContrast += Math.abs(pixels[i] - base[i])
+      referenceContrast += Math.abs(reference[i] - base[i])
+    }
+  }
+  assert.ok(currentContrast < referenceContrast * 0.6, 'Default folds must be visibly lighter than the previous 0.075 setting')
+  edges.set({ params: { foldStrength: settings.foldStrength } })
   edges.set({ params: { seed: paperWearSeed('photo-b') } })
   render()
   assert.notDeepEqual(await output.read(), pixels, 'Different photos have different wear')
@@ -65,6 +79,19 @@ try {
   edges.set({ params: { foldCount: settings.foldCount, foldSize: 56 } })
   render()
   assert.notDeepEqual(await output.read(), fourFolds, 'Fold size changes the result')
+  const variants = []
+  for (const identity of ['2025-08-31-mammoth-to-bishop', '2025-08-31-blue-lake', '2025-08-30-yoooo-semite', 'paper-variety']) {
+    edges.set({ params: { seed: paperWearSeed(identity), foldSize: settings.foldSize } })
+    render()
+    const variant = await output.read()
+    for (const previous of variants) assert.notDeepEqual(variant, previous, 'Each photo has a distinct fold composition')
+    for (let y = 24; y < height - 24; y++) {
+      for (let x = 24; x < width - 24; x++) {
+        assert.equal(variant[pixel(x, y) + 3], 255, 'All fold families preserve opaque text space')
+      }
+    }
+    variants.push(variant)
+  }
   // The texture is anchored in paper pixels, so resizing preserves existing fibers.
   paper.resize([width + 24, height])
   texture.set({ params: { resolution: [width + 24, height] } })
@@ -78,7 +105,11 @@ try {
   const directory = new URL('../output/paper/', import.meta.url)
   await mkdir(directory, { recursive: true })
   await sharp(pixels, { raw: { width, height, channels: 4 } }).png().toFile(new URL('shader.png', directory).pathname)
-  console.log('Paper shaders: deterministic texture, per-photo variation, broad subtle folds, adjustable count — passed.')
+  const previews = await Promise.all(variants.map(data => sharp(data, { raw: { width, height, channels: 4 } }).png().toBuffer()))
+  await sharp({ create: { width: width * 2, height: height * 2, channels: 4, background: '#ddd' } })
+    .composite(previews.map((input, index) => ({ input, left: (index % 2) * width, top: Math.floor(index / 2) * height })))
+    .png().toFile(new URL('variety.png', directory).pathname)
+  console.log('Paper shaders: deterministic texture, per-photo variation, lighter bounded folds, adjustable count — passed.')
 } finally {
   gpu.dispose()
 }

@@ -9,16 +9,23 @@ export default function PaperSurface({ identity, settings = PAPER_SETTINGS }: { 
   useEffect(() => {
     const canvas = ref.current
     if (!canvas || !('gpu' in navigator)) return
-    const controller = new AbortController()
+    let controller: AbortController | undefined
     const observer = new IntersectionObserver((entries) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return
-      observer.disconnect()
+      const visible = entries.some((entry) => entry.isIntersecting)
+      if (!visible) {
+        controller?.abort()
+        controller = undefined
+        return
+      }
+      if (controller) return
+      const activation = new AbortController()
+      controller = activation
       void import('./paper-renderer').then(({ mountPaper }) => {
-        if (!controller.signal.aborted) return mountPaper(canvas, settings, paperWearSeed(identity), controller.signal)
+        if (!activation.signal.aborted) return mountPaper(canvas, settings, paperWearSeed(identity), activation.signal)
       }).catch(() => {})
     }, { rootMargin: '200px' })
     observer.observe(canvas)
-    return () => { observer.disconnect(); controller.abort(); delete canvas.dataset.ready }
+    return () => { observer.disconnect(); controller?.abort(); delete canvas.dataset.ready }
   }, [identity, settings])
   return <canvas ref={ref} aria-hidden="true" data-paper-surface {...stylex.props(styles.canvas)} />
 }

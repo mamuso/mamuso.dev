@@ -7,6 +7,18 @@ loads replace the current history entry and preserve scroll; opening a viewer st
 pushes an entry, so Back returns to the loaded gallery. Without JavaScript, a
 `noscript` pagination link remains available. No virtualizer or scroll listener is used.
 
+Opening a photo or stack records the gallery URL and scroll position in tab-scoped
+session storage, with an in-memory fallback. `BackToPhotos` links to that loaded
+window and disables Next.js's automatic scrolling for the return. The gallery
+consumes a one-shot restoration request in a layout effect, before React measures
+the destination for its shared-element transition. This keeps the original
+thumbnail in the viewport at capture time. Fresh visits without an origin still
+link to `/photos`; browser Back retains its normal history behavior.
+
+`e2e/gallery-return.spec.ts` checks both a below-the-fold photo and a later batch,
+including reloading the detail, and asserts that the return photo morph actually
+runs. Only stack covers currently have shared transition names in the gallery.
+
 Miniatures have explicit responsive CSS dimensions calculated from the source aspect
 ratio (long edge 120px / 160px). The HTML image attributes alone were insufficient:
 `width: auto; height: auto` with only maximum sizes produced zero-size content before
@@ -90,3 +102,7 @@ Also verified: a fresh `/photos?page=2` visit with 48 cards; collection viewer a
 Back with focus restored; desktop thumbnails at 160px without horizontal overflow;
 disabled JavaScript with 24 sized cards and a working next-page URL. Repeat these
 checks when changing routing or the infinite-scroll controller.
+
+Photo transitions capture the complete print (image, frame and shadow) on both
+gallery and detail routes. Only the destination snapshot is visible during the
+morph: overlapping opaque snapshots would double the translucent shadows.
