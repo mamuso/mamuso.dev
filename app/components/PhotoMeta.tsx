@@ -4,7 +4,7 @@ import * as stylex from '@stylexjs/stylex'
 import PaperSurface from './PaperSurface'
 
 type Props = {
-  post: PhotoMetadata & { title: string; date: string; width: number; height: number }
+  post: PhotoMetadata & { title: string; slug: string; date: string; width: number; height: number }
 }
 
 export default function PhotoMeta({ post }: Props) {
@@ -18,7 +18,7 @@ export default function PhotoMeta({ post }: Props) {
   return (
     <div {...stylex.props(styles.slot)}>
       <section aria-label={`Photo details: ${post.title}`} data-photo-paper {...stylex.props(styles.paper)}>
-        <PaperSurface />
+        <PaperSurface identity={post.slug} />
         <div data-paper-grid {...stylex.props(styles.grid)}>
           <h3 {...stylex.props(styles.title)}>{post.title}</h3>
           <dl {...stylex.props(styles.metadata)}>
@@ -50,10 +50,10 @@ export default function PhotoMeta({ post }: Props) {
 
 const styles = stylex.create({
   slot: { display: 'grid', justifyItems: 'center', width: '100%', minWidth: 0 },
-  // 24px cells, 12px paper margin on both sides: both rectangles use whole units.
+  // Full-bleed grid; width and content rhythm still use complete 24px units.
   paper: {
     position: 'relative', isolation: 'isolate', boxSizing: 'border-box',
-    width: 'round(down, 100%, 24px)', maxWidth: 432, padding: 12,
+    width: 'round(down, 100%, 24px)', maxWidth: 432, borderRadius: 32, overflow: 'hidden',
     color: '#484640', fontSize: 13, lineHeight: '24px',
     filter: 'drop-shadow(0 2px 2px rgba(40, 36, 28, 0.08)) drop-shadow(0 8px 12px rgba(40, 36, 28, 0.05))',
   },

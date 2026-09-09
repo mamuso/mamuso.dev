@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from 'react'
 import * as stylex from '@stylexjs/stylex'
-import { PAPER_SETTINGS, type PaperSettings } from './paper-settings'
+import { PAPER_SETTINGS, paperWearSeed, type PaperSettings } from './paper-settings'
 
-export default function PaperSurface({ settings = PAPER_SETTINGS }: { settings?: PaperSettings }) {
+export default function PaperSurface({ identity, settings = PAPER_SETTINGS }: { identity: string; settings?: PaperSettings }) {
   const ref = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
     const canvas = ref.current
@@ -14,12 +14,12 @@ export default function PaperSurface({ settings = PAPER_SETTINGS }: { settings?:
       if (!entries.some((entry) => entry.isIntersecting)) return
       observer.disconnect()
       void import('./paper-renderer').then(({ mountPaper }) => {
-        if (!controller.signal.aborted) return mountPaper(canvas, settings, controller.signal)
+        if (!controller.signal.aborted) return mountPaper(canvas, settings, paperWearSeed(identity), controller.signal)
       }).catch(() => {})
     }, { rootMargin: '200px' })
     observer.observe(canvas)
     return () => { observer.disconnect(); controller.abort(); delete canvas.dataset.ready }
-  }, [settings])
+  }, [identity, settings])
   return <canvas ref={ref} aria-hidden="true" data-paper-surface {...stylex.props(styles.canvas)} />
 }
 

@@ -6,8 +6,9 @@ Metadata remains server-rendered HTML. The canvas paints only the paper.
 ## Layout
 
 The cell is 24 CSS pixels. `PhotoMeta` rounds the available width down to a whole
-cell, up to 432px, and reserves 12px of unprinted paper on each side. The grid
-therefore also has an integer column count. All content line heights, vertical
+cell, up to 432px. The grid runs full bleed to the paper edges and has an
+integer column count. The silhouette clips the print at its prominent 32px
+rounded corners; this intentional curved trim does not change the cell sizing. All content line heights, vertical
 gaps and total padding are multiples of 24px; wrapping adds whole rows. The date
 sits in a separate unruled footer. No fixed content height, clipping or truncation
 is used. CSS `round()` is required for width snapping.
@@ -20,17 +21,25 @@ Edit `app/components/paper-settings.ts`:
 - `grain`: fine noise intensity (default 0.035).
 - `fibers`: elongated fiber intensity (0.018).
 - `textureScale`: grain size in CSS pixels (1).
-- `fold`: corner fold in CSS pixels (8; clamped to 0–10).
-- `dents`: depth of edge notches in CSS pixels (1.5; clamped to 0–10).
+- `foldCount`: number of broad creases (4; clamped to 0–8).
+- `foldSize`: nominal crease size in CSS pixels (112; clamped to 24–220).
+- `foldStrength`: crease contrast (0.016; clamped to 0–0.05).
+- `dents`: shallow edge wear depth in CSS pixels (0.3; clamped to 0–2).
 
-Set fold/dents to zero to remove those imperfections. Texture is independent of
+Set `foldStrength` and `dents` to zero to remove wear; `foldCount: 0` disables
+all imperfections. Positions, angles and size variation are seeded from the
+photo slug, so each photo has its own repeatable wear pattern. The same photo
+keeps that pattern between individual and stack views. Texture is independent of
 time and stays anchored in paper coordinates when the card resizes. Paper tone
 is in `paper-texture.wgsl`; the matching CSS fallback is in the `photo-paper`
 layer in `app/globals.css`. Grid ink and text colors live in `PhotoMeta.tsx`.
 
 `paper-texture.wgsl` renders to an offscreen texture;
 `paper-imperfections.wgsl` samples it and adds the silhouette and fold shading.
-Damage is confined to the unprinted margin, preserving every grid cell.
+Edge wear follows the rounded silhouette; broad creases shade the paper gently
+without cutting into the text area. Fold positions adapt to the available size.
+The 32px corner radius is shared by the CSS clipping in `PhotoMeta.tsx` and
+the rounded silhouette calculation in `paper-imperfections.wgsl`.
 
 The renderer loads near the viewport, shares a GPU device across cards and
 renders only on initialization or resize. Unmount disconnects observers and
@@ -48,7 +57,8 @@ node scripts/paper-shaders-check.mjs
 ```
 
 The last command uses a real GPU to check deterministic output, opacity across
-the grid area, texture preservation in the second pass and the fold control.
+the text area, unchanged grain between photos, different wear seeds, and broad
+low-contrast shading with independent count, size and strength controls.
 It writes `output/paper/shader.png` for visual inspection.
 
 Browser checks should cover individual photos and stacks at desktop and narrow

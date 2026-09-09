@@ -7,7 +7,7 @@ import type { PaperSettings } from './paper-settings'
 // A stack shares one device; the last card releases it, including Strict Mode replay.
 let shared: { promise: Promise<Gpu>; users: number } | undefined
 
-export async function mountPaper(canvas: HTMLCanvasElement, settings: PaperSettings, signal: AbortSignal) {
+export async function mountPaper(canvas: HTMLCanvasElement, settings: PaperSettings, wearSeed: number, signal: AbortSignal) {
   const lease = shared ??= { promise: init(), users: 0 }
   lease.users++
   let gpu: Gpu | undefined
@@ -42,7 +42,8 @@ export async function mountPaper(canvas: HTMLCanvasElement, settings: PaperSetti
       grain: settings.grain, fibers: settings.fibers,
     } } })
     edges = effect(gpu, edgeShader, { set: {
-      params: { resolution: output.size, fold: settings.fold, dents: Math.min(10, Math.max(0, settings.dents)) },
+      params: { resolution: output.size, seed: wearSeed, foldCount: settings.foldCount,
+        foldSize: settings.foldSize, foldStrength: settings.foldStrength, dents: settings.dents },
       paper, paperSampler: sampler(gpu, { minFilter: 'linear', magFilter: 'linear' }),
     } })
     // This vgpu build only acquires swapchain textures inside frame().
