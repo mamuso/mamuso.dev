@@ -9,7 +9,7 @@
     "build": "git submodule update --init && pnpm content:check && pnpm run assets && pnpm run rss && next build",
     "start": "next start",
     "lint": "eslint .",
-    "shader:check": "VGPU_DAWN_FLAGS=backend=null vgpu check app/components/*.wgsl --require-validation",
+    "shader:check": "for shader in app/components/*.wgsl; do VGPU_DAWN_FLAGS=backend=null vgpu check \"$shader\" --require-validation || exit; done",
     "rss": "ts-node --project ./node.tsconfig.json lib/feed",
     "assets": "ts-node --project ./node.tsconfig.json lib/assets",
     "photos": "node scripts/photos.mjs",

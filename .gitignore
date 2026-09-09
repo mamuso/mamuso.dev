@@ -48,3 +48,6 @@ next-env.d.ts
 # Browser test output
 /playwright-report/
 /test-results/
+
+# Paper shader and browser verification images
+/output/paper/

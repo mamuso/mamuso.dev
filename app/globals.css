@@ -164,3 +164,17 @@ body {
     cursor: grabbing;
   }
 }
+
+@layer photo-paper {
+  [data-photo-paper]::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #f6f4f0;
+    pointer-events: none;
+  }
+
+  [data-photo-paper]:has([data-paper-surface][data-ready='true'])::before {
+    background: transparent;
+  }
+}
