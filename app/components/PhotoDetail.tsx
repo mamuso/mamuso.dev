@@ -30,8 +30,8 @@ export default function PhotoDetail({ title, photos, summary, linkPhotos = false
               <PhotoTransition slug={photo.slug}>
                 <ProgressivePhoto basename={photo.basename} width={photo.width} height={photo.height}
                   title={photo.title} sizes={photos.length === 1
-                    ? "(max-width: 639px) calc(100vw - 60px), (max-width: 1079px) calc(100vw - 132px), 948px"
-                    : "(max-width: 639px) calc(100vw - 60px), (max-width: 1079px) calc((100vw - 176px) / 2), 452px"}
+                    ? "(max-width: 639px) calc(100vw - 72px), (max-width: 1079px) calc(100vw - 144px), 936px"
+                    : "(max-width: 639px) calc(100vw - 72px), (max-width: 1079px) calc((100vw - 200px) / 2), 440px"}
                   eager={index < 2} {...stylex.props(styles.image(photo.width / photo.height))} />
               </PhotoTransition>
             </span>
@@ -64,6 +64,6 @@ const styles = stylex.create({
   grid: { display: 'grid', gridTemplateColumns: { default: '1fr', '@media (min-width: 640px)': 'repeat(2, minmax(0, 1fr))' }, gap: 32, marginBlockStart: 24 },
   photo: { display: 'flex', flexDirection: 'column', gap: 12, outlineOffset: 6 },
   frame: { display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 },
-  image: (ratio: number) => ({ display: 'block', maxWidth: 'calc(100% - 12px)', width: `min(calc(100% - 12px), ${548 * ratio}px)`, aspectRatio: ratio, height: 'auto', boxSizing: 'content-box', borderWidth: 6, borderStyle: 'solid', borderColor: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }),
+  image: (ratio: number) => ({ display: 'block', maxWidth: 'calc(100% - 24px)', width: `min(calc(100% - 24px), ${548 * ratio}px)`, aspectRatio: ratio, height: 'auto', boxSizing: 'content-box', borderWidth: 12, borderStyle: 'solid', borderColor: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }),
   item: { display: 'flex', flexDirection: 'column', gap: 24, minWidth: 0 },
 })
