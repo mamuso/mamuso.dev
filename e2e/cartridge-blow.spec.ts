@@ -92,11 +92,11 @@ test('secret cartridge hold uses touch only, reacts to sustained audio and relea
   await page.screenshot({ path: test.info().outputPath('ready-to-blow.png') })
   expect(await page.evaluate(() => window.blowTest.closed)).toBe(0)
   await page.evaluate(() => { window.blowTest.amplitude = 0.25 })
-  await expect.poll(() => page.evaluate(() => window.blowTest.stopped), { timeout: 5000 }).toBe(1)
+  await expect.poll(() => page.evaluate(() => window.blowTest.stopped), { timeout: 12_000 }).toBe(1)
   expect(await page.evaluate(() => window.blowTest.closed)).toBe(1)
   // Completion must precede the abandoned-session deadline, not pass via timeout.
   expect(await page.evaluate(() => window.blowTest.closedAt - window.blowTest.requestedAt)).toBeLessThan(15_000)
-  await page.waitForTimeout(750)
+  await page.waitForTimeout(1500)
   const samples = await page.evaluate(() => window.blowTest.samples)
   await page.waitForTimeout(150)
   expect(await page.evaluate(() => window.blowTest.samples)).toBe(samples)

@@ -103,15 +103,18 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
       ? (elapsed - kickDuration) / (BLOW.RETURN_DURATION - kickDuration)
       : elapsed / BLOW.ENTER_DURATION));
     const easeOut = 1 - Math.pow(1 - progress, 3);
-    const tilt = returning ? 1 - easeOut : easeOut;
-    shake.current += ((returning ? 0 : current.detector.intensity) - shake.current) * (1 - Math.exp(-delta * 1000 / BLOW.SHAKE_DECAY));
+    // Zero velocity and acceleration at both ends: no sudden pull out of the tilt.
+    const returnEase = progress * progress * progress * (progress * (progress * 6 - 15) + 10);
+    const tilt = returning ? 1 - returnEase : easeOut;
+    const shakeDecay = returning ? BLOW.RETURN_SHAKE_DECAY : BLOW.SHAKE_DECAY;
+    shake.current += ((returning ? 0 : current.detector.intensity) - shake.current) * (1 - Math.exp(-delta * 1000 / shakeDecay));
     const amplitude = reduceMotion.current ? 0 : shake.current * BLOW.SHAKE_ROTATION;
     const t = now / 1000;
     // Incommensurate frequencies modulate each other: turbulent, bounded wind.
     const x = Math.sin(t * 73 + Math.sin(t * 19)) * 0.65 + Math.sin(t * 109) * 0.35;
     const y = Math.sin(t * 83 + Math.sin(t * 23)) * 0.6 + Math.sin(t * 127) * 0.4;
     const z = Math.sin(t * 97 + Math.sin(t * 31));
-    const kick = returning && !reduceMotion.current ? Math.sin(Math.min(1, elapsed / BLOW.KICK_DURATION) * Math.PI) * BLOW.KICK : 0;
+    const kick = returning && !reduceMotion.current ? Math.pow(Math.sin(Math.min(1, elapsed / BLOW.KICK_DURATION) * Math.PI), 2) * BLOW.KICK : 0;
     group.rotation.set(BLOW.TILT * tilt + amplitude * x + kick, amplitude * y, amplitude * z * 0.65);
     group.position.set(x * amplitude / BLOW.SHAKE_ROTATION * BLOW.SHAKE_POSITION, y * amplitude / BLOW.SHAKE_ROTATION * BLOW.SHAKE_POSITION, 0);
     if (returning && progress === 1) {
