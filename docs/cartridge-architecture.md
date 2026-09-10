@@ -71,10 +71,12 @@ inside presentation. Its −47° rotation and wind shake are additive: neither t
 base pivot nor its spring targets/velocities are overwritten. Blow mode remains
 active through any amount of blowing or silence. A second tap on the selected
 cartridge stops audio and consumes the tap so the cartridge stays open. The
-return snapshots the current offset (including a partly completed entry) and
-eases all axes back to identity over 650 ms, with zero endpoint velocity and
-acceleration. Further taps during return are consumed. A later normal tap closes
-the cartridge as usual. Reduced-motion users get the tilt/return without shake.
+return preserves the current pose and measured velocity (including a partly
+completed entry). `cartridgeBlowReturn.ts` reuses `advanceCartridgeSpring` for a
+450 ms damped return, with less than one degree of overshoot from the full tilt.
+Wind offsets retain their momentum and fade to rest over 80 ms. Integration uses
+bounded substeps to stay stable across frame rates and finishes at exact identity. Further taps during return are consumed. A later normal tap closes
+the cartridge as usual. Reduced-motion users get the tilt/return without shake, with critical damping to prevent bounce.
 
 `cartridgeBlow.ts` owns the gesture/audio state machine and microphone lease.
 The lease survives a cancelled pending permission dialog, because getUserMedia

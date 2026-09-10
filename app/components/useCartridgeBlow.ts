@@ -4,6 +4,7 @@ import { useEffect, useRef, type RefObject } from 'react';
 import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import type { Group } from 'three';
 import { BLOW, CartridgeBlowController } from './cartridgeBlow';
+import { CartridgeBlowReturn } from './cartridgeBlowReturn';
 
 /** Input/lifecycle adapter; audio and motion share the existing demand render loop. */
 export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, stickerBusy: RefObject<boolean>) {
@@ -12,7 +13,7 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
   const controller = useRef<CartridgeBlowController | null>(null);
   const pointer = useRef<{ id: number; x: number; y: number } | null>(null);
   const shake = useRef(0);
-  const returnPose = useRef({ startedAt: -1, x: 0, y: 0, z: 0, px: 0, py: 0, pz: 0 });
+  const returnMotion = useRef(new CartridgeBlowReturn());
   const debugAt = useRef(0);
   const reduceMotion = useRef(false);
 
@@ -28,6 +29,7 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
       current.cancel();
       pointer.current = null;
       shake.current = 0;
+      returnMotion.current.reset();
       offset.current?.rotation.set(0, 0, 0);
       offset.current?.position.set(0, 0, 0);
     };
@@ -108,20 +110,17 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
       group.rotation.set(0, 0, 0);
       group.position.set(0, 0, 0);
       shake.current = 0;
+      returnMotion.current.reset();
       return;
     }
     if (current.state === 'returning') {
-      const pose = returnPose.current;
-      if (pose.startedAt !== current.returnedAt) {
-        pose.startedAt = current.returnedAt;
-        pose.x = group.rotation.x; pose.y = group.rotation.y; pose.z = group.rotation.z;
-        pose.px = group.position.x; pose.py = group.position.y; pose.pz = group.position.z;
-      }
-      const progress = Math.min(1, (now - current.returnedAt) / BLOW.RETURN_DURATION);
-      const remaining = 1 - progress * progress * progress * (progress * (progress * 6 - 15) + 10);
-      group.rotation.set(pose.x * remaining, pose.y * remaining, pose.z * remaining);
-      group.position.set(pose.px * remaining, pose.py * remaining, pose.pz * remaining);
-      if (progress === 1) current.finish();
+      const motion = returnMotion.current;
+      if (motion.startedAt !== current.returnedAt) motion.start(current.returnedAt, reduceMotion.current);
+      const finished = motion.advance(now);
+      const pose = motion.pose;
+      group.rotation.set(pose[0], pose[1], pose[2]);
+      group.position.set(pose[3], pose[4], pose[5]);
+      if (finished) current.finish();
       else invalidate();
       return;
     }
@@ -136,6 +135,11 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
     const z = Math.sin(t * 97 + Math.sin(t * 31));
     group.rotation.set(BLOW.TILT * tilt + amplitude * x, amplitude * y, amplitude * z * 0.65);
     group.position.set(x * amplitude / BLOW.SHAKE_ROTATION * BLOW.SHAKE_POSITION, y * amplitude / BLOW.SHAKE_ROTATION * BLOW.SHAKE_POSITION, 0);
+    returnMotion.current.observe(
+      group.rotation.x, group.rotation.y, group.rotation.z,
+      group.position.x, group.position.y, group.position.z,
+      BLOW.TILT * tilt, now,
+    );
     invalidate();
   });
 

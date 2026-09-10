@@ -82,6 +82,9 @@ test('secret touch hold survives opening, stays active through silence and exits
   await page.evaluate(() => { window.blowTest.amplitude = 0.006 })
   await page.waitForTimeout(700)
   expect(await page.evaluate(() => window.blowTest.stopped)).toBe(0)
+  // Exit while the wind is moving the model, to exercise the inertial return.
+  await page.evaluate(() => { window.blowTest.amplitude = 0.25 })
+  await page.waitForTimeout(150)
   // The selected cartridge may have moved since pointerdown during opening.
   const openBox = (await control.boundingBox())!
   await page.touchscreen.tap(openBox.x + openBox.width / 2, openBox.y + openBox.height / 2)
@@ -89,7 +92,7 @@ test('secret touch hold survives opening, stays active through silence and exits
   expect(await page.evaluate(() => window.blowTest.closed)).toBe(1)
   // Completion must precede the abandoned-session deadline, not pass via timeout.
   expect(await page.evaluate(() => window.blowTest.closedAt - window.blowTest.requestedAt)).toBeLessThan(15_000)
-  await page.waitForTimeout(750)
+  await page.waitForTimeout(550)
   const samples = await page.evaluate(() => window.blowTest.samples)
   await page.waitForTimeout(150)
   expect(await page.evaluate(() => window.blowTest.samples)).toBe(samples)
