@@ -172,11 +172,11 @@ export default function CartridgeItem({
           }}
           onClick={(event) => {
             event.stopPropagation();
-            if (consumeBlowClick()) return;
             if (
               event.delta > TAP_MAX_MOVEMENT_PX ||
               !entranceComplete.current
             ) return;
+            if (consumeBlowClick()) return;
             onToggleOpen?.();
           }}
         >

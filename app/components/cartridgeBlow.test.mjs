@@ -8,17 +8,17 @@ function calibrate(level = 0.006, delta = 20) {
   return detector
 }
 
-test('ambient sound and isolated loud peaks do not complete; sustained wind does across frame rates', () => {
+test('wind intensity follows energy smoothly at different frame rates', () => {
   for (const delta of [10, 20, 40]) {
     const d = calibrate(0.006, delta)
-    for (let n = 0; n < 50; n++) assert.equal(d.update(0.008, delta), false)
-    assert.equal(d.update(0.9, delta), false)
-    for (let n = 0; n < 50; n++) assert.equal(d.update(0.006, delta), false)
-    let complete = false
-    for (let time = 0; time < 1700; time += delta) assert.equal(d.update(0.15, delta), false)
-    for (let time = 0; time < 700; time += delta) complete ||= d.update(0.15, delta)
-    assert.equal(complete, true)
-    assert.ok(d.intensity >= 0 && d.intensity <= 1)
+    for (let n = 0; n < 50; n++) d.update(0.008, delta)
+    assert.ok(d.intensity < 0.1)
+    d.update(0.9, delta)
+    assert.ok(d.energy < d.rms)
+    for (let n = 0; n < 50; n++) d.update(0.006, delta)
+    assert.ok(d.intensity < 0.01)
+    for (let time = 0; time < 500; time += delta) d.update(0.15, delta)
+    assert.equal(d.intensity, 1)
   }
 })
 
@@ -27,7 +27,8 @@ test('calibration adapts to ambient noise, silence has a floor, stalled frames c
   quiet.update(0, 20); loud.update(0.05, 20)
   assert.ok(quiet.baseline > 0)
   assert.ok(loud.threshold > quiet.threshold * 3)
-  for (let n = 0; n < 30; n++) assert.equal(loud.update(0.06, 20), false)
+  for (let n = 0; n < 30; n++) loud.update(0.06, 20)
+  assert.ok(loud.energy < loud.threshold)
   loud.update(0.9, 2000)
   assert.equal(loud.sustained, 0)
 })
@@ -98,7 +99,7 @@ test('denied permission is quiet and a later attempt is possible', async t => {
   assert.equal(stats.requested, 2); assert.equal(c.state, 'idle')
 })
 
-test('lost eligibility, ended track and session timeout release the microphone', async t => {
+test('lost eligibility and ended tracks release audio; active sessions have no timeout', async t => {
   const { stats, track } = audioFixture(t)
   let eligible = true
   const c = new CartridgeBlowController(() => {}, () => eligible)
@@ -108,48 +109,50 @@ test('lost eligibility, ended track and session timeout release the microphone',
   eligible = true; c.begin(); t.mock.timers.tick(600); await flush()
   track.dispatchEvent(new Event('ended'))
   assert.equal(c.state, 'idle'); assert.equal(stats.stopped, 2)
-  c.begin(); t.mock.timers.tick(600); await flush(); t.mock.timers.tick(BLOW.SESSION_TIMEOUT)
-  assert.equal(c.state, 'idle'); assert.equal(stats.stopped, 3)
+  c.begin(); t.mock.timers.tick(600); await flush(); t.mock.timers.tick(BLOW.PERMISSION_TIMEOUT)
+  assert.equal(c.state, 'calibrating'); assert.equal(stats.stopped, 2)
+  c.cancel(); assert.equal(stats.stopped, 3)
 })
 
 
-test('slow rendering still detects sustained wind but never a single sparse spike', () => {
-  const d = new BlowDetector()
-  for (let n = 0; n < 30; n++) d.update(0.006, 250)
-  assert.equal(d.update(0.9, 250), false)
-  for (let n = 0; n < 10; n++) assert.equal(d.update(0.006, 250), false)
-  let complete = false
-  for (let n = 0; n < 32; n++) complete ||= d.update(0.25, 250)
-  assert.equal(complete, true)
-})
-
-test('two seconds qualifies the blow; only sustained release closes audio before returning', async t => {
+test('blowing and silence never exit the mode; a second tap closes audio and returns', async t => {
   const { stats } = audioFixture(t)
   const c = new CartridgeBlowController(() => {}, () => true)
   c.begin(); t.mock.timers.tick(600); await flush()
+  c.release()
+  assert.equal(c.tap(performance.now()), true) // Consume the activation gesture's click.
+  assert.equal(c.state, 'calibrating')
   let now = performance.now()
   for (let n = 0; n < 30; n++) c.sample(now += 20)
-  assert.equal(c.state, 'listening')
   stats.amplitude = 0.25
-  for (let n = 0; n < 85; n++) c.sample(now += 20)
+  for (let n = 0; n < 1600; n++) c.sample(now += 20)
   assert.equal(c.state, 'blowing'); assert.equal(stats.stopped, 0)
-  for (let n = 0; n < 25; n++) c.sample(now += 20)
-  assert.equal(c.state, 'awaitingRelease'); assert.equal(c.completed, true)
+  stats.amplitude = 0.006
   for (let n = 0; n < 100; n++) c.sample(now += 20)
-  assert.equal(stats.stopped, 0)
-  // A short dip must not initiate the return.
-  stats.amplitude = 0.006
-  for (let n = 0; n < 5; n++) c.sample(now += 20)
-  stats.amplitude = 0.25
-  for (let n = 0; n < 10; n++) c.sample(now += 20)
-  assert.equal(c.state, 'awaitingRelease'); assert.equal(stats.stopped, 0)
-  stats.amplitude = 0.006
-  for (let n = 0; n < 30; n++) c.sample(now += 20)
+  assert.equal(c.state, 'listening'); assert.equal(stats.stopped, 0)
+  assert.equal(c.tap(now), true)
   assert.equal(c.state, 'returning')
   assert.equal(stats.stopped, 1); assert.equal(stats.closed, 1)
+  assert.equal(c.tap(now + 10), true)
+  assert.equal(c.state, 'returning')
   const energy = c.detector.energy
   stats.amplitude = 0; c.sample(now + 1000)
   assert.equal(c.detector.energy, energy)
   c.finish()
-  assert.equal(c.state, 'idle'); assert.equal(stats.stopped, 1)
+  assert.equal(c.state, 'idle'); assert.equal(c.tap(now + 3000), false)
+})
+
+test('a hold during opening arms at 600ms and activates as soon as the spring is ready', async t => {
+  const { stats } = audioFixture(t)
+  let ready = false
+  const c = new CartridgeBlowController(() => {}, () => true, () => ready)
+  c.begin(); t.mock.timers.tick(600)
+  assert.equal(c.state, 'armed'); assert.equal(stats.requested, 0)
+  c.advance(); assert.equal(stats.requested, 0)
+  ready = true; c.advance(); c.advance(); await flush()
+  assert.equal(c.state, 'calibrating'); assert.equal(stats.requested, 1)
+  c.cancel()
+  ready = false; c.begin(); t.mock.timers.tick(600); c.release()
+  ready = true; c.advance(); await flush()
+  assert.equal(c.state, 'idle'); assert.equal(stats.requested, 1)
 })

@@ -4,9 +4,6 @@ export const BLOW = {
   MOVEMENT_CANCEL_THRESHOLD: 12,
   CALIBRATION_DURATION: 400,
   BLOW_THRESHOLD: 3.5,
-  BLOW_MIN_DURATION: 2000,
-  BLOW_STOP_DURATION: 180,
-  BLOW_STOP_THRESHOLD: 0.7,
   BLOW_SMOOTHING: 65,
   BASELINE_FLOOR: 0.003,
   MIN_ENERGY: 0.025,
@@ -14,24 +11,20 @@ export const BLOW = {
   FULL_INTENSITY_RATIO: 2.2,
   MAX_SAMPLE_GAP: 500,
   MAX_ENVELOPE_STEP: 100,
-  BLOW_MIN_SAMPLES: 3,
-  SESSION_TIMEOUT: 20_000,
+  PERMISSION_TIMEOUT: 20_000,
   ENTER_DURATION: 440,
   RETURN_DURATION: 2000,
   TILT: -47 * Math.PI / 180,
   SHAKE_DECAY: 55,
-  RETURN_SHAKE_DECAY: 160,
   SHAKE_ROTATION: 0.1,
   SHAKE_POSITION: 0.0014,
-  KICK: 0.045,
-  KICK_DURATION: 180,
   DEBUG_INTERVAL: 250,
   FFT_SIZE: 1024,
 } as const;
 
-export type BlowState = 'idle' | 'longPress' | 'requestingPermission' | 'calibrating' | 'listening' | 'blowing' | 'awaitingRelease' | 'returning' | 'cleanup';
+export type BlowState = 'idle' | 'longPress' | 'armed' | 'requestingPermission' | 'calibrating' | 'listening' | 'blowing' | 'returning' | 'cleanup';
 
-/** Frame-rate-independent envelope with a bounded ambient estimate and sustained gate. */
+/** Frame-rate-independent wind envelope with an ambient noise estimate. */
 export class BlowDetector {
   baseline = 0;
   energy = 0;
@@ -40,7 +33,6 @@ export class BlowDetector {
   threshold: number = BLOW.MIN_ENERGY;
   sustained = 0;
   elapsed = 0;
-  private aboveSamples = 0;
   update(rms: number, delta: number) {
     this.rms = rms;
     const dt = Math.min(delta, BLOW.MAX_ENVELOPE_STEP);
@@ -50,15 +42,13 @@ export class BlowDetector {
     if (this.elapsed <= BLOW.CALIBRATION_DURATION) {
       this.baseline += (this.energy - this.baseline) * smoothing;
       this.threshold = Math.max(BLOW.MIN_ENERGY, this.baseline * BLOW.BLOW_THRESHOLD, this.baseline + BLOW.ENERGY_MARGIN);
-      return false;
+      return;
     }
     this.baseline = Math.max(BLOW.BASELINE_FLOOR, this.baseline);
     this.threshold = Math.max(BLOW.MIN_ENERGY, this.baseline * BLOW.BLOW_THRESHOLD, this.baseline + BLOW.ENERGY_MARGIN);
     this.intensity = Math.max(0, Math.min(1, (this.energy - this.baseline) / (this.threshold * BLOW.FULL_INTENSITY_RATIO - this.baseline)));
-    // Raw energy also has to hold: smoothing's tail must not turn a transient into a blow.
+    // Duration is diagnostic only; it never completes or closes the interaction.
     this.sustained = delta <= BLOW.MAX_SAMPLE_GAP && rms >= this.threshold && this.energy >= this.threshold ? this.sustained + dt : 0;
-    this.aboveSamples = this.sustained > 0 ? this.aboveSamples + 1 : 0;
-    return this.sustained >= BLOW.BLOW_MIN_DURATION && this.aboveSamples >= BLOW.BLOW_MIN_SAMPLES;
   }
 }
 
@@ -71,7 +61,6 @@ export class CartridgeBlowController {
   detector = new BlowDetector();
   enteredAt = 0;
   returnedAt = 0;
-  completed = false;
   suppressClick = false;
   private generation = 0;
   private lease: symbol | null = null;
@@ -84,13 +73,14 @@ export class CartridgeBlowController {
   private analyser: AnalyserNode | null = null;
   private samples: Float32Array<ArrayBuffer> | null = null;
   private lastSample = 0;
-  private quietDuration = 0;
 
   private wake: () => void;
   private eligible: () => boolean;
-  constructor(wake: () => void, eligible: () => boolean) {
+  private ready: () => boolean;
+  constructor(wake: () => void, eligible: () => boolean, ready: () => boolean = () => true) {
     this.wake = wake;
     this.eligible = eligible;
+    this.ready = ready;
   }
 
   begin() {
@@ -99,12 +89,14 @@ export class CartridgeBlowController {
     this.state = 'longPress';
     this.timer = setTimeout(() => {
       if (!this.eligible()) { this.cancel(); return; }
-      void this.request();
+      this.state = 'armed';
+      this.advance();
+      this.wake();
     }, BLOW.LONG_PRESS_DURATION);
   }
 
   release() {
-    if (this.state === 'longPress') this.cancel();
+    if (this.state === 'longPress' || this.state === 'armed') this.cancel();
     // Safari can require a fresh trusted pointerup to resume a context created
     // after the hold timer. Never create another context or another stream here.
     const context = this.context;
@@ -113,14 +105,33 @@ export class CartridgeBlowController {
     });
   }
 
+  advance() {
+    if (this.state !== 'armed') return;
+    if (!this.eligible()) { this.cancel(); return; }
+    if (this.ready()) void this.request();
+  }
+
+  tap(now: number) {
+    if (this.suppressClick) { this.suppressClick = false; return true; }
+    if (this.state === 'idle') return false;
+    if (this.state === 'returning') return true;
+    if (this.state === 'calibrating' || this.state === 'listening' || this.state === 'blowing') {
+      this.returnedAt = now;
+      this.state = 'returning';
+      this.disposeAudio();
+      this.wake();
+    } else this.cancel();
+    return true;
+  }
+
   private async request() {
-    if (microphoneOwner || this.state !== 'longPress') { this.cancel(); return; }
+    if (microphoneOwner || this.state !== 'armed') { this.cancel(); return; }
     const lease = Symbol('cartridge microphone');
     microphoneOwner = this.lease = lease;
     const generation = ++this.generation;
     this.state = 'requestingPermission';
     this.suppressClick = true;
-    this.deadline = setTimeout(() => this.cancel(), BLOW.SESSION_TIMEOUT);
+    this.deadline = setTimeout(() => this.cancel(), BLOW.PERMISSION_TIMEOUT);
     try {
       const Audio = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
       if (!Audio) throw new Error('Web Audio unavailable');
@@ -135,6 +146,7 @@ export class CartridgeBlowController {
         if (generation === this.generation) this.cancel();
         return;
       }
+      clearTimeout(this.deadline);
       this.stream = stream;
       stream.getTracks().forEach(track => track.addEventListener('ended', this.audioEnded));
       this.source = context.createMediaStreamSource(stream);
@@ -144,8 +156,6 @@ export class CartridgeBlowController {
       this.source.connect(this.analyser); // No destination: never play microphone audio.
       this.detector = new BlowDetector();
       this.enteredAt = this.lastSample = performance.now();
-      this.completed = false;
-      this.quietDuration = 0;
       this.state = 'calibrating';
       this.wake();
     } catch {
@@ -169,28 +179,10 @@ export class CartridgeBlowController {
       let energy = 0;
       for (let i = 0; i < this.samples.length; i++) energy += this.samples[i] * this.samples[i];
       const delta = now - this.lastSample;
-      const complete = this.detector.update(Math.sqrt(energy / this.samples.length), delta);
+      this.detector.update(Math.sqrt(energy / this.samples.length), delta);
       this.lastSample = now;
       if (this.detector.elapsed <= BLOW.CALIBRATION_DURATION) return;
-      if (complete) {
-        this.completed = true;
-        this.state = 'awaitingRelease';
-      }
-      if (this.state === 'awaitingRelease') {
-        // Latch completion, but keep reacting until the user actually stops.
-        // Hysteresis and a short quiet hold reject momentary dips in the wind.
-        const quiet = this.detector.rms < this.detector.threshold * BLOW.BLOW_STOP_THRESHOLD &&
-          this.detector.energy < this.detector.threshold * BLOW.BLOW_STOP_THRESHOLD;
-        this.quietDuration = quiet && delta <= BLOW.MAX_SAMPLE_GAP
-          ? this.quietDuration + Math.min(delta, BLOW.MAX_ENVELOPE_STEP) : 0;
-        if (this.quietDuration >= BLOW.BLOW_STOP_DURATION) {
-          this.returnedAt = now;
-          this.state = 'returning';
-          this.disposeAudio();
-        }
-      } else {
-        this.state = this.detector.sustained > 0 ? 'blowing' : 'listening';
-      }
+      this.state = this.detector.energy >= this.detector.threshold ? 'blowing' : 'listening';
     } catch { this.cancel(); }
   }
 

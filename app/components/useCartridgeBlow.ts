@@ -12,6 +12,7 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
   const controller = useRef<CartridgeBlowController | null>(null);
   const pointer = useRef<{ id: number; x: number; y: number } | null>(null);
   const shake = useRef(0);
+  const returnPose = useRef({ startedAt: -1, x: 0, y: 0, z: 0, px: 0, py: 0, pz: 0 });
   const debugAt = useRef(0);
   const reduceMotion = useRef(false);
 
@@ -20,8 +21,8 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
     const coarse = window.matchMedia('(pointer: coarse)');
     if (!coarse.matches || !navigator.mediaDevices?.getUserMedia || !(window.AudioContext || 'webkitAudioContext' in window)) return;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const eligible = () => coarse.matches && settled.current && !stickerBusy.current && document.visibilityState === 'visible';
-    const current = new CartridgeBlowController(invalidate, eligible);
+    const eligible = () => coarse.matches && document.visibilityState === 'visible';
+    const current = new CartridgeBlowController(invalidate, eligible, () => settled.current && !stickerBusy.current);
     controller.current = current;
     const reset = () => {
       current.cancel();
@@ -32,12 +33,23 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
     };
     const move = (event: PointerEvent) => {
       const start = pointer.current;
-      if (start && start.id === event.pointerId && current.state === 'longPress' && Math.hypot(event.clientX - start.x, event.clientY - start.y) > BLOW.MOVEMENT_CANCEL_THRESHOLD) reset();
+      if (start && start.id === event.pointerId && (current.state === 'longPress' || current.state === 'armed') && Math.hypot(event.clientX - start.x, event.clientY - start.y) > BLOW.MOVEMENT_CANCEL_THRESHOLD) reset();
     };
     const up = (event: PointerEvent) => {
       if (event.pointerId === pointer.current?.id) { current.release(); pointer.current = null; }
     };
-    const down = () => { if (current.state !== 'idle') reset(); };
+    const down = (event: PointerEvent) => {
+      current.suppressClick = false;
+      if (event.target !== gl.domElement || pointer.current && pointer.current.id !== event.pointerId) reset();
+    };
+    const activationClick = (event: MouseEvent) => {
+      // Opening can move the original hitbox away from the held finger. Consume
+      // its release before raycasting so a canvas miss cannot close the rack.
+      if (!current.suppressClick) return;
+      current.suppressClick = false;
+      event.preventDefault();
+      event.stopPropagation();
+    };
     const hidden = () => { if (document.visibilityState !== 'visible') reset(); };
     const blur = () => { if (current.state !== 'requestingPermission') reset(); };
     const preferences = () => { reduceMotion.current = reduced.matches; if (!coarse.matches) reset(); };
@@ -56,6 +68,7 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
     window.addEventListener('popstate', reset);
     document.addEventListener('visibilitychange', hidden);
     gl.domElement.addEventListener('contextmenu', contextMenu);
+    gl.domElement.addEventListener('click', activationClick, true);
     coarse.addEventListener('change', preferences);
     reduced.addEventListener('change', preferences);
     return () => {
@@ -72,6 +85,7 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
       window.removeEventListener('popstate', reset);
       document.removeEventListener('visibilitychange', hidden);
       gl.domElement.removeEventListener('contextmenu', contextMenu);
+      gl.domElement.removeEventListener('click', activationClick, true);
       coarse.removeEventListener('change', preferences);
       reduced.removeEventListener('change', preferences);
     };
@@ -82,7 +96,7 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
     const group = offset.current;
     if (!current || !group) return;
     const now = performance.now();
-    if (current.state !== 'idle' && (!settled.current || stickerBusy.current)) current.cancel();
+    current.advance();
     current.sample(now);
     if (process.env.NODE_ENV === 'development' && current.state !== 'idle' && now - debugAt.current >= BLOW.DEBUG_INTERVAL) {
       debugAt.current = now;
@@ -90,38 +104,39 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
         if (window.localStorage.getItem('cartridge-blow-debug') === '1') console.debug('[cartridge blow]', { state: current.state, baseline: current.detector.baseline, rms: current.detector.rms, energy: current.detector.energy, blowIntensity: current.detector.intensity, threshold: current.detector.threshold, sustained: current.detector.sustained });
       } catch { /* Storage may be disabled; debugging must never affect the gesture. */ }
     }
-    if (current.state === 'idle' || current.state === 'longPress' || current.state === 'requestingPermission') {
+    if (current.state === 'idle' || current.state === 'longPress' || current.state === 'armed' || current.state === 'requestingPermission') {
       group.rotation.set(0, 0, 0);
       group.position.set(0, 0, 0);
       shake.current = 0;
       return;
     }
-    const returning = current.state === 'returning';
-    const elapsed = now - (returning ? current.returnedAt : current.enteredAt);
-    const kickDuration = reduceMotion.current ? 0 : BLOW.KICK_DURATION;
-    const progress = Math.max(0, Math.min(1, returning
-      ? (elapsed - kickDuration) / (BLOW.RETURN_DURATION - kickDuration)
-      : elapsed / BLOW.ENTER_DURATION));
-    const easeOut = 1 - Math.pow(1 - progress, 3);
-    // Zero velocity and acceleration at both ends: no sudden pull out of the tilt.
-    const returnEase = progress * progress * progress * (progress * (progress * 6 - 15) + 10);
-    const tilt = returning ? 1 - returnEase : easeOut;
-    const shakeDecay = returning ? BLOW.RETURN_SHAKE_DECAY : BLOW.SHAKE_DECAY;
-    shake.current += ((returning ? 0 : current.detector.intensity) - shake.current) * (1 - Math.exp(-delta * 1000 / shakeDecay));
+    if (current.state === 'returning') {
+      const pose = returnPose.current;
+      if (pose.startedAt !== current.returnedAt) {
+        pose.startedAt = current.returnedAt;
+        pose.x = group.rotation.x; pose.y = group.rotation.y; pose.z = group.rotation.z;
+        pose.px = group.position.x; pose.py = group.position.y; pose.pz = group.position.z;
+      }
+      const progress = Math.min(1, (now - current.returnedAt) / BLOW.RETURN_DURATION);
+      const remaining = 1 - progress * progress * progress * (progress * (progress * 6 - 15) + 10);
+      group.rotation.set(pose.x * remaining, pose.y * remaining, pose.z * remaining);
+      group.position.set(pose.px * remaining, pose.py * remaining, pose.pz * remaining);
+      if (progress === 1) current.finish();
+      else invalidate();
+      return;
+    }
+    const progress = Math.min(1, (now - current.enteredAt) / BLOW.ENTER_DURATION);
+    const tilt = 1 - Math.pow(1 - progress, 3);
+    shake.current += (current.detector.intensity - shake.current) * (1 - Math.exp(-delta * 1000 / BLOW.SHAKE_DECAY));
     const amplitude = reduceMotion.current ? 0 : shake.current * BLOW.SHAKE_ROTATION;
     const t = now / 1000;
     // Incommensurate frequencies modulate each other: turbulent, bounded wind.
     const x = Math.sin(t * 73 + Math.sin(t * 19)) * 0.65 + Math.sin(t * 109) * 0.35;
     const y = Math.sin(t * 83 + Math.sin(t * 23)) * 0.6 + Math.sin(t * 127) * 0.4;
     const z = Math.sin(t * 97 + Math.sin(t * 31));
-    const kick = returning && !reduceMotion.current ? Math.pow(Math.sin(Math.min(1, elapsed / BLOW.KICK_DURATION) * Math.PI), 2) * BLOW.KICK : 0;
-    group.rotation.set(BLOW.TILT * tilt + amplitude * x + kick, amplitude * y, amplitude * z * 0.65);
+    group.rotation.set(BLOW.TILT * tilt + amplitude * x, amplitude * y, amplitude * z * 0.65);
     group.position.set(x * amplitude / BLOW.SHAKE_ROTATION * BLOW.SHAKE_POSITION, y * amplitude / BLOW.SHAKE_ROTATION * BLOW.SHAKE_POSITION, 0);
-    if (returning && progress === 1) {
-      current.finish();
-      group.rotation.set(0, 0, 0);
-      group.position.set(0, 0, 0);
-    } else invalidate();
+    invalidate();
   });
 
   return {
@@ -131,16 +146,14 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
       const current = controller.current;
       if (!current) return;
       current.begin();
-      if (current.state === 'longPress') {
+      if (current.state !== 'idle') {
         event.stopPropagation();
         pointer.current = { id: event.pointerId, x: event.clientX, y: event.clientY };
       }
     },
     consumeClick() {
       const current = controller.current;
-      if (!current?.suppressClick) return false;
-      current.suppressClick = false;
-      return true;
+      return current?.tap(performance.now()) ?? false;
     },
   };
 }

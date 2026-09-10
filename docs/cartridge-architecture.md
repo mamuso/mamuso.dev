@@ -60,35 +60,38 @@ file separation alone does not remove Three.js or reduce its cost.
 
 ## Secret touch interaction
 
-An already selected, settled cartridge accepts a 600 ms primary-touch hold on its
-existing hitbox. `useCartridgeMotion` exposes its existing settled ref; selection,
-reflow, sticker placement and opening/closing remain its original owners.
+An already selected cartridge accepts a 600 ms primary-touch hold on its existing
+hitbox. The hold can start while the opening spring is moving. After 600 ms the
+`armed` state waits for the existing settled ref and sticker placement to finish;
+releasing or moving the finger cancels it. This preserves the hold instead of
+rejecting an immediate tap followed by long press.
+
 `useCartridgeBlow` owns a nested identity group around the model and sticker,
-inside presentation. Its local rotation/translation are additive, so neither the
-base pivot nor its spring targets/velocities are overwritten. Completing the
-2000 ms return from the −47° tilt sets the child transform exactly to identity. Reduced-motion users
-get the tilt/return without shake or kick. Wind shake continues throughout the
-sustained blow, including after qualification. The `awaitingRelease` state waits
-for 180 ms below a lower release threshold before closing audio and returning;
-a brief dip does not end the effect. The return uses a quintic ease with zero endpoint velocity and
-acceleration, a softer kick and a longer shake fade.
+inside presentation. Its −47° rotation and wind shake are additive: neither the
+base pivot nor its spring targets/velocities are overwritten. Blow mode remains
+active through any amount of blowing or silence. A second tap on the selected
+cartridge stops audio and consumes the tap so the cartridge stays open. The
+return snapshots the current offset (including a partly completed entry) and
+eases all axes back to identity over 2000 ms, with zero endpoint velocity and
+acceleration. Further taps during return are consumed. A later normal tap closes
+the cartridge as usual. Reduced-motion users get the tilt/return without shake.
 
 `cartridgeBlow.ts` owns the gesture/audio state machine and microphone lease.
 The lease survives a cancelled pending permission dialog, because getUserMedia
 cannot be aborted: a late stream is stopped before releasing that lease. Tracks,
-nodes and context are released on completion, audio failure, selection change,
-page hiding, scrolling, navigation, new input and unmount. A 20-second deadline
-also releases an abandoned session. No audio is sent to a server or connected to
-speakers. Sampling uses the existing R3F demand loop, with no audio RAF or React
-state updates. Pointer movement/up/cancel listeners cover leaving the hitbox;
-vertical page scrolling remains enabled.
+nodes and context are released on exit, audio failure, selection change, page
+hiding, scrolling, navigation and unmount. The 20-second deadline only applies to
+pending permission; active mode has no expiry. No audio is sent to a server or
+connected to speakers. Sampling uses the existing R3F demand loop, with no audio
+RAF or React state updates. Pointer movement/up/cancel listeners cover leaving
+the hitbox; vertical page scrolling remains enabled. Pointerdown on the same
+canvas does not reset the mode before its cartridge click handler can handle exit.
 
 Sensitivity and timing constants live in `BLOW`. The detector smooths RMS,
 calibrates ambient energy for 400 ms and combines an ambient ratio with a minimum
-energy and margin. Both raw and smoothed energy must exceed the threshold for
-2000 ms; stalled frames reset that duration. This is an energy heuristic, not
-speech recognition: a sustained loud sound can also trigger it. Validate the
-feel with actual phone microphones before treating sensitivity as final.
+energy and margin. Energy drives wind intensity continuously; no duration or
+silence threshold completes the interaction. This is an energy heuristic, not
+speech recognition: other loud sounds also shake the cartridge.
 
 For development-only console diagnostics, run
 `localStorage.setItem('cartridge-blow-debug', '1')` and perform the gesture.
@@ -96,9 +99,9 @@ The throttled log includes state, raw RMS, smoothed energy, baseline, threshold,
 intensity and sustained duration. Remove the key to disable it. The logging
 branch is excluded in production; no controls or instructions are shown.
 
-`cartridgeBlow.test.mjs` covers calibration, spikes, duration, cancellation,
-denial, delayed permission and resource disposal. `e2e/cartridge-blow.spec.ts`
-uses trusted browser input and synthetic local audio to verify touch-only
-activation, click suppression, completion, microphone shutdown and normal taps.
-Physical iOS/Android permission behavior and microphone sensitivity still need a
-real-device pass; synthetic audio cannot establish acoustic accuracy.
+`cartridgeBlow.test.mjs` covers calibration, queued/cancelled holds, denial, late
+permission, persistent listening and explicit exit. `e2e/cartridge-blow.spec.ts`
+uses browser input and synthetic local audio to verify immediate tap/hold,
+touch-only activation, persistence through silence, tap-to-return, microphone
+shutdown and normal taps afterward. Physical iOS/Android permission behavior and
+microphone sensitivity require real-device validation.

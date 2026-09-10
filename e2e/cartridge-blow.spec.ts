@@ -6,7 +6,7 @@ declare global {
   }
 }
 
-test('secret cartridge hold uses touch only, reacts to sustained audio and releases resources', async ({ page, isMobile }) => {
+test('secret touch hold survives opening, stays active through silence and exits on tap', async ({ page, isMobile }) => {
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   // Deterministic local audio; never access the test runner's physical microphone.
@@ -44,16 +44,11 @@ test('secret cartridge hold uses touch only, reacts to sustained audio and relea
     previous = values
     return Date.now() - stableSince > 300
   }, { timeout: 30_000 }).toBe(true)
-  await control.focus()
-  await page.keyboard.press('Enter')
+  const closedBox = (await control.boundingBox())!
+  if (isMobile) await page.touchscreen.tap(closedBox.x + closedBox.width / 2, closedBox.y + closedBox.height / 2)
+  else await page.mouse.click(closedBox.x + closedBox.width / 2, closedBox.y + closedBox.height / 2)
   await expect(control).toHaveAttribute('aria-expanded', 'true')
   await control.evaluate(element => element.blur())
-  // Allow the existing springs to settle before long pressing their hitbox.
-  await page.evaluate(() => new Promise<void>(resolve => {
-    let frames = 0
-    const tick = () => { if (++frames >= 120) resolve(); else requestAnimationFrame(tick) }
-    requestAnimationFrame(tick)
-  }))
   const box = (await control.boundingBox())!
   const x = box.x + box.width / 2, y = box.y + box.height / 2
   const session = await page.context().newCDPSession(page)
@@ -64,16 +59,6 @@ test('secret cartridge hold uses touch only, reacts to sustained audio and relea
   const end = async () => {
     if (isMobile) await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
     else await page.mouse.up()
-  }
-  if (isMobile) {
-    await start()
-    await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + 20, y }] })
-    await end()
-    await start()
-    await session.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] })
-    await page.waitForTimeout(650)
-    expect(await page.evaluate(() => window.blowTest.requests)).toBe(0)
-    await expect(control).toHaveAttribute('aria-expanded', 'true')
   }
   await start()
   await page.waitForTimeout(750)
@@ -95,6 +80,11 @@ test('secret cartridge hold uses touch only, reacts to sustained audio and relea
   await page.waitForTimeout(3000)
   expect(await page.evaluate(() => window.blowTest.stopped)).toBe(0)
   await page.evaluate(() => { window.blowTest.amplitude = 0.006 })
+  await page.waitForTimeout(700)
+  expect(await page.evaluate(() => window.blowTest.stopped)).toBe(0)
+  // The selected cartridge may have moved since pointerdown during opening.
+  const openBox = (await control.boundingBox())!
+  await page.touchscreen.tap(openBox.x + openBox.width / 2, openBox.y + openBox.height / 2)
   await expect.poll(() => page.evaluate(() => window.blowTest.stopped), { timeout: 12_000 }).toBe(1)
   expect(await page.evaluate(() => window.blowTest.closed)).toBe(1)
   // Completion must precede the abandoned-session deadline, not pass via timeout.
@@ -106,7 +96,7 @@ test('secret cartridge hold uses touch only, reacts to sustained audio and relea
   await page.screenshot({ path: test.info().outputPath('returned.png') })
   await expect(control).toHaveAttribute('aria-expanded', 'true')
   // A normal tap still closes the cartridge after the easter egg.
-  await page.touchscreen.tap(x, y)
+  await page.touchscreen.tap(openBox.x + openBox.width / 2, openBox.y + openBox.height / 2)
   await expect(control).toHaveAttribute('aria-expanded', 'false')
   await session.detach()
   expect(errors).toEqual([])
