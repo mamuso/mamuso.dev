@@ -50,9 +50,11 @@ test('secret touch hold survives opening, stays active through silence and exits
   await expect(control).toHaveAttribute('aria-expanded', 'true')
   await control.evaluate(element => element.blur())
   const box = (await control.boundingBox())!
-  const x = box.x + box.width / 2, y = box.y + box.height / 2
+  let x = box.x + box.width / 2, y = box.y + box.height / 2
   const session = await page.context().newCDPSession(page)
   const start = async () => {
+    const latest = (await control.boundingBox())!
+    x = latest.x + latest.width / 2; y = latest.y + latest.height / 2
     if (isMobile) await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] })
     else { await page.mouse.move(x, y); await page.mouse.down() }
   }
@@ -101,6 +103,19 @@ test('secret touch hold survives opening, stays active through silence and exits
   // A normal tap still closes the cartridge after the easter egg.
   await page.touchscreen.tap(openBox.x + openBox.width / 2, openBox.y + openBox.height / 2)
   await expect(control).toHaveAttribute('aria-expanded', 'false')
+  // Re-enter, then navigate with a swipe while the microphone is active.
+  await control.focus(); await page.keyboard.press('Enter'); await control.evaluate(element => element.blur())
+  await expect(control).toHaveAttribute('aria-expanded', 'true')
+  await start()
+  await expect.poll(() => page.evaluate(() => window.blowTest.requests)).toBe(2)
+  await end()
+  const dragBox = (await control.boundingBox())!
+  const dragX = dragBox.x + dragBox.width / 2, dragY = dragBox.y + dragBox.height / 2
+  await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: dragX, y: dragY }] })
+  await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: dragX - 80, y: dragY }] })
+  await expect.poll(() => page.evaluate(() => window.blowTest.stopped)).toBe(2)
+  await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+  await expect(page.getByRole('button', { name: 'View Microsoft, Dev Services cartridge', exact: true })).toHaveAttribute('aria-expanded', 'true')
   await session.detach()
   expect(errors).toEqual([])
 })

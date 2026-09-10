@@ -8,6 +8,7 @@ import ResponsiveCameraRig from "./ResponsiveCameraRig";
 import { resolveCartridgePoses } from "./cartridgeLayout";
 import { configureLabelTexture, uploadSceneTextures } from "./cartridgeMaterials";
 import { TAP_MAX_MOVEMENT_PX, ENTRANCE_STAGGER_SEC, type CameraPreset, type CartridgeLayoutEntry } from "./cartridgeConfig";
+import { swipeCartridgeIndex } from "./cartridgeSwipe";
 import { CARTRIDGES } from "@/data/cartridges";
 
 useGLTF.preload("/models/famicom_cartridge.glb");
@@ -78,6 +79,13 @@ function CartridgeSceneTextures({
     setLastOpenIndex(index);
     setOpenIndex((current) => current === index ? null : index);
   };
+  const navigateCartridge = useCallback((direction: -1 | 1) => {
+    if (openIndex === null) return;
+    const next = swipeCartridgeIndex(openIndex, direction, layout.length);
+    if (next === openIndex) return;
+    setLastOpenIndex(next);
+    setOpenIndex(next);
+  }, [openIndex, layout.length]);
   const textureByLabel = useMemo(() => {
     const list = Array.isArray(textures) ? textures : [textures];
     const map = new Map<string, THREE.Texture>();
@@ -178,6 +186,7 @@ function CartridgeSceneTextures({
               isOpen={i === openIndex}
               isRackOpen={openIndex !== null}
               onToggleOpen={() => selectCartridge(i)}
+              onSwipe={navigateCartridge}
               entranceDelaySec={
                 THREE.MathUtils.lerp(i * 0.018, (layout.length - 1 - i) * ENTRANCE_STAGGER_SEC, desktopBlend)
               }

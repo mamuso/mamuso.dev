@@ -8,6 +8,7 @@ import * as stylex from "@stylexjs/stylex";
 import CartridgePresentation from "./CartridgePresentation";
 import CartridgeSticker from "./CartridgeSticker";
 import { createCartridgeInstance, disposeCartridgeInstance } from "./cartridgeMaterials";
+import { useCartridgeSwipe } from "./useCartridgeSwipe";
 import { useCartridgeBlow } from "./useCartridgeBlow";
 import { useCartridgeMotion } from "./useCartridgeMotion";
 import { CARTRIDGE_WIDTH, CARTRIDGE_HEIGHT, CARTRIDGE_DEPTH, OPEN_HEIGHT, TAP_MAX_MOVEMENT_PX, type CartridgeLayoutEntry } from "./cartridgeConfig";
@@ -28,6 +29,7 @@ export default function CartridgeItem({
   renderOrderBase = 0,
   isOpen = false,
   onToggleOpen,
+  onSwipe,
   entranceDelaySec,
   entranceReady = true,
   mobileEntranceY = 0,
@@ -54,6 +56,7 @@ export default function CartridgeItem({
   renderOrderBase?: number;
   isOpen?: boolean;
   onToggleOpen?: () => void;
+  onSwipe?: (direction: -1 | 1) => void;
   entranceDelaySec?: number;
   entranceReady?: boolean;
   mobileEntranceY?: number;
@@ -77,7 +80,8 @@ export default function CartridgeItem({
   const hovered = useRef(false);
   const pointerPosition = useRef({ x: 0, y: 0 });
   const stickerBusy = useRef(false);
-  const { offset: blowOffsetRef, pointerDown: blowPointerDown, consumeClick: consumeBlowClick } = useCartridgeBlow(isOpen, settled, stickerBusy);
+  const { offset: blowOffsetRef, pointerDown: blowPointerDown, consumeClick: consumeBlowClick, cancelForNavigation } = useCartridgeBlow(isOpen, settled, stickerBusy);
+  const { offset: swipeOffsetRef, pointerDown: swipePointerDown, consumeClick: consumeSwipeClick } = useCartridgeSwipe(isOpen && desktopBlend < 1, onSwipe, cancelForNavigation);
   const instance = useMemo(() => createCartridgeInstance(scene, {
     color, maxAniso: gl.capabilities.getMaxAnisotropy(), pixelRatio: gl.getPixelRatio(),
     labelTexture, shellOpacity, renderOrderBase,
@@ -112,6 +116,7 @@ export default function CartridgeItem({
         openYaw={openYaw}
         desktopBlend={desktopBlend}
       >
+      <group ref={swipeOffsetRef}>
       <group ref={blowOffsetRef}>
       <primitive object={instance} position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]} />
       {stickerTexture && stickerApplied && (
@@ -126,6 +131,7 @@ export default function CartridgeItem({
           desktopBlend={desktopBlend}
         />
       )}
+      </group>
       </group>
       </CartridgePresentation>
       {onToggleOpen && <Html center>
@@ -145,7 +151,7 @@ export default function CartridgeItem({
         <mesh
           geometry={CARTRIDGE_HITBOX_GEOMETRY}
           dispose={null}
-          onPointerDown={(event) => blowPointerDown(event)}
+          onPointerDown={(event) => { swipePointerDown(event); blowPointerDown(event); }}
           onPointerEnter={(event) => {
             event.stopPropagation();
             if (!entranceComplete.current) return;
@@ -176,7 +182,7 @@ export default function CartridgeItem({
               event.delta > TAP_MAX_MOVEMENT_PX ||
               !entranceComplete.current
             ) return;
-            if (consumeBlowClick()) return;
+            if (consumeSwipeClick() || consumeBlowClick()) return;
             onToggleOpen?.();
           }}
         >

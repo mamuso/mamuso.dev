@@ -107,3 +107,26 @@ uses browser input and synthetic local audio to verify immediate tap/hold,
 touch-only activation, persistence through silence, tap-to-return, microphone
 shutdown and normal taps afterward. Physical iOS/Android permission behavior and
 microphone sensitivity require real-device validation.
+
+## Mobile drag navigation
+
+`useCartridgeSwipe` starts on the selected cartridge's existing hitbox for primary
+touch input in the mobile layout. It locks the gesture after 12 px: horizontal
+motion must dominate vertical motion by 1.2×. Vertical/ambiguous gestures keep
+native `pan-y` scrolling. A 48 px horizontal displacement on release opens one
+neighbor (left → next, right → previous); first/last cartridges do not wrap.
+Short or reversed drags spring back and consume their click, while ordinary taps
+retain their original behavior. Pointer cancellation, multitouch, selection and
+viewport changes cancel the pending gesture.
+
+A separate additive group gives the selected model a small resisted translation
+and roll while dragging, using the existing scalar spring and R3F demand loop.
+No React state updates occur during movement. `CartridgeScene` owns the final
+selection and uses the same poses/opening springs as taps. Horizontal intent
+immediately cancels the blow hold or active microphone, so navigation cannot
+leave audio running. Desktop input and keyboard controls remain unchanged.
+
+`cartridgeSwipe.test.mjs` covers direction locking, thresholds, boundaries and
+cancellation. `e2e/cartridge-swipe.spec.ts` covers both directions, short/cancelled
+drags, closed-rack behavior, vertical scroll and desktop preservation; the blow
+browser test also verifies that dragging away releases an active microphone.

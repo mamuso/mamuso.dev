@@ -155,6 +155,14 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
         pointer.current = { id: event.pointerId, x: event.clientX, y: event.clientY };
       }
     },
+    cancelForNavigation() {
+      controller.current?.cancel();
+      pointer.current = null;
+      shake.current = 0;
+      returnMotion.current.reset();
+      offset.current?.rotation.set(0, 0, 0);
+      offset.current?.position.set(0, 0, 0);
+    },
     consumeClick() {
       const current = controller.current;
       return current?.tap(performance.now()) ?? false;
