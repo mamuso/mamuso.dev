@@ -33,7 +33,7 @@ test('wind preserves position and velocity on release, then dissipates in 80ms',
   assert.equal(motion.pose[1], 0.02)
   motion.advance(20.001)
   assert.ok(Math.abs((motion.pose[1] - 0.02) / 0.000001 - 0.5) < 0.001)
-  motion.advance(20 + BLOW.RETURN_WIND_DURATION)
+  for (let time = 30; time <= 20 + BLOW.RETURN_WIND_DURATION; time += 10) motion.advance(time)
   assert.deepEqual([...motion.pose.slice(1)], [0, 0, 0, 0, 0])
 })
 
@@ -46,7 +46,7 @@ test('interrupted entry retains momentum and reduced motion never rebounds', () 
   assert.equal(motion.pose[0], -0.15)
   motion.advance(21)
   assert.ok(motion.pose[0] < -0.15)
-  motion.advance(20 + BLOW.RETURN_DURATION)
+  for (let time = 30; time <= 20 + BLOW.RETURN_DURATION; time += 10) motion.advance(time)
   assert.equal(motion.pose[0], 0)
   motion.reset()
   motion.observe(BLOW.TILT, 0, 0, 0, 0, 0, BLOW.TILT, 1000)
@@ -55,4 +55,22 @@ test('interrupted entry retains momentum and reduced motion never rebounds', () 
     motion.advance(time)
     assert.ok(motion.pose[0] <= 0)
   }
+})
+
+
+test('a delayed first frame and later stalls cannot collapse the return into one frame', () => {
+  const motion = new CartridgeBlowReturn()
+  motion.observe(BLOW.TILT, 0, 0, 0, 0, 0, BLOW.TILT, 0)
+  motion.start(10, false)
+  assert.equal(motion.advance(810), false)
+  assert.equal(motion.pose[0], BLOW.TILT)
+  assert.equal(motion.advance(1310), false)
+  assert.ok(Math.abs(motion.pose[0]) > Math.abs(BLOW.TILT) * 0.7)
+  let frames = 2, done = false
+  while (!done && frames < 30) {
+    done = motion.advance(1310 + (frames - 1) * 500)
+    frames++
+  }
+  assert.ok(done && frames >= 14)
+  assert.equal(motion.pose[0], 0)
 })

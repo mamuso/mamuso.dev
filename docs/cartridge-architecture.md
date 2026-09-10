@@ -75,7 +75,10 @@ return preserves the current pose and measured velocity (including a partly
 completed entry). `cartridgeBlowReturn.ts` reuses `advanceCartridgeSpring` for a
 450 ms damped return, with less than one degree of overshoot from the full tilt.
 Wind offsets retain their momentum and fade to rest over 80 ms. Integration uses
-bounded substeps to stay stable across frame rates and finishes at exact identity. Further taps during return are consumed. A later normal tap closes
+bounded substeps to stay stable across frame rates and finishes at exact identity.
+The visual clock starts on the first return frame and advances by at most 33 ms
+per rendered frame: slow audio teardown or a dropped frame cannot skip the
+animation. On slow devices the return takes longer instead of snapping. Further taps during return are consumed. A later normal tap closes
 the cartridge as usual. Reduced-motion users get the tilt/return without shake, with critical damping to prevent bounce.
 
 `cartridgeBlow.ts` owns the gesture/audio state machine and microphone lease.
@@ -123,8 +126,9 @@ A separate additive group gives the selected model a small resisted translation
 and roll while dragging, using the existing scalar spring and R3F demand loop.
 No React state updates occur during movement. `CartridgeScene` owns the final
 selection and uses the same poses/opening springs as taps. Horizontal intent
-immediately cancels the blow hold or active microphone, so navigation cannot
-leave audio running. Desktop input and keyboard controls remain unchanged.
+immediately cancels the blow hold or stops the active microphone. An active
+blow pose returns through its spring rather than being zeroed, so a short drag
+that does not navigate still exits smoothly. Desktop input and keyboard controls remain unchanged.
 
 `cartridgeSwipe.test.mjs` covers direction locking, thresholds, boundaries and
 cancellation. `e2e/cartridge-swipe.spec.ts` covers both directions, short/cancelled

@@ -14,6 +14,7 @@ export const BLOW = {
   PERMISSION_TIMEOUT: 20_000,
   ENTER_DURATION: 440,
   RETURN_DURATION: 450,
+  RETURN_MAX_FRAME_MS: 1000 / 30,
   RETURN_STIFFNESS: 450,
   RETURN_DAMPING: 33,
   RETURN_STEP: 1 / 240,
@@ -118,14 +119,18 @@ export class CartridgeBlowController {
   tap(now: number) {
     if (this.suppressClick) { this.suppressClick = false; return true; }
     if (this.state === 'idle') return false;
-    if (this.state === 'returning') return true;
+    this.returnToOpen(now);
+    return true;
+  }
+
+  returnToOpen(now: number) {
+    if (this.state === 'idle' || this.state === 'returning') return;
     if (this.state === 'calibrating' || this.state === 'listening' || this.state === 'blowing') {
       this.returnedAt = now;
       this.state = 'returning';
       this.disposeAudio();
       this.wake();
     } else this.cancel();
-    return true;
   }
 
   private async request() {

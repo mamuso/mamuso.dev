@@ -156,3 +156,15 @@ test('a hold during opening arms at 600ms and activates as soon as the spring is
   ready = true; c.advance(); await flush()
   assert.equal(c.state, 'idle'); assert.equal(stats.requested, 1)
 })
+
+
+test('horizontal intent starts the animated exit and never resets an in-flight return', async t => {
+  const { stats } = audioFixture(t)
+  const c = new CartridgeBlowController(() => {}, () => true)
+  c.begin(); t.mock.timers.tick(600); await flush()
+  c.returnToOpen(1000)
+  assert.equal(c.state, 'returning'); assert.equal(stats.stopped, 1)
+  c.returnToOpen(1100)
+  assert.equal(c.returnedAt, 1000); assert.equal(c.state, 'returning')
+  c.finish()
+})

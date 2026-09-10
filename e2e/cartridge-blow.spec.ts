@@ -22,7 +22,13 @@ test('secret touch hold survives opening, stays active through silence and exits
     class TestAudio {
       state = 'running'
       resume() { return Promise.resolve() }
-      close() { stats.closedAt = performance.now(); stats.closed++; this.state = 'closed'; return Promise.resolve() }
+      close() {
+        stats.closedAt = performance.now(); stats.closed++; this.state = 'closed'
+        // Reproduce a phone that cannot present a frame during audio teardown.
+        const until = performance.now() + 350
+        while (performance.now() < until) { /* Deliberate main-thread stall. */ }
+        return Promise.resolve()
+      }
       createMediaStreamSource() { return { connect() {}, disconnect() {} } }
       createAnalyser() { return { getFloatTimeDomainData(buffer: Float32Array) { stats.samples++; buffer.fill(stats.amplitude) }, disconnect() {} } }
     }
@@ -92,6 +98,7 @@ test('secret touch hold survives opening, stays active through silence and exits
   await page.touchscreen.tap(openBox.x + openBox.width / 2, openBox.y + openBox.height / 2)
   await expect.poll(() => page.evaluate(() => window.blowTest.stopped), { timeout: 12_000 }).toBe(1)
   expect(await page.evaluate(() => window.blowTest.closed)).toBe(1)
+  await page.screenshot({ path: test.info().outputPath('mid-return.png') })
   // Completion must precede the abandoned-session deadline, not pass via timeout.
   expect(await page.evaluate(() => window.blowTest.closedAt - window.blowTest.requestedAt)).toBeLessThan(15_000)
   await page.waitForTimeout(550)
@@ -103,17 +110,31 @@ test('secret touch hold survives opening, stays active through silence and exits
   // A normal tap still closes the cartridge after the easter egg.
   await page.touchscreen.tap(openBox.x + openBox.width / 2, openBox.y + openBox.height / 2)
   await expect(control).toHaveAttribute('aria-expanded', 'false')
-  // Re-enter, then navigate with a swipe while the microphone is active.
+  // A short horizontal drag must return smoothly without changing selection.
   await control.focus(); await page.keyboard.press('Enter'); await control.evaluate(element => element.blur())
   await expect(control).toHaveAttribute('aria-expanded', 'true')
   await start()
   await expect.poll(() => page.evaluate(() => window.blowTest.requests)).toBe(2)
   await end()
+  await page.waitForTimeout(550)
+  const shortBox = (await control.boundingBox())!
+  const shortX = shortBox.x + shortBox.width / 2, shortY = shortBox.y + shortBox.height / 2
+  await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: shortX, y: shortY }] })
+  await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: shortX - 20, y: shortY }] })
+  await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+  expect(await page.evaluate(() => window.blowTest.stopped)).toBe(2)
+  await page.screenshot({ path: test.info().outputPath('short-drag-return.png') })
+  await page.waitForTimeout(600)
+  await expect(control).toHaveAttribute('aria-expanded', 'true')
+  // Re-enter, then commit a swipe while the microphone is active.
+  await start()
+  await expect.poll(() => page.evaluate(() => window.blowTest.requests)).toBe(3)
+  await end()
   const dragBox = (await control.boundingBox())!
   const dragX = dragBox.x + dragBox.width / 2, dragY = dragBox.y + dragBox.height / 2
   await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: dragX, y: dragY }] })
   await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: dragX - 80, y: dragY }] })
-  await expect.poll(() => page.evaluate(() => window.blowTest.stopped)).toBe(2)
+  await expect.poll(() => page.evaluate(() => window.blowTest.stopped)).toBe(3)
   await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
   await expect(page.getByRole('button', { name: 'View Microsoft, Dev Services cartridge', exact: true })).toHaveAttribute('aria-expanded', 'true')
   await session.detach()

@@ -14,6 +14,8 @@ export class CartridgeBlowReturn {
   private tilt = 0;
   private tiltVelocity = 0;
   private integrated = 0;
+  private elapsed = 0;
+  private lastFrameAt: number | null = null;
   private damping: number = BLOW.RETURN_DAMPING;
   startedAt = -1;
 
@@ -40,6 +42,8 @@ export class CartridgeBlowReturn {
   start(now: number, reducedMotion: boolean) {
     this.startedAt = now;
     this.integrated = 0;
+    this.elapsed = 0;
+    this.lastFrameAt = null;
     this.angle.current = this.tilt;
     this.angularVelocity.current = this.tiltVelocity;
     this.wind.set(this.pose);
@@ -50,7 +54,12 @@ export class CartridgeBlowReturn {
   }
 
   advance(now: number) {
-    const elapsed = Math.max(0, Math.min(BLOW.RETURN_DURATION, now - this.startedAt));
+    // The first presented return frame must retain the pose, even if audio
+    // teardown or a slow renderer delayed it. Never skip the motion to catch up.
+    const delta = this.lastFrameAt === null ? 0 : Math.max(0, now - this.lastFrameAt);
+    this.lastFrameAt = now;
+    this.elapsed = Math.min(BLOW.RETURN_DURATION, this.elapsed + Math.min(delta, BLOW.RETURN_MAX_FRAME_MS));
+    const elapsed = this.elapsed;
     const seconds = elapsed / 1000;
     // Integrate bounded substeps, including on 30 Hz phones and delayed frames.
     while (this.integrated < seconds) {
