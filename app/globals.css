@@ -188,3 +188,13 @@ body {
     background: transparent;
   }
 }
+
+@layer cartridge-touch {
+  @media (pointer: coarse) {
+    [data-cartridge-viewer] canvas {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+  }
+}

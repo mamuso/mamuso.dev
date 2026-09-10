@@ -8,6 +8,7 @@ import * as stylex from "@stylexjs/stylex";
 import CartridgePresentation from "./CartridgePresentation";
 import CartridgeSticker from "./CartridgeSticker";
 import { createCartridgeInstance, disposeCartridgeInstance } from "./cartridgeMaterials";
+import { useCartridgeBlow } from "./useCartridgeBlow";
 import { useCartridgeMotion } from "./useCartridgeMotion";
 import { CARTRIDGE_WIDTH, CARTRIDGE_HEIGHT, CARTRIDGE_DEPTH, OPEN_HEIGHT, TAP_MAX_MOVEMENT_PX, type CartridgeLayoutEntry } from "./cartridgeConfig";
 const CARTRIDGE_HITBOX_GEOMETRY = new THREE.BoxGeometry(CARTRIDGE_WIDTH, CARTRIDGE_HEIGHT, CARTRIDGE_DEPTH);
@@ -68,7 +69,7 @@ export default function CartridgeItem({
 }) {
   const { gl, invalidate } = useThree();
   const [restingX, restingY, restingZ] = position;
-  const { pivotRef, entranceComplete } = useCartridgeMotion({
+  const { pivotRef, entranceComplete, settled } = useCartridgeMotion({
     position, restingPitch, restingYaw, restingRoll, openYaw, openRoll, isOpen,
     isRackOpen, neighborDistance, desktopBlend, entranceDelaySec, entranceReady,
     mobileEntranceY, renderOrderBase,
@@ -76,6 +77,7 @@ export default function CartridgeItem({
   const hovered = useRef(false);
   const pointerPosition = useRef({ x: 0, y: 0 });
   const stickerBusy = useRef(false);
+  const { offset: blowOffsetRef, pointerDown: blowPointerDown, consumeClick: consumeBlowClick } = useCartridgeBlow(isOpen, settled, stickerBusy);
   const instance = useMemo(() => createCartridgeInstance(scene, {
     color, maxAniso: gl.capabilities.getMaxAnisotropy(), pixelRatio: gl.getPixelRatio(),
     labelTexture, shellOpacity, renderOrderBase,
@@ -110,6 +112,7 @@ export default function CartridgeItem({
         openYaw={openYaw}
         desktopBlend={desktopBlend}
       >
+      <group ref={blowOffsetRef}>
       <primitive object={instance} position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]} />
       {stickerTexture && stickerApplied && (
         <CartridgeSticker
@@ -123,6 +126,7 @@ export default function CartridgeItem({
           desktopBlend={desktopBlend}
         />
       )}
+      </group>
       </CartridgePresentation>
       {onToggleOpen && <Html center>
         <button
@@ -141,6 +145,7 @@ export default function CartridgeItem({
         <mesh
           geometry={CARTRIDGE_HITBOX_GEOMETRY}
           dispose={null}
+          onPointerDown={(event) => blowPointerDown(event)}
           onPointerEnter={(event) => {
             event.stopPropagation();
             if (!entranceComplete.current) return;
@@ -167,6 +172,7 @@ export default function CartridgeItem({
           }}
           onClick={(event) => {
             event.stopPropagation();
+            if (consumeBlowClick()) return;
             if (
               event.delta > TAP_MAX_MOVEMENT_PX ||
               !entranceComplete.current

@@ -40,7 +40,7 @@ export default function CartridgeViewer({
   const layout = useMemo(() => buildCartridgeLayout(CARTRIDGES, restingPoses), [restingPoses]);
 
   return (
-    <div {...stylex.props(styles.viewer)}>
+    <div data-cartridge-viewer {...stylex.props(styles.viewer)}>
       <CartridgeBackdrop />
       <Canvas
         camera={{ fov: CAMERA_FOV_DEGREES }}

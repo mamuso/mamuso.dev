@@ -294,5 +294,5 @@ export function useCartridgeMotion({
     }
   }, -2);
 
-  return { pivotRef, entranceComplete };
+  return { pivotRef, entranceComplete, settled: restedRef };
 }
