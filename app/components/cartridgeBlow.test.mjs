@@ -15,7 +15,7 @@ test('ambient sound and isolated loud peaks do not complete; sustained wind does
     assert.equal(d.update(0.9, delta), false)
     for (let n = 0; n < 50; n++) assert.equal(d.update(0.006, delta), false)
     let complete = false
-    for (let time = 0; time < 2500; time += delta) assert.equal(d.update(0.15, delta), false)
+    for (let time = 0; time < 1700; time += delta) assert.equal(d.update(0.15, delta), false)
     for (let time = 0; time < 700; time += delta) complete ||= d.update(0.15, delta)
     assert.equal(complete, true)
     assert.ok(d.intensity >= 0 && d.intensity <= 1)
@@ -123,7 +123,7 @@ test('slow rendering still detects sustained wind but never a single sparse spik
   assert.equal(complete, true)
 })
 
-test('successful wind closes audio before the visual return and never samples again', async t => {
+test('two seconds qualifies the blow; only sustained release closes audio before returning', async t => {
   const { stats } = audioFixture(t)
   const c = new CartridgeBlowController(() => {}, () => true)
   c.begin(); t.mock.timers.tick(600); await flush()
@@ -131,10 +131,21 @@ test('successful wind closes audio before the visual return and never samples ag
   for (let n = 0; n < 30; n++) c.sample(now += 20)
   assert.equal(c.state, 'listening')
   stats.amplitude = 0.25
-  for (let n = 0; n < 125; n++) c.sample(now += 20)
+  for (let n = 0; n < 85; n++) c.sample(now += 20)
   assert.equal(c.state, 'blowing'); assert.equal(stats.stopped, 0)
   for (let n = 0; n < 25; n++) c.sample(now += 20)
-  assert.equal(c.state, 'returning'); assert.equal(c.completed, true)
+  assert.equal(c.state, 'awaitingRelease'); assert.equal(c.completed, true)
+  for (let n = 0; n < 100; n++) c.sample(now += 20)
+  assert.equal(stats.stopped, 0)
+  // A short dip must not initiate the return.
+  stats.amplitude = 0.006
+  for (let n = 0; n < 5; n++) c.sample(now += 20)
+  stats.amplitude = 0.25
+  for (let n = 0; n < 10; n++) c.sample(now += 20)
+  assert.equal(c.state, 'awaitingRelease'); assert.equal(stats.stopped, 0)
+  stats.amplitude = 0.006
+  for (let n = 0; n < 30; n++) c.sample(now += 20)
+  assert.equal(c.state, 'returning')
   assert.equal(stats.stopped, 1); assert.equal(stats.closed, 1)
   const energy = c.detector.energy
   stats.amplitude = 0; c.sample(now + 1000)

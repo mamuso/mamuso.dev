@@ -4,7 +4,9 @@ export const BLOW = {
   MOVEMENT_CANCEL_THRESHOLD: 12,
   CALIBRATION_DURATION: 400,
   BLOW_THRESHOLD: 3.5,
-  BLOW_MIN_DURATION: 2800,
+  BLOW_MIN_DURATION: 2000,
+  BLOW_STOP_DURATION: 180,
+  BLOW_STOP_THRESHOLD: 0.7,
   BLOW_SMOOTHING: 65,
   BASELINE_FLOOR: 0.003,
   MIN_ENERGY: 0.025,
@@ -15,7 +17,7 @@ export const BLOW = {
   BLOW_MIN_SAMPLES: 3,
   SESSION_TIMEOUT: 20_000,
   ENTER_DURATION: 440,
-  RETURN_DURATION: 1400,
+  RETURN_DURATION: 2000,
   TILT: -47 * Math.PI / 180,
   SHAKE_DECAY: 55,
   RETURN_SHAKE_DECAY: 160,
@@ -27,7 +29,7 @@ export const BLOW = {
   FFT_SIZE: 1024,
 } as const;
 
-export type BlowState = 'idle' | 'longPress' | 'requestingPermission' | 'calibrating' | 'listening' | 'blowing' | 'returning' | 'cleanup';
+export type BlowState = 'idle' | 'longPress' | 'requestingPermission' | 'calibrating' | 'listening' | 'blowing' | 'awaitingRelease' | 'returning' | 'cleanup';
 
 /** Frame-rate-independent envelope with a bounded ambient estimate and sustained gate. */
 export class BlowDetector {
@@ -82,6 +84,7 @@ export class CartridgeBlowController {
   private analyser: AnalyserNode | null = null;
   private samples: Float32Array<ArrayBuffer> | null = null;
   private lastSample = 0;
+  private quietDuration = 0;
 
   private wake: () => void;
   private eligible: () => boolean;
@@ -142,6 +145,7 @@ export class CartridgeBlowController {
       this.detector = new BlowDetector();
       this.enteredAt = this.lastSample = performance.now();
       this.completed = false;
+      this.quietDuration = 0;
       this.state = 'calibrating';
       this.wake();
     } catch {
@@ -164,15 +168,28 @@ export class CartridgeBlowController {
       this.analyser.getFloatTimeDomainData(this.samples);
       let energy = 0;
       for (let i = 0; i < this.samples.length; i++) energy += this.samples[i] * this.samples[i];
-      const complete = this.detector.update(Math.sqrt(energy / this.samples.length), now - this.lastSample);
+      const delta = now - this.lastSample;
+      const complete = this.detector.update(Math.sqrt(energy / this.samples.length), delta);
       this.lastSample = now;
       if (this.detector.elapsed <= BLOW.CALIBRATION_DURATION) return;
-      this.state = this.detector.sustained > 0 ? 'blowing' : 'listening';
       if (complete) {
         this.completed = true;
-        this.returnedAt = now;
-        this.state = 'returning';
-        this.disposeAudio();
+        this.state = 'awaitingRelease';
+      }
+      if (this.state === 'awaitingRelease') {
+        // Latch completion, but keep reacting until the user actually stops.
+        // Hysteresis and a short quiet hold reject momentary dips in the wind.
+        const quiet = this.detector.rms < this.detector.threshold * BLOW.BLOW_STOP_THRESHOLD &&
+          this.detector.energy < this.detector.threshold * BLOW.BLOW_STOP_THRESHOLD;
+        this.quietDuration = quiet && delta <= BLOW.MAX_SAMPLE_GAP
+          ? this.quietDuration + Math.min(delta, BLOW.MAX_ENVELOPE_STEP) : 0;
+        if (this.quietDuration >= BLOW.BLOW_STOP_DURATION) {
+          this.returnedAt = now;
+          this.state = 'returning';
+          this.disposeAudio();
+        }
+      } else {
+        this.state = this.detector.sustained > 0 ? 'blowing' : 'listening';
       }
     } catch { this.cancel(); }
   }
