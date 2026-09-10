@@ -15,7 +15,8 @@ test('ambient sound and isolated loud peaks do not complete; sustained wind does
     assert.equal(d.update(0.9, delta), false)
     for (let n = 0; n < 50; n++) assert.equal(d.update(0.006, delta), false)
     let complete = false
-    for (let time = 0; time < 500; time += delta) complete ||= d.update(0.15, delta)
+    for (let time = 0; time < 250; time += delta) assert.equal(d.update(0.15, delta), false)
+    for (let time = 0; time < 600; time += delta) complete ||= d.update(0.15, delta)
     assert.equal(complete, true)
     assert.ok(d.intensity >= 0 && d.intensity <= 1)
   }
@@ -118,7 +119,7 @@ test('slow rendering still detects sustained wind but never a single sparse spik
   assert.equal(d.update(0.9, 250), false)
   for (let n = 0; n < 10; n++) assert.equal(d.update(0.006, 250), false)
   let complete = false
-  for (let n = 0; n < 5; n++) complete ||= d.update(0.25, 250)
+  for (let n = 0; n < 8; n++) complete ||= d.update(0.25, 250)
   assert.equal(complete, true)
 })
 
