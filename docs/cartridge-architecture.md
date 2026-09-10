@@ -66,7 +66,7 @@ reflow, sticker placement and opening/closing remain its original owners.
 `useCartridgeBlow` owns a nested identity group around the model and sticker,
 inside presentation. Its local rotation/translation are additive, so neither the
 base pivot nor its spring targets/velocities are overwritten. Completing the
-1400 ms return from the −40° tilt sets the child transform exactly to identity. Reduced-motion users
+1400 ms return from the −47° tilt sets the child transform exactly to identity. Reduced-motion users
 get the tilt/return without shake or kick. Wind shake continues throughout the
 sustained blow; the return uses a quintic ease with zero endpoint velocity and
 acceleration, a softer kick and a longer shake fade.
