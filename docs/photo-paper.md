@@ -3,7 +3,7 @@
 Individual photos and stack entries use `PhotoMeta` through `PhotoDetail`.
 Metadata remains server-rendered HTML. The canvas paints only the paper.
 
-Cards use Courier Prime Regular (400) at 18px, scoped to `PhotoMeta` with
+Cards use Courier Prime Regular (400) at 16px, scoped to `PhotoMeta` with
 `next/font/local`. The full Regular and Bold (700) fonts and their SIL Open Font
 License are stored in `app/fonts/courier-prime`, downloaded from the Google Fonts
 repository. There is no 500 face. Fonts use `display: swap` with Courier New,

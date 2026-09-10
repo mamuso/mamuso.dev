@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import type { PhotoMetadata } from '@/lib/types'
 import { formatPostDate } from '@/lib/editorial-date'
 import * as stylex from '@stylexjs/stylex'
@@ -31,7 +32,7 @@ export default function PhotoMeta({ post, orientation = 'portrait' }: Props) {
     post.exposureTime ? `${post.exposureTime}s` : undefined,
     post.iso ? `ISO ${post.iso}` : undefined,
     post.exposureBiasValue !== undefined ? `${post.exposureBiasValue > 0 ? '+' : ''}${post.exposureBiasValue} EV` : undefined,
-  ].filter(Boolean).join(', ')
+  ].filter(Boolean)
   const titleRule = '-'.repeat(Array.from(post.title).length)
 
   return (
@@ -45,10 +46,17 @@ export default function PhotoMeta({ post, orientation = 'portrait' }: Props) {
           </div>
           <div {...stylex.props(styles.detailsColumn, orientation === 'landscape' && styles.landscapeDetails)}>
             <dl {...stylex.props(styles.metadata, orientation === 'landscape' && styles.landscapeMetadata)}>
-              {(post.camera || exposure) && (
+              {(post.camera || exposure.length > 0) && (
                 <div>
                   {post.camera && <><dt {...stylex.props(styles.visuallyHidden)}>Camera</dt><dd {...stylex.props(styles.value)}>{post.camera}</dd></>}
-                  {exposure && <><dt {...stylex.props(styles.visuallyHidden)}>Exposure</dt><dd {...stylex.props(styles.value)}>{exposure}</dd></>}
+                  {exposure.length > 0 && <><dt {...stylex.props(styles.visuallyHidden)}>Exposure</dt><dd {...stylex.props(styles.value)}>
+                    {exposure.map((field, index) => (
+                      <Fragment key={field}>
+                        <span {...stylex.props(styles.exposureField)}>{field}{index < exposure.length - 1 ? ',' : ''}</span>
+                        {index < exposure.length - 1 ? ' ' : null}
+                      </Fragment>
+                    ))}
+                  </dd></>}
                 </div>
               )}
               {post.GPSLatitude !== undefined && post.GPSLongitude !== undefined && (
@@ -81,15 +89,14 @@ const styles = stylex.create({
   paper: {
     position: 'relative', isolation: 'isolate', boxSizing: 'border-box',
     width: 'round(down, 100%, 24px)', maxWidth: 432, overflow: 'hidden',
-    color: '#000000cc', fontSize: 18, fontWeight: 400, lineHeight: '24px',
+    color: '#000000cc', fontSize: 16, fontWeight: 400, lineHeight: '24px',
     boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.045), 0 1px 1px -0.5px rgba(0, 0, 0, 0.045), 0 2px 3px -1.5px rgba(0, 0, 0, 0.045), 0 4px 6px -3px rgba(0, 0, 0, 0.045), 0 9px 12px -6px rgba(0, 0, 0, 0.045), 0 18px 24px -12px rgba(0, 0, 0, 0.045)',
   },
   corners: (radius: number) => ({ borderRadius: radius }),
   rotation: (degrees: number) => ({ transform: `rotate(${degrees}deg)` }),
   landscape: { maxWidth: { default: 432, '@media (min-width: 1080px)': 720 } },
   grid: {
-    // Courier Prime's baseline is 16px into a 24px line box at 18px.
-    // Place the first baseline at y=48px and the text at x=24px.
+    // Keep the 24px grid rhythm with a 16px font.
     position: 'relative', paddingInline: 24, paddingTop: 32, paddingBottom: 40,
     // Start each set of lines one cell in, without drawing an outer border.
     backgroundImage: 'repeating-linear-gradient(to right, rgba(255, 255, 255, 0.8) 0 1px, transparent 1px 24px), repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 0 1px, transparent 1px 24px)',
@@ -110,6 +117,7 @@ const styles = stylex.create({
   title: { margin: 0, fontSize: 'inherit', fontWeight: 'inherit', lineHeight: '24px', overflowWrap: 'anywhere' },
   rule: { overflowWrap: 'anywhere' },
   metadata: { display: 'grid', margin: 0, marginTop: 24 },
+  exposureField: { whiteSpace: 'nowrap' },
   value: { margin: 0, overflowWrap: 'anywhere', fontVariantNumeric: 'tabular-nums' },
   date: { marginTop: 24 },
   palette: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', columnGap: 0, rowGap: 0, marginTop: 16, position: 'relative', zIndex: 1, transform: 'translateY(12px)' },
