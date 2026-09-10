@@ -72,7 +72,7 @@ base pivot nor its spring targets/velocities are overwritten. Blow mode remains
 active through any amount of blowing or silence. A second tap on the selected
 cartridge stops audio and consumes the tap so the cartridge stays open. The
 return snapshots the current offset (including a partly completed entry) and
-eases all axes back to identity over 2000 ms, with zero endpoint velocity and
+eases all axes back to identity over 650 ms, with zero endpoint velocity and
 acceleration. Further taps during return are consumed. A later normal tap closes
 the cartridge as usual. Reduced-motion users get the tilt/return without shake.
 

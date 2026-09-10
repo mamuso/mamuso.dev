@@ -89,7 +89,7 @@ test('secret touch hold survives opening, stays active through silence and exits
   expect(await page.evaluate(() => window.blowTest.closed)).toBe(1)
   // Completion must precede the abandoned-session deadline, not pass via timeout.
   expect(await page.evaluate(() => window.blowTest.closedAt - window.blowTest.requestedAt)).toBeLessThan(15_000)
-  await page.waitForTimeout(2100)
+  await page.waitForTimeout(750)
   const samples = await page.evaluate(() => window.blowTest.samples)
   await page.waitForTimeout(150)
   expect(await page.evaluate(() => window.blowTest.samples)).toBe(samples)
