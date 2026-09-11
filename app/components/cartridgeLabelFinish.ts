@@ -6,4 +6,4 @@ export const CARTRIDGE_LABEL_FINISH = {
   clearcoatRoughness: 0.43,
   envMapIntensity: 1,
   toneMapped: true,
-} as const;
+} as const

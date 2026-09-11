@@ -25,204 +25,204 @@ export const BLOW = {
   SHAKE_POSITION: 0.0006,
   DEBUG_INTERVAL: 250,
   FFT_SIZE: 1024,
-} as const;
+} as const
 
-export type BlowState = 'idle' | 'longPress' | 'armed' | 'requestingPermission' | 'calibrating' | 'listening' | 'blowing' | 'returning' | 'cleanup';
+export type BlowState = 'idle' | 'longPress' | 'armed' | 'requestingPermission' | 'calibrating' | 'listening' | 'blowing' | 'returning' | 'cleanup'
 
 /** Frame-rate-independent wind envelope with an ambient noise estimate. */
 export class BlowDetector {
-  baseline = 0;
-  energy = 0;
-  rms = 0;
-  intensity = 0;
-  threshold: number = BLOW.MIN_ENERGY;
-  sustained = 0;
-  elapsed = 0;
+  baseline = 0
+  energy = 0
+  rms = 0
+  intensity = 0
+  threshold: number = BLOW.MIN_ENERGY
+  sustained = 0
+  elapsed = 0
   update(rms: number, delta: number) {
-    this.rms = rms;
-    const dt = Math.min(delta, BLOW.MAX_ENVELOPE_STEP);
-    this.elapsed += dt;
-    const smoothing = 1 - Math.exp(-dt / BLOW.BLOW_SMOOTHING);
-    this.energy += (rms - this.energy) * smoothing;
+    this.rms = rms
+    const dt = Math.min(delta, BLOW.MAX_ENVELOPE_STEP)
+    this.elapsed += dt
+    const smoothing = 1 - Math.exp(-dt / BLOW.BLOW_SMOOTHING)
+    this.energy += (rms - this.energy) * smoothing
     if (this.elapsed <= BLOW.CALIBRATION_DURATION) {
-      this.baseline += (this.energy - this.baseline) * smoothing;
-      this.threshold = Math.max(BLOW.MIN_ENERGY, this.baseline * BLOW.BLOW_THRESHOLD, this.baseline + BLOW.ENERGY_MARGIN);
-      return;
+      this.baseline += (this.energy - this.baseline) * smoothing
+      this.threshold = Math.max(BLOW.MIN_ENERGY, this.baseline * BLOW.BLOW_THRESHOLD, this.baseline + BLOW.ENERGY_MARGIN)
+      return
     }
-    this.baseline = Math.max(BLOW.BASELINE_FLOOR, this.baseline);
-    this.threshold = Math.max(BLOW.MIN_ENERGY, this.baseline * BLOW.BLOW_THRESHOLD, this.baseline + BLOW.ENERGY_MARGIN);
-    this.intensity = Math.max(0, Math.min(1, (this.energy - this.baseline) / (this.threshold * BLOW.FULL_INTENSITY_RATIO - this.baseline)));
+    this.baseline = Math.max(BLOW.BASELINE_FLOOR, this.baseline)
+    this.threshold = Math.max(BLOW.MIN_ENERGY, this.baseline * BLOW.BLOW_THRESHOLD, this.baseline + BLOW.ENERGY_MARGIN)
+    this.intensity = Math.max(0, Math.min(1, (this.energy - this.baseline) / (this.threshold * BLOW.FULL_INTENSITY_RATIO - this.baseline)))
     // Duration is diagnostic only; it never completes or closes the interaction.
-    this.sustained = delta <= BLOW.MAX_SAMPLE_GAP && rms >= this.threshold && this.energy >= this.threshold ? this.sustained + dt : 0;
+    this.sustained = delta <= BLOW.MAX_SAMPLE_GAP && rms >= this.threshold && this.energy >= this.threshold ? this.sustained + dt : 0
   }
 }
 
 // getUserMedia cannot be aborted. Retain the lease until even a late permission
 // result is disposed, including across selection changes and Strict Mode remounts.
-let microphoneOwner: symbol | null = null;
+let microphoneOwner: symbol | null = null
 
 export class CartridgeBlowController {
-  state: BlowState = 'idle';
-  detector = new BlowDetector();
-  enteredAt = 0;
-  returnedAt = 0;
-  suppressClick = false;
-  private generation = 0;
-  private lease: symbol | null = null;
-  private pending = false;
-  private timer: ReturnType<typeof setTimeout> | undefined;
-  private deadline: ReturnType<typeof setTimeout> | undefined;
-  private context: AudioContext | null = null;
-  private stream: MediaStream | null = null;
-  private source: MediaStreamAudioSourceNode | null = null;
-  private analyser: AnalyserNode | null = null;
-  private samples: Float32Array<ArrayBuffer> | null = null;
-  private lastSample = 0;
+  state: BlowState = 'idle'
+  detector = new BlowDetector()
+  enteredAt = 0
+  returnedAt = 0
+  suppressClick = false
+  private generation = 0
+  private lease: symbol | null = null
+  private pending = false
+  private timer: ReturnType<typeof setTimeout> | undefined
+  private deadline: ReturnType<typeof setTimeout> | undefined
+  private context: AudioContext | null = null
+  private stream: MediaStream | null = null
+  private source: MediaStreamAudioSourceNode | null = null
+  private analyser: AnalyserNode | null = null
+  private samples: Float32Array<ArrayBuffer> | null = null
+  private lastSample = 0
 
-  private wake: () => void;
-  private eligible: () => boolean;
-  private ready: () => boolean;
+  private wake: () => void
+  private eligible: () => boolean
+  private ready: () => boolean
   constructor(wake: () => void, eligible: () => boolean, ready: () => boolean = () => true) {
-    this.wake = wake;
-    this.eligible = eligible;
-    this.ready = ready;
+    this.wake = wake
+    this.eligible = eligible
+    this.ready = ready
   }
 
   begin() {
-    this.suppressClick = false;
-    if (this.state !== 'idle' || microphoneOwner || !this.eligible()) return;
-    this.state = 'longPress';
+    this.suppressClick = false
+    if (this.state !== 'idle' || microphoneOwner || !this.eligible()) return
+    this.state = 'longPress'
     this.timer = setTimeout(() => {
-      if (!this.eligible()) { this.cancel(); return; }
-      this.state = 'armed';
-      this.advance();
-      this.wake();
-    }, BLOW.LONG_PRESS_DURATION);
+      if (!this.eligible()) { this.cancel(); return }
+      this.state = 'armed'
+      this.advance()
+      this.wake()
+    }, BLOW.LONG_PRESS_DURATION)
   }
 
   release() {
-    if (this.state === 'longPress' || this.state === 'armed') this.cancel();
+    if (this.state === 'longPress' || this.state === 'armed') this.cancel()
     // Safari can require a fresh trusted pointerup to resume a context created
     // after the hold timer. Never create another context or another stream here.
-    const context = this.context;
+    const context = this.context
     if (context?.state === 'suspended') void context.resume().catch(() => {
-      if (this.context === context) this.cancel();
-    });
+      if (this.context === context) this.cancel()
+    })
   }
 
   advance() {
-    if (this.state !== 'armed') return;
-    if (!this.eligible()) { this.cancel(); return; }
-    if (this.ready()) void this.request();
+    if (this.state !== 'armed') return
+    if (!this.eligible()) { this.cancel(); return }
+    if (this.ready()) void this.request()
   }
 
   tap(now: number) {
-    if (this.suppressClick) { this.suppressClick = false; return true; }
-    if (this.state === 'idle') return false;
-    this.returnToOpen(now);
-    return true;
+    if (this.suppressClick) { this.suppressClick = false; return true }
+    if (this.state === 'idle') return false
+    this.returnToOpen(now)
+    return true
   }
 
   returnToOpen(now: number) {
-    if (this.state === 'idle' || this.state === 'returning') return;
+    if (this.state === 'idle' || this.state === 'returning') return
     if (this.state === 'calibrating' || this.state === 'listening' || this.state === 'blowing') {
-      this.returnedAt = now;
-      this.state = 'returning';
-      this.disposeAudio();
-      this.wake();
-    } else this.cancel();
+      this.returnedAt = now
+      this.state = 'returning'
+      this.disposeAudio()
+      this.wake()
+    } else this.cancel()
   }
 
   private async request() {
-    if (microphoneOwner || this.state !== 'armed') { this.cancel(); return; }
-    const lease = Symbol('cartridge microphone');
-    microphoneOwner = this.lease = lease;
-    const generation = ++this.generation;
-    this.state = 'requestingPermission';
-    this.suppressClick = true;
-    this.deadline = setTimeout(() => this.cancel(), BLOW.PERMISSION_TIMEOUT);
+    if (microphoneOwner || this.state !== 'armed') { this.cancel(); return }
+    const lease = Symbol('cartridge microphone')
+    microphoneOwner = this.lease = lease
+    const generation = ++this.generation
+    this.state = 'requestingPermission'
+    this.suppressClick = true
+    this.deadline = setTimeout(() => this.cancel(), BLOW.PERMISSION_TIMEOUT)
     try {
-      const Audio = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!Audio) throw new Error('Web Audio unavailable');
-      const context = this.context = new Audio();
-      void context.resume().catch(() => { if (generation === this.generation) this.cancel(); });
-      this.pending = true;
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      this.pending = false;
+      const Audio = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+      if (!Audio) throw new Error('Web Audio unavailable')
+      const context = this.context = new Audio()
+      void context.resume().catch(() => { if (generation === this.generation) this.cancel() })
+      this.pending = true
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      this.pending = false
       if (generation !== this.generation || !this.eligible()) {
-        stream.getTracks().forEach(track => track.stop());
-        if (microphoneOwner === lease) microphoneOwner = null;
-        if (generation === this.generation) this.cancel();
-        return;
+        stream.getTracks().forEach(track => track.stop())
+        if (microphoneOwner === lease) microphoneOwner = null
+        if (generation === this.generation) this.cancel()
+        return
       }
-      clearTimeout(this.deadline);
-      this.stream = stream;
-      stream.getTracks().forEach(track => track.addEventListener('ended', this.audioEnded));
-      this.source = context.createMediaStreamSource(stream);
-      this.analyser = context.createAnalyser();
-      this.analyser.fftSize = BLOW.FFT_SIZE;
-      this.samples = new Float32Array(BLOW.FFT_SIZE);
-      this.source.connect(this.analyser); // No destination: never play microphone audio.
-      this.detector = new BlowDetector();
-      this.enteredAt = this.lastSample = performance.now();
-      this.state = 'calibrating';
-      this.wake();
+      clearTimeout(this.deadline)
+      this.stream = stream
+      stream.getTracks().forEach(track => track.addEventListener('ended', this.audioEnded))
+      this.source = context.createMediaStreamSource(stream)
+      this.analyser = context.createAnalyser()
+      this.analyser.fftSize = BLOW.FFT_SIZE
+      this.samples = new Float32Array(BLOW.FFT_SIZE)
+      this.source.connect(this.analyser) // No destination: never play microphone audio.
+      this.detector = new BlowDetector()
+      this.enteredAt = this.lastSample = performance.now()
+      this.state = 'calibrating'
+      this.wake()
     } catch {
-      this.pending = false;
-      if (generation === this.generation) this.cancel();
-      else if (microphoneOwner === lease) microphoneOwner = null;
+      this.pending = false
+      if (generation === this.generation) this.cancel()
+      else if (microphoneOwner === lease) microphoneOwner = null
     }
   }
 
-  private audioEnded = () => this.cancel();
+  private audioEnded = () => this.cancel()
 
   sample(now: number) {
-    if (!this.analyser || !this.samples || !this.context) return;
-    if (!this.eligible() || this.context.state === 'closed') { this.cancel(); return; }
+    if (!this.analyser || !this.samples || !this.context) return
+    if (!this.eligible() || this.context.state === 'closed') { this.cancel(); return }
     if (this.context.state !== 'running') {
-      if (this.detector.elapsed > 0) this.cancel();
-      return;
+      if (this.detector.elapsed > 0) this.cancel()
+      return
     }
     try {
-      this.analyser.getFloatTimeDomainData(this.samples);
-      let energy = 0;
-      for (let i = 0; i < this.samples.length; i++) energy += this.samples[i] * this.samples[i];
-      const delta = now - this.lastSample;
-      this.detector.update(Math.sqrt(energy / this.samples.length), delta);
-      this.lastSample = now;
-      if (this.detector.elapsed <= BLOW.CALIBRATION_DURATION) return;
-      this.state = this.detector.energy >= this.detector.threshold ? 'blowing' : 'listening';
-    } catch { this.cancel(); }
+      this.analyser.getFloatTimeDomainData(this.samples)
+      let energy = 0
+      for (let i = 0; i < this.samples.length; i++) energy += this.samples[i] * this.samples[i]
+      const delta = now - this.lastSample
+      this.detector.update(Math.sqrt(energy / this.samples.length), delta)
+      this.lastSample = now
+      if (this.detector.elapsed <= BLOW.CALIBRATION_DURATION) return
+      this.state = this.detector.energy >= this.detector.threshold ? 'blowing' : 'listening'
+    } catch { this.cancel() }
   }
 
-  finish() { this.cancel(); }
+  finish() { this.cancel() }
 
   cancel() {
-    ++this.generation;
-    this.state = 'cleanup';
-    clearTimeout(this.timer);
-    clearTimeout(this.deadline);
-    this.disposeAudio();
-    this.detector.intensity = 0;
-    this.state = 'idle';
-    this.wake();
+    ++this.generation
+    this.state = 'cleanup'
+    clearTimeout(this.timer)
+    clearTimeout(this.deadline)
+    this.disposeAudio()
+    this.detector.intensity = 0
+    this.state = 'idle'
+    this.wake()
   }
 
   private disposeAudio() {
-    clearTimeout(this.deadline);
-    this.source?.disconnect();
-    this.analyser?.disconnect();
+    clearTimeout(this.deadline)
+    this.source?.disconnect()
+    this.analyser?.disconnect()
     this.stream?.getTracks().forEach(track => {
-      track.removeEventListener('ended', this.audioEnded);
-      track.stop();
-    });
-    if (this.context && this.context.state !== 'closed') void this.context.close().catch(() => {});
-    this.context = null;
-    this.stream = null;
-    this.source = null;
-    this.analyser = null;
-    this.samples = null;
-    if (!this.pending && microphoneOwner === this.lease) microphoneOwner = null;
-    this.lease = null;
+      track.removeEventListener('ended', this.audioEnded)
+      track.stop()
+    })
+    if (this.context && this.context.state !== 'closed') void this.context.close().catch(() => {})
+    this.context = null
+    this.stream = null
+    this.source = null
+    this.analyser = null
+    this.samples = null
+    if (!this.pending && microphoneOwner === this.lease) microphoneOwner = null
+    this.lease = null
   }
 }

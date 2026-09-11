@@ -19,7 +19,7 @@ function canonicalSlug(slug: string): string {
 }
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const params = await props.params;
+  const params = await props.params
   const post = getPostBySlug(canonicalSlug(params.slug), ['title', 'slug', 'summary', 'category', 'basename'])
   return pageMetadata({
     title: `${post.title || 'Notes'} – ${BLOG_TITLE}`,
@@ -30,7 +30,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 }
 
 export default async function PostPage(props: { params: Promise<{ slug: string }> }) {
-  const params = await props.params;
+  const params = await props.params
   const post = getPostBySlug(canonicalSlug(params.slug), POST_DETAIL_FIELDS)
   return <Post post={post} priority={true} />
 }

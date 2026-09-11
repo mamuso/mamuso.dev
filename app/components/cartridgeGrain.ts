@@ -1,15 +1,15 @@
-import type * as THREE from "three";
+import type * as THREE from 'three'
 
-const CARTRIDGE_GRAIN_INTENSITY = 0.02;
+const CARTRIDGE_GRAIN_INTENSITY = 0.02
 
 export function addCartridgeGrain(material: THREE.Material, pixelRatio: number) {
-  const grainDpr = { value: Math.min(pixelRatio, 2) };
-  material.userData.cartridgeGrainDpr = grainDpr;
+  const grainDpr = { value: Math.min(pixelRatio, 2) }
+  material.userData.cartridgeGrainDpr = grainDpr
   material.onBeforeCompile = (shader) => {
-    shader.uniforms.cartridgeGrainDpr = grainDpr;
+    shader.uniforms.cartridgeGrainDpr = grainDpr
     shader.fragmentShader = shader.fragmentShader
       .replace(
-        "void main() {",
+        'void main() {',
         /* glsl */ `
           uniform float cartridgeGrainDpr;
           float cartridgeGrainRandom(vec2 coordinates) {
@@ -22,7 +22,7 @@ export function addCartridgeGrain(material: THREE.Material, pixelRatio: number) 
         `
       )
       .replace(
-        "#include <opaque_fragment>",
+        '#include <opaque_fragment>',
         /* glsl */ `
           #include <opaque_fragment>
 
@@ -51,11 +51,11 @@ export function addCartridgeGrain(material: THREE.Material, pixelRatio: number) 
             cartridgeGrainResponse *
             gl_FragColor.a;
         `
-      );
-  };
+      )
+  }
   material.customProgramCacheKey = () =>
-    "cartridge-grain-v3";
-  material.needsUpdate = true;
-  return material;
+    'cartridge-grain-v3'
+  material.needsUpdate = true
+  return material
 }
 
