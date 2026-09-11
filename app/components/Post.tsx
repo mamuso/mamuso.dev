@@ -9,6 +9,7 @@ import PhotoTransition from './PhotoTransition'
 import ProgressivePhoto from './ProgressivePhoto'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '../styles/site'
+import { colors } from '../styles/tokens.stylex'
 
 export default function Post({ post, link = false, priority = false }: { post: PostDetail; link?: boolean; priority?: boolean }) {
   if (post.category === 'photo' && !link) {
@@ -42,7 +43,7 @@ export default function Post({ post, link = false, priority = false }: { post: P
                 {...stylex.props(styles.image, styles.photoSize(post.width))} />
             ) : (
               <Image src={`/assets/feed/${post.basename}`} width={post.width / 3} height={post.height / 3}
-                alt={post.title || 'This picture is missing a title'} loading={priority ? 'eager' : 'lazy'} {...stylex.props(styles.image)} />
+                alt={post.title ?? ''} loading={priority ? 'eager' : 'lazy'} {...stylex.props(styles.image)} />
             )}
           </PhotoTransition>
         </p>
@@ -87,7 +88,7 @@ const styles = stylex.create({
     paddingInlineStart: 20,
   },
   blockquote: {
-    borderInlineStartColor: '#a1a1aa',
+    borderInlineStartColor: colors.quote,
     borderInlineStartStyle: 'solid',
     borderInlineStartWidth: 1,
     marginBlock: 0,

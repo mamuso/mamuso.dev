@@ -1,6 +1,5 @@
-'use client'
-
 import * as stylex from '@stylexjs/stylex'
+import { motion } from '../styles/tokens.stylex'
 import { layout, typography } from '@/app/styles/site'
 import AnimatedName from '@/app/components/AnimatedName'
 import CartridgeStage from '@/app/components/CartridgeStageDynamic'
@@ -10,7 +9,7 @@ export default function HomeContent({ randomFact }: { randomFact: string | null 
     <section {...stylex.props(layout.fullBleed, styles.hero)}>
       <div {...stylex.props(layout.container, styles.inner)}>
         <div {...stylex.props(styles.intro)}>
-          <h2 {...stylex.props(typography.heading, styles.introCopy)}>
+          <h2 {...stylex.props(typography.heading, typography.display, styles.introCopy)}>
             <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealLead)}>
               I&apos;m{' '}
             </span>
@@ -25,7 +24,7 @@ export default function HomeContent({ randomFact }: { randomFact: string | null 
             </span>
           </h2>
           {randomFact ? (
-            <p {...stylex.props(typography.muted, styles.introCopy, styles.tagline, styles.factCopy, styles.reveal, styles.revealClosing)}>
+            <p {...stylex.props(typography.muted, typography.display, styles.introCopy, styles.tagline, styles.factCopy, styles.reveal, styles.revealClosing)}>
               A random thing about me: {randomFact}
             </p>
           ) : null}
@@ -109,10 +108,6 @@ const styles = stylex.create({
     zIndex: 2,
   },
   introCopy: {
-    fontSize: 24,
-    letterSpacing: '-0.015em',
-    lineHeight: 1.2,
-    marginBlock: 0,
     pointerEvents: 'auto',
     userSelect: 'text',
   },
@@ -132,7 +127,7 @@ const styles = stylex.create({
       default: introReveal,
       '@media (prefers-reduced-motion: reduce)': 'none',
     },
-    animationTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    animationTimingFunction: motion.easeOut,
   },
   revealLead: {
     animationDelay: '250ms',

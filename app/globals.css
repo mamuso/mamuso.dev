@@ -8,6 +8,10 @@ body {
 :root {
   --font-body: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --app-background: #f0f0f0;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.85, 0, 0.15, 1);
+  --duration-fast: 220ms;
+  --duration-base: 350ms;
   background-color: var(--app-background);
 }
 
@@ -23,8 +27,8 @@ body {
 
 @layer transitions {
   ::view-transition-group(.photo-morph) {
-    animation-duration: 350ms;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-duration: var(--duration-base);
+    animation-timing-function: var(--ease-out);
   }
 
   /* One complete print moves, including its frame and shadow. Avoid stacking
@@ -47,14 +51,14 @@ body {
   ::view-transition-group(site-header),
   ::view-transition-group(site-header-brand),
   ::view-transition-group(site-header-label) {
-    animation-duration: 350ms;
-    animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
+    animation-duration: var(--duration-base);
+    animation-timing-function: var(--ease-in-out);
   }
 
   ::view-transition-old(site-header-label),
   ::view-transition-new(site-header-label) {
     animation-fill-mode: both;
-    animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
+    animation-timing-function: var(--ease-in-out);
   }
 
   ::view-transition-old(site-header-label) {
@@ -104,7 +108,7 @@ body {
   }
 
   ::view-transition-new(root) {
-    animation: page-fade-in 250ms ease both;
+    animation: page-fade-in 250ms var(--ease-out) both;
     mix-blend-mode: normal;
   }
 
@@ -154,10 +158,10 @@ body {
     [data-photo-stack] > [data-photo-print] {
       translate: calc(var(--print-drift-x, 0px) * var(--print-response, 1)) calc(var(--print-drift-y, 0px) * var(--print-response, 1));
       rotate: calc(var(--print-drift-angle, 0deg) * var(--print-response, 1));
-      transition: translate var(--print-follow-duration, 420ms) cubic-bezier(0.22, 1, 0.36, 1),
-        rotate var(--print-follow-duration, 420ms) cubic-bezier(0.22, 1, 0.36, 1),
-        transform 220ms cubic-bezier(0.25, 0.1, 0.25, 1),
-        box-shadow 420ms ease;
+      transition: translate var(--print-follow-duration, 420ms) var(--ease-out),
+        rotate var(--print-follow-duration, 420ms) var(--ease-out),
+        transform 260ms var(--ease-out),
+        box-shadow 260ms var(--ease-out);
     }
     [data-photo-stack][data-tracking] {
       --print-follow-duration: 140ms;

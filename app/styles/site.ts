@@ -23,6 +23,18 @@ export const typography = stylex.create({
   muted: {
     color: colors.textMuted,
   },
+  display: {
+    fontSize: type.sizeDisplay,
+    letterSpacing: type.trackingDisplay,
+    lineHeight: type.lineHeightDisplay,
+    marginBlock: 0,
+  },
+  small: {
+    fontSize: type.sizeSmall,
+  },
+  caption: {
+    fontSize: type.sizeCaption,
+  },
   link: {
     color: {
       default: colors.textPrimary,

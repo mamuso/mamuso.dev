@@ -3,6 +3,7 @@
 import { Component, type ReactNode } from 'react'
 import * as stylex from '@stylexjs/stylex'
 import { CARTRIDGES } from '@/data/cartridges'
+import { colors, type } from '../styles/tokens.stylex'
 
 /** A failed GPU context, model or texture must not replace the whole homepage. */
 export default class CartridgeErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
@@ -36,5 +37,5 @@ const styles = stylex.create({
     display: 'flex', alignItems: 'center', justifyContent: 'center',
   },
   list: { listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 },
-  period: { color: '#62626a', fontSize: 13 },
+  period: { color: colors.textMuted, fontSize: type.sizeSmall },
 })

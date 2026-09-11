@@ -1,18 +1,18 @@
-"use client";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
-import { useThree } from "@react-three/fiber";
-import { Environment, Lightformer, useGLTF, useTexture } from "@react-three/drei";
-import * as THREE from "three";
-import CartridgeItem from "./CartridgeItem";
-import ResponsiveCameraRig from "./ResponsiveCameraRig";
-import { resolveCartridgePoses } from "./cartridgeLayout";
-import { configureLabelTexture, uploadSceneTextures } from "./cartridgeMaterials";
-import { TAP_MAX_MOVEMENT_PX, ENTRANCE_STAGGER_SEC, type CameraPreset, type CartridgeLayoutEntry } from "./cartridgeConfig";
-import { swipeCartridgeIndex } from "./cartridgeSwipe";
-import { CARTRIDGES } from "@/data/cartridges";
+'use client'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react'
+import { useThree } from '@react-three/fiber'
+import { Environment, Lightformer, useGLTF, useTexture } from '@react-three/drei'
+import * as THREE from 'three'
+import CartridgeItem from './CartridgeItem'
+import ResponsiveCameraRig from './ResponsiveCameraRig'
+import { resolveCartridgePoses } from './cartridgeLayout'
+import { configureLabelTexture, uploadSceneTextures } from './cartridgeMaterials'
+import { TAP_MAX_MOVEMENT_PX, ENTRANCE_STAGGER_SEC, type CameraPreset, type CartridgeLayoutEntry } from './cartridgeConfig'
+import { swipeCartridgeIndex } from './cartridgeSwipe'
+import { CARTRIDGES } from '@/data/cartridges'
 
-useGLTF.preload("/models/famicom_cartridge.glb");
-useTexture.preload(CARTRIDGES.flatMap(c => c.applicationLabel ? [c.label, c.applicationLabel] : [c.label]));
+useGLTF.preload('/models/famicom_cartridge.glb')
+useTexture.preload(CARTRIDGES.flatMap(c => c.applicationLabel ? [c.label, c.applicationLabel] : [c.label]))
 
 function CartridgeSceneTextures({
   cameraPreset,
@@ -33,93 +33,93 @@ function CartridgeSceneTextures({
   shadowPlanePosition?: [number, number, number];
   lightPosition?: [number, number, number];
 }) {
-  const { scene } = useGLTF("/models/famicom_cartridge.glb");
-  const textures = useTexture(labelUrls);
+  const { scene } = useGLTF('/models/famicom_cartridge.glb')
+  const textures = useTexture(labelUrls)
   const {
     gl,
     invalidate,
     camera,
     size,
     scene: renderScene,
-  } = useThree();
-  const [compositionCamera, setCompositionCamera] = useState(() => camera.clone());
-  const [cameraReady, setCameraReady] = useState(false);
+  } = useThree()
+  const [compositionCamera, setCompositionCamera] = useState(() => camera.clone())
+  const [cameraReady, setCameraReady] = useState(false)
   const handleCameraFrame = useCallback((framedCamera: THREE.PerspectiveCamera) => {
-    setCompositionCamera(framedCamera);
-    setCameraReady(true);
-  }, []);
-  const localStickerApplied = useRef(false);
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [lastOpenIndex, setLastOpenIndex] = useState<number | null>(null);
-  const desktopBlend = cameraPreset.desktopBlend ?? (cameraPreset.openInPlace ? 0 : 1);
-  const [entranceReady, setEntranceReady] = useState(false);
+    setCompositionCamera(framedCamera)
+    setCameraReady(true)
+  }, [])
+  const localStickerApplied = useRef(false)
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const [lastOpenIndex, setLastOpenIndex] = useState<number | null>(null)
+  const desktopBlend = cameraPreset.desktopBlend ?? (cameraPreset.openInPlace ? 0 : 1)
+  const [entranceReady, setEntranceReady] = useState(false)
 
   useEffect(() => {
     const close = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpenIndex(null);
-    };
-    window.addEventListener("keydown", close);
-    return () => window.removeEventListener("keydown", close);
-  }, []);
+      if (event.key === 'Escape') setOpenIndex(null)
+    }
+    window.addEventListener('keydown', close)
+    return () => window.removeEventListener('keydown', close)
+  }, [])
 
   useEffect(() => {
-    onOpenChange?.(openIndex !== null);
-  }, [openIndex, onOpenChange]);
+    onOpenChange?.(openIndex !== null)
+  }, [openIndex, onOpenChange])
 
   const modelHalfSize = useMemo(
     () => new THREE.Box3().setFromObject(scene).getSize(new THREE.Vector3()).multiplyScalar(0.5),
     [scene],
-  );
+  )
 
   const { poses, openLabelY, mobileEntranceY } = useMemo(
     () => resolveCartridgePoses(layout, openIndex, compositionCamera, size, cameraPreset, modelHalfSize),
     [layout, openIndex, compositionCamera, size, cameraPreset, modelHalfSize],
-  );
+  )
   const selectCartridge = (index: number) => {
-    setLastOpenIndex(index);
-    setOpenIndex((current) => current === index ? null : index);
-  };
+    setLastOpenIndex(index)
+    setOpenIndex((current) => current === index ? null : index)
+  }
   const navigateCartridge = useCallback((direction: -1 | 1) => {
-    if (openIndex === null) return;
-    const next = swipeCartridgeIndex(openIndex, direction, layout.length);
-    if (next === openIndex) return;
-    setLastOpenIndex(next);
-    setOpenIndex(next);
-  }, [openIndex, layout.length]);
+    if (openIndex === null) return
+    const next = swipeCartridgeIndex(openIndex, direction, layout.length)
+    if (next === openIndex) return
+    setLastOpenIndex(next)
+    setOpenIndex(next)
+  }, [openIndex, layout.length])
   const textureByLabel = useMemo(() => {
-    const list = Array.isArray(textures) ? textures : [textures];
-    const map = new Map<string, THREE.Texture>();
-    labelUrls.forEach((url, i) => map.set(url, list[i]));
-    return map;
-  }, [textures, labelUrls]);
+    const list = Array.isArray(textures) ? textures : [textures]
+    const map = new Map<string, THREE.Texture>()
+    labelUrls.forEach((url, i) => map.set(url, list[i]))
+    return map
+  }, [textures, labelUrls])
 
   useLayoutEffect(() => {
-    let active = true;
+    let active = true
 
     for (const texture of textureByLabel.values()) {
-      configureLabelTexture(texture, gl);
+      configureLabelTexture(texture, gl)
     }
-    uploadSceneTextures(renderScene, gl);
-    invalidate();
+    uploadSceneTextures(renderScene, gl)
+    invalidate()
 
     const warmScene = async () => {
       try {
-        await gl.compileAsync(renderScene, camera);
+        await gl.compileAsync(renderScene, camera)
       } catch {
         // Compilation is an optimization rather than a correctness
         // requirement. If a driver rejects the warm-up, continue through
         // Three.js's normal lazy path.
       }
-      if (!active) return;
-      setEntranceReady(true);
-      invalidate();
-    };
+      if (!active) return
+      setEntranceReady(true)
+      invalidate()
+    }
 
-    void warmScene();
+    void warmScene()
     return () => {
-      active = false;
-    };
-  }, [textureByLabel, gl, invalidate, renderScene, camera]);
+      active = false
+    }
+  }, [textureByLabel, gl, invalidate, renderScene, camera])
 
   return (
     <>
@@ -154,7 +154,7 @@ function CartridgeSceneTextures({
           cartridge is open. Cartridge hitboxes stopPropagation, so this only
           fires on genuine misses. */}
       <mesh position={[0, 0, -1]} onClick={(event) => {
-        if (event.delta <= TAP_MAX_MOVEMENT_PX) setOpenIndex(null);
+        if (event.delta <= TAP_MAX_MOVEMENT_PX) setOpenIndex(null)
       }}>
         <planeGeometry args={[20, 20]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
@@ -163,7 +163,7 @@ function CartridgeSceneTextures({
         <group>
           {layout.map((c, i) => (
             <CartridgeItem
-              key={i}
+              key={c.name}
               scene={scene}
               position={poses[i].position}
               color={c.color}
@@ -207,7 +207,7 @@ function CartridgeSceneTextures({
         <Lightformer intensity={0.95} position={[-4, -1, 2]} rotation={[0, -0.8, 0]} scale={[3, 4]} />
       </Environment>
     </>
-  );
+  )
 }
 
 export default function CartridgeScene({
@@ -232,7 +232,7 @@ export default function CartridgeScene({
       i === 0 && c.applicationLabel ? [c.label, c.applicationLabel] : [c.label]
     ))],
     [layout]
-  );
+  )
 
   return (
     <CartridgeSceneTextures
@@ -245,6 +245,6 @@ export default function CartridgeScene({
       shadowPlanePosition={shadowPlanePosition}
       lightPosition={lightPosition}
     />
-  );
+  )
 }
 

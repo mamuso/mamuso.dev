@@ -5,6 +5,7 @@ import type {} from 'react/canary'
 import { usePathname } from 'next/navigation'
 import * as stylex from '@stylexjs/stylex'
 import { layout } from '../styles/site'
+import { colors } from '../styles/tokens.stylex'
 import HeaderBrand from './HeaderBrand'
 
 export default function Header() {
@@ -20,7 +21,7 @@ export default function Header() {
     >
       <div {...stylex.props(layout.container, styles.inner)}>
         <ViewTransition name="site-header-brand">
-          <HeaderBrand />
+          <HeaderBrand isHome={isHome} />
         </ViewTransition>
         {!isHome && <span aria-hidden="true" {...stylex.props(styles.divider)} />}
       </div>
@@ -46,7 +47,7 @@ const styles = stylex.create({
     },
   },
   divider: {
-    borderBlockEndColor: '#ADADAD',
+    borderBlockEndColor: colors.rule,
     borderBlockEndStyle: 'solid',
     borderBlockEndWidth: 0.5,
     bottom: 0,

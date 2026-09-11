@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import CartridgeErrorBoundary from './CartridgeErrorBoundary'
 import * as stylex from '@stylexjs/stylex'
 import { layout } from '../styles/site'
+import { colors } from '../styles/tokens.stylex'
 
 const CartridgeStage = dynamic(() => import('./CartridgeStage'), {
   ssr: false,
@@ -51,7 +52,7 @@ const styles = stylex.create({
     zIndex: 2,
   },
   divider: {
-    borderBlockEndColor: '#ADADAD',
+    borderBlockEndColor: colors.rule,
     borderBlockEndStyle: 'solid',
     borderBlockEndWidth: 0.5,
   },

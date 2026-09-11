@@ -33,7 +33,8 @@ export default async function Photos({ searchParams }: Props) {
   const visible = groups.slice(0, visibleCount)
   return (
     <section {...stylex.props(layout.section, layout.stack, styles.section)}>
-      <h2 {...stylex.props(typography.heading, typography.muted, styles.title)}>Say Cheese</h2>
+      <h2 {...stylex.props(typography.heading, typography.muted, typography.display, styles.title)}>Say Cheese</h2>
+      {groups.length === 0 && <p {...stylex.props(typography.muted, styles.empty)}>No photos yet.</p>}
       <GalleryNavigation page={page} {...stylex.props(layout.list, styles.gallery)}>
         {visible.map(({ key, photos }, index) => (
           <li key={key} data-gallery-card>
@@ -48,19 +49,19 @@ export default async function Photos({ searchParams }: Props) {
 
 const styles = stylex.create({
   section: {
-    marginBlockStart: 20,
+    marginBlockStart: 24,
   },
   title: {
-    fontSize: 24,
     fontWeight: 400,
-    letterSpacing: '-0.015em',
-    lineHeight: 1.2,
+  },
+  empty: {
+    marginBlock: 0,
   },
   gallery: {
     display: 'grid',
     columnGap: { default: 16, '@media (min-width: 480px)': 32 },
     rowGap: { default: 24, '@media (min-width: 480px)': 40 },
-    marginBlockStart: 52,
+    marginBlockStart: 48,
     paddingBlockEnd: 32,
     gridTemplateColumns: {
       default: 'repeat(2, minmax(0, 1fr))',

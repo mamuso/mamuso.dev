@@ -5,6 +5,7 @@ import { alternatePhotoOffset, photoMotion } from './photoInteraction'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '../styles/tokens.stylex'
+import { typography } from '../styles/site'
 
 export interface PhotoPrint {
   slug?: string
@@ -33,7 +34,8 @@ export default function PhotoStack({ photos, href, title, collectionHref, eager 
       <PhotoStackMotion data-photo-stack {...stylex.props(styles.stack)}>
         {visible.map((photo, index) => (
           <PhotoTransition key={`${photo.basename}-${index}`} slug={index === 0 ? photo.slug : undefined}>
-            <Link href={collectionHref ?? (photo.slug ? `/note/${photo.slug}` : href)} aria-label={photo.title} data-photo-print {...stylex.props(styles.print, styles.pose(index, visible.length, alternatePhotoOffset(index, (sample(hash, index, 0) - 0.5) * photoMotion.initial.x), (sample(hash, index, 1) - 0.5) * photoMotion.initial.y + photoMotion.initial.yOffset, alternatePhotoOffset(index, (sample(hash, index, 2) - 0.5) * photoMotion.initial.angle)))}>
+            <Link href={collectionHref ?? (photo.slug ? `/note/${photo.slug}` : href)} aria-label={photo.title} data-photo-print
+              tabIndex={index === 0 ? undefined : -1} aria-hidden={index === 0 ? undefined : true} {...stylex.props(styles.print, styles.pose(index, visible.length, alternatePhotoOffset(index, (sample(hash, index, 0) - 0.5) * photoMotion.initial.x), (sample(hash, index, 1) - 0.5) * photoMotion.initial.y + photoMotion.initial.yOffset, alternatePhotoOffset(index, (sample(hash, index, 2) - 0.5) * photoMotion.initial.angle)))}>
                 <span data-photo-transition-frame {...stylex.props(styles.printFrame)}>
                 <Image
                   src={`/assets/feed/gallery-${photo.basename}`}
@@ -49,9 +51,9 @@ export default function PhotoStack({ photos, href, title, collectionHref, eager 
           </PhotoTransition>
         ))}
       </PhotoStackMotion>
-      <Link href={collectionHref ?? href} {...stylex.props(styles.title)}>{title}</Link>
+      <Link href={collectionHref ?? href} {...stylex.props(typography.small, styles.title)}>{title}</Link>
       {photos.length > 1 && (
-        <Link href={collectionHref ?? href} aria-label={`View all ${photos.length} photos in ${title}`} {...stylex.props(styles.count)}>
+        <Link href={collectionHref ?? href} aria-label={`View all ${photos.length} photos in ${title}`} {...stylex.props(typography.caption, styles.count)}>
           {photos.length} photos
         </Link>
       )}
@@ -75,7 +77,6 @@ const styles = stylex.create({
     gap: 12,
   },
   title: {
-    fontSize: 13,
     lineHeight: 1.4,
     textAlign: 'center',
     color: 'inherit',
@@ -96,13 +97,12 @@ const styles = stylex.create({
   print: {
     gridArea: '1 / 1',
     transform: 'var(--print-rest)',
-    transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1)',
     outlineOffset: 4,
     outline: { default: 'none', ':focus-visible': '2px solid currentColor' },
     display: 'flex',
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.1)',
   },
-  printFrame: { display: 'block', padding: { default: 5, '@media (min-width: 480px)': 6 }, backgroundColor: '#fff' },
+  printFrame: { display: 'block', padding: { default: 5, '@media (min-width: 480px)': 6 }, backgroundColor: colors.surface },
   pose: (index: number, count: number, x: number, y: number, angle: number) => ({
     '--print-response': 1 / (1 + index * 0.6),
     zIndex: { default: count - index, ':focus-visible': count + 1 },
@@ -117,6 +117,7 @@ const styles = stylex.create({
   image: (width: number, height: number) => ({
     display: 'block',
     flexShrink: 0,
+    backgroundColor: colors.placeholder,
     width: { default: width * 120, '@media (min-width: 480px)': width * 160 },
     height: { default: height * 120, '@media (min-width: 480px)': height * 160 },
   }),
@@ -124,7 +125,6 @@ const styles = stylex.create({
     textDecoration: { default: 'none', ':hover': 'underline', ':focus-visible': 'underline' },
     textUnderlineOffset: 3,
     marginBlockStart: -8,
-    color: '#62626a',
-    fontSize: 12,
+    color: colors.textMuted,
   },
 })

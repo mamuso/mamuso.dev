@@ -7,6 +7,7 @@ import Post from '@/app/components/Post'
 import Pagination from '@/app/components/Pagination'
 import * as stylex from '@stylexjs/stylex'
 import { layout } from '@/app/styles/site'
+import { colors } from '../../styles/tokens.stylex'
 
 export async function generateMetadata({ params }: { params: Promise<{ page: string }> }) {
   const { page } = await params
@@ -54,7 +55,7 @@ export default async function Posts(props: { params: Promise<{ page: string }> }
 const styles = stylex.create({
   rule: {
     borderBlockEndWidth: 0,
-    borderBlockStartColor: '#d4d4d8',
+    borderBlockStartColor: colors.ruleSoft,
     borderBlockStartStyle: 'solid',
     borderBlockStartWidth: 1,
     borderInlineWidth: 0,

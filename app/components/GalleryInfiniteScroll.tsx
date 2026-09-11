@@ -27,7 +27,7 @@ export default function GalleryInfiniteScroll({ page, hasMore, visibleCount, tot
   }, [hasMore, page, pending, router])
   return (
     <div ref={sentinel} data-gallery-sentinel {...stylex.props(styles.sentinel)}>
-      <p role="status" {...stylex.props(typography.muted, styles.status)}>
+      <p role="status" {...stylex.props(typography.muted, typography.caption, styles.status)}>
         {pending ? 'Loading photos…' : `${visibleCount} of ${totalCount}`}
       </p>
       {hasMore && <noscript><Link href={`/photos?page=${page + 1}`} {...stylex.props(typography.mutedLink)}>Next photos →</Link></noscript>}
@@ -37,5 +37,5 @@ export default function GalleryInfiniteScroll({ page, hasMore, visibleCount, tot
 
 const styles = stylex.create({
   sentinel: { textAlign: 'center', paddingBlock: 24, minHeight: 24 },
-  status: { margin: 0, fontSize: 12 },
+  status: { margin: 0 },
 })

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import * as stylex from '@stylexjs/stylex'
+import { motion } from '../styles/tokens.stylex'
 
 const NAME_PARTS = [
   { prefix: 'ma', extension: 'nuel', extensionWidth: '4.25ch' },
@@ -85,7 +86,7 @@ const styles = stylex.create({
       '@media (prefers-reduced-motion: reduce)': '0ms',
     },
     transitionProperty: 'margin-inline-start',
-    transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    transitionTimingFunction: motion.easeOut,
   },
   extension: {
     display: 'inline-block',
@@ -96,7 +97,7 @@ const styles = stylex.create({
       '@media (prefers-reduced-motion: reduce)': '0ms',
     },
     transitionProperty: 'max-width',
-    transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    transitionTimingFunction: motion.easeOut,
     verticalAlign: 'baseline',
   },
 })

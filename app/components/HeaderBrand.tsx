@@ -2,12 +2,10 @@
 
 import { ViewTransition } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import * as stylex from '@stylexjs/stylex'
 import { typography } from '../styles/site'
 
-export default function HeaderBrand() {
-  const isHome = usePathname() === '/'
+export default function HeaderBrand({ isHome }: { isHome: boolean }) {
   const logoSize = isHome ? 24 : 16
 
   return (
