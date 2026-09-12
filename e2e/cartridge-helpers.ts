@@ -30,6 +30,9 @@ export async function waitForCartridgeLayout(page: Page, controls: Locator) {
   let previous: number[] = []
   let stableSince = 0
   await expect.poll(async () => {
+    // Repeated DOM reads during a slow GPU frame do not prove stability.
+    // Let the animation loop present its next pose before comparing positions.
+    await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => resolve())))
     const canvas = await page.locator('canvas').last().boundingBox()
     const values = await controls.evaluateAll(elements => elements.flatMap(element => {
       const rect = element.getBoundingClientRect()
