@@ -1,31 +1,52 @@
 import * as stylex from '@stylexjs/stylex'
-import { motion } from '../styles/tokens.stylex'
 import { layout, typography } from '@/app/styles/site'
 import AnimatedName from '@/app/components/AnimatedName'
 import CartridgeStage from '@/app/components/CartridgeStageDynamic'
 
+const INTRO_DETAILS = ', a designer from Villena, Alicante, based in beautiful California, building fun things at SpaceXAI.'
+
+// Word-by-word sweep with the original envelope: first word at 250ms, last
+// word underway by 640ms, everything settled around 1.34s.
+const REVEAL_START_MS = 250
+const REVEAL_LAST_MS = 640
+
 export default function HomeContent({ randomFact }: { randomFact: string | null }) {
+  const detailWords = INTRO_DETAILS.split(' ')
+  const factWords = randomFact ? `A random thing about me: ${randomFact}`.split(' ') : []
+  const totalUnits = 2 + detailWords.length + factWords.length
+  const stepMs = (REVEAL_LAST_MS - REVEAL_START_MS) / Math.max(totalUnits - 1, 1)
+  const delayAt = (unit: number) => `${Math.round(REVEAL_START_MS + unit * stepMs)}ms`
+
   return (
     <section {...stylex.props(layout.fullBleed, styles.hero)}>
       <div {...stylex.props(layout.container, styles.inner)}>
         <div {...stylex.props(styles.intro)}>
           <h2 {...stylex.props(typography.heading, typography.display, styles.introCopy)}>
-            <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealLead)}>
+            <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealDelay(delayAt(0)))}>
               I&apos;m{' '}
             </span>
-            <span {...stylex.props(styles.reveal, styles.revealName)}>
+            <span {...stylex.props(styles.reveal, styles.revealDelay(delayAt(1)))}>
               <AnimatedName />
             </span>
-            <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealDetails)}>
-              , a designer from Villena, Alicante, based in beautiful California,{' '}
-            </span>
-            <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealClosing)}>
-              building fun things at SpaceXAI.
-            </span>
+            {detailWords.map((word, index) => (
+              <span
+                key={index}
+                {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealDelay(delayAt(2 + index)))}
+              >
+                {index === 0 ? word : ` ${word}`}
+              </span>
+            ))}
           </h2>
           {randomFact ? (
-            <p {...stylex.props(typography.muted, typography.display, styles.introCopy, styles.tagline, styles.factCopy, styles.reveal, styles.revealClosing)}>
-              A random thing about me: {randomFact}
+            <p {...stylex.props(typography.muted, typography.display, styles.introCopy, styles.tagline, styles.factCopy)}>
+              {factWords.map((word, index) => (
+                <span
+                  key={index}
+                  {...stylex.props(styles.reveal, styles.revealDelay(delayAt(2 + detailWords.length + index)))}
+                >
+                  {index === 0 ? word : ` ${word}`}
+                </span>
+              ))}
             </p>
           ) : null}
         </div>
@@ -119,7 +140,7 @@ const styles = stylex.create({
   },
   reveal: {
     animationDuration: {
-      default: '900ms',
+      default: '700ms',
       '@media (prefers-reduced-motion: reduce)': '0ms',
     },
     animationFillMode: 'backwards',
@@ -127,18 +148,9 @@ const styles = stylex.create({
       default: introReveal,
       '@media (prefers-reduced-motion: reduce)': 'none',
     },
-    animationTimingFunction: motion.easeOut,
+    // A gentle curve, not the site's expo-out: the blur reveal needs its
+    // motion spread across the whole duration to survive load-time frame drops.
+    animationTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
   },
-  revealLead: {
-    animationDelay: '250ms',
-  },
-  revealName: {
-    animationDelay: '315ms',
-  },
-  revealDetails: {
-    animationDelay: '380ms',
-  },
-  revealClosing: {
-    animationDelay: '445ms',
-  },
+  revealDelay: (delay: string) => ({ animationDelay: delay }),
 })
