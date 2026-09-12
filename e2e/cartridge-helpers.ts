@@ -27,6 +27,11 @@ export async function waitForCartridgeIdle(page: Page) {
 
 /** Raycast coordinates must follow the rendered spring, even on software WebGL. */
 export async function waitForCartridgeLayout(page: Page, controls: Locator) {
+  // Parked warm-up poses can look stable, even across animation frames. The
+  // controls only become actionable once their entrance actually completes.
+  await expect.poll(() => controls.evaluateAll(elements =>
+    elements.length > 0 && elements.every(element => !element.matches(':disabled'))),
+  { timeout: 60_000 }).toBe(true)
   let previous: number[] = []
   let stableSince = 0
   await expect.poll(async () => {

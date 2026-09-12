@@ -73,7 +73,7 @@ export default function CartridgeItem({
 }) {
   const { gl, invalidate } = useThree()
   const [restingX, restingY, restingZ] = position
-  const { pivotRef, entranceComplete, settled } = useCartridgeMotion({
+  const { pivotRef, entranceComplete, entranceFinished, settled } = useCartridgeMotion({
     position, restingPitch, restingYaw, restingRoll, openYaw, openRoll, isOpen,
     isRackOpen, neighborDistance, desktopBlend, entranceDelaySec, entranceReady,
     mobileEntranceY, renderOrderBase,
@@ -141,6 +141,7 @@ export default function CartridgeItem({
           {...stylex.props(styles.keyboardControl)}
           aria-label={`View ${accessibleName} cartridge`}
           aria-expanded={isOpen}
+          disabled={!entranceFinished}
           onFocus={() => { hovered.current = true; invalidate() }}
           onBlur={() => { hovered.current = false; invalidate() }}
           onClick={() => { if (entranceComplete.current) onToggleOpen() }}

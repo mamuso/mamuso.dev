@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { readPostIndex } from '../lib/post-index'
+import { waitForCartridgeLayout } from './cartridge-helpers'
 
 const { posts } = readPostIndex()
 const note = posts.find((post) => post.data.category !== 'photo')!
@@ -176,21 +177,7 @@ test('cartridges retain pointer, keyboard and resize interaction', async ({ page
   await page.goto('/')
   const controls = page.getByRole('button', { name: /^View .* cartridge$/ })
   await expect(controls).toHaveCount(6)
-  let previous: number[] = []
-  let stableSince = 0
-  // Wait for the entrance to finish in frame, rather than clicking its parked hitboxes.
-  await expect.poll(async () => {
-    const canvas = await page.locator('canvas').last().boundingBox()
-    const boxes = await controls.evaluateAll(elements => elements.map(element => {
-      const rect = element.getBoundingClientRect()
-      return [rect.x + rect.width / 2, rect.y + rect.height / 2]
-    }))
-    const values = boxes.flat()
-    if (!canvas || boxes.some(([x, y]) => x < canvas.x || x > canvas.x + canvas.width || y < canvas.y || y > canvas.y + canvas.height)) return false
-    if (!previous.length || values.some((value, index) => Math.abs(value - previous[index]) > 0.25)) stableSince = Date.now()
-    previous = values
-    return Date.now() - stableSince > 300
-  }, { timeout: 30_000 }).toBe(true)
+  await waitForCartridgeLayout(page, controls)
   const box = (await controls.nth(2).boundingBox())!
   if (isMobile) await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2)
   else await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)

@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import type { Group } from 'three'
@@ -68,6 +68,7 @@ export function useCartridgeMotion({
   const entranceStart = useRef<number | null>(null)
   const entranceDelay = useRef(entranceDelaySec)
   const entranceComplete = useRef(entranceDelaySec === undefined)
+  const [entranceFinished, setEntranceFinished] = useState(entranceDelaySec === undefined)
   const restedRef = useRef(
     entranceDelaySec === undefined
   )
@@ -176,6 +177,7 @@ export function useCartridgeMotion({
         invalidate()
       } else {
         entranceComplete.current = true
+        setEntranceFinished(true)
         positionY.current = positionYTarget.current
         depthPosition.current = depthTarget.current
         if (reducedMotion.current) pitchAngle.current = restingPitch
@@ -294,5 +296,5 @@ export function useCartridgeMotion({
     }
   }, -2)
 
-  return { pivotRef, entranceComplete, settled: restedRef }
+  return { pivotRef, entranceComplete, entranceFinished, settled: restedRef }
 }
