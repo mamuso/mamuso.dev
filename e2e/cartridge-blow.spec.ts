@@ -3,7 +3,7 @@ import { trackCartridgeFrames, waitForCartridgeIdle, waitForCartridgeLayout } fr
 
 declare global {
   interface Window {
-    blowTest: { requests: number; closed: number; stopped: number; samples: number; amplitude: number; requestedAt: number; closedAt: number }
+    blowTest: { requests: number; closed: number; stopped: number; samples: number; amplitude: number; lastPointerDownAt: number; stoppedAtPointerDown: number; closedAt: number }
   }
 }
 
@@ -14,12 +14,15 @@ test('secret touch hold stays active through silence and exits on tap', async ({
   page.on('pageerror', error => errors.push(error.message))
   // Deterministic local audio; never access the test runner's physical microphone.
   await page.addInitScript(() => {
-    const stats = window.blowTest = { requests: 0, closed: 0, stopped: 0, samples: 0, amplitude: 0.006, requestedAt: 0, closedAt: 0 }
+    const stats = window.blowTest = { requests: 0, closed: 0, stopped: 0, samples: 0, amplitude: 0.006, lastPointerDownAt: 0, stoppedAtPointerDown: 0, closedAt: 0 }
+    window.addEventListener('pointerdown', () => {
+      stats.lastPointerDownAt = performance.now()
+      stats.stoppedAtPointerDown = stats.stopped
+    }, true)
     const track = new EventTarget() as EventTarget & { stop: () => void }
     track.stop = () => { stats.stopped++ }
     Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { value: async () => {
       stats.requests++
-      stats.requestedAt = performance.now()
       return { getTracks: () => [track] }
     } })
     class TestAudio {
@@ -54,7 +57,7 @@ test('secret touch hold stays active through silence and exits on tap', async ({
     // On software WebGL, unchanged DOM coordinates can mean no frame was
     // presented yet. Finish opening/returning before measuring the hold target.
     // Controller tests separately cover a hold armed during opening.
-    await waitForCartridgeIdle(page)
+    if (isMobile) await waitForCartridgeIdle(page)
     await waitForCartridgeLayout(page, control)
     const latest = (await control.boundingBox())!
     x = latest.x + latest.width / 2; y = latest.y + latest.height / 2
@@ -79,7 +82,6 @@ test('secret touch hold stays active through silence and exits on tap', async ({
   await expect(control).toHaveAttribute('aria-expanded', 'true')
   await page.waitForTimeout(700)
   await expect.poll(() => page.evaluate(() => window.blowTest.samples)).toBeGreaterThanOrEqual(10)
-  await page.screenshot({ path: test.info().outputPath('ready-to-blow.png') })
   expect(await page.evaluate(() => window.blowTest.closed)).toBe(0)
   await page.evaluate(() => { window.blowTest.amplitude = 0.25 })
   await page.waitForTimeout(3000)
@@ -95,14 +97,15 @@ test('secret touch hold stays active through silence and exits on tap', async ({
   await page.touchscreen.tap(openBox.x + openBox.width / 2, openBox.y + openBox.height / 2)
   await expect.poll(() => page.evaluate(() => window.blowTest.stopped), { timeout: 12_000 }).toBe(1)
   expect(await page.evaluate(() => window.blowTest.closed)).toBe(1)
-  await page.screenshot({ path: test.info().outputPath('mid-return.png') })
-  // Completion must precede the abandoned-session deadline, not pass via timeout.
-  expect(await page.evaluate(() => window.blowTest.closedAt - window.blowTest.requestedAt)).toBeLessThan(15_000)
+  // Audio must still be live at the exit gesture and close after that input.
+  // A granted microphone has no 15-second session deadline.
+  const exit = await page.evaluate(() => window.blowTest)
+  expect(exit.stoppedAtPointerDown).toBe(0)
+  expect(exit.closedAt).toBeGreaterThanOrEqual(exit.lastPointerDownAt)
   await page.waitForTimeout(550)
   const samples = await page.evaluate(() => window.blowTest.samples)
   await page.waitForTimeout(150)
   expect(await page.evaluate(() => window.blowTest.samples)).toBe(samples)
-  await page.screenshot({ path: test.info().outputPath('returned.png') })
   await expect(control).toHaveAttribute('aria-expanded', 'true')
   // A normal tap still closes the cartridge after the easter egg. Re-read
   // the target after the return instead of reusing its wind-time position.
@@ -124,7 +127,6 @@ test('secret touch hold stays active through silence and exits on tap', async ({
   await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: shortX - 20, y: shortY }] })
   await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
   expect(await page.evaluate(() => window.blowTest.stopped)).toBe(2)
-  await page.screenshot({ path: test.info().outputPath('short-drag-return.png') })
   await page.waitForTimeout(600)
   await expect(control).toHaveAttribute('aria-expanded', 'true')
   // Re-enter, then commit a swipe while the microphone is active.
