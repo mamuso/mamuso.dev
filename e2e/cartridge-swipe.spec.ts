@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test'
 import { waitForCartridgeLayout } from './cartridge-helpers'
 
+// Continuous trace screencasts compete with SwiftShader for GPU readbacks.
+// Retain action/DOM traces and the configured screenshot on failure.
+test.use({ trace: { mode: 'retain-on-failure', screenshots: false } })
+
 test('horizontal touch drags switch open cartridges while taps and vertical scroll remain usable', async ({ page, isMobile }) => {
   // Real raycasting and animated gestures are expensive on CI's software GPU.
   test.setTimeout(180_000)

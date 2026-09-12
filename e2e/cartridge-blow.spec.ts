@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test'
 import { trackCartridgeFrames, waitForCartridgeIdle, waitForCartridgeLayout } from './cartridge-helpers'
 
+// Continuous trace screencasts compete with SwiftShader for GPU readbacks.
+// Retain action/DOM traces and the configured screenshot on failure.
+test.use({ trace: { mode: 'retain-on-failure', screenshots: false } })
+
 declare global {
   interface Window {
     blowTest: { requests: number; closed: number; stopped: number; samples: number; amplitude: number; lastPointerDownAt: number; stoppedAtPointerDown: number; closedAt: number }
@@ -54,10 +58,8 @@ test('secret touch hold stays active through silence and exits on tap', async ({
   let x = box.x + box.width / 2, y = box.y + box.height / 2
   const session = await page.context().newCDPSession(page)
   const start = async () => {
-    // On software WebGL, unchanged DOM coordinates can mean no frame was
-    // presented yet. Finish opening/returning before measuring the hold target.
-    // Controller tests separately cover a hold armed during opening.
-    if (isMobile) await waitForCartridgeIdle(page)
+    // Compare actual rendered poses before measuring the hold target. The
+    // controller arms during opening and requests audio once its spring is ready.
     await waitForCartridgeLayout(page, control)
     const latest = (await control.boundingBox())!
     x = latest.x + latest.width / 2; y = latest.y + latest.height / 2
@@ -77,7 +79,7 @@ test('secret touch hold stays active through silence and exits on tap', async ({
     expect(errors).toEqual([])
     return
   }
-  await expect.poll(() => page.evaluate(() => window.blowTest.requests)).toBe(1)
+  await expect.poll(() => page.evaluate(() => window.blowTest.requests), { timeout: 60_000 }).toBe(1)
   await end()
   await expect(control).toHaveAttribute('aria-expanded', 'true')
   await page.waitForTimeout(700)
@@ -118,7 +120,7 @@ test('secret touch hold stays active through silence and exits on tap', async ({
   await control.focus(); await page.keyboard.press('Enter'); await control.evaluate(element => element.blur())
   await expect(control).toHaveAttribute('aria-expanded', 'true')
   await start()
-  await expect.poll(() => page.evaluate(() => window.blowTest.requests)).toBe(2)
+  await expect.poll(() => page.evaluate(() => window.blowTest.requests), { timeout: 60_000 }).toBe(2)
   await end()
   await page.waitForTimeout(550)
   const shortBox = (await control.boundingBox())!
@@ -129,9 +131,11 @@ test('secret touch hold stays active through silence and exits on tap', async ({
   expect(await page.evaluate(() => window.blowTest.stopped)).toBe(2)
   await page.waitForTimeout(600)
   await expect(control).toHaveAttribute('aria-expanded', 'true')
+  // The prior drag releases audio before its return animation finishes.
+  await waitForCartridgeIdle(page)
   // Re-enter, then commit a swipe while the microphone is active.
   await start()
-  await expect.poll(() => page.evaluate(() => window.blowTest.requests)).toBe(3)
+  await expect.poll(() => page.evaluate(() => window.blowTest.requests), { timeout: 60_000 }).toBe(3)
   await end()
   const dragBox = (await control.boundingBox())!
   const dragX = dragBox.x + dragBox.width / 2, dragY = dragBox.y + dragBox.height / 2

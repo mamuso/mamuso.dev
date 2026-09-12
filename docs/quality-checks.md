@@ -51,7 +51,10 @@ Software WebGL makes the smoke suite independent of a physical GPU. The overall
 90-second test timeout includes browser-context setup. The two longer cartridge
 gesture scenarios have a 180-second budget for software WebGL and wait up to
 60 seconds for rendered targets to settle before taking touch coordinates. Other
-assertions retain their 15-second timeout (30 seconds for model decoding). The mobile
+assertions retain their 15-second timeout (30 seconds for model decoding). Holds
+allow 60 seconds for the opening spring to become ready and request audio.
+The gesture specs retain DOM/action traces but disable continuous trace screencasts,
+whose GPU readbacks stall SwiftShader; screenshots on failure remain enabled. The mobile
 project emulates a viewport and touch input; it is not a physical-device test.
 
 ## GitHub and Vercel
