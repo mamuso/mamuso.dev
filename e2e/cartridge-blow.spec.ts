@@ -51,8 +51,10 @@ test('secret touch hold stays active through silence and exits on tap', async ({
   let x = box.x + box.width / 2, y = box.y + box.height / 2
   const session = await page.context().newCDPSession(page)
   const start = async () => {
-    // Controller tests cover a hold armed during opening. Here the physical
-    // touch must hit the rendered cartridge, rather than stale spring coordinates.
+    // On software WebGL, unchanged DOM coordinates can mean no frame was
+    // presented yet. Finish opening/returning before measuring the hold target.
+    // Controller tests separately cover a hold armed during opening.
+    await waitForCartridgeIdle(page)
     await waitForCartridgeLayout(page, control)
     const latest = (await control.boundingBox())!
     x = latest.x + latest.width / 2; y = latest.y + latest.height / 2
@@ -125,9 +127,6 @@ test('secret touch hold stays active through silence and exits on tap', async ({
   await page.screenshot({ path: test.info().outputPath('short-drag-return.png') })
   await page.waitForTimeout(600)
   await expect(control).toHaveAttribute('aria-expanded', 'true')
-  // Returning releases audio before its last animation frame. Wait for that
-  // frame before starting a new hold; the hitbox itself stays stationary.
-  await waitForCartridgeIdle(page)
   // Re-enter, then commit a swipe while the microphone is active.
   await start()
   await expect.poll(() => page.evaluate(() => window.blowTest.requests)).toBe(3)
