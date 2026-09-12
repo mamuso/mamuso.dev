@@ -1,66 +1,85 @@
+import { randomInt } from 'node:crypto'
 import { pageMetadata } from '@/lib/metadata'
-import { NextPage } from 'next'
 import Link from 'next/link'
-import { getRecentPosts } from '@/lib/api'
+import { getNotePosts, getPhotoPosts } from '@/lib/api'
 import PostHome from '@/app/components/PostHome'
 import HomeContent from '@/app/components/HomeContent'
+import HomePhotos from '@/app/components/HomePhotos'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
+import { colors } from './styles/tokens.stylex'
 import { getRandomFact } from '@/lib/random-fact'
 
 export const metadata = pageMetadata({ title: 'mamuso - manuel muñoz solera', path: '/' })
+// The random fact and photo selection stay stable until the homepage revalidates.
 export const revalidate = 180
 
-const POSTS_PER_PAGE = 10
-const SHOW_JOURNAL = false
+export default function Home() {
+  const notes = getNotePosts(['title', 'date', 'slug']).slice(0, 5)
+  const photos = getPhotoPosts(['basename', 'width', 'height'])
+  // Sample without replacement, leaving the cached post index untouched.
+  const randomPhotos = Array.from({ length: Math.min(8, photos.length) }, () =>
+    photos.splice(randomInt(photos.length), 1)[0])
 
-const Journal = () => {
-  const recentPosts = getRecentPosts(POSTS_PER_PAGE, ['title', 'date', 'slug', 'category'])
-
-  return (
-    <section {...stylex.props(layout.section, layout.stack)}>
-      <h2 {...stylex.props(typography.heading)}>Journal</h2>
-      <ul {...stylex.props(layout.list, layout.stack)}>
-        {recentPosts.map((post) => (
-          <li key={post.slug}>
-            <PostHome post={post} />
-          </li>
-        ))}
-      </ul>
-      <p {...stylex.props(styles.copy)}>
-        <Link href="/notes" {...stylex.props(typography.mutedLink)}>View more →</Link>
-      </p>
-    </section>
-  )
-}
-
-const Home: NextPage = () => {
   return (
     <>
       <HomeContent randomFact={getRandomFact()} />
-      <section {...stylex.props(layout.fullBleed, styles.content)}>
-        <div {...stylex.props(layout.container)}>
-          <p {...stylex.props(styles.copy)}>
-            <Link href="/photos" {...stylex.props(typography.link)}>temp link to photos</Link>
-          </p>
-        </div>
-      </section>
-      {SHOW_JOURNAL ? <Journal /> : null}
+      <div {...stylex.props(styles.content)}>
+        <section aria-labelledby="home-notes" {...stylex.props(styles.block, styles.feed)}>
+          <h2 id="home-notes" {...stylex.props(typography.display, typography.muted, styles.heading)}>Probably not thinking about you</h2>
+          <ul {...stylex.props(layout.list, styles.notes)}>
+            {notes.map(note => (
+              <li key={note.slug}>
+                <PostHome post={note} />
+              </li>
+            ))}
+            <li {...stylex.props(styles.allNotes)}><Link href="/notes" {...stylex.props(styles.allNotesLink)}>Anyway, more notes →</Link></li>
+          </ul>
+        </section>
+        <section aria-labelledby="home-photos" {...stylex.props(styles.block)}>
+          <HomePhotos photos={randomPhotos} />
+        </section>
+      </div>
     </>
   )
 }
 
-export default Home
-
 const styles = stylex.create({
   content: {
-    flex: {
-      default: '1',
-      '@media (min-width: 880px)': '0 1 auto',
+    borderTopColor: colors.rule,
+    borderTopStyle: 'solid',
+    borderTopWidth: 1,
+    display: 'grid',
+    gridTemplateColumns: {
+      default: 'minmax(0, 1fr)',
+      '@media (min-width: 880px)': 'repeat(2, minmax(0, 1fr))',
     },
-    paddingBlock: 64,
+    paddingBlockEnd: { default: 0, '@media (min-width: 880px)': 32 },
   },
-  copy: {
+  block: {
+    minWidth: 0,
+  },
+  feed: {
+    paddingBlockStart: 64,
+    paddingBlockEnd: 32,
+    paddingInlineEnd: { default: 0, '@media (min-width: 880px)': 32 },
+  },
+  heading: {
+    fontWeight: 400,
     marginBlock: 0,
+  },
+  notes: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 8,
+    marginBlockStart: 32,
+  },
+  allNotes: {
+    marginBlockStart: 24,
+  },
+  allNotesLink: {
+    color: colors.textMuted,
+    textDecorationLine: { default: 'none', ':focus-visible': 'underline' },
+    textUnderlineOffset: 3,
   },
 })

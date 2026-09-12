@@ -25,7 +25,7 @@ export default function Posts() {
   return (
     <section {...stylex.props(layout.section, styles.section)}>
       <header {...stylex.props(styles.header)}>
-        <h2 {...stylex.props(typography.heading)}>Journal</h2>
+        <h2 {...stylex.props(typography.display, typography.muted, styles.heading)}>Probably not thinking about you</h2>
         <p {...stylex.props(styles.copy)}>
           <Link href="/notes/1" {...stylex.props(typography.mutedLink)}>Expand all notes ↓</Link>
         </p>
@@ -58,11 +58,16 @@ const styles = stylex.create({
     alignItems: 'baseline',
     display: 'flex',
     justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  heading: {
+    fontWeight: 400,
   },
   copy: {
     marginBlock: 0,
   },
   yearGroup: {
-    gap: 12,
+    gap: 32,
   },
 })

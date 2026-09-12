@@ -23,3 +23,9 @@ const weekdayDate = new Intl.DateTimeFormat('en-US', { ...options, weekday: 'lon
 export function formatPostDate(value: string, includeWeekday = false): string {
   return (includeWeekday ? weekdayDate : shortDate).format(parseEditorialDate(value))
 }
+
+const monthDate = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', year: 'numeric', month: 'short' })
+
+export function formatPostMonth(value: string): string {
+  return monthDate.format(parseEditorialDate(value))
+}
