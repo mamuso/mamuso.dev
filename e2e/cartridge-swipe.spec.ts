@@ -6,8 +6,9 @@ import { waitForCartridgeLayout } from './cartridge-helpers'
 test.use({ trace: { mode: 'retain-on-failure', screenshots: false } })
 
 test('horizontal touch drags switch open cartridges while taps and vertical scroll remain usable', async ({ page, isMobile }) => {
-  // Real raycasting and animated gestures are expensive on CI's software GPU.
-  test.setTimeout(180_000)
+  // The complete sequence reaches its final scroll around three minutes on
+  // CI's software GPU. Keep room for that gesture without extending assertions.
+  test.setTimeout(240_000)
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.goto('/')

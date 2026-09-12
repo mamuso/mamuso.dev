@@ -49,7 +49,7 @@ Browser failures retain a trace, screenshot, and HTML report. Inspect them with
 automatic test retries, skipped smoke tests, or `continue-on-error` steps.
 Software WebGL makes the smoke suite independent of a physical GPU. The overall
 90-second test timeout includes browser-context setup. The two longer cartridge
-gesture scenarios have a 180-second budget for software WebGL and wait up to
+gesture scenarios have 180-second (hold) and 240-second (swipe) budgets for software WebGL and wait up to
 60 seconds for rendered targets to settle before taking touch coordinates. Other
 assertions retain their 15-second timeout (30 seconds for model decoding). Holds
 allow 60 seconds for the opening spring to become ready and request audio.
