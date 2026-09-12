@@ -1,0 +1,25 @@
+diff --git a/dist/compiled/@vercel/og/index.node.js b/dist/compiled/@vercel/og/index.node.js
+index 416de7e6420f1784f6cad3186d5b159f5097c382..baee68322a70900206358b79994816e0986bae7a 100644
+--- a/dist/compiled/@vercel/og/index.node.js
++++ b/dist/compiled/@vercel/og/index.node.js
+@@ -21450,17 +21450,10 @@ var fonts = [
+   }
+ ];
+ var initializedResvg = initWasm(resvg_wasm);
+-var _sharp;
+ async function getSharp() {
+-  if (_sharp) {
+-    return _sharp;
+-  }
+-  try {
+-    _sharp = (await import("sharp")).default;
+-  } catch (e) {
+-    return void 0;
+-  }
+-  return _sharp;
++  // Next's image optimizer blocks SVG loaders globally in Sharp. Keep OG
++  // rendering on its bundled Resvg renderer without relaxing that policy.
++  return undefined;
+ }
+ var ImageResponse = class extends Response {
+   constructor(element, options = {}) {

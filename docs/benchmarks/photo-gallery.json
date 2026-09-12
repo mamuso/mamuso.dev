@@ -1,0 +1,232 @@
+{
+  "before": {
+    "label": "before",
+    "route": "/photos",
+    "profile": "390\u00d7844; CPU 4\u00d7; 150 ms RTT; 1.6 Mbps; empty HTTP cache",
+    "interactiveAt": 1589.9000000059605,
+    "htmlBytes": 1406421,
+    "gzipBytes": 91639,
+    "shifts": [
+      0.004981649337550182,
+      0.034147159054876176,
+      0.00430546611130503,
+      0.004290677168099228,
+      0.009954645779470002,
+      0.005564357701551385,
+      0.009784139045554129,
+      0.004406496262085812,
+      0.0043086864969722315,
+      0.004389073707829219,
+      0.004215823751933852,
+      0.00427547184512594,
+      0.0009508991912172493,
+      0.0015596210214982142
+    ],
+    "longTasks": [],
+    "dom": 1899,
+    "cards": 286,
+    "images": 333,
+    "loadedImages": 33,
+    "fetches": 22,
+    "dcl": 1406.7999999970198,
+    "cls": 0.09713416647506866,
+    "geometryChanges": 333,
+    "firstBefore": [
+      {
+        "width": 0,
+        "height": 0,
+        "top": 250.703125
+      },
+      {
+        "width": 0,
+        "height": 0,
+        "top": 249.27220153808594
+      },
+      {
+        "width": 0,
+        "height": 0,
+        "top": 245.62818908691406
+      }
+    ],
+    "firstAfter": [
+      {
+        "width": 80,
+        "height": 120,
+        "top": 192.55587768554688
+      },
+      {
+        "width": 120,
+        "height": 80,
+        "top": 206.45144653320312
+      },
+      {
+        "width": 80,
+        "height": 120,
+        "top": 185.04684448242188
+      }
+    ],
+    "scrollFrameP95": 16.700000000000728
+  },
+  "after": {
+    "label": "after",
+    "route": "/photos",
+    "profile": "390\u00d7844; CPU 4\u00d7; 150 ms latency; 1.6 Mbps; empty HTTP cache",
+    "htmlBytes": 201969,
+    "gzipBytes": 19209,
+    "interactiveAt": 1360.0999999940395,
+    "shifts": [],
+    "longTasks": [],
+    "dom": 247,
+    "cards": 24,
+    "images": 39,
+    "loadedImages": 33,
+    "fetches": 22,
+    "dcl": 629.0999999940395,
+    "loadingLayoutShift": 0,
+    "sizeChanges": 0,
+    "geometryChanges": 0,
+    "firstBefore": [
+      {
+        "width": 80,
+        "height": 120,
+        "top": 192.55612182617188
+      },
+      {
+        "width": 120,
+        "height": 80,
+        "top": 215.7250213623047
+      },
+      {
+        "width": 80,
+        "height": 120,
+        "top": 183.43478393554688
+      }
+    ],
+    "firstAfter": [
+      {
+        "width": 80,
+        "height": 120,
+        "top": 192.55612182617188
+      },
+      {
+        "width": 120,
+        "height": 80,
+        "top": 215.7250213623047
+      },
+      {
+        "width": 80,
+        "height": 120,
+        "top": 183.43478393554688
+      }
+    ],
+    "scrollFrameP95": 16.700000000000728
+  },
+  "full": {
+    "label": "full",
+    "route": "/photos?page=12",
+    "profile": "390\u00d7844; CPU 4\u00d7; 150 ms RTT; 1.6 Mbps; empty HTTP cache",
+    "interactiveAt": 1562,
+    "htmlBytes": 1487257,
+    "gzipBytes": 94466,
+    "shifts": [],
+    "longTasks": [],
+    "dom": 1895,
+    "cards": 286,
+    "images": 333,
+    "loadedImages": 33,
+    "fetches": 22,
+    "dcl": 1379.800000011921,
+    "cls": 0,
+    "sizeChanges": 0,
+    "geometryChanges": 0,
+    "firstBefore": [
+      {
+        "width": 80,
+        "height": 120,
+        "top": 192.55612182617188
+      },
+      {
+        "width": 120,
+        "height": 80,
+        "top": 206.19918823242188
+      },
+      {
+        "width": 80,
+        "height": 120,
+        "top": 178.15444946289062
+      }
+    ],
+    "firstAfter": [
+      {
+        "width": 80,
+        "height": 120,
+        "top": 192.55612182617188
+      },
+      {
+        "width": 120,
+        "height": 80,
+        "top": 206.19918823242188
+      },
+      {
+        "width": 80,
+        "height": 120,
+        "top": 178.15444946289062
+      }
+    ],
+    "scrollFrameP95": 16.700000000000728
+  },
+  "collection": {
+    "label": "collection",
+    "route": "/photos/stack/japan-cars",
+    "profile": "390\u00d7844; CPU 4\u00d7; 150 ms latency; 1.6 Mbps; empty HTTP cache",
+    "htmlBytes": 42700,
+    "gzipBytes": 6258,
+    "interactiveAt": null,
+    "shifts": [],
+    "longTasks": [],
+    "dom": 99,
+    "cards": 0,
+    "images": 7,
+    "loadedImages": 4,
+    "fetches": 8,
+    "dcl": 587.0999999940395,
+    "loadingLayoutShift": 0,
+    "sizeChanges": 0,
+    "geometryChanges": 0,
+    "firstBefore": [
+      {
+        "width": 342,
+        "height": 242,
+        "top": 233
+      },
+      {
+        "width": 342,
+        "height": 507,
+        "top": 538.265625
+      },
+      {
+        "width": 342,
+        "height": 507,
+        "top": 1108.515625
+      }
+    ],
+    "firstAfter": [
+      {
+        "width": 342,
+        "height": 242,
+        "top": 233
+      },
+      {
+        "width": 342,
+        "height": 507,
+        "top": 538.265625
+      },
+      {
+        "width": 342,
+        "height": 507,
+        "top": 1108.515625
+      }
+    ],
+    "scrollFrameP95": 16.700000000000728
+  }
+}

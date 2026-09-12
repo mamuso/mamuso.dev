@@ -38,3 +38,18 @@ next-env.d.ts
 /public/rss.xml
 /public/og
 /public/assets
+
+.pnpm-store
+
+# Local photo originals and unpublished drafts
+/photo-inbox/
+/.photo-import/
+
+# Browser test output
+/playwright-report/
+/test-results/
+
+# Paper shader and browser verification images
+/output/paper/
+
+/output/verification/

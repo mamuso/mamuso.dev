@@ -6,4 +6,6 @@
 import fs from 'fs-extra'
 
 fs.removeSync('public/assets')
-fs.copySync('content/assets', 'public/assets')
+fs.copySync('content/assets', 'public/assets', {
+  filter: (source) => source !== 'content/assets/originals' && !source.startsWith('content/assets/originals/'),
+})

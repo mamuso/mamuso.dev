@@ -1,59 +1,72 @@
-import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '@/lib/constants'
-import { getPhotoPosts } from '@/lib/api'
-import { PostType } from '@/lib/types'
-import Link from 'next/link'
-import Image from 'next/image'
+import { getPhotoGroups } from '@/lib/photo-gallery'
+import { photoGalleryWindow } from '@/lib/photo-gallery-window'
+import { pageMetadata } from '@/lib/metadata'
+import { BLOG_TITLE } from '@/lib/constants'
+import { notFound } from 'next/navigation'
+import GalleryInfiniteScroll from '@/app/components/GalleryInfiniteScroll'
+import PhotoStack from '@/app/components/PhotoStack'
+import GalleryNavigation from '@/app/components/GalleryNavigation'
+import * as stylex from '@stylexjs/stylex'
+import { layout, typography } from '@/app/styles/site'
 
-export const metadata = {
-  title: `Photos – ${BLOG_TITLE}`,
-  description: BLOG_SUBTITLE,
-  canonical: `${BLOG_URL}`,
-  openGraph: {
-    url: `${BLOG_URL}`,
-    title: `Photos – ${BLOG_TITLE}`,
-    description: `Mamuso has a camera`,
-    images: [
-      {
-        url: `${BLOG_URL}/og/Photos/${BLOG_TITLE}/opengraph-image`,
-        width: 1200,
-        height: 600,
-        alt: `Photos – ${BLOG_TITLE}`,
-      },
-    ],
-    site_name: `${BLOG_TITLE}`,
-  },
-  twitter: {
-    handle: '@mamuso',
-    site: '@mamuso',
-    cardType: 'summary_large_image',
-  },
-  icons: {
-    icon: {
-      url: '/images/favicon.png',
-      type: 'image/png',
-    },
-    shortcut: { url: '/images/favicon.png', type: 'image/png' },
-  },
+type Props = { searchParams: Promise<{ page?: string | string[] }> }
+
+async function galleryPage(searchParams: Props['searchParams']) {
+  const { page } = await searchParams
+  const groups = getPhotoGroups()
+  const window = photoGalleryWindow(page, groups.length)
+  if (!window) notFound()
+  return { groups, ...window }
 }
 
-export default function Photos() {
-  const galleryHeight = 200
-  const photoPosts: PostType[] = getPhotoPosts(['title', 'date', 'slug', 'category', 'basename', 'width', 'height'])
+export async function generateMetadata({ searchParams }: Props) {
+  const { page } = await galleryPage(searchParams)
+  return pageMetadata({
+    title: `Photos – ${BLOG_TITLE}`,
+    path: page === 1 ? '/photos' : `/photos?page=${page}`,
+    description: 'Mamuso has a camera',
+  })
+}
+
+export default async function Photos({ searchParams }: Props) {
+  const { groups, page, totalPages, visibleCount } = await galleryPage(searchParams)
+  const visible = groups.slice(0, visibleCount)
   return (
-    <section className="home-posts">
-      <header className="home-post-header">
-        <h2 className="section-title">Say Cheese</h2>
-      </header>
-      <div className="photo-gallery">
-        {photoPosts.map((post) => (
-          <div key={post.slug} style={{ width: `${(post.width * galleryHeight) / post.height}px`, flexGrow: `${(post.width * galleryHeight) / post.height}` }}>
-            <Link href={`/note/${post.slug}`}>
-              <i style={{ paddingBottom: `${(post.height / post.width) * 100}%` }} />
-              <Image src={`/assets/feed/gallery-${post.basename}`} sizes="(min-width: 1040px) 874px, (min-width: 900px) 807px, calc(94.31vw - 23px)" width={post.width / 4} height={post.height / 4} alt={post.title} className="loaded" />
-            </Link>
-          </div>
+    <section {...stylex.props(layout.section, layout.stack, styles.section)}>
+      <h2 {...stylex.props(typography.heading, typography.muted, typography.display, styles.title)}>Say Cheese</h2>
+      {groups.length === 0 && <p {...stylex.props(typography.muted, styles.empty)}>No photos yet.</p>}
+      <GalleryNavigation page={page} {...stylex.props(layout.list, styles.gallery)}>
+        {visible.map(({ key, photos }, index) => (
+          <li key={key} data-gallery-card>
+            <PhotoStack eager={index < 4} photos={photos} collectionHref={photos[0].photoStack ? `/photos/stack/${encodeURIComponent(photos[0].photoStack)}` : undefined} href={`/note/${photos[0].slug}`} title={photos[0].photoStackTitle ?? photos[0].title} />
+          </li>
         ))}
-      </div>
+      </GalleryNavigation>
+      <GalleryInfiniteScroll page={page} hasMore={page < totalPages} visibleCount={visible.length} totalCount={groups.length} />
     </section>
   )
 }
+
+const styles = stylex.create({
+  section: {
+    marginBlockStart: 24,
+  },
+  title: {
+    fontWeight: 400,
+  },
+  empty: {
+    marginBlock: 0,
+  },
+  gallery: {
+    display: 'grid',
+    columnGap: { default: 16, '@media (min-width: 480px)': 32 },
+    rowGap: { default: 24, '@media (min-width: 480px)': 40 },
+    marginBlockStart: 48,
+    paddingBlockEnd: 32,
+    gridTemplateColumns: {
+      default: 'repeat(2, minmax(0, 1fr))',
+      '@media (min-width: 640px)': 'repeat(3, minmax(0, 1fr))',
+      '@media (min-width: 960px)': 'repeat(4, minmax(0, 1fr))',
+    },
+  },
+})
