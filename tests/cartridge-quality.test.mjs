@@ -42,3 +42,21 @@ test('idle gaps and isolated stalls do not cause a quality downgrade', () => {
   sampleCartridgeQuality(quality, 0.1)
   assert.equal(quality.dpr, 2)
 })
+
+test('sustained software rendering lowers quality even when frames exceed 250ms', () => {
+  const quality = createCartridgeQuality(2)
+  for (let frame = 0; frame < 90; frame++) sampleCartridgeQuality(quality, 0.7, true)
+  assert.equal(quality.dpr, 1.25)
+  for (let frame = 0; frame < 30; frame++) sampleCartridgeQuality(quality, 1 / 60)
+  assert.equal(quality.dpr, 1.25, 'one fast window must not undo the reduction')
+  for (let frame = 0; frame < 90; frame++) sampleCartridgeQuality(quality, 1 / 60)
+  assert.equal(quality.dpr, 1.5, 'recovery requires four fast windows')
+})
+
+test('invalid frame samples cannot poison adaptive quality', () => {
+  const quality = createCartridgeQuality(1)
+  for (const delta of [NaN, Infinity, 0, -1]) sampleCartridgeQuality(quality, delta)
+  assert.equal(quality.seconds, 0)
+  assert.equal(quality.samples, 0)
+  assert.equal(quality.dpr, 1.5)
+})

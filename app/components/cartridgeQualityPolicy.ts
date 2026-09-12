@@ -7,15 +7,18 @@ export function createCartridgeQuality(nativeDpr: number) {
 export function sampleCartridgeQuality(
   quality: ReturnType<typeof createCartridgeQuality>,
   delta: number,
+  continuous = false,
 ) {
-  if (delta <= 0 || delta > 0.25) {
+  if (!Number.isFinite(delta) || delta <= 0 || !continuous && delta > 0.25) {
     quality.samples = 0
     quality.seconds = 0
     quality.fastWindows = 0
     return quality.dpr
   }
   quality.samples++
-  quality.seconds += delta
+  // The adapter discards idle gaps. Slow continuous frames must still lower
+  // quality, including software-rendered frames taking more than 250ms.
+  quality.seconds += Math.min(delta, 0.25)
   if (quality.samples < 30) return quality.dpr
   const mean = quality.seconds / quality.samples
   quality.samples = 0

@@ -48,8 +48,10 @@ Browser failures retain a trace, screenshot, and HTML report. Inspect them with
 `pnpm exec playwright show-report`; CI uploads them for seven days. There are no
 automatic test retries, skipped smoke tests, or `continue-on-error` steps.
 Software WebGL makes the smoke suite independent of a physical GPU. The overall
-90-second test timeout includes browser-context setup; assertions retain their
-15-second timeout (30 seconds for model decoding). The mobile
+90-second test timeout includes browser-context setup. The two longer cartridge
+gesture scenarios have a 180-second budget for software WebGL and wait up to
+60 seconds for rendered targets to settle before taking touch coordinates. Other
+assertions retain their 15-second timeout (30 seconds for model decoding). The mobile
 project emulates a viewport and touch input; it is not a physical-device test.
 
 ## GitHub and Vercel

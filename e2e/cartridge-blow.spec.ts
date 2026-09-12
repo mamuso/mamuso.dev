@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { trackCartridgeFrames, waitForCartridgeIdle, waitForCartridgeLayout } from './cartridge-helpers'
 
 declare global {
   interface Window {
@@ -6,7 +7,9 @@ declare global {
   }
 }
 
-test('secret touch hold survives opening, stays active through silence and exits on tap', async ({ page, isMobile }) => {
+test('secret touch hold stays active through silence and exits on tap', async ({ page, isMobile }) => {
+  // Real raycasting and animated gestures are expensive on CI's software GPU.
+  test.setTimeout(180_000)
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   // Deterministic local audio; never access the test runner's physical microphone.
@@ -34,22 +37,11 @@ test('secret touch hold survives opening, stays active through silence and exits
     }
     Object.defineProperty(window, 'AudioContext', { value: TestAudio })
   })
+  await trackCartridgeFrames(page)
   await page.goto('/')
   const control = page.getByRole('button', { name: 'View GitHub cartridge', exact: true })
   await expect(control).toBeAttached({ timeout: 30_000 })
-  let previous: number[] = []
-  let stableSince = 0
-  await expect.poll(async () => {
-    const canvas = await page.locator('canvas').last().boundingBox()
-    const values = await page.getByRole('button', { name: /^View .* cartridge$/ }).evaluateAll(elements => elements.flatMap(element => {
-      const rect = element.getBoundingClientRect()
-      return [rect.x + rect.width / 2, rect.y + rect.height / 2]
-    }))
-    if (!canvas || values.some((value, index) => index % 2 === 0 ? value < canvas.x || value > canvas.x + canvas.width : value < canvas.y || value > canvas.y + canvas.height)) return false
-    if (!previous.length || values.some((value, index) => Math.abs(value - previous[index]) > 0.25)) stableSince = Date.now()
-    previous = values
-    return Date.now() - stableSince > 300
-  }, { timeout: 30_000 }).toBe(true)
+  await waitForCartridgeLayout(page, page.getByRole('button', { name: /^View .* cartridge$/ }))
   const closedBox = (await control.boundingBox())!
   if (isMobile) await page.touchscreen.tap(closedBox.x + closedBox.width / 2, closedBox.y + closedBox.height / 2)
   else await page.mouse.click(closedBox.x + closedBox.width / 2, closedBox.y + closedBox.height / 2)
@@ -59,6 +51,9 @@ test('secret touch hold survives opening, stays active through silence and exits
   let x = box.x + box.width / 2, y = box.y + box.height / 2
   const session = await page.context().newCDPSession(page)
   const start = async () => {
+    // Controller tests cover a hold armed during opening. Here the physical
+    // touch must hit the rendered cartridge, rather than stale spring coordinates.
+    await waitForCartridgeLayout(page, control)
     const latest = (await control.boundingBox())!
     x = latest.x + latest.width / 2; y = latest.y + latest.height / 2
     if (isMobile) await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] })
@@ -107,8 +102,12 @@ test('secret touch hold survives opening, stays active through silence and exits
   expect(await page.evaluate(() => window.blowTest.samples)).toBe(samples)
   await page.screenshot({ path: test.info().outputPath('returned.png') })
   await expect(control).toHaveAttribute('aria-expanded', 'true')
-  // A normal tap still closes the cartridge after the easter egg.
-  await page.touchscreen.tap(openBox.x + openBox.width / 2, openBox.y + openBox.height / 2)
+  // A normal tap still closes the cartridge after the easter egg. Re-read
+  // the target after the return instead of reusing its wind-time position.
+  await waitForCartridgeIdle(page)
+  await waitForCartridgeLayout(page, control)
+  const returnedBox = (await control.boundingBox())!
+  await page.touchscreen.tap(returnedBox.x + returnedBox.width / 2, returnedBox.y + returnedBox.height / 2)
   await expect(control).toHaveAttribute('aria-expanded', 'false')
   // A short horizontal drag must return smoothly without changing selection.
   await control.focus(); await page.keyboard.press('Enter'); await control.evaluate(element => element.blur())
@@ -126,6 +125,9 @@ test('secret touch hold survives opening, stays active through silence and exits
   await page.screenshot({ path: test.info().outputPath('short-drag-return.png') })
   await page.waitForTimeout(600)
   await expect(control).toHaveAttribute('aria-expanded', 'true')
+  // Returning releases audio before its last animation frame. Wait for that
+  // frame before starting a new hold; the hitbox itself stays stationary.
+  await waitForCartridgeIdle(page)
   // Re-enter, then commit a swipe while the microphone is active.
   await start()
   await expect.poll(() => page.evaluate(() => window.blowTest.requests)).toBe(3)

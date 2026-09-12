@@ -1,23 +1,15 @@
 import { test, expect } from '@playwright/test'
+import { waitForCartridgeLayout } from './cartridge-helpers'
 
 test('horizontal touch drags switch open cartridges while taps and vertical scroll remain usable', async ({ page, isMobile }) => {
+  // Real raycasting and animated gestures are expensive on CI's software GPU.
+  test.setTimeout(180_000)
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.goto('/')
   const controls = page.getByRole('button', { name: /^View .* cartridge$/ })
   await expect(controls).toHaveCount(6)
-  let previous: number[] = [], stableSince = 0
-  await expect.poll(async () => {
-    const canvas = await page.locator('canvas').last().boundingBox()
-    const values = await controls.evaluateAll(elements => elements.flatMap(element => {
-      const rect = element.getBoundingClientRect()
-      return [rect.x + rect.width / 2, rect.y + rect.height / 2]
-    }))
-    if (!canvas || values.some((value, index) => index % 2 === 0 ? value < canvas.x || value > canvas.x + canvas.width : value < canvas.y || value > canvas.y + canvas.height)) return false
-    if (!previous.length || values.some((value, index) => Math.abs(value - previous[index]) > 0.25)) stableSince = Date.now()
-    previous = values
-    return Date.now() - stableSince > 300
-  }, { timeout: 30_000 }).toBe(true)
+  await waitForCartridgeLayout(page, controls)
   const session = await page.context().newCDPSession(page)
   const drag = async (index: number, dx: number, dy = 0, cancel = false) => {
     const rect = (await controls.nth(index).boundingBox())!
@@ -39,22 +31,22 @@ test('horizontal touch drags switch open cartridges while taps and vertical scro
   if (isMobile) await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2)
   else await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
   await expect(controls.nth(2)).toHaveAttribute('aria-expanded', 'true')
-  await page.waitForTimeout(700)
+  await waitForCartridgeLayout(page, controls.nth(2))
   await drag(2, -90)
   if (!isMobile) {
     await expect(controls.nth(2)).toHaveAttribute('aria-expanded', 'true')
   } else {
     await expect(controls.nth(3)).toHaveAttribute('aria-expanded', 'true')
-    await page.waitForTimeout(700)
+    await waitForCartridgeLayout(page, controls.nth(3))
     await drag(3, 90)
     await expect(controls.nth(2)).toHaveAttribute('aria-expanded', 'true')
-    await page.waitForTimeout(700)
+    await waitForCartridgeLayout(page, controls.nth(2))
     await drag(2, 25)
     await expect(controls.nth(2)).toHaveAttribute('aria-expanded', 'true')
     await drag(2, -80, 0, true)
     await expect(controls.nth(2)).toHaveAttribute('aria-expanded', 'true')
     await page.setViewportSize({ width: 390, height: 640 })
-    await page.waitForTimeout(700)
+    await waitForCartridgeLayout(page, controls.nth(2))
     await drag(2, 3, -100)
     await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0)
     await expect(controls.nth(2)).toHaveAttribute('aria-expanded', 'true')

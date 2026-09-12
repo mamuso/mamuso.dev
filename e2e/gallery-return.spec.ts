@@ -20,13 +20,16 @@ for (const batch of [1, 2]) {
     const gallery = batch === 1 ? '/photos' : '/photos?page=2'
     await page.goto(gallery)
     // Pick a standalone photo below the initial viewport, including a later batch.
-    const photo = page.locator(`[data-gallery-card]:nth-child(n+${batch === 1 ? 17 : 25}) [data-photo-print][href^="/note/"]`).first()
+    const photo = page.locator(`[data-gallery-card]:nth-child(n+${batch === 1 ? 9 : 25}) [data-photo-print][href^="/note/"]`).first()
     await photo.scrollIntoViewIfNeeded()
+    // Stay clear of the next-batch sentinel so the origin cannot change before clicking.
+    await expect(page).toHaveURL(gallery)
     const origin = await page.evaluate(() => ({ href: location.pathname + location.search, scrollY }))
+    expect(origin.scrollY).toBeGreaterThan(0)
     const destination = await photo.getAttribute('href')
     await photo.click()
     await expect(page).toHaveURL(destination!)
-    const back = page.getByRole('link', { name: '← All photos', exact: true })
+    const back = page.getByRole('link', { name: /^(?:← )?All photos$/ })
     await expect(back).toHaveAttribute('href', origin.href)
     if (batch === 2) {
       await page.reload()

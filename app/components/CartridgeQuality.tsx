@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { useFrame, useThree } from '@react-three/fiber'
+import { addTail, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { createCartridgeQuality, sampleCartridgeQuality } from './cartridgeQualityPolicy'
 
@@ -10,39 +10,38 @@ import { createCartridgeQuality, sampleCartridgeQuality } from './cartridgeQuali
 export default function CartridgeQuality() {
   const { gl, scene, setDpr, invalidate } = useThree()
   const quality = useRef(createCartridgeQuality(2))
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const restoring = useRef(false)
   const warming = useRef(6)
 
   useEffect(() => {
+    let disposed = false
     quality.current = createCartridgeQuality(window.devicePixelRatio || 1)
-    return () => { if (timer.current !== null) clearTimeout(timer.current) }
-  }, [])
-
-  useFrame((_, delta) => {
-    if (restoring.current) {
-      restoring.current = false
-      return
-    }
-    const freshBurst = timer.current === null
-    if (timer.current !== null) clearTimeout(timer.current)
-    // Ignore upload/compilation and the first frames of a fresh motion burst.
-    if (freshBurst) warming.current = 6
-    let dpr = quality.current.dpr
-    if (warming.current > 0) warming.current--
-    else dpr = sampleCartridgeQuality(quality.current, delta)
-    updateResolution(gl, scene, setDpr, dpr)
-    timer.current = setTimeout(() => {
-      timer.current = null
+    const unsubscribe = addTail(() => {
+      // A slow frame is still motion. Restore only when the demand loop stops,
+      // rather than letting a wall-clock timer fight software rendering.
       quality.current.samples = 0
       quality.current.seconds = 0
       warming.current = 6
       if (gl.getPixelRatio() !== 2) {
         restoring.current = true
         updateResolution(gl, scene, setDpr, 2)
-        invalidate()
+        // The tail runs before R3F marks its loop stopped; invalidate afterward.
+        queueMicrotask(() => { if (!disposed) invalidate() })
       }
-    }, 220)
+    })
+    return () => { disposed = true; unsubscribe() }
+  }, [gl, scene, setDpr, invalidate])
+
+  useFrame((_, delta) => {
+    if (restoring.current) {
+      restoring.current = false
+      return
+    }
+    // Ignore upload/compilation and the first frames of a fresh motion burst.
+    let dpr = quality.current.dpr
+    if (warming.current > 0) warming.current--
+    else dpr = sampleCartridgeQuality(quality.current, delta, true)
+    updateResolution(gl, scene, setDpr, dpr)
   }, -3)
   return null
 }
