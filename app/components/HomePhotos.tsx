@@ -16,10 +16,10 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
       <span {...stylex.props(styles.gallery)}>
         {photos.map((photo, index) => {
           const progress = photos.length > 1 ? index / (photos.length - 1) : 0
-          // Distribute the starts evenly, with the final print extending 16px past the edge.
-          const offset = -progress * (lastPrintWidth - 16)
+          // Distribute the starts evenly, cropping 12px on the left and 16px on the right.
+          const offset = -12 + progress * (28 - lastPrintWidth)
           return (
-            <PhotoStackMotion key={photo.basename} maxShift={40} dragScale={1} data-photo-stack aria-hidden="true"
+            <PhotoStackMotion key={photo.basename} freeDrag maxRotation={5} dragRotation={0.05} data-photo-stack aria-hidden="true"
               {...stylex.props(styles.slot(progress, offset, photos.length - index))}>
               <span data-photo-print {...stylex.props(styles.print)}>
                 <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
@@ -36,11 +36,8 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
 
 const styles = stylex.create({
   module: {
-    display: 'grid',
-    gridTemplateColumns: 'max-content minmax(0, 1fr)',
-    columnGap: 20,
-    paddingInlineStart: 32,
-    height: 90,
+    display: 'block',
+    height: 140,
     borderRadius: 24,
     backgroundColor: '#FBFBFB',
     overflow: 'hidden',
@@ -54,25 +51,25 @@ const styles = stylex.create({
     textAlign: 'left',
     fontWeight: 400,
     margin: 0,
-    alignSelf: 'center',
-    transform: 'translateY(-1px)',
+    padding: 24,
   },
   gallery: {
     display: 'block',
     position: 'relative',
-    marginBlockStart: 20,
     minWidth: 0,
   },
   slot: (progress: number, offset: number, layer: number) => ({
     position: 'absolute',
     top: 0,
     left: `calc(${progress * 100}% + ${offset}px)`,
-    touchAction: 'pan-y pinch-zoom',
+    touchAction: 'none',
+    pointerEvents: 'none',
     userSelect: 'none',
     zIndex: layer,
   }),
   print: {
     display: 'block',
+    pointerEvents: 'auto',
     padding: 4,
     backgroundColor: '#FFFFFF',
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.1)',

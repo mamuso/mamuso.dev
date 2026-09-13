@@ -14,8 +14,10 @@ export type Position = { x: number; y: number; angle: number }
 type Phase = 'idle' | 'hover' | 'pressed' | 'dragging'
 const clamp = (value: number, limit = 1) => Math.max(-limit, Math.min(limit, value))
 
+export type PhotoInteractionOptions = { maxShift?: number; dragScale?: number; maxRotation?: number; dragRotation?: number }
+
 /** Gesture state only; rendering, pointer capture and animation scheduling stay in React. */
-export function createPhotoInteraction({ maxShift = photoMotion.maxShift, dragScale = photoMotion.dragScale }: { maxShift?: number; dragScale?: number } = {}) {
+export function createPhotoInteraction({ maxShift = photoMotion.maxShift, dragScale = photoMotion.dragScale, maxRotation = photoMotion.maxRotation, dragRotation = photoMotion.dragRotation }: PhotoInteractionOptions = {}) {
   let phase: Phase = 'idle'
   let resting: Position = { x: 0, y: 0, angle: 0 }
   let position = resting
@@ -66,7 +68,7 @@ export function createPhotoInteraction({ maxShift = photoMotion.maxShift, dragSc
       position = {
         x: clamp(origin.x + (phase === 'dragging' ? dx * dragScale : hoverX * photoMotion.hoverShift), maxShift),
         y: clamp(origin.y + (phase === 'dragging' ? dy * dragScale : hoverY * photoMotion.hoverShift), maxShift),
-        angle: clamp(origin.angle + (phase === 'dragging' ? dx * photoMotion.dragRotation : hoverX * photoMotion.hoverRotation), photoMotion.maxRotation),
+        angle: clamp(origin.angle + (phase === 'dragging' ? dx * dragRotation : hoverX * photoMotion.hoverRotation), maxRotation),
       }
       return { scatter, capture }
     },

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type PointerEvent } from 'react'
-import { alternatePhotoOffset, createPhotoInteraction, photoMotion, type Position } from './photoInteraction'
+import { alternatePhotoOffset, createPhotoInteraction, photoMotion, type Position, type PhotoInteractionOptions } from './photoInteraction'
 
 function printAt(target: EventTarget | null) {
   return target instanceof Element ? target.closest<HTMLElement>('[data-photo-print]') : null
@@ -18,11 +18,11 @@ function scatter(node: HTMLElement) {
   node.dataset.opened = ''
 }
 
-type Props = ComponentPropsWithoutRef<'span'> & { maxShift?: number; dragScale?: number }
+type Props = ComponentPropsWithoutRef<'span'> & PhotoInteractionOptions & { freeDrag?: boolean }
 
-export default function PhotoStackMotion({ maxShift, dragScale, ...props }: Props) {
+export default function PhotoStackMotion({ maxShift, dragScale, maxRotation, dragRotation, freeDrag = false, ...props }: Props) {
   // A stable controller; pointer movement never triggers a React render.
-  const [interaction] = useState(() => createPhotoInteraction({ maxShift, dragScale }))
+  const [interaction] = useState(() => createPhotoInteraction({ maxShift: freeDrag ? Infinity : maxShift, dragScale: freeDrag ? 1 : dragScale, maxRotation, dragRotation }))
   const element = useRef<HTMLSpanElement>(null)
   const frame = useRef(0)
   const pending = useRef<Position>({ x: 0, y: 0, angle: 0 })
@@ -60,6 +60,7 @@ export default function PhotoStackMotion({ maxShift, dragScale, ...props }: Prop
       window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     interaction.begin(mode, event.clientX, event.clientY)
     event.currentTarget.dataset.tracking = ''
+    if (freeDrag) event.currentTarget.style.setProperty('--print-follow-duration', mode === 'pressed' ? '0ms' : '140ms')
   }
 
   function move(event: PointerEvent<HTMLSpanElement>) {

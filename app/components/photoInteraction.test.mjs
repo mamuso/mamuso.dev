@@ -107,3 +107,17 @@ test('hover restarting after pointer capture release does not turn a drag into a
   interaction.finish('release')
   assert.equal(interaction.consumeClick(1), false)
 })
+
+test('free dragging travels beyond the old limits with restrained rotation', () => {
+  const interaction = createPhotoInteraction({ maxShift: Infinity, dragScale: 1, maxRotation: 5, dragRotation: 0.05 })
+  interaction.begin('pressed', 0, 0)
+  interaction.move(60, 20)
+  assert.deepEqual(interaction.position, { x: 60, y: 20, angle: 3 })
+  interaction.move(300, -200)
+  interaction.finish('release')
+  assert.deepEqual(interaction.position, { x: 300, y: -200, angle: 5 })
+  assert.equal(interaction.consumeClick(1), true)
+  interaction.begin('pressed', 300, -200)
+  assert.equal(interaction.move(280, -180).capture, true)
+  assert.deepEqual(interaction.position, { x: 280, y: -180, angle: 4 })
+})
