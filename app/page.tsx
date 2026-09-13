@@ -18,7 +18,7 @@ export default function Home() {
   const notes = getNotePosts(['title', 'date', 'slug']).slice(0, 5)
   const photos = getPhotoPosts(['basename', 'width', 'height'])
   // Sample without replacement, leaving the cached post index untouched.
-  const randomPhotos = Array.from({ length: Math.min(3, photos.length) }, () =>
+  const randomPhotos = Array.from({ length: Math.min(7, photos.length) }, () =>
     photos.splice(randomInt(photos.length), 1)[0])
 
   return (
@@ -36,7 +36,7 @@ export default function Home() {
             <li {...stylex.props(styles.allNotes)}><Link href="/notes" {...stylex.props(styles.allNotesLink)}>Anyway, more notes →</Link></li>
           </ul>
         </section>
-        <section aria-labelledby="home-photos" {...stylex.props(styles.block)}>
+        <section aria-labelledby="home-photos" {...stylex.props(styles.photos)}>
           <HomePhotos photos={randomPhotos} />
         </section>
       </div>
@@ -61,6 +61,9 @@ const styles = stylex.create({
     overflow: 'hidden',
     paddingBlock: 24,
     paddingInline: 24,
+  },
+  photos: {
+    minWidth: 0,
   },
   heading: {
     fontWeight: 400,
