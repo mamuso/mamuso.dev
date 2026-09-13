@@ -7,6 +7,7 @@ export const colors = stylex.defineVars({
   ruleSoft: '#d4d4d8',
   quote: '#a1a1aa',
   surface: '#ffffff',
+  surfaceRaised: '#f8f8f8',
   placeholder: '#e4e4e9',
 })
 

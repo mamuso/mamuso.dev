@@ -18,14 +18,14 @@ export default function Home() {
   const notes = getNotePosts(['title', 'date', 'slug']).slice(0, 5)
   const photos = getPhotoPosts(['basename', 'width', 'height'])
   // Sample without replacement, leaving the cached post index untouched.
-  const randomPhotos = Array.from({ length: Math.min(8, photos.length) }, () =>
+  const randomPhotos = Array.from({ length: Math.min(3, photos.length) }, () =>
     photos.splice(randomInt(photos.length), 1)[0])
 
   return (
     <>
       <HomeContent randomFact={getRandomFact()} />
       <div {...stylex.props(styles.content)}>
-        <section aria-labelledby="home-notes" {...stylex.props(styles.block, styles.feed)}>
+        <section aria-labelledby="home-notes" {...stylex.props(styles.block)}>
           <h2 id="home-notes" {...stylex.props(typography.display, typography.muted, styles.heading)}>Probably not thinking about you</h2>
           <ul {...stylex.props(layout.list, styles.notes)}>
             {notes.map(note => (
@@ -46,23 +46,21 @@ export default function Home() {
 
 const styles = stylex.create({
   content: {
-    borderTopColor: colors.rule,
-    borderTopStyle: 'solid',
-    borderTopWidth: 1,
     display: 'grid',
     gridTemplateColumns: {
       default: 'minmax(0, 1fr)',
       '@media (min-width: 880px)': 'repeat(2, minmax(0, 1fr))',
     },
-    paddingBlockEnd: { default: 0, '@media (min-width: 880px)': 32 },
+    gap: 16,
+    paddingBlockEnd: 32,
   },
   block: {
     minWidth: 0,
-  },
-  feed: {
-    paddingBlockStart: 64,
-    paddingBlockEnd: 32,
-    paddingInlineEnd: { default: 0, '@media (min-width: 880px)': 32 },
+    backgroundColor: colors.surfaceRaised,
+    borderRadius: 24,
+    overflow: 'hidden',
+    paddingBlock: 24,
+    paddingInline: 24,
   },
   heading: {
     fontWeight: 400,
