@@ -74,3 +74,21 @@ test('repeated gestures stay bounded and keyboard activation is never suppressed
   assert.deepEqual(interaction.position, { x: -18, y: 18, angle: -2 })
   assert.equal(interaction.consumeClick(0), false)
 })
+
+
+test('expanded gallery dragging follows the pointer, persists, and stays bounded', () => {
+  const interaction = createPhotoInteraction({ maxShift: 160, dragScale: 1 })
+  interaction.begin('pressed', 0, 0)
+  assert.equal(interaction.move(120, -45).capture, true)
+  assert.deepEqual(interaction.position, { x: 120, y: -45, angle: 2 })
+  interaction.finish('release')
+  interaction.begin('hover', 0, 0)
+  interaction.move(30, 0)
+  assert.equal(interaction.position.x, 121)
+  interaction.finish('leave')
+  interaction.begin('pressed', 0, 0)
+  interaction.move(500, -500)
+  assert.deepEqual(interaction.position, { x: 160, y: -160, angle: 2 })
+  interaction.finish('cancel')
+  assert.equal(interaction.position.x, 121)
+})

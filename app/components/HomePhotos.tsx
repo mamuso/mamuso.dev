@@ -19,7 +19,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
           // Distribute the starts evenly, with the final print extending 16px past the edge.
           const offset = -progress * (lastPrintWidth - 16)
           return (
-            <PhotoStackMotion key={photo.basename} data-photo-stack aria-hidden="true"
+            <PhotoStackMotion key={photo.basename} maxShift={160} dragScale={1} data-photo-stack aria-hidden="true"
               {...stylex.props(styles.slot(progress, offset, photos.length - index))}>
               <span data-photo-print {...stylex.props(styles.print)}>
                 <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}

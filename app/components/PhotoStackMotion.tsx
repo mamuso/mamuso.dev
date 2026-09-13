@@ -18,9 +18,11 @@ function scatter(node: HTMLElement) {
   node.dataset.opened = ''
 }
 
-export default function PhotoStackMotion(props: ComponentPropsWithoutRef<'span'>) {
+type Props = ComponentPropsWithoutRef<'span'> & { maxShift?: number; dragScale?: number }
+
+export default function PhotoStackMotion({ maxShift, dragScale, ...props }: Props) {
   // A stable controller; pointer movement never triggers a React render.
-  const [interaction] = useState(createPhotoInteraction)
+  const [interaction] = useState(() => createPhotoInteraction({ maxShift, dragScale }))
   const element = useRef<HTMLSpanElement>(null)
   const frame = useRef(0)
   const pending = useRef<Position>({ x: 0, y: 0, angle: 0 })
