@@ -43,7 +43,8 @@ export function createPhotoInteraction({ maxShift = photoMotion.maxShift, dragSc
       phase = mode
       origin = resting
       start = { x, y }
-      suppressClick = false
+      // Capture release can restart hover before the browser dispatches click.
+      if (mode === 'pressed') suppressClick = false
     },
     move(x: number, y: number) {
       let scatter = false

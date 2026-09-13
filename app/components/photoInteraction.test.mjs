@@ -92,3 +92,18 @@ test('expanded gallery dragging follows the pointer, persists, and stays bounded
   interaction.finish('cancel')
   assert.equal(interaction.position.x, 121)
 })
+
+
+test('hover restarting after pointer capture release does not turn a drag into a click', () => {
+  const interaction = createPhotoInteraction({ maxShift: 40, dragScale: 1 })
+  interaction.begin('pressed', 0, 0)
+  interaction.move(100, 0)
+  interaction.finish('release')
+  interaction.finish('cancel')
+  interaction.begin('hover', 100, 0)
+  interaction.move(101, 0)
+  assert.equal(interaction.consumeClick(1), true)
+  interaction.begin('pressed', 101, 0)
+  interaction.finish('release')
+  assert.equal(interaction.consumeClick(1), false)
+})
