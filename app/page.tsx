@@ -56,7 +56,7 @@ const styles = stylex.create({
   },
   block: {
     minWidth: 0,
-    backgroundColor: colors.surfaceRaised,
+    backgroundColor: '#F8F8F8',
     borderRadius: 24,
     overflow: 'hidden',
     paddingBlock: 24,

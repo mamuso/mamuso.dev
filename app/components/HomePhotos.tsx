@@ -39,7 +39,7 @@ const styles = stylex.create({
     display: 'block',
     height: 140,
     borderRadius: 24,
-    backgroundColor: '#FBFBFB',
+    backgroundColor: '#F8F8F8',
     overflow: 'hidden',
     color: colors.textPrimary,
     textDecoration: 'none',
