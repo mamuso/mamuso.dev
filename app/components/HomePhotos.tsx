@@ -12,7 +12,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
 
   return (
     <Link href="/photos" draggable={false} aria-labelledby="home-photos" {...stylex.props(styles.module)}>
-      <h2 id="home-photos" {...stylex.props(styles.heading)}>Say cheese</h2>
+      <h2 id="home-photos" {...stylex.props(styles.heading)}>Say cheese!</h2>
       <span {...stylex.props(styles.gallery)}>
         {photos.map((photo, index) => {
           const progress = photos.length > 1 ? index / (photos.length - 1) : 0
@@ -20,7 +20,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
           const offset = -progress * (lastPrintWidth - 16)
           return (
             <PhotoStackMotion key={photo.basename} data-photo-stack aria-hidden="true"
-              {...stylex.props(styles.slot(progress, offset))}>
+              {...stylex.props(styles.slot(progress, offset, photos.length - index))}>
               <span data-photo-print {...stylex.props(styles.print)}>
                 <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
                   alt="" draggable={false} sizes={`${widths[index]}px`}
@@ -55,20 +55,21 @@ const styles = stylex.create({
     fontWeight: 400,
     margin: 0,
     alignSelf: 'center',
+    transform: 'translateY(-1px)',
   },
   gallery: {
     display: 'block',
     position: 'relative',
-    marginBlockStart: 24,
+    marginBlockStart: 20,
     minWidth: 0,
   },
-  slot: (progress: number, offset: number) => ({
+  slot: (progress: number, offset: number, layer: number) => ({
     position: 'absolute',
     top: 0,
     left: `calc(${progress * 100}% + ${offset}px)`,
     touchAction: 'pan-y pinch-zoom',
     userSelect: 'none',
-    zIndex: { default: 0, ':hover': 1, ':active': 2 },
+    zIndex: layer,
   }),
   print: {
     display: 'block',
