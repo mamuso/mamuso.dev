@@ -63,7 +63,7 @@ const styles = stylex.create({
     display: 'block',
     position: 'absolute',
     insetBlock: 0,
-    left: '33.333%',
+    left: '25%',
     right: 0,
     pointerEvents: 'none',
   },
