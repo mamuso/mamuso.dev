@@ -1,4 +1,5 @@
 import { randomInt } from 'node:crypto'
+import { connection } from 'next/server'
 import { pageMetadata } from '@/lib/metadata'
 import Link from 'next/link'
 import { getNotePosts, getPhotoPosts } from '@/lib/api'
@@ -12,10 +13,10 @@ import { colors } from './styles/tokens.stylex'
 import { getRandomFact } from '@/lib/random-fact'
 
 export const metadata = pageMetadata({ title: 'mamuso - manuel muñoz solera', path: '/' })
-// The random fact and photo selection stay stable until the homepage revalidates.
-export const revalidate = 180
 
-export default function Home() {
+export default async function Home() {
+  // Refresh the photographic arrangement for each incoming page request.
+  await connection()
   const notes = getNotePosts(['title', 'date', 'slug']).slice(0, 5)
   const photos = getPhotoPosts(['basename', 'width', 'height'])
   const randomPhotos = selectHomePhotos(photos, randomInt)
