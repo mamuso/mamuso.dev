@@ -1,57 +1,28 @@
 export type CompositionPhoto = { basename: string; width: number; height: number }
-export type HomePhotoPlacement = {
-  photo: CompositionPhoto
-  left: number
-  width: number
-  top: number
-  height: number
-  layer: number
-  objectPosition: string
-  background: boolean
-}
 
-// One silhouette: a large left anchor, a continuous band, and one raised photo.
-export function selectHomePhotos(photos: CompositionPhoto[], pick: (length: number) => number): HomePhotoPlacement[] {
-  if (!photos.length) return []
+// Six foreground prints with one print peeking above the row on the right.
+// Foreground x distributes the row between the card edges; background x
+// places its left edge directly within the right half of the card.
+export const homePhotoSlots = [
+  { name: 'row-1', portrait: false, x: 0, y: 64, width: 140, height: 94, layer: 7 },
+  { name: 'row-2', portrait: true, x: 0.2, y: 64, width: 80, height: 120, layer: 6 },
+  { name: 'row-3', portrait: true, x: 0.4, y: 64, width: 80, height: 120, layer: 5 },
+  { name: 'row-4', portrait: false, x: 0.6, y: 64, width: 140, height: 94, layer: 4 },
+  { name: 'row-5', portrait: true, x: 0.8, y: 64, width: 80, height: 120, layer: 3 },
+  { name: 'row-6', portrait: false, x: 1, y: 64, width: 140, height: 94, layer: 2 },
+  { name: 'back-peek', portrait: false, x: 0.64, y: 48, width: 140, height: 94, layer: 1 },
+] as const
+
+export function selectHomePhotos<T extends CompositionPhoto>(photos: T[], pick: (length: number) => number) {
   const remaining = [...photos]
-  const anchorWidth = 29 + pick(4)
-  const weights = [15 + pick(3), 9 + pick(3), 14 + pick(3), 10 + pick(3), 13 + pick(3)]
-  // Occasionally join two adjacent internal slots, never the anchor.
-  if (pick(4) === 0) {
-    const join = 1 + pick(3)
-    weights.splice(join, 2, weights[join] + weights[join + 1])
-  }
-  const internalCount = Math.min(weights.length, Math.max(0, photos.length - 2))
-  const rhythm = weights.slice(0, internalCount)
-  const total = rhythm.reduce((sum, weight) => sum + weight, 0)
-  const widths = internalCount ? [anchorWidth, ...rhythm.map(weight => weight / total * (100 - anchorWidth))] : [100]
-
-  function choose(targetRatio: number) {
-    // Prefer the least destructive crops, then randomize within that group.
-    const score = (photo: CompositionPhoto) => Math.abs(Math.log((photo.width / photo.height) / targetRatio))
-    const best = Math.min(...remaining.map(score))
-    const candidates = remaining.filter(photo => score(photo) <= best + 0.12)
-    const photo = candidates[pick(candidates.length)]
+  return homePhotoSlots.flatMap(slot => {
+    if (!remaining.length) return []
+    // Prefer a matching aspect ratio so framing needs only a small crop.
+    const matching = remaining.filter(photo => slot.portrait === (photo.height > photo.width))
+    const closeRatio = matching.filter(photo => Math.abs((photo.width / photo.height) / (slot.width / slot.height) - 1) < 0.15)
+    const pool = closeRatio.length ? closeRatio : matching.length ? matching : remaining
+    const photo = pool[pick(pool.length)]
     remaining.splice(remaining.indexOf(photo), 1)
-    return photo
-  }
-  function position() {
-    // Small focal variations avoid arbitrary off-center crops when no focal metadata exists.
-    return `${47 + pick(7)}% ${47 + pick(7)}%`
-  }
-
-  let left = 0
-  const placements: HomePhotoPlacement[] = widths.map((width, index) => {
-    const photo = choose(width * 4.7 / 76)
-    const placement = { photo, left, width, top: 64, height: 76, layer: 10 - index, objectPosition: position(), background: false }
-    left += width
-    return placement
+    return [photo]
   })
-  if (remaining.length) {
-    placements.push({
-      photo: choose(1.5), left: 64, width: 30, top: 64 - (20 + pick(9)), height: 94,
-      layer: 1, objectPosition: position(), background: true,
-    })
-  }
-  return placements
 }
