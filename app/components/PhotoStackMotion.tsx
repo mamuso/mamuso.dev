@@ -26,11 +26,7 @@ export default function PhotoStackMotion({ maxShift, dragScale, maxRotation, dra
   const element = useRef<HTMLSpanElement>(null)
   const frame = useRef(0)
   const pending = useRef<Position>({ x: 0, y: 0, angle: 0 })
-  const rotationTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-  useEffect(() => () => {
-    cancelAnimationFrame(frame.current)
-    clearTimeout(rotationTimer.current)
-  }, [])
+  useEffect(() => () => cancelAnimationFrame(frame.current), [])
 
   function paint() {
     const position = interaction.position
@@ -51,7 +47,6 @@ export default function PhotoStackMotion({ maxShift, dragScale, maxRotation, dra
   }
 
   function finish(reason: 'leave' | 'release' | 'cancel') {
-    if (reason !== 'leave' || interaction.phase !== 'dragging') clearTimeout(rotationTimer.current)
     interaction.finish(reason)
     if (interaction.phase === 'idle' && element.current) {
       delete element.current.dataset.tracking
@@ -80,13 +75,6 @@ export default function PhotoStackMotion({ maxShift, dragScale, maxRotation, dra
       return
     }
     const result = interaction.move(event.clientX, event.clientY, event.timeStamp)
-    if (velocityRotation !== undefined && interaction.phase === 'dragging') {
-      clearTimeout(rotationTimer.current)
-      rotationTimer.current = setTimeout(() => {
-        interaction.settleRotation()
-        paint()
-      }, 180)
-    }
     if (result.scatter) scatter(event.currentTarget)
     if (result.capture) {
       event.currentTarget.setPointerCapture(event.pointerId)

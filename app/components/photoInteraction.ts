@@ -72,14 +72,11 @@ export function createPhotoInteraction({ maxShift = photoMotion.maxShift, dragSc
       position = {
         x: clamp(origin.x + (phase === 'dragging' ? dx * dragScale : hoverX * photoMotion.hoverShift), maxShift),
         y: clamp(origin.y + (phase === 'dragging' ? dy * dragScale : hoverY * photoMotion.hoverShift), maxShift),
-        angle: phase === 'dragging' && velocityRotation !== undefined
-          ? clamp(speed * velocityRotation, maxRotation)
+        angle: velocityRotation !== undefined
+          ? (phase === 'dragging' && speed !== 0 ? clamp(speed * velocityRotation, maxRotation) : position.angle)
           : clamp(origin.angle + (phase === 'dragging' ? dx * dragRotation : hoverX * photoMotion.hoverRotation), maxRotation),
       }
       return { scatter, capture }
-    },
-    settleRotation() {
-      if (velocityRotation !== undefined && phase === 'dragging') position = { ...position, angle: 0 }
     },
     finish,
     consumeClick(detail: number) {
