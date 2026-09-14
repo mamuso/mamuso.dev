@@ -1,16 +1,14 @@
 export type CompositionPhoto = { basename: string; width: number; height: number }
 
-// Six foreground prints with one print peeking above the row on the right.
-// Foreground x distributes the row between the card edges; background x
-// places its left edge directly within the right half of the card.
+// Seven top-aligned prints distributed between the card edges.
 export const homePhotoSlots = [
-  { name: 'row-1', portrait: false, x: 0, y: 64, width: 140, height: 94, layer: 7 },
-  { name: 'row-2', portrait: true, x: 0.2, y: 64, width: 80, height: 120, layer: 6 },
-  { name: 'row-3', portrait: true, x: 0.4, y: 64, width: 80, height: 120, layer: 5 },
-  { name: 'row-4', portrait: false, x: 0.6, y: 64, width: 140, height: 94, layer: 4 },
-  { name: 'row-5', portrait: true, x: 0.8, y: 64, width: 80, height: 120, layer: 3 },
-  { name: 'row-6', portrait: false, x: 1, y: 64, width: 140, height: 94, layer: 2 },
-  { name: 'back-peek', portrait: false, x: 0.64, y: 48, width: 140, height: 94, layer: 1 },
+  { name: 'row-1', portrait: false, x: 0 / 6, y: 64, width: 140, height: 94, layer: 7 },
+  { name: 'row-2', portrait: true, x: 1 / 6, y: 64, width: 80, height: 120, layer: 6 },
+  { name: 'row-3', portrait: true, x: 2 / 6, y: 64, width: 80, height: 120, layer: 5 },
+  { name: 'row-4', portrait: false, x: 3 / 6, y: 64, width: 140, height: 94, layer: 4 },
+  { name: 'row-5', portrait: true, x: 4 / 6, y: 64, width: 80, height: 120, layer: 3 },
+  { name: 'row-6', portrait: false, x: 5 / 6, y: 64, width: 140, height: 94, layer: 2 },
+  { name: 'row-7', portrait: false, x: 6 / 6, y: 64, width: 140, height: 94, layer: 1 },
 ] as const
 
 export function selectHomePhotos<T extends CompositionPhoto>(photos: T[], pick: (length: number) => number) {
