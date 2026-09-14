@@ -9,7 +9,7 @@ import { colors } from '../styles/tokens.stylex'
 type Photo = { basename: string; width: number; height: number }
 
 export default function HomePhotos({ photos }: { photos: Photo[] }) {
-  const row = homePhotoSlots.slice(0, 5)
+  const row = homePhotoSlots.slice(0, 6)
   const rowWidth = row.reduce((total, slot) => total + slot.width + 8, 0)
   return (
     <Link href="/photos" draggable={false} aria-labelledby="home-photos" {...stylex.props(styles.module)}>
@@ -21,7 +21,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
           const angle = index < 2 ? 0 : (index % 2 === 0 ? 1 : -1) * randomInt(1, 26) / 10
           // Crop the row slightly at both ends; the raised prints stay behind it.
           const precedingWidth = row.slice(0, index).reduce((total, item) => total + item.width + 8, 0)
-          const left = index < 5
+          const left = index < 6
             ? `calc(${slot.x * 100}% + ${-12 + precedingWidth + slot.x * (28 - rowWidth)}px)`
             : `${slot.x * 100}%`
           return (
