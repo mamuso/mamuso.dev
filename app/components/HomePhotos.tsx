@@ -21,7 +21,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
           const precedingWidth = row.slice(0, index).reduce((total, item) => total + item.width + 8, 0)
           const left = `calc(${slot.x * 100}% + ${-12 + precedingWidth + slot.x * (28 - rowWidth)}px)`
           return (
-            <PhotoStackMotion key={photo.basename} freeDrag maxRotation={0} dragRotation={0} data-photo-stack aria-hidden="true"
+            <PhotoStackMotion key={photo.basename} freeDrag maxRotation={1} dragRotation={0.0125} data-photo-stack aria-hidden="true"
               {...stylex.props(styles.slot(left, slot.y, slot.layer))}>
               <span data-photo-print {...stylex.props(styles.print)}>
                 <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
