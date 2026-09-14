@@ -1,15 +1,16 @@
 export type CompositionPhoto = { basename: string; width: number; height: number }
 
-// An authored composition, back to front. Coordinates are independent of image dimensions.
-// x distributes each print within the available width; values over 1 peek past the right edge.
+// Five straight foreground prints, followed by two raised prints behind the row.
+// Foreground x values distribute the row between the card edges; background x
+// values place their left edges directly within the right half of the card.
 export const homePhotoSlots = [
-  { name: 'top-peek', portrait: false, x: 0.46, y: -58, width: 140, height: 94, angle: 2, layer: 1 },
-  { name: 'right-peek', portrait: true, x: 1.08, y: -12, width: 80, height: 120, angle: -2, layer: 2 },
-  { name: 'upper-right', portrait: false, x: 0.78, y: -20, width: 140, height: 94, angle: 1.5, layer: 3 },
-  { name: 'lower-right', portrait: false, x: 1.03, y: 100, width: 140, height: 94, angle: -2, layer: 4 },
-  { name: 'right-support', portrait: true, x: 0.7, y: 66, width: 80, height: 120, angle: 2, layer: 5 },
-  { name: 'hero', portrait: true, x: 0.34, y: 14, width: 80, height: 120, angle: -2, layer: 6 },
-  { name: 'foreground', portrait: false, x: 0.02, y: 78, width: 140, height: 94, angle: 2, layer: 7 },
+  { name: 'row-1', portrait: false, x: 0, y: 72, width: 140, height: 94, angle: 0, layer: 7 },
+  { name: 'row-2', portrait: true, x: 0.25, y: 72, width: 80, height: 120, angle: 0, layer: 6 },
+  { name: 'row-3', portrait: true, x: 0.5, y: 72, width: 80, height: 120, angle: 0, layer: 5 },
+  { name: 'row-4', portrait: false, x: 0.75, y: 72, width: 140, height: 94, angle: 0, layer: 4 },
+  { name: 'row-5', portrait: true, x: 1, y: 72, width: 80, height: 120, angle: 0, layer: 3 },
+  { name: 'back-left', portrait: false, x: 0.52, y: 20, width: 140, height: 94, angle: -2, layer: 1 },
+  { name: 'back-right', portrait: false, x: 0.74, y: 32, width: 140, height: 94, angle: 2, layer: 2 },
 ] as const
 
 export function selectHomePhotos<T extends CompositionPhoto>(photos: T[], pick: (length: number) => number) {

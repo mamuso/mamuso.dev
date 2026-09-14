@@ -8,6 +8,8 @@ import { colors } from '../styles/tokens.stylex'
 type Photo = { basename: string; width: number; height: number }
 
 export default function HomePhotos({ photos }: { photos: Photo[] }) {
+  const row = homePhotoSlots.slice(0, 5)
+  const rowWidth = row.reduce((total, slot) => total + slot.width + 8, 0)
   return (
     <Link href="/photos" draggable={false} aria-labelledby="home-photos" {...stylex.props(styles.module)}>
       <h2 id="home-photos" {...stylex.props(styles.heading)}>Say cheese!</h2>
@@ -15,9 +17,11 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
         {photos.map((photo, index) => {
           const slot = homePhotoSlots[index]
           if (!slot) return null
-          const position = `calc(${slot.x * 100}% - ${slot.x * (slot.width + 8)}px)`
-          // Gallery is 75% of the card; one third of its width is the card's left inset.
-          const left = slot.y < 72 ? `max(${position}, calc(136px - 33.333%))` : position
+          // Crop the row slightly at both ends; the raised prints stay behind it.
+          const precedingWidth = row.slice(0, index).reduce((total, item) => total + item.width + 8, 0)
+          const left = index < 5
+            ? `calc(${slot.x * 100}% + ${-12 + precedingWidth + slot.x * (28 - rowWidth)}px)`
+            : `${slot.x * 100}%`
           return (
             <PhotoStackMotion key={photo.basename} freeDrag maxRotation={2} dragRotation={0.025} data-photo-stack aria-hidden="true"
               {...stylex.props(styles.slot(left, slot.y, slot.layer))}>
@@ -58,7 +62,7 @@ const styles = stylex.create({
     display: 'block',
     position: 'absolute',
     insetBlock: 0,
-    left: '25%',
+    left: 0,
     right: 0,
     pointerEvents: 'none',
   },
