@@ -14,15 +14,16 @@ export type Position = { x: number; y: number; angle: number }
 type Phase = 'idle' | 'hover' | 'pressed' | 'dragging'
 const clamp = (value: number, limit = 1) => Math.max(-limit, Math.min(limit, value))
 
-export type PhotoInteractionOptions = { maxShift?: number; dragScale?: number; maxRotation?: number; dragRotation?: number }
+export type PhotoInteractionOptions = { maxShift?: number; dragScale?: number; maxRotation?: number; dragRotation?: number; velocityRotation?: number }
 
 /** Gesture state only; rendering, pointer capture and animation scheduling stay in React. */
-export function createPhotoInteraction({ maxShift = photoMotion.maxShift, dragScale = photoMotion.dragScale, maxRotation = photoMotion.maxRotation, dragRotation = photoMotion.dragRotation }: PhotoInteractionOptions = {}) {
+export function createPhotoInteraction({ maxShift = photoMotion.maxShift, dragScale = photoMotion.dragScale, maxRotation = photoMotion.maxRotation, dragRotation = photoMotion.dragRotation, velocityRotation }: PhotoInteractionOptions = {}) {
   let phase: Phase = 'idle'
   let resting: Position = { x: 0, y: 0, angle: 0 }
   let position = resting
   let origin = resting
   let start = { x: 0, y: 0 }
+  let previous = { x: 0, time: 0 }
   let opened = false
   let suppressClick = false
 
@@ -40,20 +41,23 @@ export function createPhotoInteraction({ maxShift = photoMotion.maxShift, dragSc
   return {
     get phase() { return phase },
     get position() { return position },
-    begin(mode: 'hover' | 'pressed', x: number, y: number) {
+    begin(mode: 'hover' | 'pressed', x: number, y: number, time = 0) {
       finish('leave')
       phase = mode
       origin = resting
       start = { x, y }
+      previous = { x, time }
       // Capture release can restart hover before the browser dispatches click.
       if (mode === 'pressed') suppressClick = false
     },
-    move(x: number, y: number) {
+    move(x: number, y: number, time = 0) {
       let scatter = false
       let capture = false
       if (phase === 'idle') return { scatter, capture }
       const dx = x - start.x
       const dy = y - start.y
+      const speed = (x - previous.x) / Math.max(8, time - previous.time)
+      previous = { x, time }
       if (!opened && (dx !== 0 || dy !== 0)) {
         opened = true
         scatter = true
@@ -68,9 +72,14 @@ export function createPhotoInteraction({ maxShift = photoMotion.maxShift, dragSc
       position = {
         x: clamp(origin.x + (phase === 'dragging' ? dx * dragScale : hoverX * photoMotion.hoverShift), maxShift),
         y: clamp(origin.y + (phase === 'dragging' ? dy * dragScale : hoverY * photoMotion.hoverShift), maxShift),
-        angle: clamp(origin.angle + (phase === 'dragging' ? dx * dragRotation : hoverX * photoMotion.hoverRotation), maxRotation),
+        angle: phase === 'dragging' && velocityRotation !== undefined
+          ? clamp(speed * velocityRotation, maxRotation)
+          : clamp(origin.angle + (phase === 'dragging' ? dx * dragRotation : hoverX * photoMotion.hoverRotation), maxRotation),
       }
       return { scatter, capture }
+    },
+    settleRotation() {
+      if (velocityRotation !== undefined && phase === 'dragging') position = { ...position, angle: 0 }
     },
     finish,
     consumeClick(detail: number) {

@@ -20,13 +20,17 @@ function scatter(node: HTMLElement) {
 
 type Props = ComponentPropsWithoutRef<'span'> & PhotoInteractionOptions & { freeDrag?: boolean }
 
-export default function PhotoStackMotion({ maxShift, dragScale, maxRotation, dragRotation, freeDrag = false, ...props }: Props) {
+export default function PhotoStackMotion({ maxShift, dragScale, maxRotation, dragRotation, velocityRotation, freeDrag = false, ...props }: Props) {
   // A stable controller; pointer movement never triggers a React render.
-  const [interaction] = useState(() => createPhotoInteraction({ maxShift: freeDrag ? Infinity : maxShift, dragScale: freeDrag ? 1 : dragScale, maxRotation, dragRotation }))
+  const [interaction] = useState(() => createPhotoInteraction({ maxShift: freeDrag ? Infinity : maxShift, dragScale: freeDrag ? 1 : dragScale, maxRotation, dragRotation, velocityRotation }))
   const element = useRef<HTMLSpanElement>(null)
   const frame = useRef(0)
   const pending = useRef<Position>({ x: 0, y: 0, angle: 0 })
-  useEffect(() => () => cancelAnimationFrame(frame.current), [])
+  const rotationTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  useEffect(() => () => {
+    cancelAnimationFrame(frame.current)
+    clearTimeout(rotationTimer.current)
+  }, [])
 
   function paint() {
     const position = interaction.position
@@ -47,6 +51,7 @@ export default function PhotoStackMotion({ maxShift, dragScale, maxRotation, dra
   }
 
   function finish(reason: 'leave' | 'release' | 'cancel') {
+    if (reason !== 'leave' || interaction.phase !== 'dragging') clearTimeout(rotationTimer.current)
     interaction.finish(reason)
     if (interaction.phase === 'idle' && element.current) {
       delete element.current.dataset.tracking
@@ -58,7 +63,7 @@ export default function PhotoStackMotion({ maxShift, dragScale, maxRotation, dra
   function begin(event: PointerEvent<HTMLSpanElement>, mode: 'hover' | 'pressed') {
     if (!printAt(event.target) || !event.isPrimary || (mode === 'pressed' && event.button !== 0) ||
       window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    interaction.begin(mode, event.clientX, event.clientY)
+    interaction.begin(mode, event.clientX, event.clientY, event.timeStamp)
     event.currentTarget.dataset.tracking = ''
     if (freeDrag) event.currentTarget.style.setProperty('--print-follow-duration', mode === 'pressed' ? '0ms' : '140ms')
   }
@@ -74,7 +79,14 @@ export default function PhotoStackMotion({ maxShift, dragScale, maxRotation, dra
       finish('leave')
       return
     }
-    const result = interaction.move(event.clientX, event.clientY)
+    const result = interaction.move(event.clientX, event.clientY, event.timeStamp)
+    if (velocityRotation !== undefined && interaction.phase === 'dragging') {
+      clearTimeout(rotationTimer.current)
+      rotationTimer.current = setTimeout(() => {
+        interaction.settleRotation()
+        paint()
+      }, 100)
+    }
     if (result.scatter) scatter(event.currentTarget)
     if (result.capture) {
       event.currentTarget.setPointerCapture(event.pointerId)
