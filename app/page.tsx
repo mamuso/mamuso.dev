@@ -6,7 +6,7 @@ import PostHome from '@/app/components/PostHome'
 import HomeContent from '@/app/components/HomeContent'
 import HomePhotos from '@/app/components/HomePhotos'
 import * as stylex from '@stylexjs/stylex'
-import { layout, typography } from '@/app/styles/site'
+import { layout } from '@/app/styles/site'
 import { colors } from './styles/tokens.stylex'
 import { getRandomFact } from '@/lib/random-fact'
 
@@ -25,8 +25,11 @@ export default function Home() {
     <>
       <HomeContent randomFact={getRandomFact()} />
       <div {...stylex.props(styles.content)}>
-        <section aria-labelledby="home-notes" {...stylex.props(styles.block)}>
-          <h2 id="home-notes" {...stylex.props(typography.display, typography.muted, styles.heading)}>Probably not thinking about you</h2>
+        <section aria-labelledby="home-fun" {...stylex.props(styles.block, styles.fun)}>
+          <h2 id="home-fun" {...stylex.props(styles.heading)}>Having fun</h2>
+        </section>
+        <section aria-labelledby="home-notes" {...stylex.props(styles.block, styles.notesModule)}>
+          <h2 id="home-notes" {...stylex.props(styles.heading)}>Probably not thinking about you</h2>
           <ul {...stylex.props(layout.list, styles.notes)}>
             {notes.map(note => (
               <li key={note.slug}>
@@ -51,7 +54,11 @@ const styles = stylex.create({
       default: 'minmax(0, 1fr)',
       '@media (min-width: 880px)': 'repeat(2, minmax(0, 1fr))',
     },
-    gap: 16,
+    gridTemplateAreas: {
+      default: '"fun" "notes" "photos"',
+      '@media (min-width: 880px)': '"fun notes" "fun photos"',
+    },
+    gap: 20,
     paddingBlockEnd: 32,
   },
   block: {
@@ -62,12 +69,24 @@ const styles = stylex.create({
     paddingBlock: 24,
     paddingInline: 24,
   },
+  fun: {
+    gridArea: 'fun',
+    minHeight: { default: 300, '@media (min-width: 880px)': 0 },
+  },
+  notesModule: {
+    gridArea: 'notes',
+  },
   photos: {
+    gridArea: 'photos',
     minWidth: 0,
   },
   heading: {
+    fontSize: 18,
+    lineHeight: '24px',
+    color: colors.textPrimary,
+    textAlign: 'left',
     fontWeight: 400,
-    marginBlock: 0,
+    margin: 0,
   },
   notes: {
     display: 'flex',
