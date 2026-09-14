@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto'
 import Image from 'next/image'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
@@ -17,6 +18,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
         {photos.map((photo, index) => {
           const slot = homePhotoSlots[index]
           if (!slot) return null
+          const angle = index < 2 ? 0 : (index % 2 === 0 ? 1 : -1) * randomInt(1, 26) / 10
           // Crop the row slightly at both ends; the raised prints stay behind it.
           const precedingWidth = row.slice(0, index).reduce((total, item) => total + item.width + 8, 0)
           const left = index < 5
@@ -25,7 +27,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
           return (
             <PhotoStackMotion key={photo.basename} freeDrag maxRotation={2} dragRotation={0.025} data-photo-stack aria-hidden="true"
               {...stylex.props(styles.slot(left, slot.y, slot.layer))}>
-              <span data-photo-print {...stylex.props(styles.print(slot.angle))}>
+              <span data-photo-print {...stylex.props(styles.print(angle))}>
                 <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
                   alt="" draggable={false} sizes={`${slot.width}px`}
                   {...stylex.props(styles.image(slot.width, slot.height))} />
