@@ -10,7 +10,9 @@ type Photo = { basename: string; width: number; height: number }
 export default function HomePhotos({ photos }: { photos: Photo[] }) {
   const widths = photos.map(photo => (photo.width >= photo.height ? 140 : 80))
   // Stagger prints along both edges, keeping a clear opening beside the title.
-  const columns = [0, 28, 25, 54, 52, 80, 78]
+  const columns = [4, 26, 31, 50, 58, 82, 76]
+  const edges = [82, 32, 156, 88, 174, 54, 150]
+  const layers = [7, 2, 6, 1, 5, 3, 4]
 
   return (
     <Link href="/photos" draggable={false} aria-labelledby="home-photos" {...stylex.props(styles.module)}>
@@ -19,11 +21,11 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
         {photos.map((photo, index) => {
           const height = widths[index] * photo.height / photo.width + 8
           const angle = (index % 2 === 0 ? 1 : -1) * randomInt(3, 7)
-          const top = index === 0 ? 82 : index % 2 === 1 ? 65 - height : 148 - height
+          const top = index === 0 ? edges[0] : (edges[index] ?? 150) - height
           const jitter = randomInt(-4, 5)
           return (
             <PhotoStackMotion key={photo.basename} freeDrag maxRotation={5} dragRotation={0.05} data-photo-stack aria-hidden="true"
-              {...stylex.props(styles.slot(columns[index] ?? 80, top + jitter, photos.length - index))}>
+              {...stylex.props(styles.slot((columns[index] ?? 80) + randomInt(-2, 3), top + jitter, layers[index] ?? 1))}>
               <span data-photo-print {...stylex.props(styles.print(angle))}>
                 <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
                   alt="" draggable={false} sizes={`${widths[index]}px`}
@@ -63,7 +65,7 @@ const styles = stylex.create({
     insetBlock: 0,
     left: '33.333%',
     right: 0,
-    overflow: 'hidden',
+    pointerEvents: 'none',
   },
   slot: (left: number, top: number, layer: number) => ({
     position: 'absolute',
