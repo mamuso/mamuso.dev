@@ -85,7 +85,7 @@ export default function PhotoStackMotion({ maxShift, dragScale, maxRotation, dra
       rotationTimer.current = setTimeout(() => {
         interaction.settleRotation()
         paint()
-      }, 100)
+      }, 180)
     }
     if (result.scatter) scatter(event.currentTarget)
     if (result.capture) {

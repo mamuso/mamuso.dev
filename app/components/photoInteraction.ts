@@ -56,7 +56,7 @@ export function createPhotoInteraction({ maxShift = photoMotion.maxShift, dragSc
       if (phase === 'idle') return { scatter, capture }
       const dx = x - start.x
       const dy = y - start.y
-      const speed = (x - previous.x) / Math.max(8, time - previous.time)
+      const speed = (x - previous.x) / Math.max(1, time - previous.time)
       previous = { x, time }
       if (!opened && (dx !== 0 || dy !== 0)) {
         opened = true

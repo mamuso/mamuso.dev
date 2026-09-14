@@ -139,3 +139,15 @@ test('velocity tilt responds to speed and direction, not total drag distance', (
   interaction.finish('release')
   assert.equal(interaction.consumeClick(1), true)
 })
+
+test('normal-speed drags show directional tilt even on high-frequency pointers', () => {
+  for (const interval of [2, 8, 16]) {
+    const interaction = createPhotoInteraction({ maxShift: Infinity, dragScale: 1, maxRotation: 1.5, velocityRotation: 3 })
+    interaction.begin('pressed', 0, 0, 0)
+    interaction.move(10, 0, 40)
+    interaction.move(10 + 0.3 * interval, 0, 40 + interval)
+    assert.ok(Math.abs(interaction.position.angle - 0.9) < 0.00001)
+    interaction.move(10, 0, 40 + 2 * interval)
+    assert.ok(Math.abs(interaction.position.angle + 0.9) < 0.00001)
+  }
+})
