@@ -5,6 +5,7 @@ import { getNotePosts, getPhotoPosts } from '@/lib/api'
 import PostHome from '@/app/components/PostHome'
 import HomeContent from '@/app/components/HomeContent'
 import HomePhotos from '@/app/components/HomePhotos'
+import { selectHomePhotos } from '@/app/components/homePhotoComposition'
 import * as stylex from '@stylexjs/stylex'
 import { layout } from '@/app/styles/site'
 import { colors } from './styles/tokens.stylex'
@@ -17,9 +18,7 @@ export const revalidate = 180
 export default function Home() {
   const notes = getNotePosts(['title', 'date', 'slug']).slice(0, 5)
   const photos = getPhotoPosts(['basename', 'width', 'height'])
-  // Sample without replacement, leaving the cached post index untouched.
-  const randomPhotos = Array.from({ length: Math.min(7, photos.length) }, () =>
-    photos.splice(randomInt(photos.length), 1)[0])
+  const randomPhotos = selectHomePhotos(photos, randomInt)
 
   return (
     <>

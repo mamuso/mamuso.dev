@@ -1,35 +1,30 @@
-import { randomInt } from 'node:crypto'
 import Image from 'next/image'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import PhotoStackMotion from './PhotoStackMotion'
+import { homePhotoSlots } from './homePhotoComposition'
 import { colors } from '../styles/tokens.stylex'
 
 type Photo = { basename: string; width: number; height: number }
 
 export default function HomePhotos({ photos }: { photos: Photo[] }) {
-  const widths = photos.map(photo => (photo.width >= photo.height ? 140 : 80))
-  // Stagger prints along both edges, keeping a clear opening beside the title.
-  const columns = [4, 26, 31, 50, 58, 82, 76]
-  const edges = [70, 64, 150, 88, 154, 72, 148]
-  const layers = [7, 2, 6, 1, 5, 3, 4]
-
   return (
     <Link href="/photos" draggable={false} aria-labelledby="home-photos" {...stylex.props(styles.module)}>
       <h2 id="home-photos" {...stylex.props(styles.heading)}>Say cheese!</h2>
       <span {...stylex.props(styles.gallery)}>
         {photos.map((photo, index) => {
-          const height = widths[index] * photo.height / photo.width + 8
-          const angle = (index % 2 === 0 ? 1 : -1) * randomInt(1, 4)
-          const top = index === 0 ? edges[0] : (edges[index] ?? 150) - height
-          const jitter = randomInt(-2, 3)
+          const slot = homePhotoSlots[index]
+          if (!slot) return null
+          const position = `calc(${slot.x * 100}% - ${slot.x * (slot.width + 8)}px)`
+          // Gallery is 75% of the card; one third of its width is the card's left inset.
+          const left = slot.y < 72 ? `max(${position}, calc(136px - 33.333%))` : position
           return (
             <PhotoStackMotion key={photo.basename} freeDrag maxRotation={2} dragRotation={0.025} data-photo-stack aria-hidden="true"
-              {...stylex.props(styles.slot((columns[index] ?? 80) + randomInt(-2, 3), top + jitter, layers[index] ?? 1))}>
-              <span data-photo-print {...stylex.props(styles.print(angle))}>
+              {...stylex.props(styles.slot(left, slot.y, slot.layer))}>
+              <span data-photo-print {...stylex.props(styles.print(slot.angle))}>
                 <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
-                  alt="" draggable={false} sizes={`${widths[index]}px`}
-                  {...stylex.props(styles.image(widths[index]))} />
+                  alt="" draggable={false} sizes={`${slot.width}px`}
+                  {...stylex.props(styles.image(slot.width, slot.height))} />
               </span>
             </PhotoStackMotion>
           )
@@ -67,10 +62,10 @@ const styles = stylex.create({
     right: 0,
     pointerEvents: 'none',
   },
-  slot: (left: number, top: number, layer: number) => ({
+  slot: (left: string, top: number, layer: number) => ({
     position: 'absolute',
     top,
-    left: `${left}%`,
+    left,
     touchAction: 'none',
     pointerEvents: 'none',
     userSelect: 'none',
@@ -84,10 +79,11 @@ const styles = stylex.create({
     backgroundColor: '#FFFFFF',
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.1)',
   }),
-  image: (width: number) => ({
+  image: (width: number, height: number) => ({
     display: 'block',
     width,
-    height: 'auto',
+    height,
+    objectFit: 'cover',
     backgroundColor: colors.placeholder,
   }),
 })
