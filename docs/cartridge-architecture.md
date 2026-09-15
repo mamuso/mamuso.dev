@@ -18,7 +18,7 @@ replacement is pending. Its entry point is still dynamically loaded on the homep
 | `cartridgeMaterials.ts` | Instance construction and disposal of owned materials. |
 | `CartridgeItem.tsx` | Instance lifecycle, hitboxes, accessible controls and presentation. |
 
-Presentation, sticker deformation, quality policy and mobile geometry remain in
+Presentation, sticker deformation and mobile geometry remain in
 their existing modules. Material changes do not belong in the camera/controller.
 
 ## Resource ownership
@@ -134,3 +134,19 @@ that does not navigate still exits smoothly. Desktop input and keyboard controls
 cancellation. `e2e/cartridge-swipe.spec.ts` covers both directions, short/cancelled
 drags, closed-rack behavior, vertical scroll and desktop preservation; the blow
 browser test also verifies that dragging away releases an active microphone.
+
+## Stable drawing buffer
+
+The cartridge canvas uses fixed 2× DPR during motion and at rest. Do not change
+DPR based on frame timings: resizing a WebGL drawing buffer clears it. The former
+quality controller restored DPR in an R3F tail after the final draw, presenting
+an empty canvas. It also disagreed with Canvas's fixed `dpr` prop, which R3F
+reapplies on layout/scroll reconfiguration; this caused additional resets during
+interaction. Bridging both through React state adds reconfiguration churn.
+
+Demand rendering remains enabled, so a settled scene does not run continuously.
+The tradeoff is retaining full-resolution GPU work on slow devices during motion,
+rather than temporarily reducing resolution. Future adaptive rendering must
+preserve the presented buffer (for example via offscreen composition), instead
+of resizing the visible canvas. Material grain reads the fixed renderer DPR when
+instances are created.

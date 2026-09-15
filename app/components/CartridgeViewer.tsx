@@ -4,7 +4,6 @@ import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import * as stylex from '@stylexjs/stylex'
 import CartridgeBackdrop from './CartridgeBackdrop'
-import CartridgeQuality from './CartridgeQuality'
 import CartridgeScene from './CartridgeScene'
 import { CAMERA_PRESET_LARGE, CAMERA_FOV_DEGREES, type CameraPreset } from './cartridgeConfig'
 import { INITIAL_CARTRIDGE_RESTING_POSES, randomCartridgeRestingPoses, buildCartridgeLayout, type CartridgeRestingPose } from './cartridgeLayout'
@@ -19,7 +18,8 @@ export default function CartridgeViewer({
   onOpenChange?: (isOpen: boolean) => void;
   stickerApplied?: RefObject<boolean>;
 }) {
-  // Start sharp; CartridgeQuality adapts moving frames and restores 2x at rest.
+  // Keep the drawing buffer stable during motion and at rest. Changing DPR
+  // clears the canvas and can race with Canvas reconfiguration on scroll.
   const dpr = 2
   const [restingPoses, setRestingPoses] = useState<
     readonly CartridgeRestingPose[]
@@ -57,7 +57,6 @@ export default function CartridgeViewer({
         }}
       >
         <Suspense fallback={null}>
-          <CartridgeQuality />
           <CartridgeScene
             cameraPreset={cameraPreset}
             layout={layout}
