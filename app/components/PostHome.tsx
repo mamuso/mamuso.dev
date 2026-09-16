@@ -1,14 +1,15 @@
+import { homeLink } from '../styles/homeLink.stylex'
 import type { PostSummary } from '@/lib/types'
 import { formatPostMonth } from '@/lib/editorial-date'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
-import { typography } from '../styles/site'
+import { homeLinks } from '../styles/homeLinks'
 
 export default function PostHome({ post }: { post: PostSummary }) {
   return (
-    <Link href={`/note/${post.slug}`} {...stylex.props(typography.link, styles.note)}>
+    <Link href={`/note/${post.slug}`} {...stylex.props(homeLink, homeLinks.primary, styles.note)}>
       <span title={post.title} {...stylex.props(styles.noteTitle)}>{post.title}</span>
-      <time dateTime={post.date} {...stylex.props(styles.date)}>
+      <time dateTime={post.date} {...stylex.props(homeLinks.secondary, styles.date)}>
         {formatPostMonth(post.date)}
       </time>
     </Link>
@@ -17,10 +18,6 @@ export default function PostHome({ post }: { post: PostSummary }) {
 
 const styles = stylex.create({
   note: {
-    color: {
-      default: '#17181B',
-      ':hover': 'rgba(23, 24, 27, 0.4)',
-    },
     fontSize: 16,
     fontWeight: 400,
     letterSpacing: '-0.005em',
@@ -42,7 +39,6 @@ const styles = stylex.create({
     flexShrink: 1,
   },
   date: {
-    color: 'rgba(23, 24, 27, 0.4)',
     fontSize: 16,
     flexShrink: 0,
     whiteSpace: 'nowrap',

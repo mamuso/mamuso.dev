@@ -1,11 +1,14 @@
+import { homeLink } from '@/app/styles/homeLink.stylex'
 import { pageMetadata } from '@/lib/metadata'
 import Link from 'next/link'
 import { getNotePosts } from '@/lib/api'
 import PostHome from '@/app/components/PostHome'
 import HomeContent from '@/app/components/HomeContent'
+import MoreLink from '@/app/components/MoreLink'
+import { homeLinks } from '@/app/styles/homeLinks'
 import { projects } from '@/data/projects'
 import * as stylex from '@stylexjs/stylex'
-import { layout, typography } from '@/app/styles/site'
+import { layout } from '@/app/styles/site'
 import { colors } from './styles/tokens.stylex'
 import { getRandomFact } from '@/lib/random-fact'
 
@@ -25,14 +28,14 @@ export default function Home() {
           <ul {...stylex.props(layout.list)}>
             {projects.map(project => (
               <li key={project.href} {...stylex.props(styles.rule)}>
-                <a href={project.href} {...stylex.props(typography.link, styles.link, styles.project)}>
+                <a href={project.href} {...stylex.props(homeLink, homeLinks.primary, styles.project)}>
                   {project.title}{' '}
-                  <span {...stylex.props(styles.description)}>{project.description}</span>
+                  <span {...stylex.props(homeLinks.secondary)}>{project.description}</span>
                 </a>
               </li>
             ))}
           </ul>
-          <a href="https://github.com/mamuso?tab=repositories" aria-label="More projects" {...stylex.props(typography.mutedLink, styles.more)}>More</a>
+          <MoreLink href="https://github.com/mamuso?tab=repositories" label="More projects" />
         </section>
         <div {...stylex.props(styles.right)}>
           <section aria-labelledby="home-notes" {...stylex.props(styles.module)}>
@@ -44,11 +47,11 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            <Link href="/notes" aria-label="More notes" {...stylex.props(typography.mutedLink, styles.more)}>More</Link>
+            <MoreLink href="/notes" label="More notes" />
           </section>
           <section aria-labelledby="home-photos" {...stylex.props(styles.module)}>
             <h2 id="home-photos" {...stylex.props(styles.heading, styles.rule)}>
-              <Link href="/photos" {...stylex.props(typography.link, styles.link, styles.photoLink)}>Say cheese!</Link>
+              <Link href="/photos" {...stylex.props(homeLinks.primary, styles.photoLink)}>Say cheese!</Link>
             </h2>
           </section>
         </div>
@@ -99,28 +102,11 @@ const styles = stylex.create({
     margin: 0,
     paddingBlock: 4,
   },
-  link: {
-    color: {
-      default: '#17181B',
-      ':hover': 'rgba(23, 24, 27, 0.4)',
-    },
-  },
   project: {
     display: 'block',
     lineHeight: '22px',
     paddingBlock: 5,
     overflowWrap: 'anywhere',
-  },
-  description: {
-    color: 'rgba(23, 24, 27, 0.4)',
-  },
-  more: {
-    color: {
-      default: 'rgba(23, 24, 27, 0.4)',
-      ':hover': '#17181B',
-    },
-    display: 'inline-block',
-    paddingBlock: 4,
   },
   photoLink: {
     display: 'block',
