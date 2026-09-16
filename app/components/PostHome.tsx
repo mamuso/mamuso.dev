@@ -3,7 +3,6 @@ import { formatPostMonth } from '@/lib/editorial-date'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { typography } from '../styles/site'
-import { colors } from '../styles/tokens.stylex'
 
 export default function PostHome({ post }: { post: PostSummary }) {
   return (
@@ -18,6 +17,13 @@ export default function PostHome({ post }: { post: PostSummary }) {
 
 const styles = stylex.create({
   note: {
+    color: {
+      default: '#17181B',
+      ':hover': 'rgba(23, 24, 27, 0.4)',
+    },
+    fontSize: 16,
+    fontWeight: 400,
+    letterSpacing: '-0.005em',
     paddingBlock: 5,
     display: 'flex',
     alignItems: 'center',
@@ -27,7 +33,7 @@ const styles = stylex.create({
     minWidth: 0,
   },
   noteTitle: {
-    color: colors.textPrimary,
+    color: '#17181B',
     fontWeight: 400,
     minWidth: 0,
     overflow: 'hidden',
@@ -37,7 +43,7 @@ const styles = stylex.create({
   },
   date: {
     color: 'rgba(23, 24, 27, 0.4)',
-    fontSize: 14,
+    fontSize: 16,
     flexShrink: 0,
     whiteSpace: 'nowrap',
   },

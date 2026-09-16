@@ -25,7 +25,7 @@ export default function Home() {
           <ul {...stylex.props(layout.list)}>
             {projects.map(project => (
               <li key={project.href} {...stylex.props(styles.rule)}>
-                <a href={project.href} {...stylex.props(typography.link, styles.project)}>
+                <a href={project.href} {...stylex.props(typography.link, styles.link, styles.project)}>
                   {project.title}{' '}
                   <span {...stylex.props(styles.description)}>{project.description}</span>
                 </a>
@@ -48,7 +48,7 @@ export default function Home() {
           </section>
           <section aria-labelledby="home-photos" {...stylex.props(styles.module)}>
             <h2 id="home-photos" {...stylex.props(styles.heading, styles.rule)}>
-              <Link href="/photos" {...stylex.props(typography.link, styles.photoLink)}>Say cheese!</Link>
+              <Link href="/photos" {...stylex.props(typography.link, styles.link, styles.photoLink)}>Say cheese!</Link>
             </h2>
           </section>
         </div>
@@ -59,6 +59,11 @@ export default function Home() {
 
 const styles = stylex.create({
   content: {
+    color: '#17181B',
+    fontSize: 16,
+    fontWeight: 400,
+    letterSpacing: '-0.005em',
+    lineHeight: '22px',
     display: 'grid',
     gridTemplateColumns: {
       default: 'minmax(0, 1fr)',
@@ -88,10 +93,17 @@ const styles = stylex.create({
   },
   heading: {
     fontSize: 18,
+    letterSpacing: '-0.005em',
     lineHeight: '24px',
     fontWeight: 400,
     margin: 0,
     paddingBlock: 4,
+  },
+  link: {
+    color: {
+      default: '#17181B',
+      ':hover': 'rgba(23, 24, 27, 0.4)',
+    },
   },
   project: {
     display: 'block',
@@ -105,7 +117,7 @@ const styles = stylex.create({
   more: {
     color: {
       default: 'rgba(23, 24, 27, 0.4)',
-      ':hover': colors.textPrimary,
+      ':hover': '#17181B',
     },
     display: 'inline-block',
     paddingBlock: 4,
