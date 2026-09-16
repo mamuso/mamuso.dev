@@ -27,7 +27,7 @@ export default function Home() {
               <li key={project.href} {...stylex.props(styles.rule)}>
                 <a href={project.href} {...stylex.props(typography.link, styles.project)}>
                   {project.title}{' '}
-                  <span {...stylex.props(typography.muted)}>{project.description}</span>
+                  <span {...stylex.props(styles.description)}>{project.description}</span>
                 </a>
               </li>
             ))}
@@ -96,10 +96,17 @@ const styles = stylex.create({
   project: {
     display: 'block',
     lineHeight: '22px',
-    paddingBlock: 4,
+    paddingBlock: 5,
     overflowWrap: 'anywhere',
   },
+  description: {
+    color: 'rgba(23, 24, 27, 0.4)',
+  },
   more: {
+    color: {
+      default: 'rgba(23, 24, 27, 0.4)',
+      ':hover': colors.textPrimary,
+    },
     display: 'inline-block',
     paddingBlock: 4,
   },

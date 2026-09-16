@@ -9,7 +9,7 @@ export default function PostHome({ post }: { post: PostSummary }) {
   return (
     <Link href={`/note/${post.slug}`} {...stylex.props(typography.link, styles.note)}>
       <span title={post.title} {...stylex.props(styles.noteTitle)}>{post.title}</span>
-      <time dateTime={post.date} {...stylex.props(typography.muted, styles.date)}>
+      <time dateTime={post.date} {...stylex.props(styles.date)}>
         {formatPostMonth(post.date)}
       </time>
     </Link>
@@ -18,7 +18,7 @@ export default function PostHome({ post }: { post: PostSummary }) {
 
 const styles = stylex.create({
   note: {
-    paddingBlock: 4,
+    paddingBlock: 5,
     display: 'flex',
     alignItems: 'center',
     lineHeight: '22px',
@@ -36,6 +36,7 @@ const styles = stylex.create({
     flexShrink: 1,
   },
   date: {
+    color: 'rgba(23, 24, 27, 0.4)',
     fontSize: 14,
     flexShrink: 0,
     whiteSpace: 'nowrap',
