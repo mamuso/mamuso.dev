@@ -44,14 +44,14 @@ const styles = stylex.create({
       [stylex.when.ancestor(':focus-visible', homeLink)]: 1,
     },
     transitionProperty: 'max-width, opacity',
-    transitionDuration: { default: '100ms', '@media (prefers-reduced-motion: reduce)': '0ms' },
+    transitionDuration: { default: '60ms', '@media (prefers-reduced-motion: reduce)': '0ms' },
     transitionTimingFunction: 'ease',
   },
   delay: (index: number) => ({
     transitionDelay: {
-      default: `${(4 - index) * 65}ms`,
-      [stylex.when.ancestor(':hover', homeLink)]: `${index * 65}ms`,
-      [stylex.when.ancestor(':focus-visible', homeLink)]: `${index * 65}ms`,
+      default: `${(4 - index) * 30}ms`,
+      [stylex.when.ancestor(':hover', homeLink)]: `${index * 30}ms`,
+      [stylex.when.ancestor(':focus-visible', homeLink)]: `${index * 30}ms`,
       '@media (prefers-reduced-motion: reduce)': '0ms',
     },
   }),
