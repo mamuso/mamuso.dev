@@ -33,9 +33,9 @@ test('secret touch hold stays active through silence and exits on tap', async ({
       })
       return { getTracks: () => [track] }
     } })
-    class TestAudio {
-      state = 'running'
-      constructor() { context = this }
+    class TestAudio extends EventTarget {
+      state = 'suspended'
+      constructor() { super(); context = this }
       resume() { this.state = 'running'; return Promise.resolve() }
       close() {
         stats.closedAt = performance.now(); stats.closed++; this.state = 'closed'

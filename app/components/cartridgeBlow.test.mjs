@@ -39,9 +39,9 @@ function audioFixture(t, getStream) {
   const track = new EventTarget()
   track.stop = () => stats.stopped++
   const stream = { getTracks: () => [track] }
-  class Audio {
-    state = 'running'
-    constructor() { stats.created++; stats.context = this }
+  class Audio extends EventTarget {
+    state = 'suspended'
+    constructor() { super(); stats.created++; stats.context = this }
     resume() { stats.resumed++; this.state = 'running'; return Promise.resolve() }
     close() { this.state = 'closed'; stats.closed++; return Promise.resolve() }
     createMediaStreamSource() { return { connect() {}, disconnect() { stats.disconnected++ } } }
@@ -67,12 +67,13 @@ test('tap and cancelled hold never request audio; duplicate holds create one str
   assert.equal(stats.requested, 0)
   assert.equal(c.suppressClick, false)
   c.begin(); c.cancel(); t.mock.timers.tick(1000)
-  assert.equal(stats.created, 0)
+  assert.equal(stats.created, 2)
+  assert.equal(stats.closed, 2)
   c.begin(); c.begin(); t.mock.timers.tick(600); await flush()
   assert.equal(c.state, 'calibrating'); assert.equal(c.suppressClick, true)
-  assert.equal(stats.requested, 1); assert.equal(stats.created, 1)
+  assert.equal(stats.requested, 1); assert.equal(stats.created, 3)
   c.cancel(); c.cancel()
-  assert.equal(stats.closed, 1); assert.equal(stats.stopped, 1); assert.equal(stats.disconnected, 2)
+  assert.equal(stats.closed, 3); assert.equal(stats.stopped, 1); assert.equal(stats.disconnected, 2)
   assert.equal(c.state, 'idle')
 })
 
@@ -200,4 +201,49 @@ test('a blow during calibration recovers sensitivity after the first quiet inter
   assert.ok(detector.baseline < 0.01)
   for (let i = 0; i < 30; i++) detector.update(0.08, 20)
   assert.equal(detector.intensity, 1)
+})
+
+
+test('audio context starts during the touch gesture, before the hold timer requests capture', async t => {
+  const { stats } = audioFixture(t)
+  const c = new CartridgeBlowController(() => {}, () => true)
+  t.after(() => c.cancel())
+  c.begin()
+  assert.equal(stats.created, 1)
+  assert.equal(stats.resumed, 1)
+  assert.equal(stats.requested, 0)
+  // Simulate a platform that forbids constructing AudioContext outside input.
+  window.AudioContext = class { constructor() { throw new Error('NotAllowedError') } }
+  t.mock.timers.tick(BLOW.LONG_PRESS_DURATION)
+  await flush()
+  assert.equal(c.state, 'calibrating')
+  assert.equal(stats.requested, 1)
+  assert.equal(stats.created, 1)
+})
+
+
+test('Safari interruptions preserve capture and native touchend can unlock blocked audio', async t => {
+  const { stats } = audioFixture(t)
+  const c = new CartridgeBlowController(() => {}, () => true)
+  t.after(() => c.cancel())
+  c.begin(); t.mock.timers.tick(BLOW.LONG_PRESS_DURATION); await flush()
+  let now = c.enteredAt
+  for (let i = 0; i < 30; i++) c.sample(now += 20)
+  const context = stats.context
+  const resume = context.resume.bind(context)
+  context.resume = () => Promise.reject(Object.assign(new Error('Gesture required'), { name: 'NotAllowedError' }))
+  context.state = 'interrupted'
+  context.dispatchEvent(new Event('statechange'))
+  await flush()
+  c.sample(now += 20)
+  assert.equal(c.state, 'listening')
+  assert.equal(stats.stopped, 0)
+  context.resume = resume
+  c.resumeAudio() // Native touchend, even if pointer tracking was cancelled.
+  await flush()
+  stats.amplitude = 0.15
+  for (let i = 0; i < 30; i++) c.sample(now += 20)
+  assert.equal(c.state, 'blowing')
+  assert.equal(c.detector.intensity, 1)
+  assert.equal(stats.requested, 1)
 })

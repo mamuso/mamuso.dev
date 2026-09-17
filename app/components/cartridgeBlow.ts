@@ -98,6 +98,15 @@ export class CartridgeBlowController {
     this.suppressClick = false
     if (this.state !== 'idle' || microphoneOwner || !this.eligible()) return
     this.state = 'longPress'
+    try {
+      // WebKit requires creation/resume inside the trusted touch event, not the
+      // long-press timer. This starts no capture and requests no permission.
+      const Audio = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+      if (!Audio) throw new Error('Web Audio unavailable')
+      const context = this.context = new Audio()
+      context.addEventListener('statechange', this.audioStateChanged)
+      this.resumeAudio()
+    } catch { this.cancel(); return }
     this.timer = setTimeout(() => {
       if (!this.eligible()) { this.cancel(); return }
       this.state = 'armed'
@@ -108,12 +117,24 @@ export class CartridgeBlowController {
 
   release() {
     if (this.state === 'longPress' || this.state === 'armed') this.cancel()
-    // Safari can require a fresh trusted pointerup to resume a context created
-    // after the hold timer. Never create another context or another stream here.
+    this.resumeAudio()
+  }
+
+  // Called from native touchend as well as pointerup: iOS can require the
+  // trusted touch event even when the permission prompt cancelled the pointer.
+  resumeAudio = () => {
     const context = this.context
-    if (context?.state === 'suspended') void context.resume().catch(() => {
-      if (this.context === context) this.cancel()
+    if (!context || context.state === 'closed' || context.state === 'running') return
+    void context.resume().catch(error => {
+      // A gesture-blocked context can still be unlocked on the next touchend.
+      if (this.context === context && error?.name !== 'NotAllowedError') this.cancel()
     })
+  }
+
+  private audioStateChanged = () => {
+    if (this.context?.state === 'closed') { this.cancel(); return }
+    this.resumeAudio()
+    this.wake()
   }
 
   cancelPointer() {
@@ -156,10 +177,8 @@ export class CartridgeBlowController {
     this.suppressClick = true
     this.deadline = setTimeout(() => this.cancel(), BLOW.PERMISSION_TIMEOUT)
     try {
-      const Audio = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
-      if (!Audio) throw new Error('Web Audio unavailable')
-      const context = this.context = new Audio()
-      void context.resume().catch(() => { if (generation === this.generation) this.cancel() })
+      const context = this.context
+      if (!context || context.state === 'closed') throw new Error('Web Audio unavailable')
       this.pending = true
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
@@ -184,9 +203,7 @@ export class CartridgeBlowController {
       this.state = 'calibrating'
       // Granting capture can suspend the context again on mobile. Resume with
       // the stream connected; the earlier pre-permission attempt is not enough.
-      if (context.state !== 'running') void context.resume().catch(() => {
-        if (generation === this.generation) this.cancel()
-      })
+      this.resumeAudio()
       this.wake()
     } catch {
       this.pending = false
@@ -201,7 +218,8 @@ export class CartridgeBlowController {
     if (!this.analyser || !this.samples || !this.context) return
     if (!this.eligible() || this.context.state === 'closed') { this.cancel(); return }
     if (this.context.state !== 'running') {
-      if (this.detector.elapsed > 0) this.cancel()
+      this.lastSample = now
+      this.detector.intensity = 0
       return
     }
     try {
@@ -237,6 +255,7 @@ export class CartridgeBlowController {
       track.removeEventListener('ended', this.audioEnded)
       track.stop()
     })
+    this.context?.removeEventListener('statechange', this.audioStateChanged)
     if (this.context && this.context.state !== 'closed') void this.context.close().catch(() => {})
     this.context = null
     this.stream = null

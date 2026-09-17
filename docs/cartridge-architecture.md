@@ -95,6 +95,12 @@ canvas does not reset the mode before its cartridge click handler can handle exi
 Permission-dialog touch cancellation preserves the pending request; hiding or leaving
 the page still cancels it. Capture requests disable echo cancellation, noise suppression
 and automatic gain control where supported, and resume audio again after permission.
+The audio context is created and resumed during the original touch event; the
+long-press timer only requests capture. Short or cancelled touches close the
+unused context without requesting microphone permission. Native `touchend` also
+resumes the context when a permission prompt has cleared pointer tracking.
+Temporary Safari audio interruptions preserve the active mode and resume on
+state changes or touch; hiding the page still releases all resources.
 
 Sensitivity and timing constants live in `BLOW`. The detector smooths RMS,
 calibrates ambient energy for 400 ms and combines an ambient ratio with a minimum
