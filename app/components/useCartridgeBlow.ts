@@ -40,6 +40,11 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
     const up = (event: PointerEvent) => {
       if (event.pointerId === pointer.current?.id) { current.release(); pointer.current = null }
     }
+    const cancelPointer = (event: PointerEvent) => {
+      if (event.pointerId !== pointer.current?.id) return
+      pointer.current = null
+      if (current.cancelPointer()) reset()
+    }
     const down = (event: PointerEvent) => {
       current.suppressClick = false
       if (event.target !== gl.domElement || pointer.current && pointer.current.id !== event.pointerId) reset()
@@ -62,7 +67,7 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
     window.addEventListener('pointerdown', down, true)
     window.addEventListener('pointermove', move, true)
     window.addEventListener('pointerup', up, true)
-    window.addEventListener('pointercancel', reset, true)
+    window.addEventListener('pointercancel', cancelPointer, true)
     window.addEventListener('scroll', reset, true)
     window.addEventListener('pagehide', reset)
     window.addEventListener('blur', blur)
@@ -79,7 +84,7 @@ export function useCartridgeBlow(isOpen: boolean, settled: RefObject<boolean>, s
       window.removeEventListener('pointerdown', down, true)
       window.removeEventListener('pointermove', move, true)
       window.removeEventListener('pointerup', up, true)
-      window.removeEventListener('pointercancel', reset, true)
+      window.removeEventListener('pointercancel', cancelPointer, true)
       window.removeEventListener('scroll', reset, true)
       window.removeEventListener('pagehide', reset)
       window.removeEventListener('blur', blur)

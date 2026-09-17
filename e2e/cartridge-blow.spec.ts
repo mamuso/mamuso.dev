@@ -7,7 +7,7 @@ test.use({ trace: { mode: 'retain-on-failure', screenshots: false } })
 
 declare global {
   interface Window {
-    blowTest: { requests: number; closed: number; stopped: number; samples: number; amplitude: number; lastPointerDownAt: number; stoppedAtPointerDown: number; closedAt: number }
+    blowTest: { requests: number; closed: number; stopped: number; samples: number; amplitude: number; lastPointerDownAt: number; stoppedAtPointerDown: number; closedAt: number; grant?: () => void }
   }
 }
 
@@ -25,13 +25,18 @@ test('secret touch hold stays active through silence and exits on tap', async ({
     }, true)
     const track = new EventTarget() as EventTarget & { stop: () => void }
     track.stop = () => { stats.stopped++ }
+    let context: TestAudio
     Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { value: async () => {
       stats.requests++
+      if (stats.requests === 1) await new Promise<void>(resolve => {
+        window.blowTest.grant = () => { context.state = 'suspended'; resolve() }
+      })
       return { getTracks: () => [track] }
     } })
     class TestAudio {
       state = 'running'
-      resume() { return Promise.resolve() }
+      constructor() { context = this }
+      resume() { this.state = 'running'; return Promise.resolve() }
       close() {
         stats.closedAt = performance.now(); stats.closed++; this.state = 'closed'
         // Reproduce a phone that cannot present a frame during audio teardown.
@@ -80,7 +85,10 @@ test('secret touch hold stays active through silence and exits on tap', async ({
     return
   }
   await expect.poll(() => page.evaluate(() => window.blowTest.requests), { timeout: 60_000 }).toBe(1)
-  await end()
+  // A native permission prompt takes over the held touch on the first request.
+  await session.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] })
+  expect(await page.evaluate(() => window.blowTest.stopped)).toBe(0)
+  await page.evaluate(() => window.blowTest.grant?.())
   await expect(control).toHaveAttribute('aria-expanded', 'true')
   await page.waitForTimeout(700)
   await expect.poll(() => page.evaluate(() => window.blowTest.samples)).toBeGreaterThanOrEqual(10)

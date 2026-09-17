@@ -92,9 +92,14 @@ RAF or React state updates. Pointer movement/up/cancel listeners cover leaving
 the hitbox; vertical page scrolling remains enabled. Pointerdown on the same
 canvas does not reset the mode before its cartridge click handler can handle exit.
 
+Permission-dialog touch cancellation preserves the pending request; hiding or leaving
+the page still cancels it. Capture requests disable echo cancellation, noise suppression
+and automatic gain control where supported, and resume audio again after permission.
+
 Sensitivity and timing constants live in `BLOW`. The detector smooths RMS,
 calibrates ambient energy for 400 ms and combines an ambient ratio with a minimum
-energy and margin. Energy drives wind intensity continuously; no duration or
+energy and margin. After calibration, quieter input lowers the baseline so blowing
+during startup cannot permanently reduce sensitivity. Energy drives wind intensity continuously; no duration or
 silence threshold completes the interaction. This is an energy heuristic, not
 speech recognition: other loud sounds also shake the cartridge.
 

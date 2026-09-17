@@ -35,14 +35,14 @@ test('calibration adapts to ambient noise, silence has a floor, stalled frames c
 
 function audioFixture(t, getStream) {
   t.mock.timers.enable({ apis: ['setTimeout'] })
-  const stats = { requested: 0, created: 0, closed: 0, stopped: 0, disconnected: 0, amplitude: 0.006 }
+  const stats = { requested: 0, created: 0, closed: 0, stopped: 0, disconnected: 0, resumed: 0, constraints: null, context: null, amplitude: 0.006 }
   const track = new EventTarget()
   track.stop = () => stats.stopped++
   const stream = { getTracks: () => [track] }
   class Audio {
     state = 'running'
-    constructor() { stats.created++ }
-    resume() { return Promise.resolve() }
+    constructor() { stats.created++; stats.context = this }
+    resume() { stats.resumed++; this.state = 'running'; return Promise.resolve() }
     close() { this.state = 'closed'; stats.closed++; return Promise.resolve() }
     createMediaStreamSource() { return { connect() {}, disconnect() { stats.disconnected++ } } }
     createAnalyser() { return { getFloatTimeDomainData(buffer) { buffer.fill(stats.amplitude) }, disconnect() { stats.disconnected++ } } }
@@ -50,7 +50,7 @@ function audioFixture(t, getStream) {
   const oldWindow = Object.getOwnPropertyDescriptor(globalThis, 'window')
   const oldNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator')
   Object.defineProperty(globalThis, 'window', { configurable: true, value: { AudioContext: Audio } })
-  Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { mediaDevices: { getUserMedia() { stats.requested++; return getStream ? getStream(stream) : Promise.resolve(stream) } } } })
+  Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { mediaDevices: { getUserMedia(constraints) { stats.constraints = constraints; stats.requested++; return getStream ? getStream(stream) : Promise.resolve(stream) } } } })
   t.after(() => {
     if (oldWindow) Object.defineProperty(globalThis, 'window', oldWindow); else delete globalThis.window
     Object.defineProperty(globalThis, 'navigator', oldNavigator)
@@ -167,4 +167,37 @@ test('horizontal intent starts the animated exit and never resets an in-flight r
   c.returnToOpen(1100)
   assert.equal(c.returnedAt, 1000); assert.equal(c.state, 'returning')
   c.finish()
+})
+
+
+test('permission-dialog pointer cancellation preserves first activation and resumes capture after grant', async t => {
+  let grant
+  const { stats } = audioFixture(t, stream => new Promise(resolve => { grant = () => resolve(stream) }))
+  const c = new CartridgeBlowController(() => {}, () => true)
+  t.after(() => c.cancel())
+  c.begin(); t.mock.timers.tick(BLOW.LONG_PRESS_DURATION)
+  assert.equal(c.state, 'requestingPermission')
+  assert.equal(c.cancelPointer(), false)
+  assert.equal(c.state, 'requestingPermission')
+  stats.context.state = 'suspended'
+  grant(); await flush()
+  assert.equal(c.state, 'calibrating')
+  assert.equal(stats.context.state, 'running')
+  assert.equal(stats.resumed, 2)
+  assert.equal(stats.stopped, 0)
+  assert.deepEqual(stats.constraints.audio, { echoCancellation: false, noiseSuppression: false, autoGainControl: false })
+  let now = c.enteredAt
+  for (let i = 0; i < 30; i++) c.sample(now += 20)
+  stats.amplitude = 0.15
+  for (let i = 0; i < 30; i++) c.sample(now += 20)
+  assert.equal(c.state, 'blowing')
+  assert.equal(c.detector.intensity, 1)
+})
+
+test('a blow during calibration recovers sensitivity after the first quiet interval', () => {
+  const detector = calibrate(0.2)
+  for (let i = 0; i < 100; i++) detector.update(0.006, 20)
+  assert.ok(detector.baseline < 0.01)
+  for (let i = 0; i < 30; i++) detector.update(0.08, 20)
+  assert.equal(detector.intensity, 1)
 })

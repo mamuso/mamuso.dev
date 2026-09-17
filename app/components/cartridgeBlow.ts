@@ -6,6 +6,7 @@ export const BLOW = {
   BLOW_THRESHOLD: 3.5,
   BLOW_SMOOTHING: 65,
   BASELINE_FLOOR: 0.003,
+  BASELINE_RECOVERY: 350,
   MIN_ENERGY: 0.025,
   ENERGY_MARGIN: 0.018,
   FULL_INTENSITY_RATIO: 2.2,
@@ -48,6 +49,11 @@ export class BlowDetector {
       this.baseline += (this.energy - this.baseline) * smoothing
       this.threshold = Math.max(BLOW.MIN_ENERGY, this.baseline * BLOW.BLOW_THRESHOLD, this.baseline + BLOW.ENERGY_MARGIN)
       return
+    }
+    // A blow during startup must not become the noise floor for the whole session.
+    // Only follow quieter input, so sustained blowing cannot desensitize the mode.
+    if (this.energy < this.baseline) {
+      this.baseline += (this.energy - this.baseline) * (1 - Math.exp(-dt / BLOW.BASELINE_RECOVERY))
     }
     this.baseline = Math.max(BLOW.BASELINE_FLOOR, this.baseline)
     this.threshold = Math.max(BLOW.MIN_ENERGY, this.baseline * BLOW.BLOW_THRESHOLD, this.baseline + BLOW.ENERGY_MARGIN)
@@ -110,6 +116,14 @@ export class CartridgeBlowController {
     })
   }
 
+  cancelPointer() {
+    // Native permission UI can cancel the held touch without cancelling consent.
+    // Visibility changes, navigation and explicit cancellation still dispose audio.
+    if (this.state === 'requestingPermission') return false
+    this.cancel()
+    return true
+  }
+
   advance() {
     if (this.state !== 'armed') return
     if (!this.eligible()) { this.cancel(); return }
@@ -147,7 +161,9 @@ export class CartridgeBlowController {
       const context = this.context = new Audio()
       void context.resume().catch(() => { if (generation === this.generation) this.cancel() })
       this.pending = true
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+      })
       this.pending = false
       if (generation !== this.generation || !this.eligible()) {
         stream.getTracks().forEach(track => track.stop())
@@ -166,6 +182,11 @@ export class CartridgeBlowController {
       this.detector = new BlowDetector()
       this.enteredAt = this.lastSample = performance.now()
       this.state = 'calibrating'
+      // Granting capture can suspend the context again on mobile. Resume with
+      // the stream connected; the earlier pre-permission attempt is not enough.
+      if (context.state !== 'running') void context.resume().catch(() => {
+        if (generation === this.generation) this.cancel()
+      })
       this.wake()
     } catch {
       this.pending = false
