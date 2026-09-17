@@ -1,3 +1,6 @@
+import type { PostSummary } from '@/lib/types'
+import BlankNoteYear from '@/app/components/BlankNoteYear'
+import { groupNoteYears } from '@/lib/note-years'
 import { homeLink } from '@/app/styles/homeLink.stylex'
 import { pageMetadata } from '@/lib/metadata'
 import Link from 'next/link'
@@ -17,7 +20,11 @@ export const metadata = pageMetadata({ title: 'mamuso - manuel muñoz solera', p
 export const revalidate = 180
 
 export default function Home() {
-  const notes = getNotePosts(['title', 'date', 'slug']).slice(0, 6)
+  const feed = groupNoteYears(getNotePosts(['title', 'date', 'slug']))
+    .flatMap<{ year: number, post: PostSummary | null }>(({ year, notes }) => notes.length
+      ? notes.map(post => ({ year, post }))
+      : [{ year, post: null }])
+    .slice(0, 6)
 
   return (
     <>
@@ -41,9 +48,9 @@ export default function Home() {
           <section aria-labelledby="home-notes" {...stylex.props(styles.module)}>
             <h2 id="home-notes" {...stylex.props(styles.heading, styles.rule)}>Feed</h2>
             <ul {...stylex.props(layout.list)}>
-              {notes.map(note => (
-                <li key={note.slug} {...stylex.props(styles.rule)}>
-                  <PostHome post={note} />
+              {feed.map(({ year, post }) => (
+                <li key={post?.slug ?? year} {...stylex.props(styles.rule)}>
+                  {post ? <PostHome post={post} /> : <BlankNoteYear year={year} />}
                 </li>
               ))}
             </ul>

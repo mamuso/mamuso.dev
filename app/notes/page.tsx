@@ -1,4 +1,6 @@
-import { editorialYear } from '@/lib/editorial-date'
+import { groupNoteYears } from '@/lib/note-years'
+import BlankNoteYear from '@/app/components/BlankNoteYear'
+import { colors } from '@/app/styles/tokens.stylex'
 import { pageMetadata } from '@/lib/metadata'
 import { BLOG_TITLE } from '@/lib/constants'
 import { getNotePosts } from '@/lib/api'
@@ -13,14 +15,7 @@ export const metadata = pageMetadata({ title: `Notes – ${BLOG_TITLE}`, path: '
 const allPosts: PostSummary[] = getNotePosts(['title', 'date', 'slug', 'category'])
 
 export default function Posts() {
-  const postsByYear: { [key: number]: PostSummary[] } = allPosts.reduce((acc: { [key: number]: PostSummary[] }, post) => {
-    const year = editorialYear(post.date)
-    if (!acc[year]) {
-      acc[year] = []
-    }
-    acc[year].push(post)
-    return acc
-  }, {} as { [key: number]: PostSummary[] })
+  const groups = groupNoteYears(allPosts)
 
   return (
     <section {...stylex.props(layout.section, styles.section)}>
@@ -30,20 +25,24 @@ export default function Posts() {
           <Link href="/notes/1" {...stylex.props(typography.mutedLink)}>Expand all notes ↓</Link>
         </p>
       </header>
-      {Object.entries(postsByYear)
-        .reverse()
-        .map(([year, posts]) => (
+      <div>
+        {groups.map(({ year, notes }) => notes.length ? (
           <div key={year} {...stylex.props(layout.stack, styles.yearGroup)}>
             <h3 {...stylex.props(typography.heading, typography.muted)}>{year}</h3>
             <ul {...stylex.props(layout.list, layout.stack)}>
-              {posts.map((post) => (
+              {notes.map(post => (
                 <li key={post.slug}>
                   <PostHome post={post} />
                 </li>
               ))}
             </ul>
           </div>
+        ) : (
+          <div key={year} {...stylex.props(styles.blankYear)}>
+            <BlankNoteYear year={year} />
+          </div>
         ))}
+      </div>
     </section>
   )
 }
@@ -67,7 +66,14 @@ const styles = stylex.create({
   copy: {
     marginBlock: 0,
   },
+  blankYear: {
+    borderBlockEndColor: colors.rule,
+    borderBlockEndStyle: 'solid',
+    borderBlockEndWidth: 0.5,
+  },
   yearGroup: {
+    marginBlockStart: { default: 32, ':first-child': 0 },
+    marginBlockEnd: 32,
     gap: 32,
   },
 })
