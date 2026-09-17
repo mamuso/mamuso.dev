@@ -1,6 +1,6 @@
 import { groupNoteYears } from '@/lib/note-years'
 import BlankNoteYear from '@/app/components/BlankNoteYear'
-import { colors } from '@/app/styles/tokens.stylex'
+import { colors } from '../styles/tokens.stylex'
 import { pageMetadata } from '@/lib/metadata'
 import { BLOG_TITLE } from '@/lib/constants'
 import { getNotePosts } from '@/lib/api'
