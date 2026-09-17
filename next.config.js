@@ -19,6 +19,11 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: '/notes/:page(\\d+)',
+        destination: '/notes',
+        permanent: true,
+      },
+      {
         source: '/note/allpress-coffee-tokyo',
         destination: '/note/allpress-espresso-tokyo-2',
         permanent: true,

@@ -50,7 +50,12 @@ test('production pages publish canonical metadata and working social images', { 
   const { posts, bySlug } = readPostIndex()
   const notes = posts.filter((post) => post.data.category !== 'photo')
   const stacks = [...new Set(posts.map((post) => post.data.photoStack).filter(Boolean))]
-  const pages = ['/', '/photos', '/notes', ...Array.from({ length: Math.ceil(notes.length / 20) }, (_, i) => `/notes/${i + 1}`)]
+  const pages = ['/', '/photos', '/notes']
+  for (let page = 1; page <= Math.ceil(notes.length / 20); page++) {
+    const response = await fetch(`${origin}/notes/${page}`, { redirect: 'manual' })
+    assert.equal(response.status, 308)
+    assert.equal(new URL(response.headers.get('location'), origin).pathname, '/notes')
+  }
   const entries = [
     ...pages.map((path) => ({ path })),
     ...posts.map((post) => ({ path: `/note/${post.slug}`, photo: post.data.category === 'photo' ? post.data.basename : undefined })),

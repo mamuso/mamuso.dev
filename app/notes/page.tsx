@@ -5,7 +5,6 @@ import { pageMetadata } from '@/lib/metadata'
 import { BLOG_TITLE } from '@/lib/constants'
 import { getNotePosts } from '@/lib/api'
 import PostHome from '@/app/components/PostHome'
-import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { layout } from '@/app/styles/site'
 
@@ -19,20 +18,24 @@ export default function Posts() {
   return (
     <section {...stylex.props(layout.section, styles.section)}>
       <header {...stylex.props(styles.header, styles.rule)}>
-        <h2 {...stylex.props(styles.heading)}>Probably not thinking about you</h2>
-        <Link href="/notes/1" {...stylex.props(styles.expand)}>Expand all notes ↓</Link>
+        <h2 {...stylex.props(styles.heading)}>Feed</h2>
       </header>
-      <ul {...stylex.props(layout.list)}>
-        {groups.flatMap(({ year, notes }) => notes.length ? notes.map(post => (
-          <li key={post.slug} {...stylex.props(styles.rule)}>
-            <PostHome post={post} />
-          </li>
-        )) : [
-          <li key={year} {...stylex.props(styles.rule)}>
-            <BlankNoteYear year={year} />
-          </li>,
-        ])}
-      </ul>
+      {groups.map(({ year, notes }) => notes.length ? (
+        <section key={year} aria-labelledby={`notes-${year}`} {...stylex.props(styles.yearGroup)}>
+          <h3 id={`notes-${year}`} {...stylex.props(styles.heading, styles.yearHeading, styles.rule)}>{year}</h3>
+          <ul {...stylex.props(layout.list)}>
+            {notes.map(post => (
+              <li key={post.slug} {...stylex.props(styles.rule)}>
+                <PostHome post={post} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : (
+        <div key={year} {...stylex.props(styles.rule)}>
+          <BlankNoteYear year={year} />
+        </div>
+      ))}
     </section>
   )
 }
@@ -61,17 +64,11 @@ const styles = stylex.create({
     lineHeight: '24px',
     margin: 0,
   },
-  expand: {
-    color: {
-      default: 'rgba(23, 24, 27, 0.4)',
-      ':hover': 'rgba(23, 24, 27, 0.6)',
-      ':focus-visible': 'rgba(23, 24, 27, 0.6)',
-    },
-    textDecorationLine: { default: 'none', ':focus-visible': 'underline' },
-    textUnderlineOffset: 3,
-    transitionProperty: 'color',
-    transitionDuration: { default: '140ms', '@media (prefers-reduced-motion: reduce)': '0ms' },
-    transitionTimingFunction: 'ease',
+  yearGroup: {
+    marginBlockStart: 32,
+  },
+  yearHeading: {
+    paddingBlock: 4,
   },
   rule: {
     borderBlockEndColor: colors.rule,

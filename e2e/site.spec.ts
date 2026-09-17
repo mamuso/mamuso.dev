@@ -22,7 +22,9 @@ test('homepage loads its scene and the name remains interactive', async ({ page 
 
 test('notes archive and individual writing remain navigable', async ({ page }) => {
   await page.goto('/notes')
-  await expect(page.getByRole('heading', { name: 'Probably not thinking about you', exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Feed', exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: String(Number(note.data.date.slice(0, 4))), exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Expand all notes ↓' })).toHaveCount(0)
   await page.locator(`main a[href="/note/${note.slug}"]`).click()
   await expect(page).toHaveURL(`/note/${note.slug}`)
   await expect(page.locator('main h2')).toHaveText(note.data.title)

@@ -56,7 +56,7 @@ build also runs the content pipeline and updates the submodule checkout.
 
 - `app/page.tsx`: homepage introduction and cartridge scene through `HomeContent`; the journal section is currently disabled by `SHOW_JOURNAL = false`.
 - `app/notes/page.tsx`: notes archive grouped by year.
-- `app/notes/[page]/page.tsx`: full notes, 20 per page.
+- Legacy numeric `/notes/<page>` URLs permanently redirect to `/notes`; the expanded paginated view has been removed.
 - `app/note/[slug]/page.tsx`: individual note or photo, with canonical redirects.
 - `app/photos/page.tsx`: photo gallery.
 - `app/og/[title]/[description]/opengraph-image.tsx`: generated social image.
@@ -67,10 +67,8 @@ legacy `/posts/:path*` and `/post/:slug` URLs to those routes. React Strict Mode
 enabled in that config. Resource effects must tolerate development setup/cleanup replay.
 
 The `/notes` archive holds its post list at module scope: restart the dev server
-after Markdown changes to refresh it. The homepage's optional journal, paginated
-notes, individual notes, and photos read inside their render functions. This does
-not guarantee production reads on every request: notes and pagination have
-`generateStaticParams`, and published content changes need a rebuild. Rerun
+after Markdown changes to refresh it. The homepage feed, individual notes, and photos read inside their render functions. This does
+not guarantee production reads on every request: individual notes have `generateStaticParams`, and published content changes need a rebuild. Rerun
 `pnpm run assets` after image changes and `pnpm run rss` to preview feed changes.
 
 ## Styling
