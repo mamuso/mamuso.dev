@@ -1,18 +1,34 @@
+'use client'
+
+import { useState } from 'react'
 import { homeLink } from '../styles/homeLink.stylex'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { homeLinks } from '../styles/homeLinks'
 
 export default function MoreLink({ href, label }: { href: string, label: string }) {
+  const [elongated, setElongated] = useState(false)
+  const chooseVariation = () => setElongated(Math.random() < 0.5)
+
   return (
-    <Link href={href} aria-label={label} {...stylex.props(homeLink, styles.link)}>
+    <Link
+      href={href}
+      aria-label={label}
+      onMouseEnter={chooseVariation}
+      onFocus={event => {
+        if (!event.currentTarget.matches(':hover')) chooseVariation()
+      }}
+      {...stylex.props(homeLink, styles.link)}
+    >
       <span aria-hidden="true" {...stylex.props(homeLinks.secondary, styles.words)}>
-        More
-        {['More', 'More', 'More', 'More', '›'].map((word, index) => (
+        {elongated ? 'Mo' : 'More'}
+        {[0, 1, 2, 3].map(index => (
           <span key={index} {...stylex.props(styles.word, styles.delay(index))}>
-            {'\u00a0'}{word}
+            {elongated ? 'oo' : '\u00a0More'}
           </span>
         ))}
+        {elongated && <span>re</span>}
+        <span {...stylex.props(styles.word, styles.delay(4))}>{'\u00a0›'}</span>
       </span>
     </Link>
   )
@@ -21,6 +37,8 @@ export default function MoreLink({ href, label }: { href: string, label: string 
 const styles = stylex.create({
   link: {
     display: 'inline-block',
+    whiteSpace: 'nowrap',
+    maxWidth: '100%',
     paddingBlock: 4,
     textDecorationLine: { default: 'none', ':focus-visible': 'underline' },
     textUnderlineOffset: 3,
