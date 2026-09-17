@@ -4,76 +4,78 @@ import { colors } from '../styles/tokens.stylex'
 import { pageMetadata } from '@/lib/metadata'
 import { BLOG_TITLE } from '@/lib/constants'
 import { getNotePosts } from '@/lib/api'
-import { PostSummary } from '@/lib/types'
 import PostHome from '@/app/components/PostHome'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
-import { layout, typography } from '@/app/styles/site'
+import { layout } from '@/app/styles/site'
 
 export const metadata = pageMetadata({ title: `Notes – ${BLOG_TITLE}`, path: '/notes' })
 
-const allPosts: PostSummary[] = getNotePosts(['title', 'date', 'slug', 'category'])
+const allPosts = getNotePosts(['title', 'date', 'slug', 'category'])
 
 export default function Posts() {
   const groups = groupNoteYears(allPosts)
 
   return (
     <section {...stylex.props(layout.section, styles.section)}>
-      <header {...stylex.props(styles.header)}>
-        <h2 {...stylex.props(typography.display, typography.muted, styles.heading)}>Probably not thinking about you</h2>
-        <p {...stylex.props(styles.copy)}>
-          <Link href="/notes/1" {...stylex.props(typography.mutedLink)}>Expand all notes ↓</Link>
-        </p>
+      <header {...stylex.props(styles.header, styles.rule)}>
+        <h2 {...stylex.props(styles.heading)}>Probably not thinking about you</h2>
+        <Link href="/notes/1" {...stylex.props(styles.expand)}>Expand all notes ↓</Link>
       </header>
-      <div>
-        {groups.map(({ year, notes }) => notes.length ? (
-          <div key={year} {...stylex.props(layout.stack, styles.yearGroup)}>
-            <h3 {...stylex.props(typography.heading, typography.muted)}>{year}</h3>
-            <ul {...stylex.props(layout.list, layout.stack)}>
-              {notes.map(post => (
-                <li key={post.slug}>
-                  <PostHome post={post} />
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : (
-          <div key={year} {...stylex.props(styles.blankYear)}>
+      <ul {...stylex.props(layout.list)}>
+        {groups.flatMap(({ year, notes }) => notes.length ? notes.map(post => (
+          <li key={post.slug} {...stylex.props(styles.rule)}>
+            <PostHome post={post} />
+          </li>
+        )) : [
+          <li key={year} {...stylex.props(styles.rule)}>
             <BlankNoteYear year={year} />
-          </div>
-        ))}
-      </div>
+          </li>,
+        ])}
+      </ul>
     </section>
   )
 }
 
 const styles = stylex.create({
   section: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 32,
+    color: '#17181B',
+    fontSize: 16,
+    fontWeight: 400,
+    letterSpacing: '-0.005em',
+    lineHeight: '22px',
   },
   header: {
     alignItems: 'baseline',
     display: 'flex',
     justifyContent: 'space-between',
     flexWrap: 'wrap',
-    gap: 16,
+    columnGap: 16,
+    rowGap: 4,
+    paddingBlock: 4,
   },
   heading: {
+    fontSize: 18,
     fontWeight: 400,
+    letterSpacing: '-0.005em',
+    lineHeight: '24px',
+    margin: 0,
   },
-  copy: {
-    marginBlock: 0,
+  expand: {
+    color: {
+      default: 'rgba(23, 24, 27, 0.4)',
+      ':hover': 'rgba(23, 24, 27, 0.6)',
+      ':focus-visible': 'rgba(23, 24, 27, 0.6)',
+    },
+    textDecorationLine: { default: 'none', ':focus-visible': 'underline' },
+    textUnderlineOffset: 3,
+    transitionProperty: 'color',
+    transitionDuration: { default: '140ms', '@media (prefers-reduced-motion: reduce)': '0ms' },
+    transitionTimingFunction: 'ease',
   },
-  blankYear: {
+  rule: {
     borderBlockEndColor: colors.rule,
     borderBlockEndStyle: 'solid',
     borderBlockEndWidth: 0.5,
-  },
-  yearGroup: {
-    marginBlockStart: { default: 32, ':first-child': 0 },
-    marginBlockEnd: 32,
-    gap: 32,
   },
 })
