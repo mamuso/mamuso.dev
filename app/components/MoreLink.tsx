@@ -7,9 +7,9 @@ import * as stylex from '@stylexjs/stylex'
 import { homeLinks } from '../styles/homeLinks'
 
 export default function MoreLink({ href, label }: { href: string, label: string }) {
-  const [extraOs, setExtraOs] = useState([0, 0, 0, 0, 0])
+  const [extraOs, setExtraOs] = useState([0, 0, 0, 0])
   const chooseVariation = (link: HTMLAnchorElement) => {
-    const counts = Array.from({ length: 5 }, () => Math.floor(Math.random() * 6))
+    const counts = Array.from({ length: 4 }, () => Math.floor(Math.random() * 6))
     const context = document.createElement('canvas').getContext('2d')
     if (context) {
       const style = getComputedStyle(link)
@@ -17,7 +17,7 @@ export default function MoreLink({ href, label }: { href: string, label: string 
       const available = link.parentElement?.clientWidth ?? window.innerWidth
       const spacing = parseFloat(style.letterSpacing) || 0
       const width = () => {
-        const text = counts.map(count => `M${'o'.repeat(count + 1)}re`).join(' ') + ' ›'
+        const text = 'More ' + counts.map(count => `M${'o'.repeat(count + 1)}re`).join(' ') + ' ›'
         return context.measureText(text).width + text.length * spacing
       }
       // Keep all five words; trim only extra letters when the column is narrow.
@@ -40,8 +40,8 @@ export default function MoreLink({ href, label }: { href: string, label: string 
       {...stylex.props(homeLink, styles.link)}
     >
       <span aria-hidden="true" {...stylex.props(homeLinks.secondary, styles.words)}>
-        Mo<span {...stylex.props(styles.word)}>{'o'.repeat(extraOs[0])}</span>re
-        {extraOs.slice(1).map((count, index) => (
+        More
+        {extraOs.map((count, index) => (
           <span key={index} {...stylex.props(styles.word, styles.delay(index))}>
             {'\u00a0'}M{'o'.repeat(count + 1)}re
           </span>
