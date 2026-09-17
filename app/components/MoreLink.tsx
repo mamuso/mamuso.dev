@@ -7,27 +7,45 @@ import * as stylex from '@stylexjs/stylex'
 import { homeLinks } from '../styles/homeLinks'
 
 export default function MoreLink({ href, label }: { href: string, label: string }) {
-  const [elongated, setElongated] = useState(false)
-  const chooseVariation = () => setElongated(Math.random() < 0.5)
+  const [extraOs, setExtraOs] = useState([0, 0, 0, 0, 0])
+  const chooseVariation = (link: HTMLAnchorElement) => {
+    const counts = Array.from({ length: 5 }, () => Math.floor(Math.random() * 6))
+    const context = document.createElement('canvas').getContext('2d')
+    if (context) {
+      const style = getComputedStyle(link)
+      context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`
+      const available = link.parentElement?.clientWidth ?? window.innerWidth
+      const spacing = parseFloat(style.letterSpacing) || 0
+      const width = () => {
+        const text = counts.map(count => `M${'o'.repeat(count + 1)}re`).join(' ') + ' ›'
+        return context.measureText(text).width + text.length * spacing
+      }
+      // Keep all five words; trim only extra letters when the column is narrow.
+      while (width() > available - 4 && counts.some(count => count > 0)) {
+        const longest = counts.indexOf(Math.max(...counts))
+        counts[longest] -= 1
+      }
+    }
+    setExtraOs(counts)
+  }
 
   return (
     <Link
       href={href}
       aria-label={label}
-      onMouseEnter={chooseVariation}
+      onMouseEnter={event => chooseVariation(event.currentTarget)}
       onFocus={event => {
-        if (!event.currentTarget.matches(':hover')) chooseVariation()
+        if (!event.currentTarget.matches(':hover')) chooseVariation(event.currentTarget)
       }}
       {...stylex.props(homeLink, styles.link)}
     >
       <span aria-hidden="true" {...stylex.props(homeLinks.secondary, styles.words)}>
-        {elongated ? 'Mo' : 'More'}
-        {[0, 1, 2, 3].map(index => (
+        Mo<span {...stylex.props(styles.word)}>{'o'.repeat(extraOs[0])}</span>re
+        {extraOs.slice(1).map((count, index) => (
           <span key={index} {...stylex.props(styles.word, styles.delay(index))}>
-            {elongated ? 'oo' : '\u00a0More'}
+            {'\u00a0'}M{'o'.repeat(count + 1)}re
           </span>
         ))}
-        {elongated && <span>re</span>}
         <span {...stylex.props(styles.word, styles.delay(4))}>{'\u00a0›'}</span>
       </span>
     </Link>
@@ -53,8 +71,8 @@ const styles = stylex.create({
     overflow: 'hidden',
     maxWidth: {
       default: 0,
-      [stylex.when.ancestor(':hover', homeLink)]: '3em',
-      [stylex.when.ancestor(':focus-visible', homeLink)]: '3em',
+      [stylex.when.ancestor(':hover', homeLink)]: '6em',
+      [stylex.when.ancestor(':focus-visible', homeLink)]: '6em',
     },
     opacity: {
       default: 0,
