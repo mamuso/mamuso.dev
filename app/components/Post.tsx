@@ -1,4 +1,5 @@
 import { PostDetail } from '@/lib/types'
+import type { ComponentProps } from 'react'
 import { formatPostDate, formatPostMonth } from '@/lib/editorial-date'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -52,7 +53,8 @@ export default function Post({ post, link = false, priority = false }: { post: P
       )}
       <div {...stylex.props(styles.content, isNoteDetail && styles.noteContent)}>
         {post.category === 'photo' && <PhotoMeta post={post} />}
-        <Markdown options={{ overrides: isNoteDetail ? noteMarkdownOverrides : markdownOverrides }} {...stylex.props(styles.markdown, isNoteDetail && styles.noteMarkdown)}>{post.content}</Markdown>
+        {/* Repository-authored notes include raw HTML video embeds. */}
+        <Markdown options={{ tagfilter: !isNoteDetail, overrides: isNoteDetail ? noteMarkdownOverrides : markdownOverrides }} {...stylex.props(styles.markdown, isNoteDetail && styles.noteMarkdown)}>{post.content}</Markdown>
       </div>
     </article>
   )
@@ -90,6 +92,13 @@ const styles = stylex.create({
   },
   noteImage: {
     marginBlockEnd: 16,
+  },
+  noteVideo: {
+    display: 'block',
+    width: '100%',
+    height: 'auto',
+    aspectRatio: '16 / 9',
+    borderWidth: 0,
   },
   noteMarkdown: {
     gap: 24,
@@ -186,6 +195,13 @@ const markdownOverrides = {
   pre: { props: stylex.props(styles.markdownBlock, styles.codeBlock) },
 }
 
+function NoteVideo({ src, title, ...props }: ComponentProps<'iframe'>) {
+  return (
+    <iframe {...props} src={src?.replaceAll('&amp;', '&')} title={title || 'Embedded video'}
+      {...stylex.props(styles.noteVideo)} />
+  )
+}
+
 const noteMarkdownOverrides = {
   ...markdownOverrides,
   h1: { props: stylex.props(typography.heading, styles.noteHeading, styles.noteHeadingLarge) },
@@ -201,4 +217,5 @@ const noteMarkdownOverrides = {
   blockquote: { props: stylex.props(typography.muted, styles.blockquote, styles.noteQuote) },
   hr: { props: stylex.props(styles.noteRule) },
   img: { props: stylex.props(styles.image) },
+  iframe: { component: NoteVideo },
 }
