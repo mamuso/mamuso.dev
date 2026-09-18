@@ -13,7 +13,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
   const [poses, setPoses] = useState(() => photos.map((_, index) => ({
     angle: index % 2 ? 1 : -1,
     layer: index + 1,
-    drop: 12,
+    drop: 6,
   })))
 
   function arrange() {
@@ -24,9 +24,9 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
     }
     const direction = Math.random() < 0.5 ? -1 : 1
     setPoses(photos.map((_, index) => ({
-      angle: (index % 2 ? -direction : direction) * (0.4 + Math.random() * 1.6),
+      angle: (index % 2 ? -direction : direction) * Math.random() * 3,
       layer: layers[index],
-      drop: 8 + Math.random() * 10,
+      drop: 4 + Math.random() * 6,
     })))
   }
 
@@ -41,7 +41,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
           <span key={photo.basename} data-home-photo
             {...stylex.props(styles.print, styles.pose(index, poses[index].angle, poses[index].layer, poses[index].drop))}>
             <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
-              alt="" draggable={false} sizes="72px" {...stylex.props(styles.image)} />
+              alt="" draggable={false} sizes="40px" {...stylex.props(styles.image)} />
           </span>
         ))}
       </span>
@@ -83,24 +83,19 @@ const styles = stylex.create({
     bottom: 0,
     display: 'block',
     boxSizing: 'border-box',
-    width: 'min(23%, 72px)',
-    padding: { default: 5, '@media (min-width: 480px)': 6 },
+    width: 44,
+    padding: 2,
     backgroundColor: colors.surface,
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.1)',
-    opacity: {
-      default: 0,
-      '@media (hover: hover)': { [stylex.when.ancestor(':hover', homeLink)]: 1 },
-      [stylex.when.ancestor(':focus-visible', homeLink)]: 1,
-    },
-    transitionProperty: 'transform, opacity',
+    transitionProperty: 'transform',
     transitionDuration: { default: '360ms', '@media (prefers-reduced-motion: reduce)': '0ms' },
     transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
   },
   pose: (index: number, angle: number, layer: number, drop: number) => ({
-    right: `${2 + index * 15}%`,
+    right: `calc(4px + min(${index * 32}px, ${index * 15}%))`,
     zIndex: layer,
     transform: {
-      default: `translateY(115%) rotate(${angle}deg)`,
+      default: `translateY(calc(100% + 20px)) rotate(${-angle}deg)`,
       '@media (hover: hover)': {
         [stylex.when.ancestor(':hover', homeLink)]: `translateY(${drop}px) rotate(${angle}deg)`,
       },
