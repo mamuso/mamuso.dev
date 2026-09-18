@@ -22,20 +22,22 @@ export default function Post({ post, link = false, priority = false }: { post: P
     )
   }
 
+  const isNoteDetail = !link && post.category !== 'photo'
+
   return (
-    <article {...stylex.props(layout.section, styles.article)}>
+    <article {...stylex.props(layout.section, styles.article, isNoteDetail && styles.note)}>
       {link ? (
         <h2 {...stylex.props(typography.heading)}>
           <Link href={`/note/${post.slug}`} {...stylex.props(typography.link)}>{post.title}</Link>
         </h2>
       ) : (
-        <h2 {...stylex.props(typography.heading)}>{post.title}</h2>
+        <h1 {...stylex.props(typography.heading, styles.noteTitle)}>{post.title}</h1>
       )}
-      <p {...stylex.props(typography.muted, styles.copy)}>
+      <p {...stylex.props(typography.muted, styles.copy, isNoteDetail && styles.noteDate)}>
         <time dateTime={post.date}>{formatPostDate(post.date, true)}</time>
       </p>
       {post.basename && (
-        <p {...stylex.props(styles.copy)}>
+        <p {...stylex.props(styles.copy, isNoteDetail && styles.noteImage)}>
           <PhotoTransition slug={post.category === 'photo' ? post.slug : undefined}>
             {post.category === 'photo' ? (
               <ProgressivePhoto basename={post.basename} width={post.width} height={post.height} title={post.title}
@@ -48,9 +50,9 @@ export default function Post({ post, link = false, priority = false }: { post: P
           </PhotoTransition>
         </p>
       )}
-      <div {...stylex.props(styles.content)}>
+      <div {...stylex.props(styles.content, isNoteDetail && styles.noteContent)}>
         {post.category === 'photo' && <PhotoMeta post={post} />}
-        <Markdown options={{ overrides: markdownOverrides }} {...stylex.props(styles.markdown)}>{post.content}</Markdown>
+        <Markdown options={{ overrides: isNoteDetail ? noteMarkdownOverrides : markdownOverrides }} {...stylex.props(styles.markdown, isNoteDetail && styles.noteMarkdown)}>{post.content}</Markdown>
       </div>
     </article>
   )
@@ -61,6 +63,73 @@ const styles = stylex.create({
     display: 'flex',
     flexDirection: 'column',
     gap: 8,
+  },
+  note: {
+    width: '100%',
+    maxWidth: 704,
+    marginInline: 'auto',
+    fontSize: 18,
+    lineHeight: 1.6,
+    overflowWrap: 'anywhere',
+  },
+  noteTitle: {
+    fontSize: { default: 32, '@media (min-width: 640px)': 40 },
+    fontWeight: 600,
+    lineHeight: 1.2,
+    letterSpacing: '-0.025em',
+    textWrap: 'balance',
+  },
+  noteDate: {
+    fontSize: 14,
+    lineHeight: 1.5,
+    marginBlockStart: 4,
+    marginBlockEnd: 24,
+  },
+  noteContent: {
+    marginBlockStart: 0,
+  },
+  noteImage: {
+    marginBlockEnd: 16,
+  },
+  noteMarkdown: {
+    gap: 24,
+  },
+  noteHeading: {
+    marginBlockStart: 16,
+    marginBlockEnd: 0,
+    fontWeight: 600,
+    lineHeight: 1.4,
+    letterSpacing: '-0.015em',
+    textWrap: 'balance',
+  },
+  noteHeadingLarge: { fontSize: 24 },
+  noteHeadingMedium: { fontSize: 20 },
+  noteHeadingSmall: { fontSize: 18 },
+  noteLink: {
+    textDecorationLine: 'underline',
+    textDecorationColor: { default: colors.quote, ':hover': colors.textPrimary },
+    textDecorationThickness: 1,
+  },
+  noteList: {
+    paddingInlineStart: 26,
+  },
+  noteListItem: {
+    marginBlock: 8,
+  },
+  noteQuote: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16,
+    paddingInlineStart: 24,
+  },
+  noteRule: {
+    borderWidth: 0,
+    borderBlockStartWidth: 1,
+    borderBlockStartStyle: 'solid',
+    borderBlockStartColor: colors.ruleSoft,
+    marginBlock: 16,
+    marginInline: 0,
+    width: '100%',
   },
   copy: {
     marginBlock: 0,
@@ -115,4 +184,21 @@ const markdownOverrides = {
   a: { props: stylex.props(typography.link) },
   blockquote: { props: stylex.props(typography.muted, styles.blockquote) },
   pre: { props: stylex.props(styles.markdownBlock, styles.codeBlock) },
+}
+
+const noteMarkdownOverrides = {
+  ...markdownOverrides,
+  h1: { props: stylex.props(typography.heading, styles.noteHeading, styles.noteHeadingLarge) },
+  h2: { props: stylex.props(typography.heading, styles.noteHeading, styles.noteHeadingLarge) },
+  h3: { props: stylex.props(typography.heading, styles.noteHeading, styles.noteHeadingMedium) },
+  h4: { props: stylex.props(typography.heading, styles.noteHeading, styles.noteHeadingSmall) },
+  h5: { props: stylex.props(typography.heading, styles.noteHeading, styles.noteHeadingSmall) },
+  h6: { props: stylex.props(typography.heading, styles.noteHeading, styles.noteHeadingSmall) },
+  a: { props: stylex.props(typography.link, styles.noteLink) },
+  ul: { props: stylex.props(styles.markdownList, styles.noteList) },
+  ol: { props: stylex.props(styles.markdownList, styles.noteList) },
+  li: { props: stylex.props(styles.noteListItem) },
+  blockquote: { props: stylex.props(typography.muted, styles.blockquote, styles.noteQuote) },
+  hr: { props: stylex.props(styles.noteRule) },
+  img: { props: stylex.props(styles.image) },
 }
