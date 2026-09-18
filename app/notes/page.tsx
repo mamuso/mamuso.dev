@@ -20,7 +20,7 @@ export default function Posts() {
       <header {...stylex.props(styles.header, styles.rule)}>
         <h2 {...stylex.props(styles.heading)}>Feed</h2>
       </header>
-      {groups.map(({ year, notes }) => notes.length ? (
+      {groups.map(({ year, notes }, index) => notes.length ? (
         <section key={year} aria-labelledby={`notes-${year}`} {...stylex.props(styles.yearGroup)}>
           <h3 id={`notes-${year}`} {...stylex.props(styles.heading, styles.yearHeading, styles.rule)}>{year}</h3>
           <ul {...stylex.props(layout.list)}>
@@ -32,8 +32,15 @@ export default function Posts() {
           </ul>
         </section>
       ) : (
-        <div key={year} {...stylex.props(styles.rule)}>
-          <BlankNoteYear year={year} />
+        <div key={year}>
+          {(index === 0 || groups[index - 1].notes.length > 0) && (
+            <div aria-hidden="true" {...stylex.props(styles.yearGroup, styles.heading, styles.yearHeading, styles.rule)}>
+              {'\u00a0'}
+            </div>
+          )}
+          <div {...stylex.props(styles.rule)}>
+            <BlankNoteYear year={year} />
+          </div>
         </div>
       ))}
     </section>
