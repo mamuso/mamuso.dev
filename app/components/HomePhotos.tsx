@@ -35,8 +35,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
 
   function neighborTilt(index: number) {
     if (avoidingPhoto === null || Math.abs(index - avoidingPhoto) !== 1) return 0
-    const angle = poses[index].angle
-    return Math.max(-3, Math.min(3, angle + Math.sign(index - avoidingPhoto) * 0.5)) - angle
+    return Math.sign(index - avoidingPhoto) * 2.5
   }
 
   return (
@@ -108,7 +107,7 @@ const styles = stylex.create({
     padding: 2,
     backgroundColor: colors.surface,
     transitionProperty: 'transform, rotate',
-    transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    transformOrigin: 'center bottom',
   },
   reaction: (angle: number) => ({
     rotate: { default: `${angle}deg`, '@media (prefers-reduced-motion: reduce)': '0deg' },
@@ -120,6 +119,7 @@ const styles = stylex.create({
     width: 44,
     height: 44,
     transform: `rotate(${angle}deg)`,
+    transformOrigin: 'center bottom',
     pointerEvents: 'auto',
     zIndex: 10 + layer,
   }),
@@ -127,12 +127,15 @@ const styles = stylex.create({
     right: `calc(4px + min(${index * 38}px, ${index * 16.5}%))`,
     zIndex: layer,
     boxShadow: `0 1px 2px rgba(0, 0, 0, ${0.1 + layer * 0.008}), 0 4px 10px rgba(0, 0, 0, ${0.06 + layer * 0.01})`,
+    transitionTimingFunction: avoidingPointer
+      ? 'cubic-bezier(0.45, 0, 0.55, 1), cubic-bezier(0.4, 0, 0.2, 1)'
+      : 'cubic-bezier(0.25, 0.8, 0.25, 1), cubic-bezier(0.4, 0, 0.2, 1)',
     transitionDuration: {
-      default: '180ms, 240ms',
+      default: '300ms, 320ms',
       '@media (hover: hover)': {
-        [stylex.when.ancestor(':hover', homeLink)]: '300ms, 240ms',
+        [stylex.when.ancestor(':hover', homeLink)]: avoidingPointer ? '480ms, 320ms' : '320ms, 320ms',
       },
-      [stylex.when.ancestor(':focus-visible', homeLink)]: '300ms, 240ms',
+      [stylex.when.ancestor(':focus-visible', homeLink)]: avoidingPointer ? '480ms, 320ms' : '320ms, 320ms',
       '@media (prefers-reduced-motion: reduce)': '0ms',
     },
     transform: {
