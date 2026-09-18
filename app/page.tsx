@@ -9,6 +9,7 @@ import PostHome from '@/app/components/PostHome'
 import HomeContent from '@/app/components/HomeContent'
 import MoreLink from '@/app/components/MoreLink'
 import { homeLinks } from '@/app/styles/homeLinks'
+import { listHover } from '@/app/styles/listHover'
 import { projects } from '@/data/projects'
 import * as stylex from '@stylexjs/stylex'
 import { layout } from '@/app/styles/site'
@@ -36,7 +37,8 @@ export default function Home() {
             <ul {...stylex.props(layout.list)}>
               {projects.map(project => (
                 <li key={project.href} {...stylex.props(styles.rule)}>
-                  <a href={project.href} {...stylex.props(homeLink, homeLinks.primary, styles.project)}>
+                  <a href={project.href} {...stylex.props(homeLink, homeLinks.primary, styles.project, listHover.row)}>
+                    <span aria-hidden="true" {...stylex.props(listHover.square)} />
                     {project.title}{' '}
                     <span {...stylex.props(homeLinks.secondary)}>{project.description}</span>
                   </a>

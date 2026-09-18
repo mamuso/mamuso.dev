@@ -4,10 +4,12 @@ import { formatPostMonth } from '@/lib/editorial-date'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { homeLinks } from '../styles/homeLinks'
+import { listHover } from '../styles/listHover'
 
 export default function PostHome({ post }: { post: PostSummary }) {
   return (
-    <Link href={`/note/${post.slug}`} {...stylex.props(homeLink, homeLinks.primary, styles.note)}>
+    <Link href={`/note/${post.slug}`} {...stylex.props(homeLink, homeLinks.primary, styles.note, listHover.row)}>
+      <span aria-hidden="true" {...stylex.props(listHover.square)} />
       <span title={post.title} {...stylex.props(styles.noteTitle)}>{post.title}</span>
       <time dateTime={post.date} {...stylex.props(homeLinks.secondary, styles.date)}>
         {formatPostMonth(post.date)}
