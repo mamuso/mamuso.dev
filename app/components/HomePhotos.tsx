@@ -13,7 +13,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
   const [poses, setPoses] = useState(() => photos.map((_, index) => ({
     angle: index % 2 ? 1 : -1,
     layer: index + 1,
-    drop: 6,
+    drop: index % 2 ? 10 : 4,
   })))
 
   function arrange() {
@@ -26,7 +26,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
     setPoses(photos.map((_, index) => ({
       angle: (index % 2 ? -direction : direction) * Math.random() * 3,
       layer: layers[index],
-      drop: 4 + Math.random() * 6,
+      drop: 2 + Math.random() * 12,
     })))
   }
 
