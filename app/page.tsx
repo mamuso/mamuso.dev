@@ -94,13 +94,15 @@ const styles = stylex.create({
   },
   projects: {
     display: { default: 'block', '@media (min-width: 880px)': 'grid' },
-    gridRow: { default: 'auto', '@media (min-width: 880px)': 'span 2' },
+    gridColumn: { default: 'auto', '@media (min-width: 880px)': '1' },
+    gridRow: { default: 'auto', '@media (min-width: 880px)': '1 / span 2' },
     gridTemplateRows: { default: 'none', '@media (min-width: 880px)': 'subgrid' },
   },
   right: {
     display: 'flex',
     flexDirection: 'column',
     gap: { default: 64, '@media (min-width: 880px)': 32 },
+    gridColumn: { default: 'auto', '@media (min-width: 880px)': '2' },
     gridRow: { default: 'auto', '@media (min-width: 880px)': '1' },
     justifyContent: 'space-between',
     minWidth: 0,
