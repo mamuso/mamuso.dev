@@ -130,9 +130,9 @@ const styles = stylex.create({
     transitionDuration: {
       default: '180ms, 240ms',
       '@media (hover: hover)': {
-        [stylex.when.ancestor(':hover', homeLink)]: avoidingPointer ? '180ms, 240ms' : '300ms, 240ms',
+        [stylex.when.ancestor(':hover', homeLink)]: '300ms, 240ms',
       },
-      [stylex.when.ancestor(':focus-visible', homeLink)]: avoidingPointer ? '180ms, 240ms' : '300ms, 240ms',
+      [stylex.when.ancestor(':focus-visible', homeLink)]: '300ms, 240ms',
       '@media (prefers-reduced-motion: reduce)': '0ms',
     },
     transform: {
