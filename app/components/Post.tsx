@@ -1,5 +1,5 @@
 import { PostDetail } from '@/lib/types'
-import { formatPostDate } from '@/lib/editorial-date'
+import { formatPostDate, formatPostMonth } from '@/lib/editorial-date'
 import Link from 'next/link'
 import Image from 'next/image'
 import Markdown from 'markdown-to-jsx'
@@ -34,7 +34,7 @@ export default function Post({ post, link = false, priority = false }: { post: P
         <h1 {...stylex.props(typography.heading, styles.noteTitle)}>{post.title}</h1>
       )}
       <p {...stylex.props(typography.muted, styles.copy, isNoteDetail && styles.noteDate)}>
-        <time dateTime={post.date}>{formatPostDate(post.date, true)}</time>
+        <time dateTime={post.date}>{isNoteDetail ? formatPostMonth(post.date) : formatPostDate(post.date, true)}</time>
       </p>
       {post.basename && (
         <p {...stylex.props(styles.copy, isNoteDetail && styles.noteImage)}>
