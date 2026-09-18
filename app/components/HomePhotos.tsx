@@ -92,7 +92,7 @@ const styles = stylex.create({
     transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
   },
   pose: (index: number, angle: number, layer: number, drop: number) => ({
-    right: `calc(4px + min(${index * 36}px, ${index * 16}%))`,
+    right: `calc(4px + min(${index * 38}px, ${index * 16.5}%))`,
     zIndex: layer,
     transform: {
       default: `translateY(calc(100% + 20px)) rotate(${-angle}deg)`,
