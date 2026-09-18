@@ -11,6 +11,7 @@ type Photo = { basename: string; width: number; height: number }
 
 export default function HomePhotos({ photos }: { photos: Photo[] }) {
   const [avoidingPhoto, setAvoidingPhoto] = useState<number | null>(null)
+  const [visitedPhotos, setVisitedPhotos] = useState<number[]>([])
   const [poses, setPoses] = useState(() => photos.map((_, index) => ({
     angle: index % 2 ? 1 : -1,
     layer: index + 1,
@@ -18,6 +19,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
   })))
 
   function arrange() {
+    setVisitedPhotos([])
     const layers = photos.map((_, index) => index + 1)
     for (let index = layers.length - 1; index > 0; index--) {
       const other = Math.floor(Math.random() * (index + 1))
@@ -33,14 +35,14 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
 
   return (
     <Link href="/photos" aria-labelledby="home-photos" data-home-photos
-      onMouseEnter={arrange}
+      onPointerEnter={event => { if (event.pointerType !== 'touch') arrange() }}
       onFocus={event => { if (!event.currentTarget.matches(':hover')) arrange() }}
       {...stylex.props(homeLink, styles.module)}>
       <h2 id="home-photos" {...stylex.props(styles.heading)}>Say cheese!</h2>
       <span aria-hidden="true" {...stylex.props(styles.gallery)}>
         {photos.map((photo, index) => (
           <span key={photo.basename} data-home-photo
-            {...stylex.props(styles.print, styles.pose(index, poses[index].angle, poses[index].layer, poses[index].drop, avoidingPhoto === index))}>
+            {...stylex.props(styles.print, styles.pose(index, poses[index].angle, poses[index].layer, poses[index].drop, avoidingPhoto === index, visitedPhotos.includes(index)))}>
             <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
               alt="" draggable={false} sizes="40px" {...stylex.props(styles.image)} />
           </span>
@@ -48,7 +50,11 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
         {/* Each print keeps its own stationary hit area, including while hidden. */}
         {photos.map((photo, index) => (
           <span key={`hover-${photo.basename}`} data-photo-hover-zone={index}
-            onPointerEnter={event => { if (event.pointerType !== 'touch') setAvoidingPhoto(index) }}
+            onPointerEnter={event => {
+              if (event.pointerType === 'touch') return
+              setAvoidingPhoto(index)
+              setVisitedPhotos(current => current.includes(index) ? current : [...current, index])
+            }}
             onPointerLeave={() => setAvoidingPhoto(current => current === index ? null : current)}
             onPointerCancel={() => setAvoidingPhoto(current => current === index ? null : current)}
             {...stylex.props(styles.hoverZone(index, poses[index].angle, poses[index].layer, poses[index].drop))} />
@@ -97,7 +103,6 @@ const styles = stylex.create({
     backgroundColor: colors.surface,
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.1)',
     transitionProperty: 'transform',
-    transitionDuration: { default: '360ms', '@media (prefers-reduced-motion: reduce)': '0ms' },
     transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
   },
   hoverZone: (index: number, angle: number, layer: number, drop: number) => ({
@@ -110,9 +115,17 @@ const styles = stylex.create({
     pointerEvents: 'auto',
     zIndex: 10 + layer,
   }),
-  pose: (index: number, angle: number, layer: number, drop: number, avoidingPointer: boolean) => ({
+  pose: (index: number, angle: number, layer: number, drop: number, avoidingPointer: boolean, visited: boolean) => ({
     right: `calc(4px + min(${index * 38}px, ${index * 16.5}%))`,
     zIndex: layer,
+    transitionDuration: {
+      default: '180ms',
+      '@media (hover: hover)': {
+        [stylex.when.ancestor(':hover', homeLink)]: avoidingPointer ? '180ms' : '300ms',
+      },
+      [stylex.when.ancestor(':focus-visible', homeLink)]: avoidingPointer ? '180ms' : '300ms',
+      '@media (prefers-reduced-motion: reduce)': '0ms',
+    },
     transform: {
       default: `translateY(calc(100% + 20px)) rotate(${-angle}deg)`,
       '@media (hover: hover)': {
@@ -127,9 +140,9 @@ const styles = stylex.create({
     transitionDelay: {
       default: `${(6 - layer) * 20}ms`,
       '@media (hover: hover)': {
-        [stylex.when.ancestor(':hover', homeLink)]: avoidingPointer ? '0ms' : `${(layer - 1) * 45}ms`,
+        [stylex.when.ancestor(':hover', homeLink)]: avoidingPointer ? '0ms' : visited ? '80ms' : `${(layer - 1) * 45}ms`,
       },
-      [stylex.when.ancestor(':focus-visible', homeLink)]: avoidingPointer ? '0ms' : `${(layer - 1) * 45}ms`,
+      [stylex.when.ancestor(':focus-visible', homeLink)]: avoidingPointer ? '0ms' : visited ? '80ms' : `${(layer - 1) * 45}ms`,
       '@media (prefers-reduced-motion: reduce)': '0ms',
     },
   }),
