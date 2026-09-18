@@ -26,7 +26,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
     setPoses(photos.map((_, index) => ({
       angle: (index % 2 ? -direction : direction) * Math.random() * 3,
       layer: layers[index],
-      drop: 5 + Math.random() * 4,
+      drop: 4 + Math.random() * 6,
     })))
   }
 
