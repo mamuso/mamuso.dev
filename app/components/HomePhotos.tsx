@@ -1,36 +1,49 @@
+'use client'
+
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
-import PhotoStackMotion from './PhotoStackMotion'
-import { homePhotoSlots } from './homePhotoComposition'
+import { homeLink } from '../styles/homeLink.stylex'
 import { colors } from '../styles/tokens.stylex'
 
 type Photo = { basename: string; width: number; height: number }
 
 export default function HomePhotos({ photos }: { photos: Photo[] }) {
-  const row = homePhotoSlots
-  const rowWidth = row.reduce((total, slot) => total + slot.width + 8, 0)
+  const [poses, setPoses] = useState(() => photos.map((_, index) => ({
+    angle: index % 2 ? 1 : -1,
+    layer: index + 1,
+    drop: 12,
+  })))
+
+  function arrange() {
+    const layers = photos.map((_, index) => index + 1)
+    for (let index = layers.length - 1; index > 0; index--) {
+      const other = Math.floor(Math.random() * (index + 1))
+      ;[layers[index], layers[other]] = [layers[other], layers[index]]
+    }
+    const direction = Math.random() < 0.5 ? -1 : 1
+    setPoses(photos.map((_, index) => ({
+      angle: (index % 2 ? -direction : direction) * (0.4 + Math.random() * 1.6),
+      layer: layers[index],
+      drop: 8 + Math.random() * 10,
+    })))
+  }
+
   return (
-    <Link href="/photos" draggable={false} aria-labelledby="home-photos" {...stylex.props(styles.module)}>
+    <Link href="/photos" aria-labelledby="home-photos" data-home-photos
+      onMouseEnter={arrange}
+      onFocus={event => { if (!event.currentTarget.matches(':hover')) arrange() }}
+      {...stylex.props(homeLink, styles.module)}>
       <h2 id="home-photos" {...stylex.props(styles.heading)}>Say cheese!</h2>
-      <span {...stylex.props(styles.gallery)}>
-        {photos.map((photo, index) => {
-          const slot = homePhotoSlots[index]
-          if (!slot) return null
-          // Crop the row slightly at both ends.
-          const precedingWidth = row.slice(0, index).reduce((total, item) => total + item.width + 8, 0)
-          const left = `calc(${slot.x * 100}% + ${-12 + precedingWidth + slot.x * (28 - rowWidth)}px)`
-          return (
-            <PhotoStackMotion key={photo.basename} freeDrag maxRotation={2} velocityRotation={3} data-photo-stack aria-hidden="true"
-              {...stylex.props(styles.slot(left, slot.y, slot.layer))}>
-              <span data-photo-print {...stylex.props(styles.print)}>
-                <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
-                  alt="" draggable={false} sizes={`${slot.width}px`}
-                  {...stylex.props(styles.image(slot.width, slot.height))} />
-              </span>
-            </PhotoStackMotion>
-          )
-        })}
+      <span aria-hidden="true" {...stylex.props(styles.gallery)}>
+        {photos.map((photo, index) => (
+          <span key={photo.basename} data-home-photo
+            {...stylex.props(styles.print, styles.pose(index, poses[index].angle, poses[index].layer, poses[index].drop))}>
+            <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
+              alt="" draggable={false} sizes="72px" {...stylex.props(styles.image)} />
+          </span>
+        ))}
       </span>
     </Link>
   )
@@ -40,51 +53,74 @@ const styles = stylex.create({
   module: {
     display: 'block',
     position: 'relative',
-    height: 140,
-    borderRadius: 24,
-    backgroundColor: '#F8F8F8',
-    overflow: 'hidden',
-    color: colors.textPrimary,
-    textDecoration: 'none',
+    color: '#17181B',
+    textDecoration: { default: 'none', ':focus-visible': 'underline' },
+    textUnderlineOffset: 3,
     outlineOffset: 4,
+    borderBlockEndWidth: 0.5,
+    borderBlockEndStyle: 'solid',
+    borderBlockEndColor: colors.rule,
   },
   heading: {
     fontSize: 18,
     lineHeight: '24px',
-    textAlign: 'left',
     fontWeight: 400,
     margin: 0,
-    padding: 24,
+    paddingBlock: 4,
   },
   gallery: {
-    display: 'block',
     position: 'absolute',
-    insetBlock: 0,
-    left: 0,
-    right: 0,
+    insetInlineStart: 120,
+    insetInlineEnd: 0,
+    bottom: 0,
+    height: 112,
+    overflow: 'hidden',
     pointerEvents: 'none',
+    isolation: 'isolate',
   },
-  slot: (left: string, top: number, layer: number) => ({
-    position: 'absolute',
-    top,
-    left,
-    touchAction: 'none',
-    pointerEvents: 'none',
-    userSelect: 'none',
-    zIndex: layer,
-  }),
   print: {
+    position: 'absolute',
+    bottom: 0,
     display: 'block',
-    pointerEvents: 'auto',
-    padding: 4,
-    backgroundColor: '#FFFFFF',
-    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.22), 0 4px 10px rgba(0, 0, 0, 0.18)',
+    boxSizing: 'border-box',
+    width: 'min(23%, 72px)',
+    padding: { default: 5, '@media (min-width: 480px)': 6 },
+    backgroundColor: colors.surface,
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.1)',
+    opacity: {
+      default: 0,
+      '@media (hover: hover)': { [stylex.when.ancestor(':hover', homeLink)]: 1 },
+      [stylex.when.ancestor(':focus-visible', homeLink)]: 1,
+    },
+    transitionProperty: 'transform, opacity',
+    transitionDuration: { default: '360ms', '@media (prefers-reduced-motion: reduce)': '0ms' },
+    transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
   },
-  image: (width: number, height: number) => ({
+  pose: (index: number, angle: number, layer: number, drop: number) => ({
+    right: `${2 + index * 15}%`,
+    zIndex: layer,
+    transform: {
+      default: `translateY(115%) rotate(${angle}deg)`,
+      '@media (hover: hover)': {
+        [stylex.when.ancestor(':hover', homeLink)]: `translateY(${drop}px) rotate(${angle}deg)`,
+      },
+      [stylex.when.ancestor(':focus-visible', homeLink)]: `translateY(${drop}px) rotate(${angle}deg)`,
+    },
+    transitionDelay: {
+      default: `${(6 - layer) * 20}ms`,
+      '@media (hover: hover)': {
+        [stylex.when.ancestor(':hover', homeLink)]: `${(layer - 1) * 45}ms`,
+      },
+      [stylex.when.ancestor(':focus-visible', homeLink)]: `${(layer - 1) * 45}ms`,
+      '@media (prefers-reduced-motion: reduce)': '0ms',
+    },
+  }),
+  image: {
     display: 'block',
-    width,
-    height,
+    width: '100%',
+    height: 'auto',
+    aspectRatio: '1',
     objectFit: 'cover',
     backgroundColor: colors.placeholder,
-  }),
+  },
 })

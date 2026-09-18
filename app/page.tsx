@@ -4,9 +4,11 @@ import { groupNoteYears } from '@/lib/note-years'
 import { homeLink } from '@/app/styles/homeLink.stylex'
 import { pageMetadata } from '@/lib/metadata'
 import Link from 'next/link'
-import { getNotePosts } from '@/lib/api'
+import { getNotePosts, getPhotoPosts } from '@/lib/api'
+import { randomInt } from 'node:crypto'
 import PostHome from '@/app/components/PostHome'
 import HomeContent from '@/app/components/HomeContent'
+import HomePhotos from '@/app/components/HomePhotos'
 import MoreLink from '@/app/components/MoreLink'
 import { homeLinks } from '@/app/styles/homeLinks'
 import { listHover } from '@/app/styles/listHover'
@@ -21,6 +23,9 @@ export const metadata = pageMetadata({ title: 'mamuso - manuel muñoz solera', p
 export const revalidate = 180
 
 export default function Home() {
+  const photoPool = getPhotoPosts(['basename', 'width', 'height'])
+  const photos = Array.from({ length: Math.min(6, photoPool.length) }, () =>
+    photoPool.splice(randomInt(photoPool.length), 1)[0])
   const feed = groupNoteYears(getNotePosts(['title', 'date', 'slug']))
     .flatMap<{ year: number, post: PostSummary | null }>(({ year, notes }) => notes.length
       ? notes.map(post => ({ year, post }))
@@ -63,9 +68,7 @@ export default function Home() {
             <MoreLink href="/notes" label="More notes" />
           </section>
           <section aria-labelledby="home-photos" {...stylex.props(styles.module)}>
-            <h2 id="home-photos" {...stylex.props(styles.heading, styles.rule)}>
-              <Link href="/photos" {...stylex.props(homeLinks.primary, styles.photoLink)}>Say cheese!</Link>
-            </h2>
+            <HomePhotos photos={photos} />
           </section>
         </div>
       </div>
