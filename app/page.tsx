@@ -30,19 +30,21 @@ export default function Home() {
     <>
       <HomeContent randomFact={getRandomFact()} />
       <div {...stylex.props(styles.content)}>
-        <section aria-labelledby="home-fun" {...stylex.props(styles.module)}>
-          <h2 id="home-fun" {...stylex.props(styles.heading, styles.rule)}>Having fun</h2>
-          <ul {...stylex.props(layout.list)}>
-            {projects.map(project => (
-              <li key={project.href} {...stylex.props(styles.rule)}>
-                <a href={project.href} {...stylex.props(homeLink, homeLinks.primary, styles.project)}>
-                  {project.title}{' '}
-                  <span {...stylex.props(homeLinks.secondary)}>{project.description}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-          <MoreLink href="https://github.com/mamuso?tab=repositories" label="More projects" />
+        <section aria-labelledby="home-fun" {...stylex.props(styles.module, styles.projects)}>
+          <div>
+            <h2 id="home-fun" {...stylex.props(styles.heading, styles.rule)}>Having fun</h2>
+            <ul {...stylex.props(layout.list)}>
+              {projects.map(project => (
+                <li key={project.href} {...stylex.props(styles.rule)}>
+                  <a href={project.href} {...stylex.props(homeLink, homeLinks.primary, styles.project)}>
+                    {project.title}{' '}
+                    <span {...stylex.props(homeLinks.secondary)}>{project.description}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div><MoreLink href="https://github.com/mamuso?tab=repositories" label="More projects" /></div>
         </section>
         <div {...stylex.props(styles.right)}>
           <section aria-labelledby="home-notes" {...stylex.props(styles.module)}>
@@ -80,7 +82,7 @@ const styles = stylex.create({
       '@media (min-width: 880px)': 'repeat(2, minmax(0, 1fr))',
     },
     columnGap: 16,
-    rowGap: 40,
+    rowGap: { default: 40, '@media (min-width: 880px)': 0 },
     borderBlockColor: colors.rule,
     borderBlockStyle: 'solid',
     borderBlockWidth: 0.5,
@@ -90,10 +92,17 @@ const styles = stylex.create({
   module: {
     minWidth: 0,
   },
+  projects: {
+    display: { default: 'block', '@media (min-width: 880px)': 'grid' },
+    gridRow: { default: 'auto', '@media (min-width: 880px)': 'span 2' },
+    gridTemplateRows: { default: 'none', '@media (min-width: 880px)': 'subgrid' },
+  },
   right: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 64,
+    gap: { default: 64, '@media (min-width: 880px)': 32 },
+    gridRow: { default: 'auto', '@media (min-width: 880px)': '1' },
+    justifyContent: 'space-between',
     minWidth: 0,
   },
   rule: {
