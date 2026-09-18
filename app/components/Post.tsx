@@ -46,7 +46,9 @@ export default function Post({ post, link = false, priority = false }: { post: P
                 {...stylex.props(styles.image, styles.photoSize(post.width))} />
             ) : (
               <Image src={`/assets/feed/${post.basename}`} width={post.width / 3} height={post.height / 3}
-                alt={post.title ?? ''} loading={priority ? 'eager' : 'lazy'} {...stylex.props(styles.image)} />
+                alt={post.title ?? ''} loading={priority ? 'eager' : 'lazy'}
+                sizes={isNoteDetail ? '(max-width: 639px) calc(100vw - 24px), (max-width: 1079px) calc(100vw - 120px), 960px' : undefined}
+                {...stylex.props(styles.image, isNoteDetail && styles.wideMedia)} />
             )}
           </PhotoTransition>
         </p>
@@ -92,6 +94,22 @@ const styles = stylex.create({
   },
   noteImage: {
     marginBlockEnd: 16,
+  },
+  wideMedia: {
+    display: 'block',
+    width: {
+      default: 'min(960px, calc(100vw - 24px))',
+      '@media (min-width: 640px)': 'min(960px, calc(100vw - 120px))',
+    },
+    maxWidth: 'none',
+    marginInline: {
+      default: 'calc((100% - min(960px, calc(100vw - 24px))) / 2)',
+      '@media (min-width: 640px)': 'calc((100% - min(960px, calc(100vw - 120px))) / 2)',
+    },
+  },
+  noteFigure: {
+    marginBlock: 0,
+    marginInline: 0,
   },
   noteVideo: {
     display: 'block',
@@ -198,7 +216,7 @@ const markdownOverrides = {
 function NoteVideo({ src, title, ...props }: ComponentProps<'iframe'>) {
   return (
     <iframe {...props} src={src?.replaceAll('&amp;', '&')} title={title || 'Embedded video'}
-      {...stylex.props(styles.noteVideo)} />
+      {...stylex.props(styles.noteVideo, styles.wideMedia)} />
   )
 }
 
@@ -216,6 +234,9 @@ const noteMarkdownOverrides = {
   li: { props: stylex.props(styles.noteListItem) },
   blockquote: { props: stylex.props(typography.muted, styles.blockquote, styles.noteQuote) },
   hr: { props: stylex.props(styles.noteRule) },
-  img: { props: stylex.props(styles.image) },
+  img: { props: stylex.props(styles.image, styles.wideMedia) },
+  video: { props: stylex.props(styles.image, styles.wideMedia) },
+  audio: { props: stylex.props(styles.wideMedia) },
+  figure: { props: stylex.props(styles.noteFigure) },
   iframe: { component: NoteVideo },
 }
