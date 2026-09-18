@@ -50,7 +50,9 @@ export default function Home() {
         </section>
         <div {...stylex.props(styles.right)}>
           <section aria-labelledby="home-notes" {...stylex.props(styles.module)}>
-            <h2 id="home-notes" {...stylex.props(styles.heading, styles.rule)}>Feed</h2>
+            <h2 id="home-notes" {...stylex.props(styles.heading, styles.rule)}>
+              <Link href="/notes" {...stylex.props(homeLinks.primary, styles.photoLink)}>Feed</Link>
+            </h2>
             <ul {...stylex.props(layout.list)}>
               {feed.map(({ year, post }) => (
                 <li key={post?.slug ?? year} {...stylex.props(styles.rule)}>
