@@ -37,7 +37,7 @@ export default function Home() {
             <ul {...stylex.props(layout.list)}>
               {projects.map(project => (
                 <li key={project.href} {...stylex.props(styles.rule)}>
-                  <a href={project.href} {...stylex.props(homeLink, homeLinks.primary, styles.project, listHover.row)}>
+                  <a href={project.href} title={`${project.title} — ${project.description}`} {...stylex.props(homeLink, homeLinks.primary, styles.project, listHover.row)}>
                     <span aria-hidden="true" {...stylex.props(listHover.square)} />
                     {project.title}{' '}
                     <span {...stylex.props(homeLinks.secondary)}>{project.description}</span>
@@ -126,7 +126,8 @@ const styles = stylex.create({
     display: 'block',
     lineHeight: '22px',
     paddingBlock: 5,
-    overflowWrap: 'anywhere',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
   },
   photoLink: {
     display: 'block',

@@ -1,5 +1,5 @@
 export const projects = [
-  { title: 'Papercups', description: 'Drawings collection of my favorite compostable goods', href: 'https://papercups.mamuso.net/' },
+  { title: 'Papercups', description: 'My favorite compostable goods', href: 'https://papercups.mamuso.net/' },
   { title: 'Stray characters', description: 'Typography is everywhere', href: 'https://straycharacters.mamuso.net/' },
   { title: 'Figma Orgchart', description: 'I promise I’m fun at parties', href: 'https://www.figma.com/community/plugin/1091247524080548244/Orgchart' },
   { title: 'Discussion → Markdown GH Action', description: 'nothing-to-add.md', href: 'https://github.com/mamuso/discussion-to-markdown-action' },

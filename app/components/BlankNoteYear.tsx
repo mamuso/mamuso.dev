@@ -4,7 +4,7 @@ export default function BlankNoteYear({ year }: { year: number }) {
   return (
     <div {...stylex.props(styles.row)}>
       <span {...stylex.props(styles.label)}>Intentionally left blank</span>
-      <time dateTime={String(year)}>{year}</time>
+      <time dateTime={String(year)} {...stylex.props(styles.year)}>{year}</time>
     </div>
   )
 }
@@ -24,5 +24,12 @@ const styles = stylex.create({
   },
   label: {
     fontStyle: 'italic',
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  year: {
+    flexShrink: 0,
   },
 })
