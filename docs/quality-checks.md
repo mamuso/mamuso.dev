@@ -44,6 +44,12 @@ Smoke coverage:
 - Legacy `/post`, `/posts` and filename aliases; a real PNG social image with special characters.
 - Aborted GLB request: a scoped error boundary retains the homepage and displays work history.
 
+For a manual typography review, open `/note/markdown-specimen`. This unlisted,
+`noindex` page uses the real `Post` template with the fixture in
+`app/note/markdown-specimen/specimen.md`. It stays outside the content index,
+archives, and feed. Edit the fixture to add cases when changing Markdown styles.
+The URL is directly accessible; it is a design specimen, not private content.
+
 Browser failures retain a trace, screenshot, and HTML report. Inspect them with
 `pnpm exec playwright show-report`; CI uploads them for seven days. There are no
 automatic test retries, skipped smoke tests, or `continue-on-error` steps.
