@@ -10,7 +10,7 @@ import { colors } from '../styles/tokens.stylex'
 type Photo = { basename: string; width: number; height: number }
 
 export default function HomePhotos({ photos }: { photos: Photo[] }) {
-  const [avoidingPointer, setAvoidingPointer] = useState(false)
+  const [avoidingPhoto, setAvoidingPhoto] = useState<number | null>(null)
   const [poses, setPoses] = useState(() => photos.map((_, index) => ({
     angle: index % 2 ? 1 : -1,
     layer: index + 1,
@@ -40,18 +40,20 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
       <span aria-hidden="true" {...stylex.props(styles.gallery)}>
         {photos.map((photo, index) => (
           <span key={photo.basename} data-home-photo
-            {...stylex.props(styles.print, styles.pose(index, poses[index].angle, poses[index].layer, poses[index].drop, avoidingPointer))}>
+            {...stylex.props(styles.print, styles.pose(index, poses[index].angle, poses[index].layer, poses[index].drop, avoidingPhoto === index))}>
             <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
               alt="" draggable={false} sizes="40px" {...stylex.props(styles.image)} />
           </span>
         ))}
+        {/* Each print keeps its own stationary hit area, including while hidden. */}
+        {photos.map((photo, index) => (
+          <span key={`hover-${photo.basename}`} data-photo-hover-zone={index}
+            onPointerEnter={event => { if (event.pointerType !== 'touch') setAvoidingPhoto(index) }}
+            onPointerLeave={() => setAvoidingPhoto(current => current === index ? null : current)}
+            onPointerCancel={() => setAvoidingPhoto(current => current === index ? null : current)}
+            {...stylex.props(styles.hoverZone(index, poses[index].angle, poses[index].layer, poses[index].drop))} />
+        ))}
       </span>
-      {/* Keep the hit area still while the prints slide beneath the clipping edge. */}
-      <span aria-hidden="true" data-photo-hover-zone
-        onPointerEnter={event => { if (event.pointerType !== 'touch') setAvoidingPointer(true) }}
-        onPointerLeave={() => setAvoidingPointer(false)}
-        onPointerCancel={() => setAvoidingPointer(false)}
-        {...stylex.props(styles.hoverZone)} />
     </Link>
   )
 }
@@ -98,14 +100,16 @@ const styles = stylex.create({
     transitionDuration: { default: '360ms', '@media (prefers-reduced-motion: reduce)': '0ms' },
     transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
   },
-  hoverZone: {
+  hoverZone: (index: number, angle: number, layer: number, drop: number) => ({
     position: 'absolute',
-    right: 0,
-    bottom: 0,
-    width: 'min(238px, calc(100% - 120px))',
+    right: `calc(4px + min(${index * 38}px, ${index * 16.5}%))`,
+    bottom: -drop,
+    width: 44,
     height: 44,
-    zIndex: 1,
-  },
+    transform: `rotate(${angle}deg)`,
+    pointerEvents: 'auto',
+    zIndex: 10 + layer,
+  }),
   pose: (index: number, angle: number, layer: number, drop: number, avoidingPointer: boolean) => ({
     right: `calc(4px + min(${index * 38}px, ${index * 16.5}%))`,
     zIndex: layer,
