@@ -13,6 +13,8 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
   const link = useRef<HTMLAnchorElement>(null)
   const [touchRevealed, setTouchRevealed] = useState(false)
   const [avoidingPhoto, setAvoidingPhoto] = useState<number | null>(null)
+  const [retreatingPhotos, setRetreatingPhotos] = useState<number[]>([])
+  const retreatTimers = useRef(new Map<number, ReturnType<typeof setTimeout>>())
   const [visitedPhotos, setVisitedPhotos] = useState<number[]>([])
   const [poses, setPoses] = useState(() => photos.map((_, index) => ({
     angle: index % 2 ? 1 : -1,
@@ -31,6 +33,27 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
     observer.observe(node)
     return () => observer.disconnect()
   }, [])
+
+  useEffect(() => {
+    const timers = retreatTimers.current
+    return () => { timers.forEach(clearTimeout); timers.clear() }
+  }, [])
+
+  function finishRetreat(index: number) {
+    clearTimeout(retreatTimers.current.get(index))
+    retreatTimers.current.delete(index)
+    setRetreatingPhotos(current => current.filter(photo => photo !== index))
+  }
+
+  function beginRetreat(index: number) {
+    setAvoidingPhoto(index)
+    setVisitedPhotos(current => current.includes(index) ? current : [...current, index])
+    if (retreatTimers.current.has(index)) return
+    setRetreatingPhotos(current => [...current, index])
+    // Transitionend releases each print at the bottom. The timeout also handles
+    // reduced motion, cancelled transitions, or a print that was already hidden.
+    retreatTimers.current.set(index, setTimeout(() => finishRetreat(index), 560))
+  }
 
   function arrange() {
     setVisitedPhotos([])
@@ -63,7 +86,15 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
       <span aria-hidden="true" {...stylex.props(styles.gallery)}>
         {photos.map((photo, index) => (
           <span key={photo.basename} data-home-photo
-            {...stylex.props(styles.print, styles.reaction(neighborTilt(index)), styles.pose(index, poses[index].angle, poses[index].layer, poses[index].drop, avoidingPhoto === index, visitedPhotos.includes(index), touchRevealed))}>
+            onTransitionEnd={event => {
+              if (event.target !== event.currentTarget || event.propertyName !== 'transform' || !retreatTimers.current.has(index)) return
+              // A queued end event from the upward movement must not release
+              // a newly started retreat when the pointer sweeps across quickly.
+              const print = event.currentTarget
+              const y = new DOMMatrixReadOnly(getComputedStyle(print).transform).m42
+              if (y >= print.offsetHeight + 19) finishRetreat(index)
+            }}
+            {...stylex.props(styles.print, styles.reaction(neighborTilt(index)), styles.pose(index, poses[index].angle, poses[index].layer, poses[index].drop, avoidingPhoto === index || retreatingPhotos.includes(index), visitedPhotos.includes(index), touchRevealed))}>
             <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
               alt="" draggable={false} sizes="40px" {...stylex.props(styles.image)} />
           </span>
@@ -73,8 +104,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
           <span key={`hover-${photo.basename}`} data-photo-hover-zone={index}
             onPointerEnter={event => {
               if (event.pointerType === 'touch') return
-              setAvoidingPhoto(index)
-              setVisitedPhotos(current => current.includes(index) ? current : [...current, index])
+              beginRetreat(index)
             }}
             onPointerLeave={() => setAvoidingPhoto(current => current === index ? null : current)}
             onPointerCancel={() => setAvoidingPhoto(current => current === index ? null : current)}
