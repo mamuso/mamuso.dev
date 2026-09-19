@@ -68,7 +68,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
               alt="" draggable={false} sizes="40px" {...stylex.props(styles.image)} />
           </span>
         ))}
-        {/* Each print keeps its own stationary hit area, including while hidden. */}
+        {/* Fixed, non-overlapping lanes keep moving prints from exchanging hover. */}
         {photos.map((photo, index) => (
           <span key={`hover-${photo.basename}`} data-photo-hover-zone={index}
             onPointerEnter={event => {
@@ -78,7 +78,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
             }}
             onPointerLeave={() => setAvoidingPhoto(current => current === index ? null : current)}
             onPointerCancel={() => setAvoidingPhoto(current => current === index ? null : current)}
-            {...stylex.props(styles.hoverZone(index, poses[index].angle, poses[index].layer, poses[index].drop))} />
+            {...stylex.props(styles.hoverZone(index, photos.length))} />
         ))}
       </span>
     </Link>
@@ -128,16 +128,16 @@ const styles = stylex.create({
   reaction: (angle: number) => ({
     rotate: { default: `${angle}deg`, '@media (prefers-reduced-motion: reduce)': '0deg' },
   }),
-  hoverZone: (index: number, angle: number, layer: number, drop: number) => ({
+  hoverZone: (index: number, count: number) => ({
     position: 'absolute',
     right: `calc(4px + min(${index * 38}px, ${index * 16.5}%))`,
-    bottom: -drop,
-    width: 44,
+    bottom: 0,
+    // Each lane ends exactly where its neighbor begins. Only the leftmost
+    // print needs its full width because it has no neighbor on that side.
+    width: index === count - 1 ? 44 : 'min(38px, 16.5%)',
     height: 44,
-    transform: `rotate(${angle}deg)`,
-    transformOrigin: 'center bottom',
     pointerEvents: 'auto',
-    zIndex: 10 + layer,
+    zIndex: 10,
   }),
   pose: (index: number, angle: number, layer: number, drop: number, avoidingPointer: boolean, visited: boolean, touchRevealed: boolean) => ({
     right: `calc(4px + min(${index * 38}px, ${index * 16.5}%))`,
