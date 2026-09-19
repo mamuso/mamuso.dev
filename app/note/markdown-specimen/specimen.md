@@ -107,8 +107,8 @@ A deliberately long code line: /notes/a-very-long-example-path/with-several-segm
 
 | Element | Alignment | Example |
 | :--- | :---: | ---: |
-| Body text | Center | 18 |
-| Reading column | Center | 704 |
+| Body text | Center | 16 |
+| Reading column | Center | 664 |
 | Media width | Center | 960 |
 | **Emphasis** and `code` | Center | 24 |
 
