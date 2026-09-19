@@ -1,15 +1,48 @@
-import { PostType } from '@/lib/types'
-import { formatPostDate } from '@/lib/constants'
+import { homeLink } from '../styles/homeLink.stylex'
+import type { PostSummary } from '@/lib/types'
+import { formatPostMonth } from '@/lib/editorial-date'
 import Link from 'next/link'
-import { SelectIcon } from './Icons'
+import * as stylex from '@stylexjs/stylex'
+import { homeLinks } from '../styles/homeLinks'
+import { listHover } from '../styles/listHover'
 
-export default function PostHome({ post }: { post: PostType }) {
+export default function PostHome({ post }: { post: PostSummary }) {
   return (
-    <Link href={`/note/${post.slug}`}>
-      <SelectIcon category={post.category} />
-      <strong>{post.title}</strong>
-      <i></i>
-      <time dateTime={post.date}>{formatPostDate(post.date)}</time>
+    <Link href={`/note/${post.slug}`} {...stylex.props(homeLink, homeLinks.primary, styles.note, listHover.row)}>
+      <span aria-hidden="true" {...stylex.props(listHover.square)} />
+      <span title={post.title} {...stylex.props(styles.noteTitle)}>{post.title}</span>
+      <time dateTime={post.date} {...stylex.props(homeLinks.secondary, styles.date)}>
+        {formatPostMonth(post.date)}
+      </time>
     </Link>
   )
 }
+
+const styles = stylex.create({
+  note: {
+    fontSize: 16,
+    fontWeight: 400,
+    letterSpacing: '-0.005em',
+    paddingBlock: 5,
+    display: 'flex',
+    alignItems: 'center',
+    lineHeight: '22px',
+    gap: 12,
+    justifyContent: 'space-between',
+    minWidth: 0,
+  },
+  noteTitle: {
+    color: '#17181B',
+    fontWeight: 400,
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    flexShrink: 1,
+  },
+  date: {
+    fontSize: 16,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+  },
+})

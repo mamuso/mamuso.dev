@@ -1,0 +1,204 @@
+@stylex;
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+:root {
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --app-background: #f0f0f0;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.85, 0, 0.15, 1);
+  --duration-fast: 220ms;
+  --duration-base: 350ms;
+  background-color: var(--app-background);
+}
+
+body {
+  font-family: var(--font-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--app-background);
+}
+
+@layer transitions {
+  ::view-transition-group(.photo-morph) {
+    animation-duration: var(--duration-base);
+    animation-timing-function: var(--ease-out);
+  }
+
+  /* One complete print moves, including its frame and shadow. Avoid stacking
+     two opaque snapshots: their translucent shadow pixels would double up. */
+  ::view-transition-old(.photo-morph),
+  ::view-transition-new(.photo-morph) {
+    animation: none;
+    opacity: 1;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-old(.photo-morph) {
+    opacity: 0;
+  }
+
+  [data-header-brand] {
+    view-transition-group: contain;
+  }
+
+  ::view-transition-group(site-header),
+  ::view-transition-group(site-header-brand),
+  ::view-transition-group(site-header-label) {
+    animation-duration: var(--duration-base);
+    animation-timing-function: var(--ease-in-out);
+  }
+
+  ::view-transition-old(site-header-label),
+  ::view-transition-new(site-header-label) {
+    animation-fill-mode: both;
+    animation-timing-function: var(--ease-in-out);
+  }
+
+  ::view-transition-old(site-header-label) {
+    animation-delay: 0ms;
+    animation-name: header-label-out;
+  }
+
+  ::view-transition-new(site-header-label) {
+    animation-delay: 100ms;
+    animation-name: header-label-in;
+  }
+
+  @keyframes header-label-in {
+    from {
+      opacity: 0;
+      filter: blur(3px);
+      transform: translateX(12px);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes header-label-out {
+    from {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      filter: blur(3px);
+      transform: translateX(12px);
+    }
+  }
+
+  ::view-transition {
+    background-color: var(--app-background);
+    pointer-events: none;
+  }
+
+  ::view-transition-old(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-new(root) {
+    animation: page-fade-in 250ms var(--ease-out) both;
+    mix-blend-mode: normal;
+  }
+
+  @keyframes page-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation-duration: 0s !important;
+      animation-delay: 0s !important;
+    }
+  }
+}
+
+/* Keep captions still while the framed photos respond to their shared link. */
+@layer photo-interactions {
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    [data-photo-print]:hover {
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.12), 0 7px 14px rgba(0, 0, 0, 0.11);
+    }
+  }
+
+  [data-photo-group]:focus-within { z-index: 1; }
+  [data-photo-group]:focus-within [data-photo-print],
+  [data-photo-group] [data-photo-stack][data-opened] > [data-photo-print] {
+    transform: var(--print-open);
+  }
+  @media (hover: hover) {
+    [data-photo-group]:hover { z-index: 1; }
+  }
+  @media (hover: none) {
+    [data-photo-group] [data-photo-print] { transform: var(--print-open); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-photo-print] { transition: none; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-photo-stack] > [data-photo-print] {
+      translate: calc(var(--print-drift-x, 0px) * var(--print-response, 1)) calc(var(--print-drift-y, 0px) * var(--print-response, 1));
+      rotate: calc(var(--print-drift-angle, 0deg) * var(--print-response, 1));
+      transition: translate var(--print-follow-duration, 420ms) var(--ease-out),
+        rotate var(--print-follow-duration, 420ms) var(--ease-out),
+        transform 260ms var(--ease-out),
+        box-shadow 260ms var(--ease-out);
+    }
+    [data-photo-stack][data-tracking] {
+      --print-follow-duration: 140ms;
+    }
+  }
+
+  [data-photo-stack][data-dragging] { cursor: grabbing; --print-follow-duration: 60ms; }
+  [data-photo-stack][data-dragging] > [data-photo-print] {
+    cursor: grabbing;
+  }
+}
+
+@layer photo-paper {
+  [data-photo-paper] {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: auto;
+  }
+
+  [data-photo-paper]::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #e4e4e9;
+    pointer-events: none;
+  }
+
+  [data-photo-paper]:has([data-paper-surface][data-ready='true'])::before {
+    background: transparent;
+  }
+}
+
+@layer cartridge-touch {
+  @media (pointer: coarse) {
+    [data-cartridge-viewer] canvas {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+  }
+}
