@@ -54,9 +54,12 @@ Browser failures retain a trace, screenshot, and HTML report. Inspect them with
 `pnpm exec playwright show-report`; CI uploads them for seven days. There are no
 automatic test retries, skipped smoke tests, or `continue-on-error` steps.
 Software WebGL makes the smoke suite independent of a physical GPU. The overall
-90-second test timeout includes browser-context setup. The two longer cartridge
-gesture scenarios have 180-second (hold) and 240-second (swipe) budgets for software WebGL and wait up to
-60 seconds for rendered targets to settle before taking touch coordinates. Other
+90-second test timeout includes browser-context setup. Cartridge hold and swipe
+scenarios each have a 180-second budget for software WebGL. Swipe switching,
+cancellation and scrolling run on separate fresh pages so one long sequence cannot
+consume the final gesture's budget. Coordinate helpers wait up to 60 seconds for
+three stable rendered-frame comparisons, measuring cumulative movement from the
+start of that window rather than elapsed wall time. Other
 assertions retain their 15-second timeout (30 seconds for model decoding). Holds
 allow 60 seconds for the opening spring to become ready and request audio.
 The gesture specs retain DOM/action traces but disable continuous trace screencasts,

@@ -27,7 +27,7 @@ test('notes archive and individual writing remain navigable', async ({ page }) =
   await expect(page.getByRole('link', { name: 'Expand all notes ↓' })).toHaveCount(0)
   await page.locator(`main a[href="/note/${note.slug}"]`).click()
   await expect(page).toHaveURL(`/note/${note.slug}`)
-  await expect(page.locator('main h2')).toHaveText(note.data.title)
+  await expect(page.getByRole('main').getByRole('heading', { name: note.data.title, level: 1, exact: true })).toBeVisible()
   await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', `https://mamuso.dev/note/${note.slug}`)
 })
 

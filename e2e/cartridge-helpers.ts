@@ -33,7 +33,7 @@ export async function waitForCartridgeLayout(page: Page, controls: Locator) {
     elements.length > 0 && elements.every(element => !element.matches(':disabled'))),
   { timeout: 60_000 }).toBe(true)
   let previous: number[] = []
-  let stableSince = 0
+  let stableFrames = 0
   await expect.poll(async () => {
     // Repeated DOM reads during a slow GPU frame do not prove stability.
     // Let the animation loop present its next pose before comparing positions.
@@ -47,11 +47,17 @@ export async function waitForCartridgeLayout(page: Page, controls: Locator) {
       ? value < canvas.x || value > canvas.x + canvas.width
       : value < canvas.y || value > canvas.y + canvas.height)) {
       previous = []
-      stableSince = 0
+      stableFrames = 0
       return false
     }
-    if (!previous.length || values.some((value, index) => Math.abs(value - previous[index]) > 0.25)) stableSince = Date.now()
-    previous = values
-    return Date.now() - stableSince > 300
+    // Compare against the start of the stable window, so slow cumulative drift
+    // cannot pass. Wall time alone can elapse within one software-rendered frame.
+    if (!previous.length || values.some((value, index) => Math.abs(value - previous[index]) > 0.25)) {
+      previous = values
+      stableFrames = 0
+    } else {
+      stableFrames++
+    }
+    return stableFrames >= 3
   }, { timeout: 60_000 }).toBe(true)
 }

@@ -8,6 +8,7 @@ import PhotoMeta from './PhotoMeta'
 import PhotoDetail from './PhotoDetail'
 import PhotoTransition from './PhotoTransition'
 import ProgressivePhoto from './ProgressivePhoto'
+import CodeBlock from './CodeBlock'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '../styles/site'
 import { colors } from '../styles/tokens.stylex'
@@ -38,7 +39,7 @@ export default function Post({ post, link = false, priority = false }: { post: P
         <time dateTime={post.date}>{isNoteDetail ? formatPostMonth(post.date) : formatPostDate(post.date, true)}</time>
       </p>
       {post.basename && (
-        <p {...stylex.props(styles.copy, isNoteDetail && styles.noteImage)}>
+        <p {...stylex.props(styles.copy)}>
           <PhotoTransition slug={post.category === 'photo' ? post.slug : undefined}>
             {post.category === 'photo' ? (
               <ProgressivePhoto basename={post.basename} width={post.width} height={post.height} title={post.title}
@@ -48,7 +49,7 @@ export default function Post({ post, link = false, priority = false }: { post: P
               <Image src={`/assets/feed/${post.basename}`} width={post.width / 3} height={post.height / 3}
                 alt={post.title ?? ''} loading={priority ? 'eager' : 'lazy'}
                 sizes={isNoteDetail ? '(max-width: 639px) calc(100vw - 24px), (max-width: 1079px) calc(100vw - 120px), 960px' : undefined}
-                {...stylex.props(styles.image, isNoteDetail && styles.wideMedia)} />
+                {...stylex.props(styles.image, isNoteDetail && styles.wideMedia, isNoteDetail && styles.noteMedia)} />
             )}
           </PhotoTransition>
         </p>
@@ -94,9 +95,6 @@ const styles = stylex.create({
   noteContent: {
     marginBlockStart: 0,
   },
-  noteImage: {
-    marginBlockEnd: 32,
-  },
   wideMedia: {
     display: 'block',
     width: {
@@ -112,6 +110,10 @@ const styles = stylex.create({
   noteFigure: {
     marginBlock: 0,
     marginInline: 0,
+  },
+  noteMedia: {
+    borderRadius: 6,
+    marginBlockEnd: 24,
   },
   noteVideo: {
     display: 'block',
@@ -193,10 +195,6 @@ const styles = stylex.create({
     marginInline: 0,
     paddingInlineStart: 16,
   },
-  codeBlock: {
-    maxWidth: '100%',
-    overflowX: 'auto',
-  },
 })
 
 const headingProps = stylex.props(typography.heading, styles.markdownBlock)
@@ -212,13 +210,13 @@ const markdownOverrides = {
   ol: { props: stylex.props(styles.markdownList) },
   a: { props: stylex.props(typography.link) },
   blockquote: { props: stylex.props(typography.muted, styles.blockquote) },
-  pre: { props: stylex.props(styles.markdownBlock, styles.codeBlock) },
+  pre: { component: CodeBlock },
 }
 
 function NoteVideo({ src, title, ...props }: ComponentProps<'iframe'>) {
   return (
     <iframe {...props} src={src?.replaceAll('&amp;', '&')} title={title || 'Embedded video'}
-      {...stylex.props(styles.noteVideo, styles.wideMedia)} />
+      {...stylex.props(styles.noteVideo, styles.wideMedia, styles.noteMedia)} />
   )
 }
 
@@ -236,9 +234,9 @@ const noteMarkdownOverrides = {
   li: { props: stylex.props(styles.noteListItem) },
   blockquote: { props: stylex.props(typography.muted, styles.blockquote, styles.noteQuote) },
   hr: { props: stylex.props(styles.noteRule) },
-  img: { props: stylex.props(styles.image, styles.wideMedia) },
-  video: { props: stylex.props(styles.image, styles.wideMedia) },
-  audio: { props: stylex.props(styles.wideMedia) },
+  img: { props: stylex.props(styles.image, styles.wideMedia, styles.noteMedia) },
+  video: { props: stylex.props(styles.image, styles.wideMedia, styles.noteMedia) },
+  audio: { props: stylex.props(styles.wideMedia, styles.noteMedia) },
   figure: { props: stylex.props(styles.noteFigure) },
   iframe: { component: NoteVideo },
 }
