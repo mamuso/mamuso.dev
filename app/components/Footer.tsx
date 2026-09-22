@@ -38,8 +38,8 @@ const styles = stylex.create({
   },
   footer: {
     gridColumn: '1 / -1',
-    marginBlockStart: 80,
-    paddingBlockStart: 32,
+    marginBlockStart: 32,
+    paddingBlockStart: 80,
     paddingBlockEnd: 12,
     isolation: 'isolate',
     overflow: 'hidden',
