@@ -30,22 +30,33 @@ export default function RecentMusic() {
     const controller = new AbortController()
     const introduction = introductions[Math.floor(Math.random() * introductions.length)]
     const tilt = Math.random() * 4 - 2
+    let timer: number | undefined
+    let pending = false
     async function refresh() {
-      if (document.hidden) return
+      if (document.hidden || pending || controller.signal.aborted) return
+      window.clearTimeout(timer)
+      pending = true
+      let delay = 15_000
       try {
         const response = await fetch('/api/music', { signal: controller.signal })
         if (!response.ok) return
         const data: { track: RecentTrack | null } = await response.json()
         setMusic({ track: data.track, introduction, tilt })
+        if (data.track) delay = 120_000
       } catch {
         // The footer stays usable when the optional music service is unavailable.
+      } finally {
+        pending = false
+        if (!controller.signal.aborted) timer = window.setTimeout(refresh, delay)
       }
     }
+    const onVisible = () => { if (!document.hidden) void refresh() }
+    document.addEventListener('visibilitychange', onVisible)
     void refresh()
-    const timer = window.setInterval(refresh, 120_000)
     return () => {
       controller.abort()
-      window.clearInterval(timer)
+      window.clearTimeout(timer)
+      document.removeEventListener('visibilitychange', onVisible)
     }
   }, [])
 

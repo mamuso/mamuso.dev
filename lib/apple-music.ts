@@ -57,9 +57,10 @@ export function createRecentTrackReader({
 }) {
   let cached: RecentTrack | null = null
   let expires = 0
+  let staleUntil = 0
   let pending: Promise<RecentTrack | null> | null = null
 
-  async function load(): Promise<RecentTrack | null> {
+  async function load(): Promise<RecentTrack | null | undefined> {
     try {
       const { developerToken, userToken } = credentials()
       if (!developerToken || !userToken) return null
@@ -69,11 +70,12 @@ export function createRecentTrackReader({
         redirect: 'error',
         signal: AbortSignal.timeout(5000),
       })
+      if (response.status === 429 || response.status >= 500) return undefined
       if (!response.ok) return null
       return publicTrack(await response.json())
     } catch {
       // Do not log upstream bodies, errors or request headers: they may contain credentials.
-      return null
+      return undefined
     }
   }
 
@@ -81,9 +83,14 @@ export function createRecentTrackReader({
     if (now() < expires) return Promise.resolve(cached)
     if (pending) return pending
     pending = load().then(track => {
-      cached = track
-      expires = now() + 60_000
-      return track
+      if (track !== undefined) {
+        cached = track
+        staleUntil = track ? now() + 15 * 60_000 : 0
+      } else if (now() >= staleUntil) {
+        cached = null
+      }
+      expires = now() + (track === undefined ? 15_000 : 60_000)
+      return cached
     }).finally(() => { pending = null })
     return pending
   }

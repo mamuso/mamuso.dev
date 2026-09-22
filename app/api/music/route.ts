@@ -7,7 +7,7 @@ export async function GET() {
   const track = await getRecentTrack()
   return Response.json({ track }, {
     headers: {
-      'Cache-Control': 'public, max-age=0, s-maxage=60',
+      'Cache-Control': track ? 'public, max-age=0, s-maxage=60' : 'no-store',
       'X-Content-Type-Options': 'nosniff',
     },
   })

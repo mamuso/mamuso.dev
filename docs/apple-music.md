@@ -133,6 +133,13 @@ código malicioso lo lea. Mantén revisados los cambios y restringido el acceso 
 no sigue redirecciones, no registra errores con credenciales, no guarda respuestas
 autenticadas en la caché persistente de fetch y devuelve solo los campos públicos
 validados. La caché en memoria limita peticiones por instancia; no es un límite global.
+Ante errores temporales de Apple (red, 429 o 5xx), una instancia conserva la última
+canción válida durante un máximo de quince minutos y reintenta tras quince segundos.
+La caché es local a cada instancia: un arranque en frío aún necesita una respuesta
+válida de Apple. Los errores de autorización y el historial vacío borran esa copia.
+Las respuestas sin canción no se cachean en el CDN. El navegador reintenta cada
+quince segundos si no hay canción y al volver a una pestaña visible.
+
 El navegador público no carga MusicKit: solo consulta `/api/music` y la imagen del CDN.
 
 `.gitignore` excluye `.p8`, archivos de entorno y `.apple-music/`. No uses
