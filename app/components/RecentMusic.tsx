@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import * as stylex from '@stylexjs/stylex'
 import type { RecentTrack } from '../../lib/apple-music'
-import { layout, typography } from '../styles/site'
+import { typography } from '../styles/site'
 import { colors } from '../styles/tokens.stylex'
 
 const introductions = [
@@ -54,13 +54,13 @@ export default function RecentMusic() {
 
   const contents = (
     <>
-      {track.bgColor ? <span aria-hidden="true" {...stylex.props(styles.glow, styles.glowColor(track.bgColor))}><span {...stylex.props(styles.noise)} /></span> : null}
+      {track.bgColor ? <span aria-hidden="true" {...stylex.props(styles.glow)}><span {...stylex.props(styles.glowColor(track.bgColor), styles.tint)} /><span {...stylex.props(styles.noise)} /></span> : null}
       <span aria-hidden="true" {...stylex.props(styles.cover, styles.tilt(tilt))}>
-      {track.artwork ? (
-        // Apple artwork URLs are allowlisted by our server; no image proxy is needed.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={track.artwork} alt="" width={72} height={72} referrerPolicy="no-referrer" {...stylex.props(styles.artwork)} />
-      ) : <span aria-hidden="true" {...stylex.props(styles.artwork, styles.placeholder)}>♪</span>}
+        {track.artwork ? (
+          // Apple artwork URLs are allowlisted by our server; no image proxy is needed.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={track.artwork} alt="" width={48} height={48} referrerPolicy="no-referrer" {...stylex.props(styles.artwork)} />
+        ) : <span aria-hidden="true" {...stylex.props(styles.artwork, styles.placeholder)}>♪</span>}
       </span>
       <span title={`${introduction} ${track.name} ${track.artist}`} {...stylex.props(styles.details)}>
         <span {...stylex.props(typography.muted, styles.introduction)}>{introduction}</span>{' '}
@@ -70,33 +70,18 @@ export default function RecentMusic() {
     </>
   )
 
-  return (
-    <section aria-label="Recently played music" {...stylex.props(layout.fullBleed, styles.section)}>
-      <div {...stylex.props(layout.container)}>
-        {track.url ? (
-          <a href={track.url} rel="noreferrer" {...stylex.props(typography.link, styles.module)}>{contents}</a>
-        ) : <div {...stylex.props(styles.module)}>{contents}</div>}
-      </div>
-    </section>
-  )
+  return track.url ? (
+    <a aria-label={`${introduction} ${track.name}, ${track.artist}`} href={track.url} rel="noreferrer" {...stylex.props(typography.link, styles.module)}>{contents}</a>
+  ) : <div {...stylex.props(styles.module)}>{contents}</div>
 }
 
 const styles = stylex.create({
-  section: {
-    isolation: 'isolate',
-    overflow: 'hidden',
-    position: 'relative',
-    marginBlockStart: 80,
-    marginBlockEnd: -64,
-    paddingBlockStart: 32,
-    paddingBlockEnd: 24,
-  },
   module: {
     alignItems: 'center',
     display: 'flex',
     flexGrow: 1,
     fontSize: 'inherit',
-    gap: 18,
+    gap: 14,
     width: { default: '100%', '@media (min-width: 880px)': 'auto' },
     minWidth: 0,
   },
@@ -104,10 +89,10 @@ const styles = stylex.create({
     alignSelf: 'flex-end',
     display: 'block',
     flexShrink: 0,
-    height: 56,
-    width: 72,
+    height: { default: 48, '@media (min-width: 880px)': 22 },
+    width: 48,
     position: 'relative',
-    top: 30,
+    top: { default: 0, '@media (min-width: 880px)': 8 },
   },
   tilt: (degrees: number) => ({
     transform: `rotate(${degrees}deg)`,
@@ -117,25 +102,24 @@ const styles = stylex.create({
     borderRadius: 5,
     boxShadow: '0 0 0 1px rgb(0 0 0 / 0.06), 0 1px 1px -0.5px rgb(0 0 0 / 0.06), 0 3px 3px -1.5px rgb(0 0 0 / 0.06), 0 6px 6px -3px rgb(0 0 0 / 0.06), 0 12px 12px -6px rgb(0 0 0 / 0.06), 0 24px 24px -12px rgb(0 0 0 / 0.06)',
     display: 'block',
-    height: 72,
+    height: 48,
     objectFit: 'cover',
-    width: 72,
+    width: 48,
   },
   glow: {
     position: 'absolute',
     inset: 0,
     pointerEvents: 'none',
     zIndex: -1,
-    opacity: 0.2,
-    maskImage: 'radial-gradient(ellipse 440px 150px at 25% 115%, black, transparent)',
+    maskImage: 'radial-gradient(ellipse 230px 80px at max(80px, calc((100vw - 960px) / 2)) 110%, black, transparent)',
   },
+  tint: { position: 'absolute', inset: 0, opacity: 0.09 },
   glowColor: (color: string) => ({ backgroundColor: color }),
   noise: {
     position: 'absolute',
     inset: 0,
     backgroundImage: 'url("/images/music-grain.svg")',
-    opacity: 0.3,
-    mixBlendMode: 'soft-light',
+    opacity: 0.12,
   },
   placeholder: {
     alignItems: 'center',
@@ -144,7 +128,7 @@ const styles = stylex.create({
   },
   details: {
     minWidth: 0,
-    paddingBlock: 4,
+
     overflowWrap: 'anywhere',
   },
   introduction: {
