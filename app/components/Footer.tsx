@@ -33,7 +33,7 @@ const styles = stylex.create({
     gridColumn: '1 / -1',
     marginBlockStart: 80,
     paddingBlockStart: 32,
-    paddingBlockEnd: 24,
+    paddingBlockEnd: 12,
     isolation: 'isolate',
     overflow: 'hidden',
     position: 'relative',

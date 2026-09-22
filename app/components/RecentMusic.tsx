@@ -59,24 +59,29 @@ export default function RecentMusic() {
         {track.artwork ? (
           // Apple artwork URLs are allowlisted by our server; no image proxy is needed.
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={track.artwork} alt="" width={48} height={48} referrerPolicy="no-referrer" {...stylex.props(styles.artwork)} />
+          <img src={track.artwork} alt="" width={52} height={52} referrerPolicy="no-referrer" {...stylex.props(styles.artwork)} />
         ) : <span aria-hidden="true" {...stylex.props(styles.artwork, styles.placeholder)}>♪</span>}
       </span>
-      <span title={`${introduction} ${track.name} ${track.artist}`} {...stylex.props(styles.details)}>
+      <span title={`${introduction} ${track.name}, ${track.artist}`} {...stylex.props(styles.details)}>
         <span {...stylex.props(typography.muted, styles.introduction)}>{introduction}</span>{' '}
-        <span {...stylex.props(styles.song)}>{track.name}</span>{' '}
-        <span {...stylex.props(typography.muted, styles.artist)}>{track.artist}</span>
+        <span {...stylex.props(styles.song)}>{track.name},</span>{' '}
+        <span {...stylex.props(styles.artist)}>{track.artist}</span>
       </span>
     </>
   )
 
   return track.url ? (
-    <a aria-label={`${introduction} ${track.name}, ${track.artist}`} href={track.url} rel="noreferrer" {...stylex.props(typography.link, styles.module)}>{contents}</a>
+    <a aria-label={`${introduction} ${track.name}, ${track.artist}`} href={track.url} rel="noreferrer" {...stylex.props(styles.link, styles.module)}>{contents}</a>
   ) : <div {...stylex.props(styles.module)}>{contents}</div>
 }
 
 const styles = stylex.create({
+  link: {
+    textDecorationLine: { default: 'none', ':focus-visible': 'underline' },
+    textUnderlineOffset: 3,
+  },
   module: {
+    color: colors.textPrimary,
     alignItems: 'center',
     display: 'flex',
     flexGrow: 1,
@@ -89,22 +94,28 @@ const styles = stylex.create({
     alignSelf: 'flex-end',
     display: 'block',
     flexShrink: 0,
-    height: { default: 48, '@media (min-width: 880px)': 22 },
-    width: 48,
+    height: { default: 52, '@media (min-width: 880px)': 22 },
+    width: 52,
     position: 'relative',
-    top: { default: 0, '@media (min-width: 880px)': 8 },
+    top: -8,
+    transitionProperty: 'transform',
+    transitionDuration: { default: '180ms', '@media (prefers-reduced-motion: reduce)': '0ms' },
+    transitionTimingFunction: 'ease-out',
   },
   tilt: (degrees: number) => ({
-    transform: `rotate(${degrees}deg)`,
+    transform: {
+      default: `rotate(${degrees}deg)`,
+      ':hover': `rotate(${degrees + 2}deg)`,
+    },
   }),
   artwork: {
     backgroundColor: colors.placeholder,
     borderRadius: 5,
     boxShadow: '0 0 0 1px rgb(0 0 0 / 0.06), 0 1px 1px -0.5px rgb(0 0 0 / 0.06), 0 3px 3px -1.5px rgb(0 0 0 / 0.06), 0 6px 6px -3px rgb(0 0 0 / 0.06), 0 12px 12px -6px rgb(0 0 0 / 0.06), 0 24px 24px -12px rgb(0 0 0 / 0.06)',
     display: 'block',
-    height: 48,
+    height: 52,
     objectFit: 'cover',
-    width: 48,
+    width: 52,
   },
   glow: {
     position: 'absolute',
@@ -128,7 +139,6 @@ const styles = stylex.create({
   },
   details: {
     minWidth: 0,
-
     overflowWrap: 'anywhere',
   },
   introduction: {
