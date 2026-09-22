@@ -132,7 +132,7 @@ const styles = stylex.create({
     zIndex: -1,
     maskImage: 'radial-gradient(ellipse 230px 80px at calc(100% - max(80px, calc((100vw - 960px) / 2))) 110%, black, transparent)',
   },
-  tint: { position: 'absolute', inset: 0, opacity: 0.16 },
+  tint: { position: 'absolute', inset: 0, opacity: 0.14 },
   glowColor: (color: string) => ({ backgroundColor: color }),
   noise: {
     position: 'absolute',
