@@ -18,6 +18,7 @@
 # misc
 .DS_Store
 *.pem
+*.p8
 
 # debug
 npm-debug.log*
@@ -25,7 +26,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
+.env*
+!.env.example
+/.apple-music/
 
 # vercel
 .vercel
