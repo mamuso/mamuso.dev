@@ -11,12 +11,12 @@ export default function Footer() {
   return (
     <footer {...stylex.props(layout.fullBleed, styles.footer)}>
       <div {...stylex.props(layout.container, styles.content)}>
-        {pathname === '/' ? <RecentMusic /> : null}
         <p {...stylex.props(typography.muted, styles.copy)}>
-          <Link href="https://x.com/mamuso" {...stylex.props(typography.link)}>x</Link>{' '}
+          mamuso{' '}
           <Link href="https://github.com/mamuso" aria-label="GitHub" {...stylex.props(typography.link)}>gh</Link>{' '}
-          mamuso
+          <Link href="https://x.com/mamuso" {...stylex.props(typography.link)}>x</Link>
         </p>
+        {pathname === '/' ? <RecentMusic /> : null}
       </div>
     </footer>
   )
@@ -28,7 +28,7 @@ const styles = stylex.create({
     flexDirection: { default: 'column', '@media (min-width: 880px)': 'row' },
     gap: 24,
     display: 'flex',
-    justifyContent: { default: 'flex-start', '@media (min-width: 880px)': 'flex-end' },
+    justifyContent: 'space-between',
   },
   footer: {
     gridColumn: '1 / -1',
@@ -43,7 +43,6 @@ const styles = stylex.create({
   copy: {
     flexShrink: 0,
     marginBlock: 0,
-    marginInlineStart: { default: 0, '@media (min-width: 880px)': 'auto' },
     position: 'relative',
     whiteSpace: 'nowrap',
   },

@@ -5,6 +5,7 @@ import * as stylex from '@stylexjs/stylex'
 import type { RecentTrack } from '../../lib/apple-music'
 import { typography } from '../styles/site'
 import { colors } from '../styles/tokens.stylex'
+import { musicModule } from '../styles/musicModule.stylex'
 
 const introductions = [
   'On repeat',
@@ -55,6 +56,11 @@ export default function RecentMusic() {
   const contents = (
     <>
       {track.bgColor ? <span aria-hidden="true" {...stylex.props(styles.glow)}><span {...stylex.props(styles.glowColor(track.bgColor), styles.tint)} /><span {...stylex.props(styles.noise)} /></span> : null}
+      <span title={`${introduction} ${track.name}, ${track.artist}`} {...stylex.props(styles.details)}>
+        <span {...stylex.props(typography.muted, styles.introduction)}>{introduction}</span>{' '}
+        <span {...stylex.props(styles.song)}>{track.name},</span>{' '}
+        <span {...stylex.props(styles.artist)}>{track.artist}</span>
+      </span>
       <span aria-hidden="true" {...stylex.props(styles.cover, styles.tilt(tilt))}>
         {track.artwork ? (
           // Apple artwork URLs are allowlisted by our server; no image proxy is needed.
@@ -62,17 +68,12 @@ export default function RecentMusic() {
           <img src={track.artwork} alt="" width={52} height={52} referrerPolicy="no-referrer" {...stylex.props(styles.artwork)} />
         ) : <span aria-hidden="true" {...stylex.props(styles.artwork, styles.placeholder)}>♪</span>}
       </span>
-      <span title={`${introduction} ${track.name}, ${track.artist}`} {...stylex.props(styles.details)}>
-        <span {...stylex.props(typography.muted, styles.introduction)}>{introduction}</span>{' '}
-        <span {...stylex.props(styles.song)}>{track.name},</span>{' '}
-        <span {...stylex.props(styles.artist)}>{track.artist}</span>
-      </span>
     </>
   )
 
   return track.url ? (
-    <a aria-label={`${introduction} ${track.name}, ${track.artist}`} href={track.url} rel="noreferrer" {...stylex.props(styles.link, styles.module)}>{contents}</a>
-  ) : <div {...stylex.props(styles.module)}>{contents}</div>
+    <a aria-label={`${introduction} ${track.name}, ${track.artist}`} href={track.url} rel="noreferrer" {...stylex.props(musicModule, styles.link, styles.module)}>{contents}</a>
+  ) : <div {...stylex.props(musicModule, styles.module)}>{contents}</div>
 }
 
 const styles = stylex.create({
@@ -85,6 +86,8 @@ const styles = stylex.create({
     alignItems: 'center',
     display: 'flex',
     flexGrow: 1,
+    justifyContent: 'flex-end',
+    textAlign: 'right',
     fontSize: 'inherit',
     gap: 14,
     width: { default: '100%', '@media (min-width: 880px)': 'auto' },
@@ -99,13 +102,19 @@ const styles = stylex.create({
     position: 'relative',
     top: -8,
     transitionProperty: 'transform',
-    transitionDuration: { default: '180ms', '@media (prefers-reduced-motion: reduce)': '0ms' },
-    transitionTimingFunction: 'ease-out',
+    transitionDuration: { default: '320ms', '@media (prefers-reduced-motion: reduce)': '0ms' },
+    transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    transformOrigin: '26px 26px',
   },
   tilt: (degrees: number) => ({
     transform: {
       default: `rotate(${degrees}deg)`,
-      ':hover': `rotate(${degrees + 2}deg)`,
+      '@media (hover: hover) and (pointer: fine)': {
+        default: `rotate(${degrees}deg)`,
+        [stylex.when.ancestor(':hover', musicModule)]: `translateY(-3px) rotate(${degrees + 1.5}deg)`,
+      },
+      [stylex.when.ancestor(':focus-visible', musicModule)]: `translateY(-3px) rotate(${degrees + 1.5}deg)`,
+      '@media (prefers-reduced-motion: reduce)': `rotate(${degrees}deg)`,
     },
   }),
   artwork: {
@@ -122,7 +131,7 @@ const styles = stylex.create({
     inset: 0,
     pointerEvents: 'none',
     zIndex: -1,
-    maskImage: 'radial-gradient(ellipse 230px 80px at max(80px, calc((100vw - 960px) / 2)) 110%, black, transparent)',
+    maskImage: 'radial-gradient(ellipse 230px 80px at calc(100% - max(80px, calc((100vw - 960px) / 2))) 110%, black, transparent)',
   },
   tint: { position: 'absolute', inset: 0, opacity: 0.09 },
   glowColor: (color: string) => ({ backgroundColor: color }),
