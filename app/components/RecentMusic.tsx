@@ -89,7 +89,7 @@ const styles = stylex.create({
     textAlign: 'right',
     fontSize: 'inherit',
     gap: 14,
-    width: { default: '100%', '@media (min-width: 880px)': 'auto' },
+    flexBasis: 0,
     minWidth: 0,
   },
   cover: {
@@ -121,7 +121,7 @@ const styles = stylex.create({
     zIndex: -1,
     maskImage: 'radial-gradient(ellipse 230px 80px at calc(100% - max(80px, calc((100vw - 960px) / 2))) 110%, black, transparent)',
   },
-  tint: { position: 'absolute', inset: 0, opacity: 0.09 },
+  tint: { position: 'absolute', inset: 0, opacity: 0.16 },
   glowColor: (color: string) => ({ backgroundColor: color }),
   noise: {
     position: 'absolute',
@@ -136,15 +136,17 @@ const styles = stylex.create({
   },
   details: {
     minWidth: 0,
-    overflowWrap: 'anywhere',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
   introduction: {
-    display: { default: 'block', '@media (min-width: 880px)': 'inline' },
+    display: 'inline',
   },
   song: {
-    display: { default: 'block', '@media (min-width: 880px)': 'inline' },
+    display: { default: 'none', '@media (min-width: 880px)': 'inline' },
   },
   artist: {
-    display: { default: 'block', '@media (min-width: 880px)': 'inline' },
+    display: { default: 'none', '@media (min-width: 880px)': 'inline' },
   },
 })

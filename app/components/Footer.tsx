@@ -30,9 +30,9 @@ const styles = stylex.create({
     textUnderlineOffset: 3,
   },
   content: {
-    alignItems: { default: 'stretch', '@media (min-width: 880px)': 'center' },
-    flexDirection: { default: 'column', '@media (min-width: 880px)': 'row' },
-    gap: 24,
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: { default: 16, '@media (min-width: 880px)': 24 },
     display: 'flex',
     justifyContent: 'space-between',
   },
