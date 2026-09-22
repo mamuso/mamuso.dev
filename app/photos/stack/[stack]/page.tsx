@@ -6,14 +6,14 @@ import { BLOG_TITLE } from '@/lib/constants'
 
 type Props = { params: Promise<{ stack: string }> }
 
-export function generateStaticParams() {
-  return [...new Set(getPhotoPosts(['photoStack']).map((photo) => photo.photoStack).filter(Boolean))]
+export async function generateStaticParams() {
+  return [...new Set((await getPhotoPosts(['photoStack'])).map((photo) => photo.photoStack).filter(Boolean))]
     .map((stack) => ({ stack }))
 }
 
 export async function generateMetadata({ params }: Props) {
   const { stack } = await params
-  const photos = getPhotoStack(stack)
+  const photos = await getPhotoStack(stack)
   const cover = photos[0]
   const title = cover.photoStackTitle ?? cover.title
   return pageMetadata({
@@ -26,6 +26,6 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function PhotoCollection({ params }: Props) {
   const { stack } = await params
-  const photos = getPhotoStack(stack)
+  const photos = await getPhotoStack(stack)
   return <PhotoDetail title={photos[0].photoStackTitle ?? photos[0].title} photos={photos} linkPhotos />
 }

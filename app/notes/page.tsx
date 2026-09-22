@@ -10,9 +10,8 @@ import { layout } from '@/app/styles/site'
 
 export const metadata = pageMetadata({ title: `Notes – ${BLOG_TITLE}`, path: '/notes' })
 
-const allPosts = getNotePosts(['title', 'date', 'slug', 'category'])
-
-export default function Posts() {
+export default async function Posts() {
+  const allPosts = await getNotePosts(['title', 'date', 'slug', 'category'])
   const groups = groupNoteYears(allPosts)
 
   return (

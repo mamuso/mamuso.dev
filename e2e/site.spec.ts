@@ -32,6 +32,13 @@ test('notes archive and individual writing remain navigable', async ({ page }) =
 })
 
 test('infinite gallery preserves cards and scroll across photo navigation', async ({ page }) => {
+  const batchRequests: string[] = []
+  const galleryNavigations: string[] = []
+  page.on('request', request => {
+    const url = new URL(request.url())
+    if (url.pathname === '/api/photos') batchRequests.push(url.search)
+    if (url.pathname === '/photos' && url.searchParams.has('_rsc')) galleryNavigations.push(url.search)
+  })
   await page.goto('/photos')
   const cards = page.locator('[data-gallery-card]')
   await expect(cards).toHaveCount(24)
@@ -42,6 +49,8 @@ test('infinite gallery preserves cards and scroll across photo navigation', asyn
   })
   const position = await page.evaluate(() => ({ y: scrollY, history: history.length }))
   await expect(cards).toHaveCount(48)
+  expect(batchRequests).toEqual(['?page=2'])
+  expect(galleryNavigations).toEqual([])
   await expect(page).toHaveURL('/photos?page=2')
   expect(await page.evaluate(() => history.length)).toBe(position.history)
   expect(await page.evaluate(() => scrollY)).toBe(position.y)
@@ -65,15 +74,20 @@ test('infinite gallery preserves cards and scroll across photo navigation', asyn
 test('collection and photo pages navigate back to the gallery', async ({ page }) => {
   await page.goto('/photos')
   const collection = page.locator('[data-gallery-card] > div > a[href^="/photos/stack/"]').first()
+  const collectionHref = await collection.getAttribute('href')
   await collection.click()
   await expect(page).toHaveURL(/\/photos\/stack\//)
   await expect(page.locator('dialog')).toHaveCount(0)
-  const photo = page.locator('main a[href^="/note/"]').first()
+  const photo = page.locator('main a[href^="/note/"]:visible').first()
   const href = await photo.getAttribute('href')
   await photo.click()
   await expect(page).toHaveURL(href!)
-  await expect(page.locator('main [data-progressive-photo] img:not([aria-hidden])')).toBeVisible()
+  await expect(page.locator('main [data-progressive-photo] img:not([aria-hidden]):visible')).toBeVisible()
   await page.goBack()
+  await expect(page).toHaveURL(collectionHref!)
+  // Activity retains the previous page's DOM; wait for the collection before
+  // resolving its back link, rather than capturing the now-hidden photo link.
+  await expect(photo).toBeVisible()
   await page.getByRole('link', { name: /^(?:← )?All photos$/ }).click()
   await expect(page).toHaveURL('/photos')
 })

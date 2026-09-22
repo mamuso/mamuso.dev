@@ -1,5 +1,8 @@
 # Quality checks
 
+See [Content caching](caching.md) for the Cache Components policies and publication
+workflow. The production build validates prerender/cache boundaries.
+
 Use Node 24 and the pnpm version pinned in `package.json`.
 
 ```sh
@@ -71,8 +74,10 @@ project emulates a viewport and touch input; it is not a physical-device test.
 `.github/workflows/quality.yml` runs on pushes, pull requests, merge queues and
 manual dispatch. It uses pinned action revisions, read-only permissions, Node 24,
 locked dependencies, and the pinned content submodule. The required status check
-name is **Quality gate**. There are no path filters that could leave a required
-check pending indefinitely.
+name is **Quality gate**. It runs `pnpm build` followed by `pnpm smoke:test`:
+the production build is needed to serve the browser tests. It does not repeat
+`pnpm check` or `pnpm metadata:test`, which run on Vercel. There are no path
+filters that could leave a required check pending indefinitely.
 
 `main` requires this check from the GitHub Actions app, including administrators,
 with the branch up to date before integration (configured on 2026-09-07). This setting lives in GitHub branch protection, not in
@@ -80,7 +85,9 @@ the workflow file. The workflow must be pushed to a feature branch before GitHub
 integrate into `main` only after Quality gate passes.
 
 Vercel independently initializes the pinned submodule and runs `check`, `build`
-and the metadata audit. A failed command fails the deployment build. Browser
+and the metadata audit. A failed command fails the deployment build. The shared
+build command retains its content validation and asset/feed preparation in both
+environments. `pnpm verify` remains available locally for the complete gate. Browser
 smoke tests run in GitHub, where Chromium and its system dependencies are installed;
 requiring Quality gate on `main` protects the normal production Git deployment
 path. Preview deployments can still be produced while the GitHub browser suite

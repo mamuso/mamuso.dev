@@ -43,7 +43,7 @@ build also runs the content pipeline and updates the submodule checkout.
 - Posts and photo assets live in the public `content/` git submodule (`github.com/mamuso/mamuso.dev.content.git`). App-specific images, models, and labels also live in `public/`.
 - Populate the submodule before rendering content pages: `lib/post-index.ts` reads `content/posts/`, which otherwise fails with `ENOENT`.
 - Builds use the parent repository's pinned content revision. Do not advance to the remote default branch during a build. After committing content changes, stage the updated `content` gitlink before building; push the content commit before the parent commit so deployments can fetch it.
-- Markdown uses gray-matter frontmatter. `lib/post-index.ts` validates explicit slugs and rejects collisions with canonical URLs or filename aliases. `lib/api.tsx` wraps reads in React `cache()` and selects requested fields.
+- Markdown uses gray-matter frontmatter. `lib/post-index.ts` validates explicit slugs and rejects collisions with canonical URLs or filename aliases. `lib/api.tsx` uses Next.js `use cache` / `cacheLife('max')` for the index; its asynchronous readers select requested fields. See `docs/caching.md`.
 - Photo posts use `category: photo`, `basename`, image dimensions, and optional camera/EXIF, GPS, and palette fields. A non-photo note can also have a `basename` image; it will not appear in the photo gallery. Notes lists include all non-photo entries, including legacy `code` and uncategorized posts.
 - Editorial dates are calendar days in `YYYY-MM-DD` format. Use `lib/editorial-date.ts` for formatting, archive years, and conversion to feed timestamps; never format them in the server's local time zone.
 - Keep published explicit slugs fixed when editing titles. Markdown filenames also remain stable: photo import uses them for duplicate detection. `/note/<filename>` permanently redirects to `/note/<slug>` when an explicit slug exists; otherwise the filename remains the URL.
@@ -66,9 +66,10 @@ Use `/notes` and `/note/<slug>` in new links. `next.config.js` permanently redir
 legacy `/posts/:path*` and `/post/:slug` URLs to those routes. React Strict Mode is
 enabled in that config. Resource effects must tolerate development setup/cleanup replay.
 
-The `/notes` archive holds its post list at module scope: restart the dev server
-after Markdown changes to refresh it. The homepage feed, individual notes, and photos read inside their render functions. This does
-not guarantee production reads on every request: individual notes have `generateStaticParams`, and published content changes need a rebuild. Rerun
+Cache Components is enabled. Restart the dev server after Markdown changes to
+clear cached content. The homepage uses a 180-second cache revalidation policy;
+the shared content index and photo groups use the `max` profile. Individual notes
+have `generateStaticParams`, and published content changes need a rebuild. Rerun
 `pnpm run assets` after image changes and `pnpm run rss` to preview feed changes.
 
 ## Styling

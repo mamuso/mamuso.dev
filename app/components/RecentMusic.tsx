@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import * as stylex from '@stylexjs/stylex'
-import type { RecentTrack } from '../../lib/apple-music'
+import type { RecentTrack, RecentMusicResult } from '../../lib/apple-music'
 import { typography } from '../styles/site'
 import { colors } from '../styles/tokens.stylex'
 
@@ -27,34 +27,46 @@ export default function RecentMusic() {
   const [music, setMusic] = useState<{ track: RecentTrack | null, introduction: string, tilt: number } | null>(null)
 
   useEffect(() => {
-    const controller = new AbortController()
+    let disposed = false
+    let request: AbortController | undefined
     const introduction = introductions[Math.floor(Math.random() * introductions.length)]
     const tilt = Math.random() * 4 - 2
     let timer: number | undefined
     let pending = false
     async function refresh() {
-      if (document.hidden || pending || controller.signal.aborted) return
+      if (document.hidden || pending || disposed) return
       window.clearTimeout(timer)
       pending = true
+      const controller = new AbortController()
+      request = controller
+      const timeout = window.setTimeout(() => controller.abort(), 8000)
       let delay = 15_000
       try {
-        const response = await fetch('/api/music', { signal: controller.signal })
-        if (!response.ok) return
-        const data: { track: RecentTrack | null } = await response.json()
-        setMusic({ track: data.track, introduction, tilt })
-        if (data.track) delay = 120_000
+        const response = await fetch('/api/music', { signal: controller.signal, cache: 'no-store' })
+        if (!response.ok) throw new Error('Music unavailable')
+        const data: RecentMusicResult = await response.json()
+        if (data.status !== 'empty' && (data.status !== 'ready' || !data.track ||
+          typeof data.track.name !== 'string' || typeof data.track.artist !== 'string')) {
+          throw new Error('Invalid music response')
+        }
+        if (disposed) return
+        setMusic({ track: data.status === 'ready' ? data.track : null, introduction, tilt })
+        delay = 240_000
       } catch {
-        // The footer stays usable when the optional music service is unavailable.
+        // Never leave an old song visible when refresh fails or times out.
+        if (!disposed) setMusic(null)
       } finally {
+        window.clearTimeout(timeout)
         pending = false
-        if (!controller.signal.aborted) timer = window.setTimeout(refresh, delay)
+        if (!disposed) timer = window.setTimeout(refresh, delay)
       }
     }
     const onVisible = () => { if (!document.hidden) void refresh() }
     document.addEventListener('visibilitychange', onVisible)
     void refresh()
     return () => {
-      controller.abort()
+      disposed = true
+      request?.abort()
       window.clearTimeout(timer)
       document.removeEventListener('visibilitychange', onVisible)
     }

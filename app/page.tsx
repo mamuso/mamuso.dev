@@ -1,3 +1,4 @@
+import { cacheLife } from 'next/cache'
 import type { PostSummary } from '@/lib/types'
 import BlankNoteYear from '@/app/components/BlankNoteYear'
 import { groupNoteYears } from '@/lib/note-years'
@@ -20,13 +21,14 @@ import { getRandomFact } from '@/lib/random-fact'
 
 export const metadata = pageMetadata({ title: 'mamuso - manuel muñoz solera', path: '/' })
 // The random fact stays stable until the homepage revalidates.
-export const revalidate = 180
 
-export default function Home() {
-  const photoPool = getPhotoPosts(['basename', 'width', 'height'])
+export default async function Home() {
+  'use cache'
+  cacheLife({ stale: 180, revalidate: 180, expire: 3600 })
+  const photoPool = await getPhotoPosts(['basename', 'width', 'height'])
   const photos = Array.from({ length: Math.min(6, photoPool.length) }, () =>
     photoPool.splice(randomInt(photoPool.length), 1)[0])
-  const feed = groupNoteYears(getNotePosts(['title', 'date', 'slug']))
+  const feed = groupNoteYears(await getNotePosts(['title', 'date', 'slug']))
     .flatMap<{ year: number, post: PostSummary | null }>(({ year, notes }) => notes.length
       ? notes.map(post => ({ year, post }))
       : [{ year, post: null }])

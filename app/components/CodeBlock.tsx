@@ -1,4 +1,5 @@
 import { Children, isValidElement } from 'react'
+import { cacheLife } from 'next/cache'
 import type { ComponentProps } from 'react'
 import { createHighlighterCore } from 'shiki/core'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
@@ -25,6 +26,14 @@ function getHighlighter() {
   })
 }
 
+async function highlight(code: string, language: string) {
+  'use cache'
+  cacheLife('max')
+  const syntax = await getHighlighter()
+  const lang = syntax.getLoadedLanguages().includes(language) ? language : 'text'
+  return { lang, tokens: syntax.codeToTokens(code, { lang, theme: 'github-light' }).tokens }
+}
+
 export default async function CodeBlock({ children, ...props }: ComponentProps<'pre'>) {
   const child = Children.toArray(children)[0]
   if (!isValidElement<ComponentProps<'code'>>(child) || typeof child.props.children !== 'string') {
@@ -32,9 +41,7 @@ export default async function CodeBlock({ children, ...props }: ComponentProps<'
   }
 
   const language = child.props.className?.match(/(?:^|\s)lang(?:uage)?-([^\s]+)/)?.[1] ?? 'text'
-  const syntax = await getHighlighter()
-  const lang = syntax.getLoadedLanguages().includes(language) ? language : 'text'
-  const { tokens } = syntax.codeToTokens(child.props.children, { lang, theme: 'github-light' })
+  const { lang, tokens } = await highlight(child.props.children, language)
 
   return (
     <pre {...props} {...stylex.props(styles.block)} tabIndex={0} aria-label={`${lang} code`}>

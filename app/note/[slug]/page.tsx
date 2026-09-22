@@ -8,11 +8,11 @@ import Post from '@/app/components/Post'
 
 // Pre-generate all post pages at build time
 export async function generateStaticParams() {
-  return getPostRouteSlugs().map((slug) => ({ slug }))
+  return (await getPostRouteSlugs()).map((slug) => ({ slug }))
 }
 
-function canonicalSlug(slug: string): string {
-  const resolved = resolvePostSlug(slug)
+async function canonicalSlug(slug: string): Promise<string> {
+  const resolved = await resolvePostSlug(slug)
   if (!resolved) notFound()
   if (resolved !== slug) permanentRedirect(`/note/${resolved}`)
   return resolved
@@ -20,7 +20,7 @@ function canonicalSlug(slug: string): string {
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const params = await props.params
-  const post = getPostBySlug(canonicalSlug(params.slug), ['title', 'slug', 'summary', 'category', 'basename'])
+  const post = await getPostBySlug(await canonicalSlug(params.slug), ['title', 'slug', 'summary', 'category', 'basename'])
   return pageMetadata({
     title: `${post.title || 'Notes'} – ${BLOG_TITLE}`,
     path: `/note/${post.slug}`,
@@ -31,6 +31,6 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
 export default async function PostPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params
-  const post = getPostBySlug(canonicalSlug(params.slug), POST_DETAIL_FIELDS)
+  const post = await getPostBySlug(await canonicalSlug(params.slug), POST_DETAIL_FIELDS)
   return <Post post={post} priority={true} />
 }

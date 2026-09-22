@@ -133,12 +133,21 @@ código malicioso lo lea. Mantén revisados los cambios y restringido el acceso 
 no sigue redirecciones, no registra errores con credenciales, no guarda respuestas
 autenticadas en la caché persistente de fetch y devuelve solo los campos públicos
 validados. La caché en memoria limita peticiones por instancia; no es un límite global.
-Ante errores temporales de Apple (red, 429 o 5xx), una instancia conserva la última
-canción válida durante un máximo de quince minutos y reintenta tras quince segundos.
-La caché es local a cada instancia: un arranque en frío aún necesita una respuesta
-válida de Apple. Los errores de autorización y el historial vacío borran esa copia.
-Las respuestas sin canción no se cachean en el CDN. El navegador reintenta cada
-quince segundos si no hay canción y al volver a una pestaña visible.
+Las respuestas válidas se conservan **4 minutos** en memoria por instancia.
+No hay caché en el CDN ni en el navegador para `/api/music`. Si falla Apple
+(red, timeout, 401/403, 429, 5xx o datos inválidos), se borra la canción anterior
+inmediatamente: no hay margen de quince minutos ni reutilización de datos antiguos.
+La API devuelve un 503 genérico, `track: null` y `Retry-After: 15`; no expone
+el motivo interno ni información de la cuenta. Un historial vacío devuelve 200
+con `status: empty` y también elimina la canción anterior.
+
+El navegador consulta cada 4 minutos mientras la pestaña está visible y al
+volver a ella. Ante fallo oculta el módulo y reintenta a los 15 segundos. Cada
+petición tiene un timeout de 8 segundos en el navegador y de 5 segundos hacia
+Apple. Se cancelan las peticiones al desmontar el módulo. La caché es local a cada
+instancia y las consultas simultáneas se deduplican; un arranque en frío necesita
+una respuesta válida de Apple. Estos tiempos limitan nuestra caché, no el retraso
+con el que Apple actualiza su historial de reproducciones.
 
 El navegador público no carga MusicKit: solo consulta `/api/music` y la imagen del CDN.
 

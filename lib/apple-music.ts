@@ -45,6 +45,10 @@ export function publicTrack(payload: unknown): RecentTrack | null {
   return { name, artist, bgColor, artwork: safeURL(artwork, true), url: safeURL(attributes.url) }
 }
 
+export type RecentMusicResult =
+  | { status: 'ready'; track: RecentTrack }
+  | { status: 'empty' | 'unavailable'; track: null }
+
 /** Used only by the server-only boundary. Dependencies are injectable for security tests. */
 export function createRecentTrackReader({
   credentials,
@@ -55,41 +59,39 @@ export function createRecentTrackReader({
   request?: typeof fetch
   now?: () => number
 }) {
-  let cached: RecentTrack | null = null
+  let cached: RecentMusicResult = { status: 'unavailable', track: null }
   let expires = 0
-  let staleUntil = 0
-  let pending: Promise<RecentTrack | null> | null = null
+  let pending: Promise<RecentMusicResult> | null = null
 
-  async function load(): Promise<RecentTrack | null | undefined> {
+  async function load(): Promise<RecentMusicResult> {
     try {
       const { developerToken, userToken } = credentials()
-      if (!developerToken || !userToken) return null
+      if (!developerToken || !userToken) return { status: 'unavailable', track: null }
       const response = await request('https://api.music.apple.com/v1/me/recent/played/tracks?limit=1', {
         headers: { Authorization: `Bearer ${developerToken}`, 'Music-User-Token': userToken },
         cache: 'no-store',
         redirect: 'error',
         signal: AbortSignal.timeout(5000),
       })
-      if (response.status === 429 || response.status >= 500) return undefined
-      if (!response.ok) return null
-      return publicTrack(await response.json())
+      if (!response.ok) return { status: 'unavailable', track: null }
+      const payload: unknown = await response.json()
+      if (payload && typeof payload === 'object' && 'data' in payload &&
+        Array.isArray(payload.data) && payload.data.length === 0) return { status: 'empty', track: null }
+      const track = publicTrack(payload)
+      return track ? { status: 'ready', track } : { status: 'unavailable', track: null }
     } catch {
       // Do not log upstream bodies, errors or request headers: they may contain credentials.
-      return undefined
+      return { status: 'unavailable', track: null }
     }
   }
 
-  return function read(): Promise<RecentTrack | null> {
+  return function read(): Promise<RecentMusicResult> {
     if (now() < expires) return Promise.resolve(cached)
     if (pending) return pending
-    pending = load().then(track => {
-      if (track !== undefined) {
-        cached = track
-        staleUntil = track ? now() + 15 * 60_000 : 0
-      } else if (now() >= staleUntil) {
-        cached = null
-      }
-      expires = now() + (track === undefined ? 15_000 : 60_000)
+    pending = load().then(result => {
+      // A failed refresh always clears the previous song, with a short retry cooldown.
+      cached = result
+      expires = now() + (result.status === 'unavailable' ? 15_000 : 240_000)
       return cached
     }).finally(() => { pending = null })
     return pending
