@@ -44,7 +44,7 @@ const styles = stylex.create({
     },
     gridTemplateRows: 'auto 1fr auto',
     minHeight: '100dvh',
-    paddingBlock: 24,
+    paddingBlockStart: 24,
     position: 'relative',
     rowGap: {
       default: 24,

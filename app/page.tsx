@@ -8,6 +8,7 @@ import { getNotePosts, getPhotoPosts } from '@/lib/api'
 import { randomInt } from 'node:crypto'
 import PostHome from '@/app/components/PostHome'
 import HomeContent from '@/app/components/HomeContent'
+import RecentMusic from '@/app/components/RecentMusic'
 import HomePhotos from '@/app/components/HomePhotos'
 import MoreLink from '@/app/components/MoreLink'
 import { homeLinks } from '@/app/styles/homeLinks'
@@ -72,6 +73,7 @@ export default function Home() {
           </section>
         </div>
       </div>
+      <RecentMusic />
     </>
   )
 }

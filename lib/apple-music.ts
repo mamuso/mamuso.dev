@@ -2,6 +2,7 @@ export type RecentTrack = {
   name: string
   artist: string
   artwork: string | null
+  bgColor: string | null
   url: string | null
 }
 
@@ -37,9 +38,11 @@ export function publicTrack(payload: unknown): RecentTrack | null {
   const artist = attributes.artistName.trim().slice(0, 300)
   if (!name || !artist) return null
   const artwork = typeof attributes.artwork?.url === 'string'
-    ? attributes.artwork.url.replaceAll('{w}', '96').replaceAll('{h}', '96')
+    ? attributes.artwork.url.replaceAll('{w}', '160').replaceAll('{h}', '160')
     : null
-  return { name, artist, artwork: safeURL(artwork, true), url: safeURL(attributes.url) }
+  const color = attributes.artwork?.bgColor
+  const bgColor = typeof color === 'string' && /^[0-9a-f]{6}$/i.test(color) ? '#' + color : null
+  return { name, artist, bgColor, artwork: safeURL(artwork, true), url: safeURL(attributes.url) }
 }
 
 /** Used only by the server-only boundary. Dependencies are injectable for security tests. */
