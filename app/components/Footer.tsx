@@ -13,8 +13,9 @@ export default function Footer() {
       <div {...stylex.props(layout.container, styles.content)}>
         {pathname === '/' ? <RecentMusic /> : null}
         <p {...stylex.props(typography.muted, styles.copy)}>
-          mamuso <Link href="https://x.com/mamuso" {...stylex.props(typography.mutedLink)}>x</Link>{' '}
-          <Link href="https://github.com/mamuso" {...stylex.props(typography.mutedLink)}>github</Link>
+          <Link href="https://x.com/mamuso" {...stylex.props(typography.link)}>x</Link>{' '}
+          <Link href="https://github.com/mamuso" aria-label="GitHub" {...stylex.props(typography.link)}>gh</Link>{' '}
+          mamuso
         </p>
       </div>
     </footer>
