@@ -5,6 +5,7 @@ import RecentMusic from './RecentMusic'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '../styles/site'
+import { colors } from '../styles/tokens.stylex'
 
 export default function Footer() {
   const pathname = usePathname()
@@ -13,8 +14,8 @@ export default function Footer() {
       <div {...stylex.props(layout.container, styles.content)}>
         <p {...stylex.props(typography.muted, styles.copy)}>
           mamuso{' '}
-          <Link href="https://github.com/mamuso" aria-label="GitHub" {...stylex.props(typography.link)}>gh</Link>{' '}
-          <Link href="https://x.com/mamuso" {...stylex.props(typography.link)}>x</Link>
+          <Link href="https://github.com/mamuso" aria-label="GitHub" {...stylex.props(styles.link)}>gh</Link>{' '}
+          <Link href="https://x.com/mamuso" {...stylex.props(styles.link)}>x</Link>
         </p>
         {pathname === '/' ? <RecentMusic /> : null}
       </div>
@@ -23,6 +24,11 @@ export default function Footer() {
 }
 
 const styles = stylex.create({
+  link: {
+    color: colors.textPrimary,
+    textDecorationLine: { default: 'none', ':focus-visible': 'underline' },
+    textUnderlineOffset: 3,
+  },
   content: {
     alignItems: { default: 'stretch', '@media (min-width: 880px)': 'center' },
     flexDirection: { default: 'column', '@media (min-width: 880px)': 'row' },

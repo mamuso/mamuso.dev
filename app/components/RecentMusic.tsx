@@ -5,7 +5,6 @@ import * as stylex from '@stylexjs/stylex'
 import type { RecentTrack } from '../../lib/apple-music'
 import { typography } from '../styles/site'
 import { colors } from '../styles/tokens.stylex'
-import { musicModule } from '../styles/musicModule.stylex'
 
 const introductions = [
   'On repeat',
@@ -65,15 +64,15 @@ export default function RecentMusic() {
         {track.artwork ? (
           // Apple artwork URLs are allowlisted by our server; no image proxy is needed.
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={track.artwork} alt="" width={52} height={52} referrerPolicy="no-referrer" {...stylex.props(styles.artwork)} />
+          <img src={track.artwork} alt="" width={48} height={48} referrerPolicy="no-referrer" {...stylex.props(styles.artwork)} />
         ) : <span aria-hidden="true" {...stylex.props(styles.artwork, styles.placeholder)}>♪</span>}
       </span>
     </>
   )
 
   return track.url ? (
-    <a aria-label={`${introduction} ${track.name}, ${track.artist}`} href={track.url} rel="noreferrer" {...stylex.props(musicModule, styles.link, styles.module)}>{contents}</a>
-  ) : <div {...stylex.props(musicModule, styles.module)}>{contents}</div>
+    <a aria-label={`${introduction} ${track.name}, ${track.artist}`} href={track.url} rel="noreferrer" {...stylex.props(styles.link, styles.module)}>{contents}</a>
+  ) : <div {...stylex.props(styles.module)}>{contents}</div>
 }
 
 const styles = stylex.create({
@@ -97,34 +96,23 @@ const styles = stylex.create({
     alignSelf: 'flex-end',
     display: 'block',
     flexShrink: 0,
-    height: { default: 52, '@media (min-width: 880px)': 22 },
-    width: 52,
+    height: 22,
+    width: 48,
     position: 'relative',
     top: -8,
-    transitionProperty: 'transform',
-    transitionDuration: { default: '320ms', '@media (prefers-reduced-motion: reduce)': '0ms' },
-    transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
-    transformOrigin: '26px 26px',
+    transformOrigin: '24px 24px',
   },
   tilt: (degrees: number) => ({
-    transform: {
-      default: `rotate(${degrees}deg)`,
-      '@media (hover: hover) and (pointer: fine)': {
-        default: `rotate(${degrees}deg)`,
-        [stylex.when.ancestor(':hover', musicModule)]: `translateY(-3px) rotate(${degrees + 1.5}deg)`,
-      },
-      [stylex.when.ancestor(':focus-visible', musicModule)]: `translateY(-3px) rotate(${degrees + 1.5}deg)`,
-      '@media (prefers-reduced-motion: reduce)': `rotate(${degrees}deg)`,
-    },
+    transform: `rotate(${degrees}deg)`,
   }),
   artwork: {
     backgroundColor: colors.placeholder,
     borderRadius: 5,
     boxShadow: '0 0 0 1px rgb(0 0 0 / 0.06), 0 1px 1px -0.5px rgb(0 0 0 / 0.06), 0 3px 3px -1.5px rgb(0 0 0 / 0.06), 0 6px 6px -3px rgb(0 0 0 / 0.06), 0 12px 12px -6px rgb(0 0 0 / 0.06), 0 24px 24px -12px rgb(0 0 0 / 0.06)',
     display: 'block',
-    height: 52,
+    height: 48,
     objectFit: 'cover',
-    width: 52,
+    width: 48,
   },
   glow: {
     position: 'absolute',
