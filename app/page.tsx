@@ -2,18 +2,16 @@ import { cacheLife } from 'next/cache'
 import type { PostSummary } from '@/lib/types'
 import BlankNoteYear from '@/app/components/BlankNoteYear'
 import { groupNoteYears } from '@/lib/note-years'
-import { homeLink } from '@/app/styles/homeLink.stylex'
 import { pageMetadata } from '@/lib/metadata'
 import Link from 'next/link'
 import { getNotePosts, getPhotoPosts } from '@/lib/api'
 import { randomInt } from 'node:crypto'
 import PostHome from '@/app/components/PostHome'
+import HomeProjects from '@/app/components/HomeProjects'
 import HomeContent from '@/app/components/HomeContent'
 import HomePhotos from '@/app/components/HomePhotos'
 import MoreLink from '@/app/components/MoreLink'
 import { homeLinks } from '@/app/styles/homeLinks'
-import { listHover } from '@/app/styles/listHover'
-import { projects } from '@/data/projects'
 import * as stylex from '@stylexjs/stylex'
 import { layout } from '@/app/styles/site'
 import { colors } from './styles/tokens.stylex'
@@ -38,23 +36,7 @@ export default async function Home() {
     <>
       <HomeContent randomFact={getRandomFact()} />
       <div {...stylex.props(styles.content)}>
-        <section aria-labelledby="home-fun" {...stylex.props(styles.module, styles.projects)}>
-          <div>
-            <h2 id="home-fun" {...stylex.props(styles.heading, styles.rule)}>Having fun</h2>
-            <ul {...stylex.props(layout.list)}>
-              {projects.map(project => (
-                <li key={project.href} {...stylex.props(styles.rule)}>
-                  <a href={project.href} title={`${project.title} — ${project.description}`} {...stylex.props(homeLink, homeLinks.primary, styles.project, listHover.row)}>
-                    <span aria-hidden="true" {...stylex.props(listHover.square)} />
-                    {project.title}{' '}
-                    <span {...stylex.props(homeLinks.secondary)}>{project.description}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div><MoreLink href="https://github.com/mamuso?tab=repositories" label="More projects" /></div>
-        </section>
+        <HomeProjects />
         <div {...stylex.props(styles.right)}>
           <section aria-labelledby="home-notes" {...stylex.props(styles.module)}>
             <h2 id="home-notes" {...stylex.props(styles.heading, styles.rule)}>
@@ -101,12 +83,6 @@ const styles = stylex.create({
   module: {
     minWidth: 0,
   },
-  projects: {
-    display: { default: 'block', '@media (min-width: 880px)': 'grid' },
-    gridColumn: { default: 'auto', '@media (min-width: 880px)': '1' },
-    gridRow: { default: 'auto', '@media (min-width: 880px)': '1 / span 2' },
-    gridTemplateRows: { default: 'none', '@media (min-width: 880px)': 'subgrid' },
-  },
   right: {
     display: 'flex',
     flexDirection: 'column',
@@ -128,13 +104,6 @@ const styles = stylex.create({
     fontWeight: 400,
     margin: 0,
     paddingBlock: 4,
-  },
-  project: {
-    display: 'block',
-    lineHeight: '22px',
-    paddingBlock: 5,
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
   },
   photoLink: {
     display: 'block',

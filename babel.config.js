@@ -13,7 +13,8 @@ module.exports = {
         enableInlinedConditionalMerge: true,
         treeshakeCompensation: true,
         aliases: { '@/*': [path.join(__dirname, '*')] },
-        unstable_moduleResolution: { type: 'commonJS' },
+        // Turbopack rewrites __dirname to /ROOT/ in the PostCSS worker.
+        unstable_moduleResolution: { type: 'commonJS', rootDir: process.cwd() },
       },
     ],
   ],

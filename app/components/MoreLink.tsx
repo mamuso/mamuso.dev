@@ -6,9 +6,14 @@ import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { homeLinks } from '../styles/homeLinks'
 
-export default function MoreLink({ href, label }: { href: string, label: string }) {
+type MoreLinkProps = { label: string } & (
+  | { href: string, onClick?: never, expanded?: never, controls?: never }
+  | { href?: never, onClick: () => void, expanded: boolean, controls: string }
+)
+
+export default function MoreLink({ href, label, onClick, expanded, controls }: MoreLinkProps) {
   const [extraOs, setExtraOs] = useState([0, 0, 0, 0])
-  const chooseVariation = (link: HTMLAnchorElement) => {
+  const chooseVariation = (link: HTMLElement) => {
     const counts = Array.from({ length: 4 }, () => Math.floor(Math.random() * 6))
     const context = document.createElement('canvas').getContext('2d')
     if (context) {
@@ -29,31 +34,45 @@ export default function MoreLink({ href, label }: { href: string, label: string 
     setExtraOs(counts)
   }
 
-  return (
-    <Link
-      href={href}
-      aria-label={label}
-      onMouseEnter={event => chooseVariation(event.currentTarget)}
-      onFocus={event => {
-        if (!event.currentTarget.matches(':hover')) chooseVariation(event.currentTarget)
-      }}
-      {...stylex.props(homeLink, styles.link)}
-    >
-      <span aria-hidden="true" {...stylex.props(homeLinks.secondary, styles.words)}>
-        More
-        {extraOs.map((count, index) => (
-          <span key={index} {...stylex.props(styles.word, styles.delay(index))}>
-            {'\u00a0'}M{'o'.repeat(count + 1)}re
-          </span>
-        ))}
-        <span {...stylex.props(styles.word, styles.delay(4))}>{'\u00a0›'}</span>
-      </span>
-    </Link>
+  const interactionProps = {
+    'aria-label': label,
+    onMouseEnter: (event: React.MouseEvent<HTMLElement>) => chooseVariation(event.currentTarget),
+    onFocus: (event: React.FocusEvent<HTMLElement>) => {
+      if (!event.currentTarget.matches(':hover')) chooseVariation(event.currentTarget)
+    },
+    ...stylex.props(homeLink, styles.link),
+  }
+  const words = (
+    <span aria-hidden="true" {...stylex.props(homeLinks.secondary, styles.words)}>
+      {expanded ? 'Less' : 'More'}
+      {!expanded && extraOs.map((count, index) => (
+        <span key={index} {...stylex.props(styles.word, styles.delay(index))}>
+          {'\u00a0'}M{'o'.repeat(count + 1)}re
+        </span>
+      ))}
+      {!expanded && <span {...stylex.props(styles.word, styles.delay(4))}>{'\u00a0›'}</span>}
+    </span>
+  )
+
+  return href !== undefined ? (
+    <Link href={href} {...interactionProps}>{words}</Link>
+  ) : (
+    <button type="button" onClick={onClick} aria-expanded={expanded} aria-controls={controls} {...interactionProps}>
+      {words}
+    </button>
   )
 }
 
 const styles = stylex.create({
   link: {
+    appearance: 'none',
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    cursor: 'pointer',
+    font: 'inherit',
+    letterSpacing: 'inherit',
+    paddingInline: 0,
+    textAlign: 'start',
     display: 'inline-block',
     whiteSpace: 'nowrap',
     maxWidth: '100%',
