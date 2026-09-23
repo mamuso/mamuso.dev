@@ -10,7 +10,7 @@ export const getRecentTrack = createRecentTrackReader({
     const userToken = process.env.APPLE_MUSIC_USER_TOKEN
     if (!privateKey || !teamId || !keyId || !userToken) return {}
 
-    // Sign on each upstream refresh (every 4 minutes per instance, or 15s after failure).
+    // Sign on each upstream refresh (every minute per instance, or 15s after failure).
     // Short-lived tokens need no stored credential, cron or manual renewal.
     return {
       developerToken: developerToken(privateKey.replaceAll('\\n', '\n'), teamId, keyId, 600),

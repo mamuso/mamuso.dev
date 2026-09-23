@@ -25,8 +25,9 @@ explicit `cacheLife` policies instead of route-level `revalidate` or `dynamic`.
   profile. Shiki's internal clock access remains inside that cache boundary.
 - `/api/music` calls `connection()` before reading credentials or signing tokens.
   It stays outside the content cache: valid results live in instance memory for
-  4 minutes, failures clear the previous song and retry after 15 seconds, and
-  HTTP responses use `no-store`. The browser polls every 4 minutes, with an
+  1 minute, failures clear the previous song and retry after 15 seconds, and
+  HTTP responses use `no-store`. The browser schedules its next poll using the remaining server TTL
+  (`refreshAfterMs`), rather than adding another one minute, with an
   8-second timeout and no stale fallback. Node.js remains the default runtime.
 
 Next includes the build ID in `use cache` keys. Publishing Markdown still requires

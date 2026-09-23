@@ -61,7 +61,7 @@ export function createRecentTrackReader({
 }) {
   let cached: RecentMusicResult = { status: 'unavailable', track: null }
   let expires = 0
-  let pending: Promise<RecentMusicResult> | null = null
+  let pending: Promise<RecentMusicResult & { refreshAfterMs: number }> | null = null
 
   async function load(): Promise<RecentMusicResult> {
     try {
@@ -85,14 +85,18 @@ export function createRecentTrackReader({
     }
   }
 
-  return function read(): Promise<RecentMusicResult> {
-    if (now() < expires) return Promise.resolve(cached)
+  function snapshot() {
+    return { ...cached, refreshAfterMs: Math.max(0, expires - now()) }
+  }
+
+  return function read(): Promise<RecentMusicResult & { refreshAfterMs: number }> {
+    if (now() < expires) return Promise.resolve(snapshot())
     if (pending) return pending
     pending = load().then(result => {
       // A failed refresh always clears the previous song, with a short retry cooldown.
       cached = result
-      expires = now() + (result.status === 'unavailable' ? 15_000 : 240_000)
-      return cached
+      expires = now() + (result.status === 'unavailable' ? 15_000 : 60_000)
+      return snapshot()
     }).finally(() => { pending = null })
     return pending
   }

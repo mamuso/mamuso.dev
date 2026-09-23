@@ -133,7 +133,7 @@ código malicioso lo lea. Mantén revisados los cambios y restringido el acceso 
 no sigue redirecciones, no registra errores con credenciales, no guarda respuestas
 autenticadas en la caché persistente de fetch y devuelve solo los campos públicos
 validados. La caché en memoria limita peticiones por instancia; no es un límite global.
-Las respuestas válidas se conservan **4 minutos** en memoria por instancia.
+Las respuestas válidas se conservan **1 minuto** en memoria por instancia.
 No hay caché en el CDN ni en el navegador para `/api/music`. Si falla Apple
 (red, timeout, 401/403, 429, 5xx o datos inválidos), se borra la canción anterior
 inmediatamente: no hay margen de quince minutos ni reutilización de datos antiguos.
@@ -141,8 +141,9 @@ La API devuelve un 503 genérico, `track: null` y `Retry-After: 15`; no expone
 el motivo interno ni información de la cuenta. Un historial vacío devuelve 200
 con `status: empty` y también elimina la canción anterior.
 
-El navegador consulta cada 4 minutos mientras la pestaña está visible y al
-volver a ella. Ante fallo oculta el módulo y reintenta a los 15 segundos. Cada
+El navegador consulta al caducar la respuesta del servidor (como máximo cada
+1 minuto mientras la pestaña está visible) y al volver a ella. `refreshAfterMs`
+indica el tiempo restante de caché para no sumar otro minuto en el cliente. Ante fallo oculta el módulo y reintenta a los 15 segundos. Cada
 petición tiene un timeout de 8 segundos en el navegador y de 5 segundos hacia
 Apple. Se cancelan las peticiones al desmontar el módulo. La caché es local a cada
 instancia y las consultas simultáneas se deduplican; un arranque en frío necesita

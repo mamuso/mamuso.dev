@@ -20,10 +20,10 @@ for (const failure of ['http', 'network', 'json', 'empty'] as const) {
     await page.goto('/')
     const music = page.locator('footer a[href="https://music.apple.com/us/song/test/123"]')
     await expect(music).toBeVisible()
-    await page.clock.fastForward(240_000)
+    await page.clock.fastForward(60_000)
     await expect(music).toHaveCount(0)
     expect(calls).toBe(2)
-    await page.clock.fastForward(failure === 'empty' ? 240_000 : 15_000)
+    await page.clock.fastForward(failure === 'empty' ? 60_000 : 15_000)
     await expect(music).toBeVisible()
     expect(calls).toBe(3)
   })
@@ -46,7 +46,7 @@ test('a stalled music response times out, hides the song and allows a retry', as
     await page.goto('/')
     const music = page.locator('footer a[href="https://music.apple.com/us/song/test/123"]')
     await expect(music).toBeVisible()
-    await page.clock.fastForward(240_000)
+    await page.clock.fastForward(60_000)
     await expect.poll(() => calls).toBe(2)
     await page.clock.fastForward(8000)
     await expect(music).toHaveCount(0)
@@ -57,4 +57,26 @@ test('a stalled music response times out, hides the song and allows a retry', as
   } finally {
     release()
   }
+})
+
+test('music refreshes when the server cache expires instead of waiting another one minute', async ({ page }) => {
+  let calls = 0
+  await page.route('**/models/famicom_cartridge.glb', route => route.abort())
+  await page.route('**/api/music', route => {
+    calls++
+    return route.fulfill({ json: {
+      ...ready,
+      track: { ...ready.track, name: calls === 1 ? 'Old song' : 'New song' },
+      refreshAfterMs: calls === 1 ? 10_000 : 60_000,
+    } })
+  })
+  await page.clock.install()
+  await page.goto('/')
+  const music = page.locator('footer a[href="https://music.apple.com/us/song/test/123"]')
+  await expect(music).toHaveAttribute('aria-label', /Old song/)
+  await page.clock.fastForward(9000)
+  expect(calls).toBe(1)
+  await page.clock.fastForward(1000)
+  await expect(music).toHaveAttribute('aria-label', /New song/)
+  expect(calls).toBe(2)
 })

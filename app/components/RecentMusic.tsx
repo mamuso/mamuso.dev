@@ -44,14 +44,17 @@ export default function RecentMusic() {
       try {
         const response = await fetch('/api/music', { signal: controller.signal, cache: 'no-store' })
         if (!response.ok) throw new Error('Music unavailable')
-        const data: RecentMusicResult = await response.json()
+        const data: RecentMusicResult & { refreshAfterMs?: number } = await response.json()
         if (data.status !== 'empty' && (data.status !== 'ready' || !data.track ||
           typeof data.track.name !== 'string' || typeof data.track.artist !== 'string')) {
           throw new Error('Invalid music response')
         }
         if (disposed) return
         setMusic({ track: data.status === 'ready' ? data.track : null, introduction, tilt })
-        delay = 240_000
+        // Use the remaining server TTL, not another full one-minute window.
+        delay = typeof data.refreshAfterMs === 'number' && Number.isFinite(data.refreshAfterMs)
+          ? Math.max(1000, Math.min(60_000, data.refreshAfterMs))
+          : 60_000
       } catch {
         // Never leave an old song visible when refresh fails or times out.
         if (!disposed) setMusic(null)
