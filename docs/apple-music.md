@@ -153,6 +153,11 @@ con el que Apple actualiza su historial de reproducciones.
 La consulta incluye explícitamente `types=songs,library-songs`, el parámetro
 obligatorio de Apple para incluir canciones de catálogo y biblioteca. Omitirlo
 puede dejar fuera reproducciones de biblioteca aunque la caché se renueve.
+Para las canciones de biblioteca, se incluye su relación `catalog` y se completan
+el color, el enlace y la carátula si faltan. Si Apple no incluye esa relación,
+se consulta `/v1/me/library/songs/{id}/catalog` dentro del mismo plazo total de
+5 segundos. Un fallo de esta consulta opcional conserva la canción reciente;
+no se buscan coincidencias por título ni se reutiliza el color de otra canción.
 
 El navegador público no carga MusicKit: solo consulta `/api/music` y la imagen del CDN.
 
