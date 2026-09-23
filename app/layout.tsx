@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Analytics } from '@vercel/analytics/next'
 import * as stylex from '@stylexjs/stylex'
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from '../lib/constants'
 import Header from './components/Header'
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main {...stylex.props(styles.main)}>{children}</main>
           <Footer />
         </div>
+        <Analytics />
       </body>
     </html>
   )

@@ -27,6 +27,7 @@
     "@react-three/drei": "^10.7.8",
     "@react-three/fiber": "^9.7.0",
     "@stylexjs/stylex": "^0.19.0",
+    "@vercel/analytics": "^2.0.1",
     "fs-extra": "^11.4.0",
     "gray-matter": "^4.0.3",
     "markdown-to-jsx": "^9.10.2",
