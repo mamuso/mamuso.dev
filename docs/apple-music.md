@@ -90,7 +90,7 @@ Cambiar variables no modifica un despliegue existente.
 
 Reproduce una canción en Apple Music y visita el pie de la web. El servidor
 consulta el historial con caché de 60 segundos por instancia, y el navegador
-actualiza cada dos minutos mientras la pestaña está visible. Apple puede tardar
+actualiza al caducar esa caché mientras la pestaña está visible. Apple puede tardar
 más en reflejar actividad o no incluir algunas reproducciones.
 
 `/api/music` devuelve solo `track` con nombre, artista, imagen y enlace. Si devuelve
@@ -149,6 +149,10 @@ Apple. Se cancelan las peticiones al desmontar el módulo. La caché es local a 
 instancia y las consultas simultáneas se deduplican; un arranque en frío necesita
 una respuesta válida de Apple. Estos tiempos limitan nuestra caché, no el retraso
 con el que Apple actualiza su historial de reproducciones.
+
+La consulta incluye explícitamente `types=songs,library-songs`, el parámetro
+obligatorio de Apple para incluir canciones de catálogo y biblioteca. Omitirlo
+puede dejar fuera reproducciones de biblioteca aunque la caché se renueve.
 
 El navegador público no carga MusicKit: solo consulta `/api/music` y la imagen del CDN.
 

@@ -157,7 +157,7 @@ button.addEventListener('click', async () => {
       const { userToken } = JSON.parse(body)
       if (typeof userToken !== 'string' || !/^[A-Za-z0-9._~+/=-]{20,16000}$/.test(userToken)) return fail(400, 'INVALID_TOKEN')
       stage = 'apple'
-      const check = await request('https://api.music.apple.com/v1/me/recent/played/tracks?limit=1', {
+      const check = await request('https://api.music.apple.com/v1/me/recent/played/tracks?limit=1&types=songs,library-songs', {
         headers: { Authorization: `Bearer ${serverToken}`, 'Music-User-Token': userToken },
         redirect: 'error',
         signal: AbortSignal.timeout(10000),

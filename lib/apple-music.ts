@@ -67,7 +67,7 @@ export function createRecentTrackReader({
     try {
       const { developerToken, userToken } = credentials()
       if (!developerToken || !userToken) return { status: 'unavailable', track: null }
-      const response = await request('https://api.music.apple.com/v1/me/recent/played/tracks?limit=1', {
+      const response = await request('https://api.music.apple.com/v1/me/recent/played/tracks?limit=1&types=songs,library-songs', {
         headers: { Authorization: `Bearer ${developerToken}`, 'Music-User-Token': userToken },
         cache: 'no-store',
         redirect: 'error',
