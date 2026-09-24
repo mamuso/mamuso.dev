@@ -5,6 +5,7 @@ import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { homeLinks } from '../styles/homeLinks'
 import { listHover } from '../styles/listHover'
+import { colors } from '../styles/tokens.stylex'
 
 export default function PostHome({ post }: { post: PostSummary }) {
   return (
@@ -32,7 +33,7 @@ const styles = stylex.create({
     minWidth: 0,
   },
   noteTitle: {
-    color: '#17181B',
+    color: colors.textPrimary,
     fontWeight: 400,
     minWidth: 0,
     overflow: 'hidden',

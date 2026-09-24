@@ -15,7 +15,8 @@ export default function Footer() {
         <p {...stylex.props(typography.muted, styles.copy)}>
           mamuso{' '}
           <Link href="https://github.com/mamuso" aria-label="GitHub" {...stylex.props(styles.link)}>gh</Link>{' '}
-          <Link href="https://x.com/mamuso" {...stylex.props(styles.link)}>x</Link>
+          <Link href="https://x.com/mamuso" {...stylex.props(styles.link)}>x</Link>{' '}
+          <a href="/feed.xml" type="application/atom+xml" aria-label="Feed" {...stylex.props(styles.link)}>feed</a>
         </p>
         {pathname === '/' ? <RecentMusic /> : null}
       </div>

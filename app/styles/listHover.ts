@@ -1,5 +1,6 @@
 import * as stylex from '@stylexjs/stylex'
 import { homeLink } from './homeLink.stylex'
+import { colors } from './tokens.stylex'
 
 export const listHover = stylex.create({
   row: {
@@ -20,7 +21,7 @@ export const listHover = stylex.create({
     insetBlockStart: 9,
     width: 14,
     height: 14,
-    backgroundColor: '#17181B',
+    backgroundColor: colors.textPrimary,
     pointerEvents: 'none',
     transform: {
       default: 'translateX(-24px)',

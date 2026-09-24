@@ -48,7 +48,7 @@ export default async function Posts() {
 
 const styles = stylex.create({
   section: {
-    color: '#17181B',
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: 400,
     letterSpacing: '-0.005em',

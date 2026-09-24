@@ -54,7 +54,7 @@ build also runs the content pipeline and updates the submodule checkout.
 
 ## Routes and rendering
 
-- `app/page.tsx`: homepage introduction and cartridge scene through `HomeContent`; the journal section is currently disabled by `SHOW_JOURNAL = false`.
+- `app/page.tsx`: homepage introduction and cartridge scene through `HomeContent`, then the "Having fun" projects list (`HomeProjects`, data in `data/projects.ts`), the first six Feed rows (blank years included) and a random photo selection (`HomePhotos`).
 - `app/notes/page.tsx`: notes archive grouped by year.
 - Legacy numeric `/notes/<page>` URLs permanently redirect to `/notes`; the expanded paginated view has been removed.
 - `app/note/[slug]/page.tsx`: individual note or photo, with canonical redirects.
@@ -90,6 +90,11 @@ modules, Tailwind, or webfonts. The site uses the native system font stack.
 - The homepage loads the scene via `HomeContent` → `CartridgeStageDynamic` (`ssr: false`) → `CartridgeStage` → `CartridgeViewer`. Keep the scene and its assets scoped to the homepage. Cartridge definitions are in `data/cartridges.ts`, with label textures in `public/labels/`.
 - The viewer composes focused camera, layout, motion and material modules. See `docs/cartridge-architecture.md` for ownership rules and verification.
 - WGSL loaders are configured for both Turbopack and Webpack in `next.config.js`.
+
+## Agent skills
+
+Repository skills live in `.agents/skills/`. `.claude/skills`, `.codex/skills` and
+`.cursor/skills` are symlinks to it; add or edit skills only under `.agents/skills/`.
 
 ## TypeScript
 

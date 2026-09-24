@@ -1,10 +1,11 @@
 import * as stylex from '@stylexjs/stylex'
 
 import { homeLink } from './homeLink.stylex'
+import { colors } from './tokens.stylex'
 
 export const homeLinks = stylex.create({
   primary: {
-    color: { default: '#17181B', ':hover': '#17181B' },
+    color: { default: colors.textPrimary, ':hover': colors.textPrimary },
     textDecorationLine: { default: 'none', ':focus-visible': 'underline' },
     textUnderlineOffset: 3,
   },

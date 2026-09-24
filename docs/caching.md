@@ -14,8 +14,10 @@ explicit `cacheLife` policies instead of route-level `revalidate` or `dynamic`.
   URLs, and scroll restoration retain their existing behavior. Scrolling fetches
   only the next 24 groups from `/api/photos?page=N`, appends them in place, and
   uses native `history.replaceState` to update the URL without an RSC navigation.
-  The endpoint reuses the cached index, with `no-store` HTTP responses so a browser
-  cannot reuse a previous deployment's batches. Failed or interrupted requests
+  The endpoint reuses the cached index. Responses are CDN-cacheable
+  (`s-maxage`) because batches change only with a deployment, which purges
+  Vercel's CDN cache; `max-age=0` keeps a browser from reusing a previous
+  deployment's batches. `/og` social images use the same policy. Failed or interrupted requests
   leave the current cards and URL intact; retry and full-reload links are offered.
   Without JavaScript the next-page link renders the cumulative window as before.
 - The homepage caches its rendered content with a 180-second revalidation

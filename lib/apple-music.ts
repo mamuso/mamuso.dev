@@ -76,28 +76,29 @@ export function createRecentTrackReader({
       const response = await request('https://api.music.apple.com/v1/me/recent/played/tracks?limit=1&types=songs,library-songs&include[library-songs]=catalog', options)
       if (!response.ok) return { status: 'unavailable', track: null }
       const payload: unknown = await response.json()
-      if (payload && typeof payload === 'object' && 'data' in payload &&
-        Array.isArray(payload.data) && payload.data.length === 0) return { status: 'empty', track: null }
+      const data = payload && typeof payload === 'object' && 'data' in payload && Array.isArray(payload.data)
+        ? payload.data
+        : null
+      if (data?.length === 0) return { status: 'empty', track: null }
       const track = publicTrack(payload)
-      if (!track) return { status: 'unavailable', track: null }
-      if (payload && typeof payload === 'object' && 'data' in payload && Array.isArray(payload.data)) {
-        const recent = payload.data[0]
-        if (recent.type === 'library-songs' && (!track.bgColor || !track.url || !track.artwork)) {
-          // Resolve Apple's exact catalog relationship, never a title/artist search.
-          let catalog = publicTrack(recent.relationships?.catalog)
-          if (!catalog && typeof recent.id === 'string' && /^[a-zA-Z0-9.-]+$/.test(recent.id)) {
-            try {
-              const related = await request(`https://api.music.apple.com/v1/me/library/songs/${encodeURIComponent(recent.id)}/catalog`, options)
-              if (related.ok) catalog = publicTrack(await related.json())
-            } catch {
-              // Optional metadata must not hide a successfully fetched recent song.
-            }
+      // publicTrack only succeeds when data[0] exists.
+      if (!data || !track) return { status: 'unavailable', track: null }
+      const recent = data[0]
+      if (recent.type === 'library-songs' && (!track.bgColor || !track.url || !track.artwork)) {
+        // Resolve Apple's exact catalog relationship, never a title/artist search.
+        let catalog = publicTrack(recent.relationships?.catalog)
+        if (!catalog && typeof recent.id === 'string' && /^[a-zA-Z0-9.-]+$/.test(recent.id)) {
+          try {
+            const related = await request(`https://api.music.apple.com/v1/me/library/songs/${encodeURIComponent(recent.id)}/catalog`, options)
+            if (related.ok) catalog = publicTrack(await related.json())
+          } catch {
+            // Optional metadata must not hide a successfully fetched recent song.
           }
-          if (catalog) {
-            track.bgColor ??= catalog.bgColor
-            track.url ??= catalog.url
-            track.artwork ??= catalog.artwork
-          }
+        }
+        if (catalog) {
+          track.bgColor ??= catalog.bgColor
+          track.url ??= catalog.url
+          track.artwork ??= catalog.artwork
         }
       }
       return { status: 'ready', track }

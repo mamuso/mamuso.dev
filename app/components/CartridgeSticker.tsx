@@ -6,12 +6,12 @@ import { useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { addCartridgeGrain } from './cartridgeGrain'
 import { CARTRIDGE_LABEL_FINISH } from './cartridgeLabelFinish'
+import { STICKER_APPROACH_DISTANCE } from './cartridgeConfig'
 
 const WIDTH_SEGMENTS = 64
 const HEIGHT_SEGMENTS = 24
 // Let the opening settle and leave time to read the original artwork.
 const OPEN_DELAY = 0.9
-import { STICKER_APPROACH_DISTANCE } from './cartridgeConfig'
 const DURATION = 2.4
 const FIRST_CONTACT_PROGRESS = 0.2
 const MOBILE_FIRST_CONTACT_PROGRESS = 0.34

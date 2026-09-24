@@ -62,7 +62,7 @@ export default async function Home() {
 
 const styles = stylex.create({
   content: {
-    color: '#17181B',
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: 400,
     letterSpacing: '-0.005em',

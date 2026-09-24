@@ -119,7 +119,7 @@ const styles = stylex.create({
   module: {
     display: 'block',
     position: 'relative',
-    color: '#17181B',
+    color: colors.textPrimary,
     textDecoration: { default: 'none', ':focus-visible': 'underline' },
     textUnderlineOffset: 3,
     outlineOffset: 4,

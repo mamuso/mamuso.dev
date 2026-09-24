@@ -24,7 +24,10 @@ marked.use({
   renderer,
 })
 
-const renderPost = (md: string): string => `${marked.parse(md)}`
+// Feed readers resolve relative URLs inconsistently; make root-relative
+// src/href attributes absolute, including those in raw HTML blocks.
+const renderPost = (md: string): string =>
+  `${marked.parse(md)}`.replace(/\b(src|href)=(["'])\/(?!\/)/g, `$1=$2${BLOG_URL}/`)
 
 const main = () => {
   const feedOptions = {
@@ -40,7 +43,7 @@ const main = () => {
     generator: 'mamuso.dev',
     language: 'en',
     feedLinks: {
-      rss2: `${BLOG_URL}/feed.xml`,
+      atom: `${BLOG_URL}/feed.xml`,
     },
     author: {
       name: 'Manuel Muñoz Solera',
@@ -55,8 +58,6 @@ const main = () => {
 
     let description: string = post.basename ? `<img src='${BLOG_URL}/assets/feed/${post.basename}'/>` : ''
     description += renderPost(post.body)
-      .replace(/\'\/assets\//g, "'" + `${BLOG_URL}` + '/assets/')
-      .replace(/\"\/assets\//g, '"' + `${BLOG_URL}` + '/assets/')
 
     feed.addItem({
       // Keep the historical identity when changing an entry's public URL.

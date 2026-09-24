@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        <link rel="alternate" type="application/rss+xml" title="mamuso.dev RSS" href={`${BLOG_URL}/feed.xml`}></link>
+        <link rel="alternate" type="application/atom+xml" title="mamuso.dev" href="/feed.xml" />
       </head>
       <body {...stylex.props(typography.root)}>
         <div {...stylex.props(layout.container, styles.page)}>

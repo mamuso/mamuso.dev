@@ -4,6 +4,7 @@ import { useState, type HTMLAttributes } from 'react'
 import Image from 'next/image'
 import PhotoTransition from './PhotoTransition'
 import * as stylex from '@stylexjs/stylex'
+import { colors } from '../styles/tokens.stylex'
 
 type Props = HTMLAttributes<HTMLSpanElement> & {
   basename: string
@@ -38,7 +39,7 @@ export default function ProgressivePhoto({ basename, width, height, title, sizes
 }
 
 const styles = stylex.create({
-  printFrame: { display: 'block', margin: -12, padding: 12, backgroundColor: '#fff' },
+  printFrame: { display: 'block', margin: -12, padding: 12, backgroundColor: colors.surface },
   canvas: (ratio: number) => ({ display: 'block', position: 'relative', width: '100%', aspectRatio: ratio }),
   original: (decoded: boolean) => ({ opacity: decoded ? 1 : 0 }),
 })

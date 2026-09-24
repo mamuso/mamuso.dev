@@ -6,10 +6,24 @@ export const size = {
   width: 1200,
   height: 600,
 }
+// Output depends only on the text, so let the CDN keep it. Vercel purges its CDN
+// cache on every deployment; max-age=0 keeps browsers from holding old designs.
+const CACHE_CONTROL = 'public, max-age=0, s-maxage=31536000, stale-while-revalidate=86400'
+
+let background: Promise<string> | undefined
+function templateBackground() {
+  background ??= readFile(path.join(process.cwd(), 'public/images/og-template.png'))
+    .then(template => `data:image/png;base64,${template.toString('base64')}`)
+    .catch(error => {
+      background = undefined
+      throw error
+    })
+  return background
+}
+
 export async function textSocialImage(title: string, description: string) {
   try {
-    const template = await readFile(path.join(process.cwd(), 'public/images/og-template.png'))
-    const background = `data:image/png;base64,${template.toString('base64')}`
+    const background = await templateBackground()
     const values = {
       title: title || 'Why did you not set a title?',
       description: description.slice(0, 180) || '',
@@ -61,7 +75,7 @@ export async function textSocialImage(title: string, description: string) {
           </p>
         </div>
       ),
-      size
+      { ...size, headers: { 'Cache-Control': CACHE_CONTROL } }
     )
   } catch (error) {
     console.error(error)

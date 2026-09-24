@@ -6,7 +6,7 @@ test('photo endpoint returns disjoint bounded batches and rejects invalid pages'
   for (let page = 1; page === 1 || keys.size < totalCount; page++) {
     const response = await request.get(`/api/photos?page=${page}`)
     expect(response.ok()).toBe(true)
-    expect(response.headers()['cache-control']).toBe('no-store')
+    expect(response.headers()['cache-control']).toBe('public, max-age=0, s-maxage=31536000, stale-while-revalidate=86400')
     const batch = await response.json()
     totalCount = batch.totalCount
     expect(batch.page).toBe(page)
