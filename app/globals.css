@@ -1,5 +1,19 @@
 @stylex;
 
+/* The unlisted composition route occupies the complete viewport. */
+@layer og-base {
+  [data-site-shell]:has([data-og-base]) {
+    display: block;
+    max-width: none;
+    padding: 0;
+  }
+
+  [data-site-shell]:has([data-og-base]) > header,
+  [data-site-shell]:has([data-og-base]) > footer {
+    display: none;
+  }
+}
+
 html,
 body {
   overflow-x: hidden;

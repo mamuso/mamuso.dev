@@ -6,7 +6,7 @@ import { CARTRIDGES } from '@/data/cartridges'
 import { colors, type } from '../styles/tokens.stylex'
 
 /** A failed GPU context, model or texture must not replace the whole homepage. */
-export default class CartridgeErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+export default class CartridgeErrorBoundary extends Component<{ children: ReactNode; fallback?: ReactNode }, { failed: boolean }> {
   state = { failed: false }
 
   static getDerivedStateFromError() {
@@ -15,6 +15,7 @@ export default class CartridgeErrorBoundary extends Component<{ children: ReactN
 
   render() {
     if (!this.state.failed) return this.props.children
+    if (this.props.fallback !== undefined) return this.props.fallback
     return (
       <section aria-label="Work experience" data-cartridge-fallback {...stylex.props(styles.fallback)}>
         <ul {...stylex.props(styles.list)}>

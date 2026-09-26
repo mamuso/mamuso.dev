@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="alternate" type="application/atom+xml" title="mamuso.dev" href="/feed.xml" />
       </head>
       <body {...stylex.props(typography.root)}>
-        <div {...stylex.props(layout.container, styles.page)}>
+        <div data-site-shell {...stylex.props(layout.container, styles.page)}>
           <Header />
           <main {...stylex.props(styles.main)}>{children}</main>
           <Footer />

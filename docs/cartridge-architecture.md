@@ -3,6 +3,13 @@
 The Three.js renderer remains the visual compatibility baseline while the vgpu
 replacement is pending. Its entry point is still dynamically loaded on the homepage.
 
+The unlisted `/og-base` route reuses the baseline GLB, GitHub definition and
+material helpers for a static, front-facing composition. Its dynamically loaded
+scene uses an orthographic camera, fits the model to 78% of the available width
+or height, and renders on demand. It loads only the GitHub label and has no
+stack interactions. A route marker hides the shared header/footer and removes
+the page gutters while this composition is mounted.
+
 ## Responsibilities
 
 | Module | Contract |
