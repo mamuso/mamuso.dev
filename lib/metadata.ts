@@ -5,9 +5,11 @@ type SocialImage = { url: string; alt: string; width?: number; height?: number }
 
 const generated = (url: string, alt: string): SocialImage => ({ url, width: 1200, height: 630, alt })
 
-/** A single photo post on the photo cartridge. */
-export function photoSocialImage(slug: string, title: string) {
-  return generated(`/og/photo/${encodeURIComponent(slug)}`, title)
+// Generated images mirror page paths: /note/<slug> → /og/note/<slug>, and so on.
+
+/** A note or photo post; the route picks the notes or the photo cartridge. */
+export function noteSocialImage(slug: string, title: string) {
+  return generated(`/og/note/${encodeURIComponent(slug)}`, title)
 }
 
 /** A photo stack: its cover with the next photo askew behind it. */
@@ -19,11 +21,11 @@ export function pageMetadata({ title, path, description = BLOG_SUBTITLE, socialT
   title: string
   path: string
   description?: string
-  /** The title printed on the generated note image, without the site suffix. */
+  /** The title printed on the generated page image, without the site suffix. */
   socialTitle?: string
   image?: SocialImage
 }) {
-  const socialImage = image ?? generated(`/og?${new URLSearchParams({ title: socialTitle })}`, socialTitle)
+  const socialImage = image ?? generated(`/og/page/${encodeURIComponent(socialTitle)}`, socialTitle)
   return {
     title,
     description,

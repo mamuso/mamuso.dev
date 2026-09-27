@@ -58,11 +58,11 @@ test('production pages publish canonical metadata and working social images', { 
   }
   const entries = [
     ...pages.map((path) => ({ path })),
-    ...posts.map((post) => ({ path: `/note/${post.slug}`, photo: post.data.category === 'photo' ? post.slug : undefined })),
+    ...posts.map((post) => ({ path: `/note/${post.slug}`, note: post.slug })),
     ...stacks.map((stack) => ({ path: `/photos/stack/${encodeURIComponent(stack)}`, collection: stack })),
   ]
   const images = new Set()
-  await parallel(entries, async ({ path, photo, collection }) => {
+  await parallel(entries, async ({ path, note, collection }) => {
     const response = await fetch(`${origin}${path}`, { headers: { 'user-agent': 'Twitterbot/1.0' }, redirect: 'manual' })
     assert.equal(response.status, 200, path)
     const metadata = tags(await response.text())
@@ -75,14 +75,14 @@ test('production pages publish canonical metadata and working social images', { 
     assert.ok(image, path)
     assert.equal(metadata.get('twitter:image'), image, path)
     assert.equal(new URL(image).origin, publishedOrigin, path)
-    if (photo) assert.equal(new URL(image).pathname, `/og/photo/${encodeURIComponent(photo)}`, path)
+    if (note) assert.equal(new URL(image).pathname, `/og/note/${encodeURIComponent(note)}`, path)
     if (collection) assert.equal(new URL(image).pathname, `/og/stack/${encodeURIComponent(collection)}`, path)
     images.add(image)
   })
-  // Every photo image runs the same renderer with different data, and content:check
+  // Every post image runs one of two renderers with different data, and content:check
   // already proves each feed asset exists, so render one in ten plus every other image.
-  const photoImages = [...images].filter((image) => new URL(image).pathname.startsWith('/og/photo/')).sort()
-  const rendered = [...images].filter((image) => !photoImages.includes(image) || photoImages.indexOf(image) % 10 === 0)
+  const postImages = [...images].filter((image) => new URL(image).pathname.startsWith('/og/note/')).sort()
+  const rendered = [...images].filter((image) => !postImages.includes(image) || postImages.indexOf(image) % 10 === 0)
   await parallel(rendered, async (image) => {
     const url = new URL(image)
     const response = await fetch(`${origin}${url.pathname}${url.search}`)

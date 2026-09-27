@@ -44,10 +44,12 @@ function templateBackground(kind: keyof typeof templates) {
   return background
 }
 
+const LETTER_SPACING = -0.03
+
 /** A rough Inter advance width, enough to pick a size before Satori lays text out. */
 function estimateWidth(text: string, fontSize: number) {
   let em = 0
-  for (const char of text) em += char === ' ' ? 0.26 : /[A-Z0-9]/.test(char) ? 0.66 : /[iljtf.,:;'!|]/.test(char) ? 0.3 : /[mwMW]/.test(char) ? 0.84 : 0.56
+  for (const char of text) em += (char === ' ' ? 0.26 : /[A-Z0-9]/.test(char) ? 0.66 : /[iljtf.,:;'!|]/.test(char) ? 0.3 : /[mwMW]/.test(char) ? 0.84 : 0.56) + LETTER_SPACING
   return em * fontSize
 }
 
@@ -99,7 +101,7 @@ function Title({ title, box, style }: { title: string; box: TitleBox; style: Rea
         fontFamily: 'Inter',
         fontSize,
         lineHeight: box.lineHeight,
-        letterSpacing: '-0.03em',
+        letterSpacing: `${LETTER_SPACING}em`,
         wordBreak: 'break-word',
         lineClamp: lines,
         ...style,
@@ -125,7 +127,7 @@ async function render(node: React.ReactElement) {
 }
 
 // Clear of the cartridge, which starts at x = 935.
-const NOTE_TITLE: TitleBox = { width: 780, height: 440, sizes: [88, 76, 64, 54], lineHeight: 1.04 }
+const NOTE_TITLE: TitleBox = { width: 780, height: 440, sizes: [88, 76, 64, 54], lineHeight: 0.9 }
 
 export async function textSocialImage(title: string) {
   const background = await templateBackground('notes')
@@ -139,9 +141,9 @@ export async function textSocialImage(title: string) {
 export type SocialPhoto = { src: string; width?: number; height?: number }
 
 /**
- * Feed JPEGs are fetched from the site itself, so photo binaries stay out of the
- * function bundle, through the image optimizer: a 1080px JPEG decodes several times
- * faster than the 2048px original and still covers the 480px frame at 2x.
+ * Feed JPEGs come from the site itself, so photo binaries stay out of the function
+ * bundle, through the image optimizer: a 1080px JPEG decodes several times faster
+ * than the 2048px original and still covers the 480px frame at 2x.
  */
 export function feedPhoto({ basename, width, height }: { basename: string; width?: number; height?: number }, request: Request): SocialPhoto {
   const url = new URL('/_next/image', request.url)
@@ -149,9 +151,31 @@ export function feedPhoto({ basename, width, height }: { basename: string; width
   return { src: url.href, width, height }
 }
 
+/**
+ * Satori would fetch the photo itself, but protected preview deployments answer that
+ * request with a login redirect. Fetching here lets it carry Vercel's automation
+ * bypass, which the platform provides once Protection Bypass for Automation is on.
+ * A photo that still fails leaves its frame empty rather than failing the image.
+ */
+async function loadPhoto(photo: SocialPhoto): Promise<SocialPhoto | null> {
+  const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+  try {
+    const response = await fetch(photo.src, {
+      // Satori decodes JPEG and PNG, not the WebP or AVIF the optimizer prefers.
+      headers: { accept: 'image/jpeg,image/png', ...(bypass && { 'x-vercel-protection-bypass': bypass }) },
+    })
+    const type = response.headers.get('content-type') ?? ''
+    if (!response.ok || !/^image\/(jpeg|png)/.test(type)) throw new Error(`${response.status} ${type}`)
+    return { ...photo, src: `data:${type};base64,${Buffer.from(await response.arrayBuffer()).toString('base64')}` }
+  } catch (error) {
+    console.error(`Social image photo unavailable: ${photo.src}`, error)
+    return null
+  }
+}
+
 // The photo window on the label, and the title column beside it.
 const FRAME = { left: 520, top: 177, width: 480, height: 300, radius: 14 }
-const PHOTO_TITLE: TitleBox = { width: 290, height: 250, sizes: [58, 50, 42, 36], lineHeight: 1.02 }
+const PHOTO_TITLE: TitleBox = { width: 290, height: 250, sizes: [58, 50, 42, 36], lineHeight: 0.9 }
 
 // Stacked shadows with negative spread: a hairline edge, then soft layers that tighten as they fall.
 const PHOTO_SHADOW = ['0 0 0 1px', '0 1px 1px -0.5px', '0 3px 3px -1.5px', '0 6px 6px -3px', '0 12px 12px -6px', '0 24px 24px -12px']
@@ -236,8 +260,11 @@ function Photo({ photo, shadow, style }: { photo: SocialPhoto; shadow: string; s
 
 /** A single photo, or a stack when a second photo sits slightly askew behind it. */
 export async function photoSocialImage(title: string, photos: readonly SocialPhoto[]) {
-  const [background, shadow] = await Promise.all([templateBackground('images'), frameShadow()])
-  const [cover, behind] = photos
+  const [background, shadow, [cover, behind]] = await Promise.all([
+    templateBackground('images'),
+    frameShadow(),
+    Promise.all(photos.slice(0, 2).map(loadPhoto)),
+  ])
   return render(
     <div style={{ display: 'flex', width: '100%', height: '100%', backgroundImage: `url(${background})`, backgroundSize: '100% 100%' }}>
       <Title title={title} box={PHOTO_TITLE} style={{ left: 198, top: 238 }} />
