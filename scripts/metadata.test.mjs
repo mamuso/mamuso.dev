@@ -4,6 +4,7 @@ import { once } from 'node:events'
 import test from 'node:test'
 import sharp from 'sharp'
 import { readPostIndex } from '../lib/post-index.ts'
+import { postPath } from '../lib/post-path.ts'
 
 // Run after pnpm build. This starts an isolated production server, never the dev server.
 const port = process.env.METADATA_TEST_PORT || '3101'
@@ -58,11 +59,11 @@ test('production pages publish canonical metadata and working social images', { 
   }
   const entries = [
     ...pages.map((path) => ({ path })),
-    ...posts.map((post) => ({ path: `/note/${post.slug}`, note: post.slug })),
+    ...posts.map((post) => ({ path: postPath({ slug: post.slug, category: post.data.category }), slug: post.slug })),
     ...stacks.map((stack) => ({ path: `/photos/stack/${encodeURIComponent(stack)}`, collection: stack })),
   ]
   const images = new Set()
-  await parallel(entries, async ({ path, note, collection }) => {
+  await parallel(entries, async ({ path, slug, collection }) => {
     const response = await fetch(`${origin}${path}`, { headers: { 'user-agent': 'Twitterbot/1.0' }, redirect: 'manual' })
     assert.equal(response.status, 200, path)
     const metadata = tags(await response.text())
@@ -75,13 +76,14 @@ test('production pages publish canonical metadata and working social images', { 
     assert.ok(image, path)
     assert.equal(metadata.get('twitter:image'), image, path)
     assert.equal(new URL(image).origin, publishedOrigin, path)
-    if (note) assert.equal(new URL(image).pathname, `/og/note/${encodeURIComponent(note)}`, path)
+    // Post images mirror the page path: /note/<slug> → /og/note/<slug>, /photo/<slug> → /og/photo/<slug>.
+    if (slug) assert.equal(new URL(image).pathname, `/og${path}`, path)
     if (collection) assert.equal(new URL(image).pathname, `/og/stack/${encodeURIComponent(collection)}`, path)
     images.add(image)
   })
   // Every post image runs one of two renderers with different data, and content:check
   // already proves each feed asset exists, so render one in ten plus every other image.
-  const postImages = [...images].filter((image) => new URL(image).pathname.startsWith('/og/note/')).sort()
+  const postImages = [...images].filter((image) => /^\/og\/(?:note|photo)\//.test(new URL(image).pathname)).sort()
   const rendered = [...images].filter((image) => !postImages.includes(image) || postImages.indexOf(image) % 10 === 0)
   await parallel(rendered, async (image) => {
     const url = new URL(image)
@@ -91,11 +93,15 @@ test('production pages publish canonical metadata and working social images', { 
     const dimensions = await sharp(Buffer.from(await response.arrayBuffer())).metadata()
     assert.ok(dimensions.width > 0 && dimensions.height > 0, image)
   })
+  // Aliases, and photos under /note or notes under /photo, reach the canonical path in one redirect.
   for (const [alias, post] of bySlug) {
-    if (alias === post.slug) continue
-    const response = await fetch(`${origin}/note/${alias}`, { redirect: 'manual' })
-    assert.equal(response.status, 308, alias)
-    assert.equal(new URL(response.headers.get('location'), origin).pathname, `/note/${post.slug}`, alias)
+    const canonical = postPath({ slug: post.slug, category: post.data.category })
+    for (const path of [`/note/${alias}`, `/photo/${alias}`]) {
+      if (path === canonical) continue
+      const response = await fetch(`${origin}${path}`, { redirect: 'manual' })
+      assert.equal(response.status, 308, path)
+      assert.equal(new URL(response.headers.get('location'), origin).pathname, canonical, path)
+    }
   }
   for (const title of ['Mouse on / Mouse off', 'Reading? #1', '"Hello" & <world>', 'Muñoz — 日本語']) {
     const response = await fetch(`${origin}/og?${new URLSearchParams({ title, description: 'Quotes, /, ?, # and Unicode' })}`)

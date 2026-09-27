@@ -35,7 +35,7 @@ export default function PhotoDetail({ title, photos, linkPhotos = false, childre
           return (
             <li key={photo.slug} {...stylex.props(styles.item, portrait && styles.portrait)}>
               {linkPhotos ? (
-                <Link href={`/note/${photo.slug}`} {...stylex.props(styles.photo, typography.link)}>
+                <Link href={`/photo/${photo.slug}`} {...stylex.props(styles.photo, typography.link)}>
                   {image}
                 </Link>
               ) : (

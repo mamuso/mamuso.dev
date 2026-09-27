@@ -30,7 +30,7 @@ Preconditions:
 
 ## Gotchas
 
-- Photo posts also live under `/note/<slug>`. This feature is the written note. Use [Photos](./photos.md) for `category: photo`.
+- Photo posts live under `/photo/<slug>`; `/note/<photo>` redirects there. This feature is the written note. Use [Photos](./photos.md) for `category: photo`.
 - Some notes include a `basename` image (for example `Hello dns!`). Title plus body still prove the note; do not require a hero image on `Cozy`.
 - Feed item links historically point at `/post/<slug>`. A subscriber clicking a feed URL should land on the note via this redirect — that is expected, not a broken canonical.
 - `curl` without `-L` is required to see the 308. The browser follows it automatically.

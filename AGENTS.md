@@ -46,7 +46,7 @@ build also runs the content pipeline and updates the submodule checkout.
 - Markdown uses gray-matter frontmatter. `lib/post-index.ts` validates explicit slugs and rejects collisions with canonical URLs or filename aliases. `lib/api.tsx` uses Next.js `use cache` / `cacheLife('max')` for the index; its asynchronous readers select requested fields. See `docs/caching.md`.
 - Photo posts use `category: photo`, `basename`, image dimensions, and optional camera/EXIF, GPS, and palette fields. A non-photo note can also have a `basename` image; it will not appear in the photo gallery. Notes lists include all non-photo entries, including legacy `code` and uncategorized posts.
 - Editorial dates are calendar days in `YYYY-MM-DD` format. Use `lib/editorial-date.ts` for formatting, archive years, and conversion to feed timestamps; never format them in the server's local time zone.
-- Keep published explicit slugs fixed when editing titles. Markdown filenames also remain stable: photo import uses them for duplicate detection. `/note/<filename>` permanently redirects to `/note/<slug>` when an explicit slug exists; otherwise the filename remains the URL.
+- Keep published explicit slugs fixed when editing titles. Markdown filenames also remain stable: photo import uses them for duplicate detection. `/note/<filename>` permanently redirects to `/note/<slug>` when an explicit slug exists; otherwise the filename remains the URL. Photos live at `/photo/<slug>` (`lib/post-path.ts` picks the section from `category`); `/note/<photo>` and photo aliases redirect there, and `/photo/<note>` redirects back to `/note/`.
 - Photo import deduplicates originals by SHA-256 and preserves draft edits. `pnpm photos --review` collects title, slug and date; `pnpm photos --publish ID` (or `all`) installs reviewed drafts and images into content and refreshes assets/feed. Originals and raw EXIF stay local. See `docs/photo-import.md`.
 - Feed links use canonical `/note/<slug>` URLs, while entry IDs retain historical `/post/<filename>` URLs to preserve subscriber history.
 - `lib/types.ts` distinguishes notes and photos. API field selections expose only requested keys; optional data has an `undefined` value. Use `POST_DETAIL_FIELDS` for full-post rendering. EXIF numbers are numeric; unavailable legacy GPS `"NaN"` values normalize to absence.
@@ -57,12 +57,13 @@ build also runs the content pipeline and updates the submodule checkout.
 - `app/page.tsx`: homepage introduction and cartridge scene through `HomeContent`, then the "Having fun" projects list (`HomeProjects`, data in `data/projects.ts`), the first six Feed rows (blank years included) and a random photo selection (`HomePhotos`).
 - `app/notes/page.tsx`: notes archive grouped by year.
 - Legacy numeric `/notes/<page>` URLs permanently redirect to `/notes`; the expanded paginated view has been removed.
-- `app/note/[slug]/page.tsx`: individual note or photo, with canonical redirects.
+- `app/note/[slug]/page.tsx`: individual note, with canonical redirects (photos redirect to `/photo/<slug>`).
+- `app/photo/[slug]/page.tsx`: individual photo, with canonical redirects.
 - `app/photos/page.tsx`: photo gallery.
-- `app/og/[title]/[description]/opengraph-image.tsx`: generated social image.
+- `app/og/{note,photo,stack,page}/…`: generated social images, mirroring page paths (`/note/<slug>` → `/og/note/<slug>`). `/og?title=` and `app/og/[title]/[description]` keep legacy shared URLs working.
 - `app/layout.tsx`: shared layout, metadata, header, and footer.
 
-Use `/notes` and `/note/<slug>` in new links. `next.config.js` permanently redirects
+Use `/notes`, `/note/<slug>` and `/photo/<slug>` in new links. `next.config.js` permanently redirects
 legacy `/posts/:path*` and `/post/:slug` URLs to those routes. React Strict Mode is
 enabled in that config. Resource effects must tolerate development setup/cleanup replay.
 

@@ -7,9 +7,14 @@ const generated = (url: string, alt: string): SocialImage => ({ url, width: 1200
 
 // Generated images mirror page paths: /note/<slug> → /og/note/<slug>, and so on.
 
-/** A note or photo post; the route picks the notes or the photo cartridge. */
+/** A written note on the notes cartridge. */
 export function noteSocialImage(slug: string, title: string) {
   return generated(`/og/note/${encodeURIComponent(slug)}`, title)
+}
+
+/** A single photo on the photo cartridge. */
+export function photoSocialImage(slug: string, title: string) {
+  return generated(`/og/photo/${encodeURIComponent(slug)}`, title)
 }
 
 /** A photo stack: its cover with the next photo askew behind it. */

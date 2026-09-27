@@ -5,7 +5,7 @@ Photos is a gallery of stills. Choosing one opens a photo note with the image, c
 ## Sub-features
 
 - `photos-gallery` lists images on `/photos` under `Say Cheese`.
-- `photos-open` opens a gallery still into `/note/<slug>`.
+- `photos-open` opens a gallery still into `/photo/<slug>`.
 - `photos-meta` shows camera and exposure lines on the photo note.
 - `photos-asset` serves the underlying `/assets/feed/...` image as 200.
 
@@ -13,7 +13,7 @@ Photos is a gallery of stills. Choosing one opens a photo note with the image, c
 
 - Choose `pics` in the header.
 - Open `/photos`.
-- Open a photo note URL such as `/note/2024-07-15-DSCF8915`.
+- Open a photo URL such as `/photo/2024-07-15-psycobolic-shadow`. The filename alias `/note/2024-07-15-DSCF8915` and the old `/note/<slug>` URL permanently redirect there.
 
 ## Driving it with control-mamuso
 
@@ -24,7 +24,7 @@ Preconditions:
 - `content/posts/2024-07-15-DSCF8915.md` exists (title `Psycobolic Shadow`). If missing, pick another gallery still and substitute.
 
 - **Header entry.** From `$BASE/`, click `pics`. Heading `Say Cheese` appears. Multiple images with non-empty `alt` are listed.
-- **Open still.** Click the image named `Psycobolic Shadow` (alt text). The path contains `/note/2024-07-15-DSCF8915`. An `article` heading reads `Psycobolic Shadow`. An image with that alt is visible.
+- **Open still.** Click the image named `Psycobolic Shadow` (alt text). The path contains `/photo/2024-07-15-psycobolic-shadow`. An `article` heading reads `Psycobolic Shadow`. An image with that alt is visible.
 - **Meta.** On that article, list items include `FUJIFILM X-T5`, `ƒ/1.4`, and `ISO 400`.
 - **Asset bytes.** Run `.agents/skills/verify-mamuso-dev/bin/control-mamuso curl --path /assets/feed/2024-07-15-DSCF8915.jpg`. Status is `200` and `content-type` starts with `image/`.
 - **Proof.** Screenshot the gallery and the opened photo. Save `.agents/skills/verify-mamuso-dev/artifacts/photos/gallery.png`, `.agents/skills/verify-mamuso-dev/artifacts/photos/photo.png`, and `.agents/skills/verify-mamuso-dev/artifacts/photos/gallery.aria.txt`. The gallery artifacts show `Say Cheese`; the photo artifacts show `Psycobolic Shadow` and the camera line.

@@ -72,7 +72,7 @@ export default function PhotoGallery({ initialGroups, initialPage, totalPages, t
       <GalleryNavigation page={page} {...stylex.props(layout.list, styles.gallery)}>
         {groups.map(({ key, photos }, index) => (
           <li key={key} data-gallery-card>
-            <PhotoStack eager={index < 4} photos={photos} collectionHref={photos[0].photoStack ? `/photos/stack/${encodeURIComponent(photos[0].photoStack)}` : undefined} href={`/note/${photos[0].slug}`} title={photos[0].photoStackTitle ?? photos[0].title} />
+            <PhotoStack eager={index < 4} photos={photos} collectionHref={photos[0].photoStack ? `/photos/stack/${encodeURIComponent(photos[0].photoStack)}` : undefined} href={`/photo/${photos[0].slug}`} title={photos[0].photoStackTitle ?? photos[0].title} />
           </li>
         ))}
       </GalleryNavigation>

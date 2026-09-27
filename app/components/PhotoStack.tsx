@@ -34,7 +34,7 @@ export default function PhotoStack({ photos, href, title, collectionHref, eager 
       <PhotoStackMotion data-photo-stack {...stylex.props(styles.stack)}>
         {visible.map((photo, index) => (
           <PhotoTransition key={`${photo.basename}-${index}`} slug={index === 0 ? photo.slug : undefined}>
-            <Link href={collectionHref ?? (photo.slug ? `/note/${photo.slug}` : href)} aria-label={photo.title} data-photo-print
+            <Link href={collectionHref ?? (photo.slug ? `/photo/${photo.slug}` : href)} aria-label={photo.title} data-photo-print
               tabIndex={index === 0 ? undefined : -1} aria-hidden={index === 0 ? undefined : true} {...stylex.props(styles.print, styles.pose(index, visible.length, alternatePhotoOffset(index, (sample(hash, index, 0) - 0.5) * photoMotion.initial.x), (sample(hash, index, 1) - 0.5) * photoMotion.initial.y + photoMotion.initial.yOffset, alternatePhotoOffset(index, (sample(hash, index, 2) - 0.5) * photoMotion.initial.angle)))}>
                 <span data-photo-transition-frame {...stylex.props(styles.printFrame)}>
                 <Image

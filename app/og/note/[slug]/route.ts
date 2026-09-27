@@ -1,11 +1,11 @@
 import { getPostBySlug, resolvePostSlug } from '@/lib/api'
-import { feedPhoto, photoSocialImage, textSocialImage } from '@/lib/social-image'
+import { textSocialImage } from '@/lib/social-image'
 
-// Mirrors /note/<slug>: photo posts get the photo cartridge, every other note the notes one.
-export async function GET(request: Request, ctx: RouteContext<'/og/note/[slug]'>) {
+// Mirrors /note/<slug>; photos have their own route at /og/photo/<slug>.
+export async function GET(_request: Request, ctx: RouteContext<'/og/note/[slug]'>) {
   const slug = await resolvePostSlug((await ctx.params).slug)
   if (!slug) return new Response('Not found', { status: 404 })
-  const post = await getPostBySlug(slug, ['title', 'category', 'basename', 'width', 'height'])
-  if (post.category === 'photo' && post.basename) return photoSocialImage(post.title, [feedPhoto(post, request)])
+  const post = await getPostBySlug(slug, ['title', 'category'])
+  if (post.category === 'photo') return new Response('Not found', { status: 404 })
   return textSocialImage(post.title)
 }

@@ -1,6 +1,7 @@
 import { PostDetail } from '@/lib/types'
 import type { ComponentProps } from 'react'
 import { formatPostDate, formatPostMonth } from '@/lib/editorial-date'
+import { postPath } from '@/lib/post-path'
 import Link from 'next/link'
 import Image from 'next/image'
 import Markdown from 'markdown-to-jsx'
@@ -31,7 +32,7 @@ export default function Post({ post, link = false, priority = false }: { post: P
     <article {...stylex.props(layout.section, styles.article, isNoteDetail && styles.note)}>
       {link ? (
         <h2 {...stylex.props(typography.heading)}>
-          <Link href={`/note/${post.slug}`} {...stylex.props(typography.link)}>{post.title}</Link>
+          <Link href={postPath(post)} {...stylex.props(typography.link)}>{post.title}</Link>
         </h2>
       ) : (
         <h1 {...stylex.props(typography.heading, styles.noteTitle)}>{post.title}</h1>

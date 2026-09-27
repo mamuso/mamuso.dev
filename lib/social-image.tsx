@@ -112,12 +112,13 @@ function Title({ title, box, style }: { title: string; box: TitleBox; style: Rea
   )
 }
 
-async function render(node: React.ReactElement) {
+async function render(node: React.ReactElement, { complete = true } = {}) {
   try {
     return new ImageResponse(node, {
       ...size,
       fonts: [{ name: 'SF Pro Display', data: await titleFont(), weight: 500, style: 'normal' }],
-      headers: { 'Cache-Control': CACHE_CONTROL },
+      // An image missing a photo must not stay in the CDN for a year.
+      headers: { 'Cache-Control': complete ? CACHE_CONTROL : 'no-store' },
     })
   } catch (error) {
     console.error(error)
@@ -270,16 +271,18 @@ function Photo({ photo, shadow, style }: { photo: SocialPhoto; shadow: string; s
 
 /** A single photo, or a stack when a second photo sits slightly askew behind it. */
 export async function photoSocialImage(title: string, photos: readonly SocialPhoto[]) {
-  const [background, shadow, [cover, behind]] = await Promise.all([
+  const [background, shadow, loaded] = await Promise.all([
     templateBackground('images'),
     frameShadow(),
     Promise.all(photos.slice(0, 2).map(loadPhoto)),
   ])
+  const [cover, behind] = loaded
   return render(
     <div style={{ display: 'flex', width: '100%', height: '100%', backgroundImage: `url(${background})`, backgroundSize: '100% 100%' }}>
       <Title title={title} box={PHOTO_TITLE} style={{ left: 198, top: 238 }} />
       {behind && <Photo photo={behind} shadow={shadow} style={{ opacity: 0.7, transform: 'translate(6px, 8px) rotate(-2.5deg)' }} />}
       {cover && <Photo photo={cover} shadow={shadow} />}
-    </div>
+    </div>,
+    { complete: loaded.every(Boolean) },
   )
 }

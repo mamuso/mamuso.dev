@@ -16,7 +16,7 @@ export default function GalleryNavigation({ page, ...props }: ComponentPropsWith
     const link = event.target instanceof Element ? event.target.closest('a') : null
     if (!link || link.target === '_blank' || link.hasAttribute('download')) return
     const target = new URL(link.href)
-    if (target.origin !== location.origin || !/^\/(?:note\/|photos\/stack\/)/.test(target.pathname)) return
+    if (target.origin !== location.origin || !/^\/(?:photo\/|photos\/stack\/)/.test(target.pathname)) return
     rememberGalleryOrigin({ href, scrollY: window.scrollY })
   }} />
 }
