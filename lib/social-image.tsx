@@ -11,17 +11,16 @@ export const size = {
 const CACHE_CONTROL = 'public, max-age=0, s-maxage=31536000, stale-while-revalidate=86400'
 const INK = '#1f1f1f'
 
-// Satori needs font files, not system fonts. Latin Extended covers names like Muñoz.
-let fonts: Promise<Buffer[]> | undefined
-function interFonts() {
-  fonts ??= Promise.all([
-    readFile(path.join(process.cwd(), 'app/fonts/inter/inter-latin-400-normal.woff')),
-    readFile(path.join(process.cwd(), 'app/fonts/inter/inter-latin-ext-400-normal.woff')),
-  ]).catch(error => {
-    fonts = undefined
+// Satori needs a font file, not a system font. This Latin subset of SF Pro Display
+// Medium is 71 KB, against 6 MB for the full font, and covers names like Muñoz.
+// It keeps kerning but drops GSUB, whose extension lookups Satori cannot parse.
+let font: Promise<Buffer> | undefined
+function titleFont() {
+  font ??= readFile(path.join(process.cwd(), 'app/fonts/sf/SF-Pro-Display-Medium-latin.otf')).catch(error => {
+    font = undefined
     throw error
   })
-  return fonts
+  return font
 }
 
 // Literal paths keep file tracing to these two images.
@@ -44,9 +43,9 @@ function templateBackground(kind: keyof typeof templates) {
   return background
 }
 
-const LETTER_SPACING = -0.03
+const LETTER_SPACING = -0.01
 
-/** A rough Inter advance width, enough to pick a size before Satori lays text out. */
+/** A rough SF Pro Display advance width, enough to pick a size before Satori lays text out. */
 function estimateWidth(text: string, fontSize: number) {
   let em = 0
   for (const char of text) em += (char === ' ' ? 0.26 : /[A-Z0-9]/.test(char) ? 0.66 : /[iljtf.,:;'!|]/.test(char) ? 0.3 : /[mwMW]/.test(char) ? 0.84 : 0.56) + LETTER_SPACING
@@ -98,7 +97,7 @@ function Title({ title, box, style }: { title: string; box: TitleBox; style: Rea
         paddingBottom: fontSize * 0.3,
         overflow: 'hidden',
         color: INK,
-        fontFamily: 'Inter',
+        fontFamily: 'SF Pro Display',
         fontSize,
         lineHeight: box.lineHeight,
         letterSpacing: `${LETTER_SPACING}em`,
@@ -114,10 +113,9 @@ function Title({ title, box, style }: { title: string; box: TitleBox; style: Rea
 
 async function render(node: React.ReactElement) {
   try {
-    const fonts = (await interFonts()).map(data => ({ name: 'Inter', data, weight: 400 as const, style: 'normal' as const }))
     return new ImageResponse(node, {
       ...size,
-      fonts,
+      fonts: [{ name: 'SF Pro Display', data: await titleFont(), weight: 500, style: 'normal' }],
       headers: { 'Cache-Control': CACHE_CONTROL },
     })
   } catch (error) {
@@ -127,13 +125,13 @@ async function render(node: React.ReactElement) {
 }
 
 // Clear of the cartridge, which starts at x = 935.
-const NOTE_TITLE: TitleBox = { width: 780, height: 440, sizes: [88, 76, 64, 54], lineHeight: 0.9 }
+const NOTE_TITLE: TitleBox = { width: 780, height: 440, sizes: [80, 70, 60, 52], lineHeight: 0.9 }
 
 export async function textSocialImage(title: string) {
   const background = await templateBackground('notes')
   return render(
     <div style={{ display: 'flex', width: '100%', height: '100%', backgroundImage: `url(${background})`, backgroundSize: '100% 100%' }}>
-      <Title title={title} box={NOTE_TITLE} style={{ left: 88, top: 104 }} />
+      <Title title={title} box={NOTE_TITLE} style={{ left: 87, top: 117 }} />
     </div>
   )
 }
@@ -175,7 +173,7 @@ async function loadPhoto(photo: SocialPhoto): Promise<SocialPhoto | null> {
 
 // The photo window on the label, and the title column beside it.
 const FRAME = { left: 520, top: 177, width: 480, height: 300, radius: 14 }
-const PHOTO_TITLE: TitleBox = { width: 290, height: 250, sizes: [58, 50, 42, 36], lineHeight: 0.9 }
+const PHOTO_TITLE: TitleBox = { width: 290, height: 250, sizes: [60, 52, 44, 38], lineHeight: 0.9 }
 
 // Stacked shadows with negative spread: a hairline edge, then soft layers that tighten as they fall.
 const PHOTO_SHADOW = ['0 0 0 1px', '0 1px 1px -0.5px', '0 3px 3px -1.5px', '0 6px 6px -3px', '0 12px 12px -6px', '0 24px 24px -12px']

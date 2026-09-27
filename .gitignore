@@ -56,3 +56,6 @@ next-env.d.ts
 /output/paper/
 
 /output/verification/
+
+# Full SF Pro font; only its Latin subset is committed for social images.
+/app/fonts/sf/SF-Pro-Display-Medium.otf
