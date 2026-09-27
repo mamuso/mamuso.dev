@@ -138,31 +138,71 @@ export async function textSocialImage(title: string) {
 
 export type SocialPhoto = { src: string; width?: number; height?: number }
 
-/** Feed JPEGs are fetched from the site itself so photo binaries stay out of the function bundle. */
+/**
+ * Feed JPEGs are fetched from the site itself, so photo binaries stay out of the
+ * function bundle, through the image optimizer: a 1080px JPEG decodes several times
+ * faster than the 2048px original and still covers the 480px frame at 2x.
+ */
 export function feedPhoto({ basename, width, height }: { basename: string; width?: number; height?: number }, request: Request): SocialPhoto {
-  return { src: new URL(`/assets/feed/${encodeURIComponent(basename)}`, request.url).href, width, height }
+  const url = new URL('/_next/image', request.url)
+  url.search = new URLSearchParams({ url: `/assets/feed/${basename}`, w: '1080', q: '75' }).toString()
+  return { src: url.href, width, height }
 }
-
-// Stacked shadows with negative spread: a hairline edge, then soft layers that tighten as they fall.
-const PHOTO_SHADOW = ['0 0 0 1px', '0 1px 1px -0.5px', '0 3px 3px -1.5px', '0 6px 6px -3px', '0 12px 12px -6px', '0 24px 24px -12px']
-  .map(layer => `${layer} rgba(0, 0, 0, 0.04)`)
-  .join(', ')
 
 // The photo window on the label, and the title column beside it.
 const FRAME = { left: 520, top: 177, width: 480, height: 300, radius: 14 }
 const PHOTO_TITLE: TitleBox = { width: 290, height: 250, sizes: [58, 50, 42, 36], lineHeight: 1.02 }
 
+// Stacked shadows with negative spread: a hairline edge, then soft layers that tighten as they fall.
+const PHOTO_SHADOW = ['0 0 0 1px', '0 1px 1px -0.5px', '0 3px 3px -1.5px', '0 6px 6px -3px', '0 12px 12px -6px', '0 24px 24px -12px']
+  .map(layer => `${layer} rgba(0, 0, 0, 0.04)`)
+  .join(', ')
+// Room around the frame for the deepest layer: 24px down plus 24px of blur, less 12px of spread.
+const SHADOW_PAD = 40
+
+// Blurring six shadow layers costs half a second per photo, and the frame never
+// changes size, so each server instance draws the shadow once and reuses it.
+let shadow: Promise<string> | undefined
+function frameShadow() {
+  shadow ??= new ImageResponse(
+    (
+      <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+        <div
+          style={{
+            position: 'absolute',
+            left: SHADOW_PAD,
+            top: SHADOW_PAD,
+            width: FRAME.width,
+            height: FRAME.height,
+            borderRadius: FRAME.radius,
+            backgroundColor: '#c8c8c8',
+            boxShadow: PHOTO_SHADOW,
+          }}
+        />
+      </div>
+    ),
+    { width: FRAME.width + SHADOW_PAD * 2, height: FRAME.height + SHADOW_PAD * 2 },
+  ).arrayBuffer()
+    .then(png => `data:image/png;base64,${Buffer.from(png).toString('base64')}`)
+    .catch(error => {
+      shadow = undefined
+      throw error
+    })
+  return shadow
+}
+
 /**
  * Every photo fills the horizontal frame. Landscape crops stay centred; portrait
  * crops sit near the top, where faces and horizons tend to be.
  */
-function Photo({ photo, style }: { photo: SocialPhoto; style?: React.CSSProperties }) {
+function Photo({ photo, shadow, style }: { photo: SocialPhoto; shadow: string; style?: React.CSSProperties }) {
   const ratio = photo.width && photo.height ? photo.width / photo.height : 3 / 2
   const frameRatio = FRAME.width / FRAME.height
   const width = ratio > frameRatio ? FRAME.height * ratio : FRAME.width
   const height = width / ratio
   const left = (FRAME.width - width) / 2
   const top = (FRAME.height - height) * (ratio < 1 ? 0.2 : 0.5)
+  const shadowSize = { width: FRAME.width + SHADOW_PAD * 2, height: FRAME.height + SHADOW_PAD * 2 }
   return (
     <div
       style={{
@@ -172,28 +212,37 @@ function Photo({ photo, style }: { photo: SocialPhoto; style?: React.CSSProperti
         top: FRAME.top,
         width: FRAME.width,
         height: FRAME.height,
-        borderRadius: FRAME.radius,
-        overflow: 'hidden',
-        backgroundColor: '#c8c8c8',
-        boxShadow: PHOTO_SHADOW,
         ...style,
       }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- Satori renders plain img elements. */}
-      <img src={photo.src} alt="" width={width} height={height} style={{ position: 'absolute', left, top, width, height }} />
+      <img src={shadow} alt="" {...shadowSize} style={{ position: 'absolute', left: -SHADOW_PAD, top: -SHADOW_PAD, ...shadowSize }} />
+      <div
+        style={{
+          position: 'absolute',
+          display: 'flex',
+          width: FRAME.width,
+          height: FRAME.height,
+          borderRadius: FRAME.radius,
+          overflow: 'hidden',
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- Satori renders plain img elements. */}
+        <img src={photo.src} alt="" width={width} height={height} style={{ position: 'absolute', left, top, width, height }} />
+      </div>
     </div>
   )
 }
 
 /** A single photo, or a stack when a second photo sits slightly askew behind it. */
 export async function photoSocialImage(title: string, photos: readonly SocialPhoto[]) {
-  const background = await templateBackground('images')
+  const [background, shadow] = await Promise.all([templateBackground('images'), frameShadow()])
   const [cover, behind] = photos
   return render(
     <div style={{ display: 'flex', width: '100%', height: '100%', backgroundImage: `url(${background})`, backgroundSize: '100% 100%' }}>
       <Title title={title} box={PHOTO_TITLE} style={{ left: 198, top: 238 }} />
-      {behind && <Photo photo={behind} style={{ opacity: 0.7, transform: 'translate(6px, 8px) rotate(-2.5deg)' }} />}
-      {cover && <Photo photo={cover} />}
+      {behind && <Photo photo={behind} shadow={shadow} style={{ opacity: 0.7, transform: 'translate(6px, 8px) rotate(-2.5deg)' }} />}
+      {cover && <Photo photo={cover} shadow={shadow} />}
     </div>
   )
 }

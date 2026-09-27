@@ -79,7 +79,11 @@ test('production pages publish canonical metadata and working social images', { 
     if (collection) assert.equal(new URL(image).pathname, `/og/stack/${encodeURIComponent(collection)}`, path)
     images.add(image)
   })
-  await parallel([...images], async (image) => {
+  // Every photo image runs the same renderer with different data, and content:check
+  // already proves each feed asset exists, so render one in ten plus every other image.
+  const photoImages = [...images].filter((image) => new URL(image).pathname.startsWith('/og/photo/')).sort()
+  const rendered = [...images].filter((image) => !photoImages.includes(image) || photoImages.indexOf(image) % 10 === 0)
+  await parallel(rendered, async (image) => {
     const url = new URL(image)
     const response = await fetch(`${origin}${url.pathname}${url.search}`)
     assert.equal(response.status, 200, image)
@@ -100,5 +104,5 @@ test('production pages publish canonical metadata and working social images', { 
     assert.equal(dimensions.width, 1200, title)
     assert.equal(dimensions.height, 630, title)
   }
-  t.diagnostic(`Verified ${entries.length} pages, ${images.size} social images, filename redirects and special characters.`)
+  t.diagnostic(`Verified ${entries.length} pages and ${images.size} social image URLs, rendered ${rendered.length}, filename redirects and special characters.`)
 })
