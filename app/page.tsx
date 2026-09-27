@@ -17,7 +17,16 @@ import { layout } from '@/app/styles/site'
 import { colors } from './styles/tokens.stylex'
 import { getRandomFact } from '@/lib/random-fact'
 
-export const metadata = pageMetadata({ title: 'mamuso - manuel muñoz solera', path: '/' })
+export const metadata = pageMetadata({
+  title: 'mamuso - manuel muñoz solera',
+  path: '/',
+  image: {
+    url: '/images/og.png',
+    width: 1200,
+    height: 630,
+    alt: 'mamuso - manuel muñoz solera',
+  },
+})
 // The random fact stays stable until the homepage revalidates.
 
 export default async function Home() {
