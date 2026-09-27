@@ -1,5 +1,5 @@
 'use client'
-import { Suspense, useLayoutEffect, useMemo, useState, type RefObject } from 'react'
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import * as stylex from '@stylexjs/stylex'
@@ -37,12 +37,42 @@ export default function CartridgeViewer({
     }
   }, [])
 
+  // The router keeps visited pages in a hidden <Activity>, which runs effect
+  // cleanups without removing the DOM. R3F's cleanup disposes the renderer and
+  // forces context loss on its canvas, so a revealed page needs a new canvas.
+  // The stale canvas leaves the hidden tree: any R3F commit during the reveal
+  // can unmount a drei <Html> root, a synchronous flush that makes React skip
+  // the navigation's view transition. The new canvas mounts once it finishes.
+  const [canvasGeneration, setCanvasGeneration] = useState(0)
+  const [canvasMounted, setCanvasMounted] = useState(true)
+  const canvasReleased = useRef(false)
+  useEffect(() => {
+    let active = true
+    if (canvasReleased.current) {
+      canvasReleased.current = false
+      const remount = () => {
+        if (!active) return
+        setCanvasGeneration((generation) => generation + 1)
+        setCanvasMounted(true)
+      }
+      const transition = activeViewTransition()
+      if (transition) transition.finished.then(remount, remount)
+      else remount()
+    }
+    return () => {
+      active = false
+      canvasReleased.current = true
+      setCanvasMounted(false)
+    }
+  }, [])
+
   const layout = useMemo(() => buildCartridgeLayout(CARTRIDGES, restingPoses), [restingPoses])
 
   return (
     <div data-cartridge-viewer {...stylex.props(styles.viewer)}>
       <CartridgeBackdrop />
-      <Canvas
+      {canvasMounted && <Canvas
+        key={canvasGeneration}
         camera={{ fov: CAMERA_FOV_DEGREES }}
         style={{ position: 'relative', touchAction: 'pan-y' }}
         dpr={dpr}
@@ -64,9 +94,18 @@ export default function CartridgeViewer({
             stickerApplied={stickerApplied}
           />
         </Suspense>
-      </Canvas>
+      </Canvas>}
     </div>
   )
+}
+
+// `activeViewTransition` is recent; React's own handle covers older browsers.
+function activeViewTransition(): ViewTransition | null {
+  const doc = document as Document & {
+    activeViewTransition?: ViewTransition | null
+    __reactViewTransition?: ViewTransition | null
+  }
+  return doc.activeViewTransition ?? doc.__reactViewTransition ?? null
 }
 
 const styles = stylex.create({
