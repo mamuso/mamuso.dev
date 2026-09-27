@@ -2,10 +2,14 @@ import { cacheLife } from 'next/cache'
 import type { PostType, PhotoPost, NotePost, SelectedPost } from './types'
 import { readPostIndex } from './post-index'
 
-async function getPostIndex() {
+async function getCachedPostIndex() {
   'use cache'
   cacheLife('max')
   return readPostIndex()
+}
+/** Development reads posts from disk on every request so draft edits show up on reload. */
+async function getPostIndex() {
+  return process.env.NODE_ENV === 'development' ? readPostIndex() : getCachedPostIndex()
 }
 async function getSortedPosts() {
   return (await getPostIndex()).posts.map(post => post.data)

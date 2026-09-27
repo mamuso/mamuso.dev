@@ -9,6 +9,7 @@ import PhotoDetail from './PhotoDetail'
 import PhotoTransition from './PhotoTransition'
 import ProgressivePhoto from './ProgressivePhoto'
 import CodeBlock from './CodeBlock'
+import NoteTweet from './NoteTweet'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '../styles/site'
 import { colors } from '../styles/tokens.stylex'
@@ -110,6 +111,12 @@ const styles = stylex.create({
   noteFigure: {
     marginBlock: 0,
     marginInline: 0,
+  },
+  noteCaption: {
+    fontSize: 14,
+    marginBlockStart: -12,
+    textAlign: 'center',
+    opacity: 0.6,
   },
   noteMedia: {
     borderRadius: 6,
@@ -238,5 +245,7 @@ const noteMarkdownOverrides = {
   video: { props: stylex.props(styles.image, styles.wideMedia, styles.noteMedia) },
   audio: { props: stylex.props(styles.wideMedia, styles.noteMedia) },
   figure: { props: stylex.props(styles.noteFigure) },
+  figcaption: { props: stylex.props(styles.noteCaption) },
   iframe: { component: NoteVideo },
+  Tweet: { component: NoteTweet },
 }

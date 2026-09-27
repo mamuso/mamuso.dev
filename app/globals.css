@@ -216,3 +216,10 @@ body {
     }
   }
 }
+
+/* react-tweet caps embeds at 550px; notes size them to the text column.
+   Unlayered on purpose: react-tweet's own CSS is unlayered, so a layered rule would lose. */
+.note-tweet .react-tweet-theme {
+  max-width: none;
+  margin: 0;
+}

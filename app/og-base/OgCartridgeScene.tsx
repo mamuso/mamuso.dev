@@ -17,19 +17,30 @@ function frameFront(camera: THREE.Camera, size: { width: number; height: number 
 
 function Model() {
   const { scene: model } = useGLTF('/models/famicom_cartridge.glb')
-  const texture = useTexture(github.label)
+  const texture = useTexture('/images/og-mamuso-base.png')
   const { gl, scene, camera, size, invalidate } = useThree()
 
   // Each setup owns its materials, including Strict Mode's setup/cleanup replay.
   useLayoutEffect(() => {
     configureLabelTexture(texture, gl)
     const instance = createCartridgeInstance(model, {
-      color: github.color,
+      color: '#A3ADB8',
       shellOpacity: github.shellOpacity,
       labelTexture: texture,
       maxAniso: gl.capabilities.getMaxAnisotropy(),
       pixelRatio: gl.getPixelRatio(),
       renderOrderBase: 0,
+    })
+    // Lift the artwork gently while retaining its lighting and paper finish.
+    instance.traverse(object => {
+      if (!(object instanceof THREE.Mesh)) return
+      const materials = Array.isArray(object.material) ? object.material : [object.material]
+      for (const material of materials) {
+        if (!(material instanceof THREE.MeshPhysicalMaterial) || material.map !== texture) continue
+        material.emissive.set(0xffffff)
+        material.emissiveMap = texture
+        material.emissiveIntensity = 0.2
+      }
     })
     const bounds = new THREE.Box3().setFromObject(instance)
     const center = bounds.getCenter(new THREE.Vector3())
