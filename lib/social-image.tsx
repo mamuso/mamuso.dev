@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
+import { BLOG_URL } from './constants'
 
 export const size = {
   width: 1200,
@@ -149,26 +150,37 @@ export function feedPhoto({ basename, width, height }: { basename: string; width
   return { src: url.href, width, height }
 }
 
+async function fetchImage(url: string) {
+  const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+  const response = await fetch(url, {
+    // A protected deployment redirects to its login page; treat that as a failure.
+    redirect: 'manual',
+    // Satori decodes JPEG and PNG, not the WebP or AVIF the optimizer prefers.
+    headers: { accept: 'image/jpeg,image/png', ...(bypass && { 'x-vercel-protection-bypass': bypass }) },
+  })
+  const type = response.headers.get('content-type') ?? ''
+  if (!response.ok || !/^image\/(jpeg|png)/.test(type)) throw new Error(`${response.status} ${type}`)
+  return `data:${type};base64,${Buffer.from(await response.arrayBuffer()).toString('base64')}`
+}
+
 /**
- * Satori would fetch the photo itself, but protected preview deployments answer that
- * request with a login redirect. Fetching here lets it carry Vercel's automation
- * bypass, which the platform provides once Protection Bypass for Automation is on.
- * A photo that still fails leaves its frame empty rather than failing the image.
+ * Satori would fetch the photo itself, but protected preview deployments answer
+ * with a login redirect. Fetching here can carry Vercel's automation bypass when the
+ * project enables it, and otherwise falls back to the published site: feed filenames
+ * are content hashes, so the same path there is the same photo. A photo that still
+ * fails leaves its frame empty rather than failing the image.
  */
 async function loadPhoto(photo: SocialPhoto): Promise<SocialPhoto | null> {
-  const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
-  try {
-    const response = await fetch(photo.src, {
-      // Satori decodes JPEG and PNG, not the WebP or AVIF the optimizer prefers.
-      headers: { accept: 'image/jpeg,image/png', ...(bypass && { 'x-vercel-protection-bypass': bypass }) },
-    })
-    const type = response.headers.get('content-type') ?? ''
-    if (!response.ok || !/^image\/(jpeg|png)/.test(type)) throw new Error(`${response.status} ${type}`)
-    return { ...photo, src: `data:${type};base64,${Buffer.from(await response.arrayBuffer()).toString('base64')}` }
-  } catch (error) {
-    console.error(`Social image photo unavailable: ${photo.src}`, error)
-    return null
+  const own = new URL(photo.src)
+  const published = new URL(own.pathname + own.search, BLOG_URL)
+  for (const url of own.origin === published.origin ? [own] : [own, published]) {
+    try {
+      return { ...photo, src: await fetchImage(url.href) }
+    } catch (error) {
+      console.error(`Social image photo unavailable: ${url.href}`, error)
+    }
   }
+  return null
 }
 
 // The photo window on the label, and the title column beside it.
