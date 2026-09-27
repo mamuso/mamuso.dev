@@ -8,7 +8,7 @@ import PostHome from '@/app/components/PostHome'
 import * as stylex from '@stylexjs/stylex'
 import { layout } from '@/app/styles/site'
 
-export const metadata = pageMetadata({ title: `Notes – ${BLOG_TITLE}`, path: '/notes' })
+export const metadata = pageMetadata({ title: `Notes – ${BLOG_TITLE}`, path: '/notes', socialTitle: 'Notes' })
 
 export default async function Posts() {
   const allPosts = await getNotePosts(['title', 'date', 'slug', 'category'])

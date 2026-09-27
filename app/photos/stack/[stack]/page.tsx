@@ -1,5 +1,5 @@
 import PhotoDetail from '@/app/components/PhotoDetail'
-import { pageMetadata, photoSocialImage } from '@/lib/metadata'
+import { pageMetadata, stackSocialImage } from '@/lib/metadata'
 import { getPhotoPosts } from '@/lib/api'
 import { getPhotoStack } from '@/lib/get-photo-stack'
 import { BLOG_TITLE } from '@/lib/constants'
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props) {
     title: `${title} – Photos – ${BLOG_TITLE}`,
     path: `/photos/stack/${encodeURIComponent(stack)}`,
     description: `${title} — ${photos.length} photos by Mamuso.`,
-    image: photoSocialImage(cover.basename, title),
+    image: stackSocialImage(stack, title),
   })
 }
 

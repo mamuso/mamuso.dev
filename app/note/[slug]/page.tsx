@@ -25,7 +25,8 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     title: `${post.title || 'Notes'} – ${BLOG_TITLE}`,
     path: `/note/${post.slug}`,
     description: post.summary || (post.category === 'photo' ? `${post.title} — Photography by Mamuso.` : undefined),
-    image: post.category === 'photo' && post.basename ? photoSocialImage(post.basename, post.title) : undefined,
+    socialTitle: post.title || 'Notes',
+    image: post.category === 'photo' && post.basename ? photoSocialImage(post.slug, post.title) : undefined,
   })
 }
 

@@ -58,8 +58,8 @@ test('production pages publish canonical metadata and working social images', { 
   }
   const entries = [
     ...pages.map((path) => ({ path })),
-    ...posts.map((post) => ({ path: `/note/${post.slug}`, photo: post.data.category === 'photo' ? post.data.basename : undefined })),
-    ...stacks.map((stack) => ({ path: `/photos/stack/${encodeURIComponent(stack)}`, collection: true })),
+    ...posts.map((post) => ({ path: `/note/${post.slug}`, photo: post.data.category === 'photo' ? post.slug : undefined })),
+    ...stacks.map((stack) => ({ path: `/photos/stack/${encodeURIComponent(stack)}`, collection: stack })),
   ]
   const images = new Set()
   await parallel(entries, async ({ path, photo, collection }) => {
@@ -75,8 +75,8 @@ test('production pages publish canonical metadata and working social images', { 
     assert.ok(image, path)
     assert.equal(metadata.get('twitter:image'), image, path)
     assert.equal(new URL(image).origin, publishedOrigin, path)
-    if (photo) assert.equal(new URL(image).pathname, `/assets/feed/${encodeURIComponent(photo)}`, path)
-    if (collection) assert.ok(new URL(image).pathname.startsWith('/assets/feed/'), path)
+    if (photo) assert.equal(new URL(image).pathname, `/og/photo/${encodeURIComponent(photo)}`, path)
+    if (collection) assert.equal(new URL(image).pathname, `/og/stack/${encodeURIComponent(collection)}`, path)
     images.add(image)
   })
   await parallel([...images], async (image) => {
@@ -98,7 +98,7 @@ test('production pages publish canonical metadata and working social images', { 
     assert.equal(response.status, 200, title)
     const dimensions = await sharp(Buffer.from(await response.arrayBuffer())).metadata()
     assert.equal(dimensions.width, 1200, title)
-    assert.equal(dimensions.height, 600, title)
+    assert.equal(dimensions.height, 630, title)
   }
   t.diagnostic(`Verified ${entries.length} pages, ${images.size} social images, filename redirects and special characters.`)
 })

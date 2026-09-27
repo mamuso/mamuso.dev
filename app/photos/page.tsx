@@ -23,6 +23,7 @@ export async function generateMetadata({ searchParams }: Props) {
     title: `Photos – ${BLOG_TITLE}`,
     path: page === 1 ? '/photos' : `/photos?page=${page}`,
     description: 'Mamuso has a camera',
+    socialTitle: 'Photos',
   })
 }
 

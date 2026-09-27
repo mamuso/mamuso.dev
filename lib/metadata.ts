@@ -3,23 +3,27 @@ import { BLOG_SUBTITLE, BLOG_TITLE } from './constants'
 
 type SocialImage = { url: string; alt: string; width?: number; height?: number }
 
-export function photoSocialImage(basename: string, title: string): SocialImage {
-  // Feed assets are public JPEGs; omit dimensions rather than using original-image dimensions.
-  return { url: `/assets/feed/${encodeURIComponent(basename)}`, alt: title }
+const generated = (url: string, alt: string): SocialImage => ({ url, width: 1200, height: 630, alt })
+
+/** A single photo post on the photo cartridge. */
+export function photoSocialImage(slug: string, title: string) {
+  return generated(`/og/photo/${encodeURIComponent(slug)}`, title)
 }
 
-export function pageMetadata({ title, path, description = BLOG_SUBTITLE, image }: {
+/** A photo stack: its cover with the next photo askew behind it. */
+export function stackSocialImage(stack: string, title: string) {
+  return generated(`/og/stack/${encodeURIComponent(stack)}`, title)
+}
+
+export function pageMetadata({ title, path, description = BLOG_SUBTITLE, socialTitle = title, image }: {
   title: string
   path: string
   description?: string
+  /** The title printed on the generated note image, without the site suffix. */
+  socialTitle?: string
   image?: SocialImage
 }) {
-  const socialImage = image ?? {
-    url: `/og?${new URLSearchParams({ title, description })}`,
-    width: 1200,
-    height: 600,
-    alt: `${title} – ${description}`,
-  }
+  const socialImage = image ?? generated(`/og?${new URLSearchParams({ title: socialTitle })}`, socialTitle)
   return {
     title,
     description,
