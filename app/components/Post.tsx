@@ -1,5 +1,5 @@
 import { PostDetail } from '@/lib/types'
-import type { ComponentProps } from 'react'
+import { Children, cloneElement, isValidElement, type ComponentProps, type ReactElement, type ReactNode } from 'react'
 import { formatPostDate, formatPostMonth } from '@/lib/editorial-date'
 import { postPath } from '@/lib/post-path'
 import Link from 'next/link'
@@ -123,6 +123,38 @@ const styles = stylex.create({
     borderRadius: 6,
     marginBlockEnd: 24,
   },
+  galleryRows: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12,
+    marginBlockEnd: 24,
+  },
+  galleryRow: {
+    display: 'flex',
+    flexDirection: { default: 'column', '@media (min-width: 640px)': 'row' },
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  galleryGrid: {
+    display: 'grid',
+    alignItems: 'start',
+    gap: 12,
+    marginBlockEnd: 24,
+  },
+  galleryCols2: { gridTemplateColumns: { default: '1fr', '@media (min-width: 640px)': 'repeat(2, 1fr)' } },
+  galleryCols3: { gridTemplateColumns: { default: 'repeat(2, 1fr)', '@media (min-width: 640px)': 'repeat(3, 1fr)' } },
+  galleryCols4: { gridTemplateColumns: { default: 'repeat(2, 1fr)', '@media (min-width: 640px)': 'repeat(4, 1fr)' } },
+  galleryItem: {
+    display: 'block',
+    width: '100%',
+    height: 'auto',
+    minWidth: 0,
+    borderRadius: 6,
+  },
+  galleryRowItem: {
+    flexBasis: { default: 'auto', '@media (min-width: 640px)': 0 },
+  },
+  galleryRatio: (ratio: number) => ({ flexGrow: ratio }),
   noteVideo: {
     display: 'block',
     width: '100%',
@@ -221,6 +253,54 @@ const markdownOverrides = {
   pre: { component: CodeBlock },
 }
 
+type GalleryMediaProps = { width?: string | number; height?: string | number; controls?: unknown; children?: ReactNode }
+
+function collectMedia(children: ReactNode): ReactElement<GalleryMediaProps>[] {
+  return Children.toArray(children).flatMap(child => {
+    if (!isValidElement<GalleryMediaProps>(child)) return []
+    if (child.type === 'img' || child.type === 'video') return [child]
+    return collectMedia(child.props.children)
+  })
+}
+
+function galleryItem(item: ReactElement<GalleryMediaProps>, index: number, isRow: boolean) {
+  const ratio = Number(item.props.width) / Number(item.props.height) || 1
+  // Videos without controls behave like silent loops, the way the clips were posted.
+  const loop = item.type === 'video' && !item.props.controls ? { autoPlay: true, muted: true, loop: true, playsInline: true } : {}
+  return cloneElement(item, { key: index, ...loop,
+    ...stylex.props(styles.galleryItem, isRow && styles.galleryRowItem, isRow && styles.galleryRatio(ratio)) })
+}
+
+/**
+ * `<Gallery layout="row|grid" columns="2|3|4" width="wide|text" caption="…">` with `<img>` and `<video>` children.
+ * Rows share one height per row; `columns` on a row layout splits the items into rows of that many.
+ */
+function NoteGallery({ children, layout = 'grid', columns, width = 'wide', caption }:
+  { children?: ReactNode; layout?: string; columns?: string; width?: string; caption?: string }) {
+  const media = collectMedia(children)
+  const perRow = Number(columns) || media.length
+  const rows = Array.from({ length: Math.ceil(media.length / perRow) }, (_, row) => media.slice(row * perRow, (row + 1) * perRow))
+  const columnStyle = columns === '4' ? styles.galleryCols4 : columns === '3' ? styles.galleryCols3 : styles.galleryCols2
+  return (
+    <figure {...stylex.props(styles.noteFigure, width !== 'text' && styles.wideMedia)}>
+      {layout === 'row' ? (
+        <div {...stylex.props(styles.galleryRows)}>
+          {rows.map((items, row) => (
+            <div key={row} {...stylex.props(styles.galleryRow)}>
+              {items.map((item, index) => galleryItem(item, index, true))}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div {...stylex.props(styles.galleryGrid, columnStyle)}>
+          {media.map((item, index) => galleryItem(item, index, false))}
+        </div>
+      )}
+      {caption && <figcaption {...stylex.props(styles.noteCaption)}>{caption}</figcaption>}
+    </figure>
+  )
+}
+
 function NoteVideo({ src, title, ...props }: ComponentProps<'iframe'>) {
   return (
     <iframe {...props} src={src?.replaceAll('&amp;', '&')} title={title || 'Embedded video'}
@@ -249,4 +329,5 @@ const noteMarkdownOverrides = {
   figcaption: { props: stylex.props(styles.noteCaption) },
   iframe: { component: NoteVideo },
   Tweet: { component: NoteTweet },
+  Gallery: { component: NoteGallery },
 }

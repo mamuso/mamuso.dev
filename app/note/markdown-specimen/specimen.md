@@ -139,6 +139,56 @@ The text returns to the reading column after the image.
   <figcaption>A caption beneath a wide image. This is raw HTML inside Markdown.</figcaption>
 </figure>
 
+## Media layouts
+
+`<Gallery>` groups images and videos. Videos without `controls` play as silent loops.
+
+### A row
+
+Items share one height and keep their proportions. Good for mixing portrait and landscape.
+
+<Gallery layout="row" caption="A row: portrait, landscape and video at one height">
+  <img src="/assets/posts/resincasting.jpeg" alt="Resin casting" width="3024" height="4032" />
+  <img src="/assets/posts/IMG_1056.jpeg" alt="A photo prompt" width="4032" height="3024" />
+  <video src="/assets/posts/try-and-try-again.mp4" width="1280" height="720"></video>
+</Gallery>
+
+### Rows of two
+
+`columns` on a row layout splits the items into rows. Each row shares one height.
+
+<Gallery layout="row" columns="2" caption="Two per row, each row justified on its own">
+  <img src="/assets/posts/IMG_1056.jpeg" alt="A photo prompt" width="4032" height="3024" />
+  <img src="/assets/posts/resincasting.jpeg" alt="Resin casting" width="3024" height="4032" />
+  <img src="/assets/posts/tikilampfinished.jpeg" alt="A finished tiki lamp" width="3024" height="4032" />
+  <video src="/assets/posts/try-and-try-again.mp4" width="1280" height="720"></video>
+</Gallery>
+
+### A two-column grid
+
+<Gallery columns="2" caption="Two columns">
+  <img src="/assets/posts/IMG_1056.jpeg" alt="A photo prompt" width="4032" height="3024" />
+  <img src="/assets/posts/IMG_1057.jpeg" alt="Another photo prompt" width="4032" height="3024" />
+</Gallery>
+
+### A three-column grid
+
+<Gallery columns="3" caption="Three columns, two on phones">
+  <img src="/assets/posts/IMG_1056.jpeg" alt="A photo prompt" width="4032" height="3024" />
+  <img src="/assets/posts/perlernewzealandstory.jpeg" alt="A Perler bead piece" width="3907" height="2930" />
+  <video src="/assets/posts/try-and-try-again.mp4" width="1280" height="720"></video>
+  <img src="/assets/posts/IMG_1057.jpeg" alt="Another photo prompt" width="4032" height="3024" />
+  <img src="/assets/posts/retro.png" alt="Retro" width="2092" height="1170" />
+  <img src="/assets/posts/IMG_1056.jpeg" alt="A photo prompt" width="4032" height="3024" />
+</Gallery>
+
+### A text-width row
+
+<Gallery layout="row" width="text">
+  <img src="/assets/posts/resincasting.jpeg" alt="Resin casting" width="3024" height="4032" />
+  <img src="/assets/posts/tikilampfinished.jpeg" alt="A finished tiki lamp" width="3024" height="4032" />
+</Gallery>
+
 ## Embedded video
 
 The same YouTube clip used in the Bill Hader note, shown at the wider media size.
