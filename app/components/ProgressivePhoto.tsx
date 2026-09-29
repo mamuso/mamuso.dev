@@ -4,6 +4,7 @@ import { useState, type HTMLAttributes } from 'react'
 import Image from 'next/image'
 import PhotoTransition from './PhotoTransition'
 import * as stylex from '@stylexjs/stylex'
+import { media } from '../styles/site'
 import { colors } from '../styles/tokens.stylex'
 
 type Props = HTMLAttributes<HTMLSpanElement> & {
@@ -25,7 +26,7 @@ export default function ProgressivePhoto({ basename, width, height, title, sizes
     <PhotoTransition slug={transitionSlug}>
       <span {...props} data-progressive-photo>
         <span data-photo-transition-frame {...stylex.props(styles.printFrame)}>
-          <span {...stylex.props(styles.canvas(width / height))}>
+          <span {...stylex.props(styles.canvas(width / height), media.edge)}>
             <Image src={`/assets/feed/gallery-${basename}`} fill alt="" aria-hidden="true"
               sizes="(max-width: 479px) 120px, 160px" loading={eager ? 'eager' : 'lazy'} />
             <Image src={src} fill alt={title} sizes={sizes} loading={eager ? 'eager' : 'lazy'}

@@ -5,7 +5,7 @@ import { alternatePhotoOffset, photoMotion } from './photoInteraction'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '../styles/tokens.stylex'
-import { typography } from '../styles/site'
+import { media, typography } from '../styles/site'
 
 export interface PhotoPrint {
   slug?: string
@@ -44,7 +44,7 @@ export default function PhotoStack({ photos, href, title, collectionHref, eager 
                   loading={eager ? 'eager' : 'lazy'}
                   alt=""
                   sizes="(max-width: 479px) 120px, 160px"
-                  {...stylex.props(styles.image(photo.width / Math.max(photo.width, photo.height), photo.height / Math.max(photo.width, photo.height)))}
+                  {...stylex.props(media.edge, styles.image(photo.width / Math.max(photo.width, photo.height), photo.height / Math.max(photo.width, photo.height)))}
                 />
                 </span>
             </Link>

@@ -88,3 +88,16 @@ export const layout = stylex.create({
     gap: 8,
   },
 })
+
+/**
+ * Images and videos can't paint an inset box-shadow over their own content, so
+ * a 1px negative-offset outline draws the subtle inner edge instead.
+ */
+export const media = stylex.create({
+  edge: {
+    outlineColor: 'rgba(0, 0, 0, 0.08)',
+    outlineStyle: 'solid',
+    outlineWidth: 1,
+    outlineOffset: -1,
+  },
+})

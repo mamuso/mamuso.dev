@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
+import { media } from '../styles/site'
 import { homeLink } from '../styles/homeLink.stylex'
 import { colors } from '../styles/tokens.stylex'
 
@@ -96,7 +97,7 @@ export default function HomePhotos({ photos }: { photos: Photo[] }) {
             }}
             {...stylex.props(styles.print, styles.reaction(neighborTilt(index)), styles.pose(index, poses[index].angle, poses[index].layer, poses[index].drop, avoidingPhoto === index || retreatingPhotos.includes(index), visitedPhotos.includes(index), touchRevealed))}>
             <Image src={`/assets/feed/gallery-${photo.basename}`} width={photo.width} height={photo.height}
-              alt="" draggable={false} sizes="40px" {...stylex.props(styles.image)} />
+              alt="" draggable={false} sizes="40px" {...stylex.props(media.edge, styles.image)} />
           </span>
         ))}
         {/* Fixed, non-overlapping lanes keep moving prints from exchanging hover. */}

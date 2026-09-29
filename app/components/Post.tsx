@@ -12,7 +12,7 @@ import ProgressivePhoto from './ProgressivePhoto'
 import CodeBlock from './CodeBlock'
 import NoteTweet from './NoteTweet'
 import * as stylex from '@stylexjs/stylex'
-import { layout, typography } from '../styles/site'
+import { layout, media, typography } from '../styles/site'
 import { colors } from '../styles/tokens.stylex'
 
 export default function Post({ post, link = false, priority = false }: { post: PostDetail; link?: boolean; priority?: boolean }) {
@@ -51,7 +51,7 @@ export default function Post({ post, link = false, priority = false }: { post: P
               <Image src={`/assets/feed/${post.basename}`} width={post.width / 3} height={post.height / 3}
                 alt={post.title ?? ''} loading={priority ? 'eager' : 'lazy'}
                 sizes={isNoteDetail ? '(max-width: 639px) calc(100vw - 24px), (max-width: 1079px) calc(100vw - 120px), 960px' : undefined}
-                {...stylex.props(styles.image, isNoteDetail && styles.wideMedia, isNoteDetail && styles.noteMedia)} />
+                {...stylex.props(styles.image, media.edge, isNoteDetail && styles.wideMedia, isNoteDetail && styles.noteMedia)} />
             )}
           </PhotoTransition>
         </p>
@@ -121,7 +121,11 @@ const styles = stylex.create({
   },
   noteMedia: {
     borderRadius: 6,
+    marginBlockStart: 20,
     marginBlockEnd: 24,
+  },
+  galleryFigure: {
+    marginBlockStart: 20,
   },
   galleryRows: {
     display: 'flex',
@@ -268,7 +272,7 @@ function galleryItem(item: ReactElement<GalleryMediaProps>, index: number, isRow
   // Videos without controls behave like silent loops, the way the clips were posted.
   const loop = item.type === 'video' && !item.props.controls ? { autoPlay: true, muted: true, loop: true, playsInline: true } : {}
   return cloneElement(item, { key: index, ...loop,
-    ...stylex.props(styles.galleryItem, isRow && styles.galleryRowItem, isRow && styles.galleryRatio(ratio)) })
+    ...stylex.props(styles.galleryItem, media.edge, isRow && styles.galleryRowItem, isRow && styles.galleryRatio(ratio)) })
 }
 
 /**
@@ -282,7 +286,7 @@ function NoteGallery({ children, layout = 'grid', columns, width = 'wide', capti
   const rows = Array.from({ length: Math.ceil(media.length / perRow) }, (_, row) => media.slice(row * perRow, (row + 1) * perRow))
   const columnStyle = columns === '4' ? styles.galleryCols4 : columns === '3' ? styles.galleryCols3 : styles.galleryCols2
   return (
-    <figure {...stylex.props(styles.noteFigure, width !== 'text' && styles.wideMedia)}>
+    <figure {...stylex.props(styles.noteFigure, styles.galleryFigure, width !== 'text' && styles.wideMedia)}>
       {layout === 'row' ? (
         <div {...stylex.props(styles.galleryRows)}>
           {rows.map((items, row) => (
@@ -322,8 +326,8 @@ const noteMarkdownOverrides = {
   li: { props: stylex.props(styles.noteListItem) },
   blockquote: { props: stylex.props(typography.muted, styles.blockquote, styles.noteQuote) },
   hr: { props: stylex.props(styles.noteRule) },
-  img: { props: stylex.props(styles.image, styles.wideMedia, styles.noteMedia) },
-  video: { props: stylex.props(styles.image, styles.wideMedia, styles.noteMedia) },
+  img: { props: stylex.props(styles.image, media.edge, styles.wideMedia, styles.noteMedia) },
+  video: { props: stylex.props(styles.image, media.edge, styles.wideMedia, styles.noteMedia) },
   audio: { props: stylex.props(styles.wideMedia, styles.noteMedia) },
   figure: { props: stylex.props(styles.noteFigure) },
   figcaption: { props: stylex.props(styles.noteCaption) },
