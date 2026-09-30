@@ -8,7 +8,7 @@ overrides:
   immutable: 5.1.9
   js-yaml: 3.15.1
   postcss: 8.5.26
-  sharp: 0.35.3
+  sharp: 0.35.4
 
 allowBuilds:
   '@parcel/watcher': true
@@ -17,4 +17,4 @@ allowBuilds:
   unrs-resolver: true
 
 patchedDependencies:
-  next@16.3.0: patches/next@16.3.0.patch
+  next@16.3.3: patches/next@16.3.3.patch
