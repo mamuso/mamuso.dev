@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { readPostIndex } from '../lib/post-index'
+import { postPath } from '../lib/post-path'
 import { waitForCartridgeLayout } from './cartridge-helpers'
 
 const { posts } = readPostIndex()
@@ -55,7 +56,7 @@ test('infinite gallery preserves cards and scroll across photo navigation', asyn
   expect(await page.evaluate(() => history.length)).toBe(position.history)
   expect(await page.evaluate(() => scrollY)).toBe(position.y)
   await expect(cards.first()).toHaveAttribute('data-survives-append', '')
-  const photo = cards.locator('> div > a[href^="/note/"]').first()
+  const photo = cards.locator('> div > a[href^="/photo/"]').first()
   await photo.scrollIntoViewIfNeeded()
   const scrollBefore = await page.evaluate(() => scrollY)
   const href = await photo.getAttribute('href')
@@ -78,7 +79,7 @@ test('collection and photo pages navigate back to the gallery', async ({ page })
   await collection.click()
   await expect(page).toHaveURL(/\/photos\/stack\//)
   await expect(page.locator('dialog')).toHaveCount(0)
-  const photo = page.locator('main a[href^="/note/"]:visible').first()
+  const photo = page.locator('main a[href^="/photo/"]:visible').first()
   const href = await photo.getAttribute('href')
   await photo.click()
   await expect(page).toHaveURL(href!)
@@ -109,7 +110,7 @@ test('legacy routes and social images return the correct resources', async ({ re
   for (const path of [`/post/${alias.fileSlug}`, `/note/${alias.fileSlug}`]) {
     const response = await request.get(path)
     expect(response.status()).toBe(200)
-    expect(new URL(response.url()).pathname).toBe(`/note/${alias.slug}`)
+    expect(new URL(response.url()).pathname).toBe(postPath({ slug: alias.slug, category: alias.data.category }))
   }
   const archive = await request.get('/posts')
   expect(new URL(archive.url()).pathname).toBe('/notes')
@@ -172,7 +173,7 @@ test('photo navigation animates image geometry and captures the header', async (
     }
   })
   await page.goto('/photos')
-  const photo = page.locator('[data-gallery-card] > div > a[href^="/note/"]').first()
+  const photo = page.locator('[data-gallery-card] > div > a[href^="/photo/"]').first()
   const href = await photo.getAttribute('href')
   await photo.click()
   await expect(page).toHaveURL(href!)
@@ -234,7 +235,7 @@ test('photo detail retains its thumbnail while the full image loads', async ({ p
   })
   try {
     await page.goto('/photos')
-    await page.locator('[data-gallery-card] > div > a[href^="/note/"]').first().click()
+    await page.locator('[data-gallery-card] > div > a[href^="/photo/"]').first().click()
     const frame = page.locator('main [data-progressive-photo]')
     const preview = frame.locator('img[aria-hidden="true"]')
     const original = frame.locator('img:not([aria-hidden])')

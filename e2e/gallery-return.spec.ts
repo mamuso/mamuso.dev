@@ -20,9 +20,10 @@ for (const batch of [1, 2]) {
     const gallery = batch === 1 ? '/photos' : '/photos?page=2'
     await page.goto(gallery)
     // Pick a standalone photo below the initial viewport, including a later batch.
-    const photo = page.locator(`[data-gallery-card]:nth-child(n+${batch === 1 ? 9 : 25}) [data-photo-print][href^="/note/"]`).first()
-    await photo.scrollIntoViewIfNeeded()
-    // Stay clear of the next-batch sentinel so the origin cannot change before clicking.
+    const photo = page.locator(`[data-gallery-card]:nth-child(n+${batch === 1 ? 13 : 25}) [data-photo-print][href^="/photo/"]`).first()
+    // Scroll minimally: centering can reach the next-batch sentinel's 400px margin
+    // and change the origin before clicking.
+    await photo.evaluate((element) => element.scrollIntoView({ block: 'end', behavior: 'instant' }))
     await expect(page).toHaveURL(gallery)
     const origin = await page.evaluate(() => ({ href: location.pathname + location.search, scrollY }))
     expect(origin.scrollY).toBeGreaterThan(0)
