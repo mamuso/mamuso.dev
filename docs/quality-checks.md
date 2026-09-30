@@ -71,11 +71,17 @@ project emulates a viewport and touch input; it is not a physical-device test.
 
 ## GitHub and Vercel
 
-`.github/workflows/quality.yml` runs on pushes, pull requests, merge queues and
-manual dispatch. It uses pinned action revisions, read-only permissions, Node 24,
+`.github/workflows/quality.yml` runs on pushes to `main`, pull requests, merge
+queues and manual dispatch. Branch pushes are left to the pull request run so each
+commit is tested once. It uses pinned action revisions, read-only permissions, Node 24,
 locked dependencies, and the pinned content submodule. The required status check
-name is **Quality gate**. It runs `pnpm build` followed by `pnpm smoke:test`:
-the production build is needed to serve the browser tests. It does not repeat
+name is **Quality gate**. Four parallel **Browser tests** jobs each run `pnpm build`
+followed by one `pnpm smoke:test --shard=N/4`: the production build is needed to
+serve the browser tests, and software WebGL makes the full suite too slow for one
+job. `fullyParallel` lets shards split individual tests. Quality gate passes only
+when every shard does. On CI, Playwright stops itself after 15 minutes so a slow
+shard still reports its failures, and diagnostics upload on failure or
+cancellation. It does not repeat
 `pnpm check` or `pnpm metadata:test`, which run on Vercel. There are no path
 filters that could leave a required check pending indefinitely.
 
