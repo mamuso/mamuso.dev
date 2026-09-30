@@ -161,6 +161,7 @@ const styles = stylex.create({
     justifyContent: 'center',
   },
   details: {
+    display: { default: 'none', '@media (min-width: 640px)': 'block' },
     minWidth: 0,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
