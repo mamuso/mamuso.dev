@@ -1,0 +1,10 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mamuso-dev",
+      "url": "http://localhost:3000",
+      "port": 3000
+    }
+  ]
+}

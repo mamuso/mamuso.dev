@@ -1,29 +1,17 @@
+import { parseEditorialDate } from './editorial-date'
 import fs from 'fs-extra'
 import { Feed } from 'feed'
 import path from 'path'
 import { marked } from 'marked'
-import matter from 'gray-matter'
+import { readPostIndex } from './post-index'
 import { BLOG_URL, BLOG_TITLE, BLOG_SUBTITLE } from './constants'
 
-interface FeedPost {
-  slug: string
-  body: string
-  title: string
-  date: string
-  basename?: string
-  [key: string]: unknown
-}
-
-const posts = fs
-  .readdirSync(path.resolve(__dirname, '../content/posts/'))
-  .filter((file) => path.extname(file) === '.md' || path.extname(file) === '.mdx')
-  .map((file) => {
-    const postContent = fs.readFileSync(`./content/posts/${file}`, 'utf8')
-    const slug = file.replace(/\.md$/, '')
-    const { data, content } = matter(postContent)
-    return { ...data, slug: slug, body: content } as FeedPost
+const posts = readPostIndex().posts
+  .filter(({ data }) => data.category !== 'photo')
+  .map(({ data, content, slug, fileSlug }) => {
+    return { ...data, slug, fileSlug, body: content }
   })
-  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  .sort((a, b) => parseEditorialDate(b.date).getTime() - parseEditorialDate(a.date).getTime())
 
 const renderer = new marked.Renderer()
 
@@ -36,7 +24,10 @@ marked.use({
   renderer,
 })
 
-const renderPost = (md: string): string => `${marked.parse(md)}`
+// Feed readers resolve relative URLs inconsistently; make root-relative
+// src/href attributes absolute, including those in raw HTML blocks.
+const renderPost = (md: string): string =>
+  `${marked.parse(md)}`.replace(/\b(src|href)=(["'])\/(?!\/)/g, `$1=$2${BLOG_URL}/`)
 
 const main = () => {
   const feedOptions = {
@@ -52,7 +43,7 @@ const main = () => {
     generator: 'mamuso.dev',
     language: 'en',
     feedLinks: {
-      rss2: `${BLOG_URL}/feed.xml`,
+      atom: `${BLOG_URL}/feed.xml`,
     },
     author: {
       name: 'Manuel Muñoz Solera',
@@ -63,17 +54,17 @@ const main = () => {
   const feed = new Feed(feedOptions)
 
   posts.forEach((post) => {
-    const url = `${BLOG_URL}/post/${post.slug}`
+    const url = `${BLOG_URL}/note/${post.slug}`
 
     let description: string = post.basename ? `<img src='${BLOG_URL}/assets/feed/${post.basename}'/>` : ''
     description += renderPost(post.body)
-      .replace(/\'\/assets\//g, "'" + `${BLOG_URL}` + '/assets/')
-      .replace(/\"\/assets\//g, '"' + `${BLOG_URL}` + '/assets/')
 
     feed.addItem({
+      // Keep the historical identity when changing an entry's public URL.
+      id: `${BLOG_URL}/post/${post.fileSlug}`,
       title: post.title,
       description: description,
-      date: new Date(post?.date),
+      date: parseEditorialDate(post.date),
       author: [
         {
           name: 'Manuel Muñoz Solera',

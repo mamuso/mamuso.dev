@@ -1,0 +1,269 @@
+#!/usr/bin/env bash
+# Launch, health-check, and tear down an isolated mamuso.dev verification instance.
+# Never kill by process name. Never delete proof artifacts.
+set -euo pipefail
+
+REPO_ROOT="$(git -C "$(dirname "$0")" rev-parse --show-toplevel)"
+STATE_DIR="${VERIFY_MAMUSO_STATE_DIR:-/tmp/verify-mamuso-dev}"
+DEFAULT_PORT="${VERIFY_MAMUSO_PORT:-3010}"
+DEFAULT_HOST="${VERIFY_MAMUSO_HOST:-127.0.0.1}"
+PID_FILE="$STATE_DIR/pid"
+PORT_FILE="$STATE_DIR/port"
+HOST_FILE="$STATE_DIR/host"
+LOG_FILE="$STATE_DIR/next.log"
+URL_FILE="$STATE_DIR/url"
+
+die() {
+  echo "control-mamuso: $*" >&2
+  exit 1
+}
+
+usage() {
+  cat <<'EOF'
+Usage: control-mamuso <command>
+
+  launch [--port N] [--host HOST]
+      Start `pnpm dev` for this repo on an isolated port (default 3010).
+      Refuses if this verification instance is already running, or if the
+      chosen port is already bound. Does not attach to someone else's server.
+
+  doctor
+      Read-only health check: our pid is alive, it owns our port, GET /
+      returns 200, and the homepage HTML contains the site identity.
+
+  url
+      Print the base URL of the running instance.
+
+  curl --path PATH [--out FILE]
+      GET a path on the running instance. Writes the body to FILE when given.
+      Prints status, content-type, and (for redirects) location.
+
+  cleanup
+      Stop the process started by launch. Leaves proof artifacts in place.
+EOF
+}
+
+require_state() {
+  [[ -f "$PID_FILE" && -f "$PORT_FILE" && -f "$HOST_FILE" ]] || die "no verification instance recorded in $STATE_DIR (run launch first)"
+}
+
+read_state() {
+  require_state
+  PID="$(cat "$PID_FILE")"
+  PORT="$(cat "$PORT_FILE")"
+  HOST="$(cat "$HOST_FILE")"
+  URL="http://${HOST}:${PORT}"
+}
+
+port_owner_pid() {
+  local port="$1"
+  ss -ltnp 2>/dev/null | awk -v p=":$port" '
+    $4 ~ p"$" || $4 ~ ":"p"$" {
+      if (match($0, /pid=[0-9]+/)) {
+        print substr($0, RSTART+4, RLENGTH-4)
+        exit
+      }
+    }
+  '
+}
+
+is_alive() {
+  local pid="$1"
+  kill -0 "$pid" 2>/dev/null
+}
+
+is_descendant_of() {
+  local ancestor="$1"
+  local current="$2"
+  local i
+  for i in $(seq 1 24); do
+    [[ -z "$current" || "$current" == "0" || "$current" == "1" ]] && return 1
+    [[ "$current" == "$ancestor" ]] && return 0
+    current="$(ps -o ppid= -p "$current" 2>/dev/null | tr -d ' ' || true)"
+  done
+  return 1
+}
+
+base_url() {
+  echo "http://${HOST}:${PORT}"
+}
+
+cmd_launch() {
+  local port="$DEFAULT_PORT"
+  local host="$DEFAULT_HOST"
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --port) port="$2"; shift 2 ;;
+      --host) host="$2"; shift 2 ;;
+      *) die "unknown launch flag: $1" ;;
+    esac
+  done
+
+  if [[ -f "$PID_FILE" ]]; then
+    local existing
+    existing="$(cat "$PID_FILE")"
+    if is_alive "$existing"; then
+      die "verification instance already running (pid $existing). Run cleanup first, or doctor to reuse it."
+    fi
+    rm -f "$PID_FILE" "$PORT_FILE" "$HOST_FILE" "$URL_FILE"
+  fi
+
+  local owner
+  owner="$(port_owner_pid "$port" || true)"
+  if [[ -n "$owner" ]]; then
+    die "port $port is already bound by pid $owner. Pick another --port rather than driving a shared instance."
+  fi
+
+  mkdir -p "$STATE_DIR"
+  cd "$REPO_ROOT"
+
+  git submodule update --init >/dev/null
+  [[ -d content/posts ]] || die "content/posts missing after submodule init"
+  pnpm install
+  [[ -d public/assets ]] || pnpm run assets
+  [[ -f public/feed.xml ]] || pnpm run rss
+
+  : >"$LOG_FILE"
+  # New session so cleanup can kill the whole tree. Login shell so Node 24
+  # from nvm wins if /exec-daemon/node (v22) is on PATH.
+  setsid bash -lc "cd \"$REPO_ROOT\" && exec pnpm dev --hostname $host --port $port" \
+    >"$LOG_FILE" 2>&1 &
+  local pid=$!
+  echo "$pid" >"$PID_FILE"
+  echo "$port" >"$PORT_FILE"
+  echo "$host" >"$HOST_FILE"
+
+  local ready=0
+  local i
+  for i in $(seq 1 60); do
+    if ! is_alive "$pid"; then
+      die "dev server exited during startup. Last log lines:\n$(tail -n 40 "$LOG_FILE")"
+    fi
+    if curl -fsS -o /dev/null --max-time 2 "http://${host}:${port}/"; then
+      ready=1
+      break
+    fi
+    sleep 1
+  done
+  [[ "$ready" -eq 1 ]] || die "dev server did not become ready on http://${host}:${port}/ within 60s. Log: $LOG_FILE"
+
+  echo "http://${host}:${port}" >"$URL_FILE"
+  echo "http://${host}:${port}"
+}
+
+cmd_doctor() {
+  read_state
+  is_alive "$PID" || die "recorded pid $PID is not running"
+  local owner
+  owner="$(port_owner_pid "$PORT" || true)"
+  if [[ -n "$owner" ]]; then
+    is_descendant_of "$PID" "$owner" || die "port $PORT is owned by pid $owner, not verification pid $PID (or its descendants). Refuse to drive a shared instance."
+  fi
+
+  local tmp
+  tmp="$(mktemp)"
+  local status
+  status="$(curl -sS -o "$tmp" -w '%{http_code}' --max-time 5 "$URL/")" || {
+    rm -f "$tmp"
+    die "GET $URL/ failed"
+  }
+  [[ "$status" == "200" ]] || {
+    rm -f "$tmp"
+    die "GET $URL/ returned $status, expected 200"
+  }
+  grep -q 'mamuso' "$tmp" || {
+    rm -f "$tmp"
+    die "homepage HTML does not contain mamuso"
+  }
+  grep -q 'Manuel Muñoz Solera' "$tmp" || {
+    rm -f "$tmp"
+    die "homepage HTML does not contain the identity heading Manuel Muñoz Solera"
+  }
+  rm -f "$tmp"
+
+  echo "ok pid=$PID url=$URL port=$PORT"
+}
+
+cmd_url() {
+  read_state
+  echo "$URL"
+}
+
+cmd_curl() {
+  read_state
+  local path=""
+  local out=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --path) path="$2"; shift 2 ;;
+      --out) out="$2"; shift 2 ;;
+      *) die "unknown curl flag: $1" ;;
+    esac
+  done
+  [[ -n "$path" ]] || die "curl requires --path"
+  [[ "$path" == /* ]] || die "path must start with /"
+
+  local dest
+  dest="$(mktemp)"
+  local hdr
+  hdr="$(mktemp)"
+  local status ctype location
+  status="$(curl -sS -D "$hdr" -o "$dest" -w '%{http_code}' --max-time 10 "$URL$path")" || true
+  ctype="$(awk 'BEGIN{IGNORECASE=1} /^content-type:/{sub("\r",""); print $0; exit}' "$hdr")"
+  location="$(awk 'BEGIN{IGNORECASE=1} /^location:/{sub("\r",""); sub(/^location:[[:space:]]*/,""); print $0; exit}' "$hdr")"
+  echo "status=$status"
+  echo "content-type=${ctype:-}"
+  [[ -n "$location" ]] && echo "location=$location"
+  if [[ -n "$out" ]]; then
+    mkdir -p "$(dirname "$out")"
+    cp "$dest" "$out"
+    echo "body=$out"
+  fi
+  rm -f "$dest" "$hdr"
+  [[ "$status" =~ ^[23][0-9][0-9]$ ]]
+}
+
+cmd_cleanup() {
+  if [[ ! -f "$PID_FILE" ]]; then
+    echo "no verification instance to clean up"
+    return 0
+  fi
+  local pid
+  pid="$(cat "$PID_FILE")"
+  if is_alive "$pid"; then
+    # Kill the process group started by nohup/bash -lc so next + turbopack exit.
+    local pgid
+    pgid="$(ps -o pgid= -p "$pid" 2>/dev/null | tr -d ' ' || true)"
+    if [[ -n "$pgid" ]]; then
+      kill -- "-$pgid" 2>/dev/null || kill "$pid" 2>/dev/null || true
+    else
+      kill "$pid" 2>/dev/null || true
+    fi
+    local i
+    for i in $(seq 1 20); do
+      is_alive "$pid" || break
+      sleep 0.25
+    done
+    if is_alive "$pid"; then
+      if [[ -n "$pgid" ]]; then
+        kill -9 -- "-$pgid" 2>/dev/null || kill -9 "$pid" 2>/dev/null || true
+      else
+        kill -9 "$pid" 2>/dev/null || true
+      fi
+    fi
+  fi
+  rm -f "$PID_FILE" "$PORT_FILE" "$HOST_FILE" "$URL_FILE"
+  echo "cleaned pid=$pid (log left at $LOG_FILE)"
+}
+
+cmd="${1:-}"
+shift || true
+case "$cmd" in
+  launch) cmd_launch "$@" ;;
+  doctor) cmd_doctor "$@" ;;
+  url) cmd_url "$@" ;;
+  curl) cmd_curl "$@" ;;
+  cleanup) cmd_cleanup "$@" ;;
+  -h|--help|help|"") usage; [[ -n "$cmd" ]] || exit 2 ;;
+  *) die "unknown command: $cmd" ;;
+esac
