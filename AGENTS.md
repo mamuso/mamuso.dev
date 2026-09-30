@@ -31,6 +31,7 @@ Standard commands are defined in `package.json`:
 - `pnpm run photos`: prepare originals from local `photo-inbox/` into `.photo-import/` drafts; see `docs/photo-import.md`.
 - `pnpm run shader:check`: validate component WGSL shaders with vgpu.
 - `pnpm test`: run all Node contract tests.
+- `pnpm smoke:core` / `pnpm smoke:gestures`: the required browser suite and the optional cartridge gesture specs, against an existing production build (`pnpm smoke:test` runs both).
 - `pnpm check`: lint, route types, TypeScript, Node tests, and shader validation.
 - `pnpm verify`: check, production build, HTTP metadata audit, and desktop/mobile browser smoke tests. Run `pnpm exec playwright install chromium` once first.
 - See `docs/quality-checks.md` for CI, deployment gates, and the version-specific Next OG patch.

@@ -40,7 +40,7 @@ jobs:
       - name: Build production for browser tests
         run: pnpm build
       - name: Test production in desktop and mobile browsers
-        run: pnpm smoke:test --shard=${{ matrix.shard }}/4
+        run: pnpm smoke:core --shard=${{ matrix.shard }}/4
       - name: Upload browser failure diagnostics
         if: failure() || cancelled()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -60,3 +60,42 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - run: test "${{ needs.browsers.result }}" = success
+
+  # Long gesture scripts outgrow software WebGL on hosted runners. They report
+  # here without gating merges; `pnpm verify` runs them on real hardware.
+  gestures:
+    name: Cartridge gestures (${{ matrix.shard }}/2, optional)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Build production for browser tests
+        run: pnpm build
+      - name: Test cartridge gestures in desktop and mobile browsers
+        run: pnpm smoke:gestures --shard=${{ matrix.shard }}/2
+      - name: Upload browser failure diagnostics
+        if: failure() || cancelled()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: gesture-diagnostics-${{ matrix.shard }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+          if-no-files-found: ignore

@@ -12,8 +12,9 @@ declare global {
 }
 
 test('secret touch hold stays active through silence and exits on tap', async ({ page, isMobile }) => {
-  // Real raycasting and animated gestures are expensive on CI's software GPU.
-  test.setTimeout(180_000)
+  // Real raycasting and animated gestures are expensive on CI's software GPU;
+  // the mobile scenario takes about four times its local duration there.
+  test.setTimeout(300_000)
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   // Deterministic local audio; never access the test runner's physical microphone.

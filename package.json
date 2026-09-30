@@ -21,6 +21,8 @@
     "content:check": "node scripts/content-check.mjs",
     "check": "pnpm content:check && pnpm lint && pnpm typecheck && pnpm test && pnpm shader:check",
     "smoke:test": "node scripts/prepare-smoke.mjs && playwright test",
+    "smoke:core": "pnpm smoke:test --grep-invert 'cartridge-(blow|buffer|readiness|swipe)\\.spec'",
+    "smoke:gestures": "pnpm smoke:test --grep 'cartridge-(blow|buffer|readiness|swipe)\\.spec'",
     "verify": "pnpm check && pnpm build && pnpm metadata:test && pnpm smoke:test"
   },
   "dependencies": {
