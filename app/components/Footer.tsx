@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation'
 import RecentMusic from './RecentMusic'
-import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '../styles/site'
 import { colors } from '../styles/tokens.stylex'
@@ -13,10 +12,9 @@ export default function Footer() {
     <footer {...stylex.props(layout.fullBleed, styles.footer)}>
       <div {...stylex.props(layout.container, styles.content)}>
         <p {...stylex.props(typography.muted, styles.copy)}>
-          mamuso{' '}
-          <Link href="https://github.com/mamuso" aria-label="GitHub" {...stylex.props(styles.link)}>gh</Link>{' '}
-          <Link href="https://x.com/mamuso" {...stylex.props(styles.link)}>x</Link>{' '}
-          <a href="/feed.xml" type="application/atom+xml" aria-label="Feed" {...stylex.props(styles.link)}>feed</a>
+          mamuso on{' '}
+          <a href="https://github.com/mamuso" {...stylex.props(styles.link)}>GitHub</a> and{' '}
+          <a href="https://x.com/mamuso" {...stylex.props(styles.link)}>X</a>
         </p>
         {pathname === '/' ? <RecentMusic /> : null}
       </div>
