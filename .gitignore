@@ -33,6 +33,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Claude Code local config; postinstall links .claude/skills to .agents/skills
+/.claude/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
