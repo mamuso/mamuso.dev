@@ -135,6 +135,51 @@ body {
     }
   }
 
+  /* The homepage's pink takeover: the new page blooms out of the clicked word
+     through a mask of soft, drifting blobs, set every frame by pinkReveal.ts. */
+  html[data-pink-reveal]::view-transition-old(root),
+  html[data-pink-reveal]::view-transition-new(root) {
+    animation: pink-hold var(--pink-duration) linear both;
+    mix-blend-mode: normal;
+  }
+
+  html[data-pink-reveal]::view-transition-new(root) {
+    mask-image: var(--pink-mask);
+  }
+
+  /* Keep the header (and anything else named for page navigation) inside the
+     root snapshot, so it turns pink with the bloom instead of cross-fading as
+     its own unmasked rectangle. */
+  html[data-pink-reveal] [data-site-shell],
+  html[data-pink-reveal] [data-site-shell] * {
+    view-transition-name: none !important;
+  }
+
+  /* A faint violet bloom just inside the spreading edge, in the new page so
+     it shares the mask. At radius 0 it is fully transparent. */
+  html[data-pink-reveal] body::after {
+    background: radial-gradient(
+      circle at var(--pink-x) var(--pink-y),
+      transparent calc(var(--pink-r) * 0.5),
+      rgb(176 120 255 / 0.3) calc(var(--pink-r) * 0.82),
+      transparent var(--pink-r)
+    );
+    content: '';
+    inset: 0;
+    pointer-events: none;
+    position: fixed;
+    z-index: 2147483647;
+  }
+
+  @keyframes pink-hold {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     ::view-transition-group(*),
     ::view-transition-old(*),
@@ -204,6 +249,23 @@ body {
 
   [data-photo-paper]:has([data-paper-surface][data-ready='true'])::before {
     background: transparent;
+  }
+}
+
+/* The pink takeover recolors imagery with RandomFact's gradient map. */
+@layer pink-imagery {
+  /* The WebGPU backdrop is tuned for the grey page, and a live WebGPU canvas
+     inside the reveal's snapshots blinks as the page is handed back. */
+  html[data-pink-reveal] [data-cartridge-viewer] > canvas,
+  html[data-pink] [data-cartridge-viewer] > canvas {
+    visibility: hidden;
+  }
+
+  html[data-pink] [data-cartridge-viewer] > div canvas,
+  html[data-pink] [data-home-photo] img,
+  html[data-pink] [data-music-artwork],
+  html[data-pink] [data-music-glow] {
+    filter: url(#pink-gradient-map);
   }
 }
 

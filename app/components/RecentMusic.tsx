@@ -80,7 +80,7 @@ export default function RecentMusic() {
 
   const contents = (
     <>
-      {track.bgColor ? <span aria-hidden="true" {...stylex.props(styles.glow)}><span {...stylex.props(styles.glowColor(track.bgColor), styles.tint)} /><span {...stylex.props(styles.noise)} /></span> : null}
+      {track.bgColor ? <span aria-hidden="true" data-music-glow {...stylex.props(styles.glow)}><span {...stylex.props(styles.glowColor(track.bgColor), styles.tint)} /><span {...stylex.props(styles.noise)} /></span> : null}
       <span title={`${introduction} ${track.name}, ${track.artist}`} {...stylex.props(styles.details)}>
         <span {...stylex.props(typography.muted, styles.introduction)}>{introduction}</span>{' '}
         <span {...stylex.props(styles.song)}>{track.name},</span>{' '}
@@ -90,7 +90,7 @@ export default function RecentMusic() {
         {track.artwork ? (
           // Apple artwork URLs are allowlisted by our server; no image proxy is needed.
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={track.artwork} alt="" width={48} height={48} referrerPolicy="no-referrer" {...stylex.props(styles.artwork)} />
+          <img src={track.artwork} alt="" width={48} height={48} referrerPolicy="no-referrer" data-music-artwork {...stylex.props(styles.artwork)} />
         ) : <span aria-hidden="true" {...stylex.props(styles.artwork, styles.placeholder)}>♪</span>}
       </span>
     </>

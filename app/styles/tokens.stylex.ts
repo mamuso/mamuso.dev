@@ -3,6 +3,8 @@ import * as stylex from '@stylexjs/stylex'
 export const colors = stylex.defineVars({
   textPrimary: '#18181b',
   textMuted: '#62626a',
+  textFaint: 'rgba(23, 24, 27, 0.4)',
+  textSubtle: 'rgba(23, 24, 27, 0.6)',
   rule: '#ADADAD',
   ruleSoft: '#d4d4d8',
   quote: '#a1a1aa',
