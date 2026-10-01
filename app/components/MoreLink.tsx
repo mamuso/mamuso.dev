@@ -5,6 +5,7 @@ import { homeLink } from '../styles/homeLink.stylex'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { homeLinks } from '../styles/homeLinks'
+import { colors } from '../styles/tokens.stylex'
 
 type MoreLinkProps = { label: string } & (
   | { href: string, onClick?: never, expanded?: never, controls?: never }
@@ -79,7 +80,7 @@ const styles = stylex.create({
     paddingBlock: 4,
     textDecorationLine: { default: 'none', ':focus-visible': 'underline' },
     textUnderlineOffset: 3,
-    color: 'rgba(23, 24, 27, 0.6)',
+    color: colors.textSubtle,
   },
   words: {
     display: 'inline-flex',

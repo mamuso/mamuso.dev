@@ -11,9 +11,9 @@ export const homeLinks = stylex.create({
   },
   secondary: {
     color: {
-      default: 'rgba(23, 24, 27, 0.4)',
-      [stylex.when.ancestor(':hover', homeLink)]: 'rgba(23, 24, 27, 0.6)',
-      [stylex.when.ancestor(':focus-visible', homeLink)]: 'rgba(23, 24, 27, 0.6)',
+      default: colors.textFaint,
+      [stylex.when.ancestor(':hover', homeLink)]: colors.textSubtle,
+      [stylex.when.ancestor(':focus-visible', homeLink)]: colors.textSubtle,
     },
     transitionProperty: 'color',
     transitionDuration: { default: '140ms', '@media (prefers-reduced-motion: reduce)': '0ms' },

@@ -1,4 +1,5 @@
 import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/app/styles/tokens.stylex'
 
 export default function BlankNoteYear({ year }: { year: number }) {
   return (
@@ -20,7 +21,7 @@ const styles = stylex.create({
     fontWeight: 400,
     lineHeight: '22px',
     letterSpacing: '-0.005em',
-    color: 'rgba(23, 24, 27, 0.4)',
+    color: colors.textFaint,
   },
   label: {
     fontStyle: 'italic',
