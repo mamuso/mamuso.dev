@@ -61,6 +61,9 @@ export default function PinkSky() {
           if (!pinkSky.active || !skySurface) return
           // Grain only needs film rate, and one still frame for reduced motion.
           if (reduceMotion.matches && drewStill) return
+          // Hold the grain still while the cartridges move: frozen grain is
+          // invisible in motion, and on phones the scene needs the GPU.
+          if (now < pinkSky.busyUntil) return
           if (now - lastDraw < GRAIN_FRAME_MS) return
           lastDraw = now
           drewStill = true

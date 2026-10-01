@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { PINK_GRADIENT_MAP } from './pinkGradientMap'
+import { pinkSky } from './pinkReveal'
 
 const stops = (values: readonly number[]) => `vec4(${values.slice(0, 4).join(', ')}), ${values[4].toFixed(2)}`
 
@@ -41,6 +42,9 @@ const vertexShader = /* glsl */ `
   }
 `
 
+// How long the grain waits after the scene's last frame.
+const SCENE_BUSY_MS = 250
+
 const isPink = () => document.documentElement.dataset.pink !== undefined
 
 class PinkPass {
@@ -77,6 +81,7 @@ class PinkPass {
   render(gl: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera) {
     gl.render(scene, camera)
     if (!this.pink) return
+    pinkSky.busyUntil = performance.now() + SCENE_BUSY_MS
     gl.getDrawingBufferSize(this.size)
     if (this.frame.image.width !== this.size.x || this.frame.image.height !== this.size.y) {
       this.frame.dispose()
