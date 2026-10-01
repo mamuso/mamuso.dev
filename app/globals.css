@@ -261,7 +261,8 @@ body {
     visibility: hidden;
   }
 
-  html[data-pink] [data-cartridge-viewer] > div canvas,
+  /* The cartridge canvas maps itself (CartridgePinkPass): WebKit ignores SVG
+     filters on WebGL canvases. */
   html[data-pink] [data-home-photo] img,
   html[data-pink] [data-music-artwork],
   html[data-pink] [data-music-glow] {

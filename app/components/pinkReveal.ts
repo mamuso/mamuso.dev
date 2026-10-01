@@ -21,7 +21,9 @@ const BLOBS = [
   { angle: 5.4, distance: 0.4, size: 0.64, breathe: 0.1, phase: 5.1 },
 ]
 
-export const pinkSky = { active: false }
+// `busyUntil` is set by the cartridge scene while it animates, so the grain
+// yields the GPU to it (performance.now() time).
+export const pinkSky = { active: false, busyUntil: 0 }
 
 let frameId: number | undefined
 

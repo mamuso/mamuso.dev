@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useState, useSyncExternalStore, type MouseE
 import { flushSync } from 'react-dom'
 import * as stylex from '@stylexjs/stylex'
 import PinkSky from '@/app/components/PinkSky'
+import { PINK_GRADIENT_MAP } from '@/app/components/pinkGradientMap'
 import { resetPinkSky, revealPink } from '@/app/components/pinkReveal'
 import { typography } from '@/app/styles/site'
 import { reveal } from '@/app/styles/introReveal'
@@ -91,15 +92,15 @@ export default function RandomFact({ facts, startMs, stepMs }: {
       {heat >= 2 && <PinkSky />}
       {heat >= 2 && (
         <svg aria-hidden="true" width="0" height="0" {...stylex.props(styles.filters)}>
-          {/* Gradient map for imagery on the pink page (cartridges, photos,
-              album art): shadows to plum, mid-tones to pink, and light details
-              back up to blush and white. */}
+          {/* Gradient map for imagery on the pink page (photos, album art):
+              shadows to plum, mid-tones to pink, and light details back up to
+              blush and white. The cartridges apply it in WebGL. */}
           <filter id="pink-gradient-map" colorInterpolationFilters="sRGB">
             <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0" />
             <feComponentTransfer>
-              <feFuncR type="table" tableValues="0.14 0.62 1 1 1" />
-              <feFuncG type="table" tableValues="0 0 0.42 0.84 1" />
-              <feFuncB type="table" tableValues="0.08 0.36 0.72 0.92 1" />
+              <feFuncR type="table" tableValues={PINK_GRADIENT_MAP.r.join(' ')} />
+              <feFuncG type="table" tableValues={PINK_GRADIENT_MAP.g.join(' ')} />
+              <feFuncB type="table" tableValues={PINK_GRADIENT_MAP.b.join(' ')} />
             </feComponentTransfer>
           </filter>
         </svg>

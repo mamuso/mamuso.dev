@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import * as stylex from '@stylexjs/stylex'
 import CartridgeBackdrop from './CartridgeBackdrop'
+import CartridgePinkPass from './CartridgePinkPass'
 import CartridgeScene from './CartridgeScene'
 import { CAMERA_PRESET_LARGE, CAMERA_FOV_DEGREES, type CameraPreset } from './cartridgeConfig'
 import { INITIAL_CARTRIDGE_RESTING_POSES, randomCartridgeRestingPoses, buildCartridgeLayout, type CartridgeRestingPose } from './cartridgeLayout'
@@ -86,6 +87,7 @@ export default function CartridgeViewer({
           outputColorSpace: THREE.SRGBColorSpace,
         }}
       >
+        <CartridgePinkPass />
         <Suspense fallback={null}>
           <CartridgeScene
             cameraPreset={cameraPreset}
