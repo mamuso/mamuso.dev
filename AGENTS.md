@@ -95,8 +95,9 @@ modules, Tailwind, or webfonts. The site uses the native system font stack.
 
 ## Agent skills
 
-Repository skills live in `.agents/skills/`. `.claude/skills`, `.codex/skills` and
-`.cursor/skills` are symlinks to it; add or edit skills only under `.agents/skills/`.
+Repository skills live in `.agents/skills/`, which Codex and Cursor read directly.
+Claude Code only reads `.claude/skills`, so `pnpm install` creates that as a local,
+gitignored symlink to `.agents/skills/`. Add or edit skills only under `.agents/skills/`.
 
 ## TypeScript
 

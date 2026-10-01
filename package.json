@@ -6,6 +6,7 @@
   "packageManager": "pnpm@10.17.1",
   "scripts": {
     "dev": "next dev",
+    "postinstall": "node -e \"const fs=require('fs');fs.mkdirSync('.claude',{recursive:true});try{fs.symlinkSync('../.agents/skills','.claude/skills')}catch(e){if(e.code!=='EEXIST')throw e}\"",
     "build": "git submodule update --init && pnpm content:check && pnpm run assets && pnpm run rss && next build",
     "start": "next start",
     "lint": "eslint .",
