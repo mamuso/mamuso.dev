@@ -15,7 +15,7 @@ import { homeLinks } from '@/app/styles/homeLinks'
 import * as stylex from '@stylexjs/stylex'
 import { layout } from '@/app/styles/site'
 import { colors } from './styles/tokens.stylex'
-import { getRandomFact } from '@/lib/random-fact'
+import { getRandomFacts } from '@/lib/random-fact'
 
 export const metadata = pageMetadata({
   title: 'mamuso - manuel muñoz solera',
@@ -27,8 +27,6 @@ export const metadata = pageMetadata({
     alt: 'mamuso - manuel muñoz solera',
   },
 })
-// The random fact stays stable until the homepage revalidates.
-
 export default async function Home() {
   'use cache'
   cacheLife({ stale: 180, revalidate: 180, expire: 3600 })
@@ -43,7 +41,7 @@ export default async function Home() {
 
   return (
     <>
-      <HomeContent randomFact={getRandomFact()} />
+      <HomeContent randomFacts={getRandomFacts()} />
       <div {...stylex.props(styles.content)}>
         <HomeProjects />
         <div {...stylex.props(styles.right)}>
