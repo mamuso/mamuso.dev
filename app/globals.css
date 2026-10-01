@@ -39,6 +39,12 @@ body {
   background-color: var(--app-background);
 }
 
+/* The pink page's grain canvas sits at z-index -1, above the root background
+   but below the body's. Let the root's pink show through. */
+html[data-pink] body {
+  background-color: transparent;
+}
+
 @layer transitions {
   ::view-transition-group(.photo-morph) {
     animation-duration: var(--duration-base);
