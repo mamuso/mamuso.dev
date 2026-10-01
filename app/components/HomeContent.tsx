@@ -2,6 +2,8 @@ import * as stylex from '@stylexjs/stylex'
 import { layout, typography } from '@/app/styles/site'
 import AnimatedName from '@/app/components/AnimatedName'
 import CartridgeStage from '@/app/components/CartridgeStageDynamic'
+import RandomFact from '@/app/components/RandomFact'
+import { reveal } from '@/app/styles/introReveal'
 
 const INTRO_DETAILS = ', a designer from Villena, Alicante, based in beautiful California, building fun things at SpaceXAI.'
 
@@ -10,10 +12,11 @@ const INTRO_DETAILS = ', a designer from Villena, Alicante, based in beautiful C
 const REVEAL_START_MS = 250
 const REVEAL_LAST_MS = 640
 
-export default function HomeContent({ randomFact }: { randomFact: string | null }) {
+export default function HomeContent({ randomFacts }: { randomFacts: string[] }) {
   const detailWords = INTRO_DETAILS.split(' ')
-  const factWords = randomFact ? `A random thing about me: ${randomFact}`.split(' ') : []
-  const totalUnits = 2 + detailWords.length + factWords.length
+  // The fact is picked in the browser, so pace the sweep for the longest one.
+  const factUnits = Math.max(0, ...randomFacts.map(fact => `A random thing about me: ${fact}`.split(' ').length))
+  const totalUnits = 2 + detailWords.length + factUnits
   const stepMs = (REVEAL_LAST_MS - REVEAL_START_MS) / Math.max(totalUnits - 1, 1)
   const delayAt = (unit: number) => `${Math.round(REVEAL_START_MS + unit * stepMs)}ms`
 
@@ -22,33 +25,26 @@ export default function HomeContent({ randomFact }: { randomFact: string | null 
       <div {...stylex.props(layout.container, styles.inner)}>
         <div {...stylex.props(styles.intro)}>
           <h2 {...stylex.props(typography.heading, typography.display, styles.introCopy)}>
-            <span {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealDelay(delayAt(0)))}>
+            <span {...stylex.props(typography.muted, styles.tagline, reveal.word, reveal.delay(delayAt(0)))}>
               I&apos;m{' '}
             </span>
-            <span {...stylex.props(styles.reveal, styles.revealDelay(delayAt(1)))}>
+            <span {...stylex.props(reveal.word, reveal.delay(delayAt(1)))}>
               <AnimatedName />
             </span>
             {detailWords.map((word, index) => (
               <span
                 key={index}
-                {...stylex.props(typography.muted, styles.tagline, styles.reveal, styles.revealDelay(delayAt(2 + index)))}
+                {...stylex.props(typography.muted, styles.tagline, reveal.word, reveal.delay(delayAt(2 + index)))}
               >
                 {index === 0 ? word : ` ${word}`}
               </span>
             ))}
           </h2>
-          {randomFact ? (
-            <p {...stylex.props(typography.muted, typography.display, styles.introCopy, styles.tagline, styles.factCopy)}>
-              {factWords.map((word, index) => (
-                <span
-                  key={index}
-                  {...stylex.props(styles.reveal, styles.revealDelay(delayAt(2 + detailWords.length + index)))}
-                >
-                  {index === 0 ? word : ` ${word}`}
-                </span>
-              ))}
-            </p>
-          ) : null}
+          <RandomFact
+            facts={randomFacts}
+            startMs={REVEAL_START_MS + (2 + detailWords.length) * stepMs}
+            stepMs={stepMs}
+          />
         </div>
       </div>
       <div {...stylex.props(styles.stage)}>
@@ -57,17 +53,6 @@ export default function HomeContent({ randomFact }: { randomFact: string | null 
     </section>
   )
 }
-
-const introReveal = stylex.keyframes({
-  from: {
-    filter: 'blur(1.5px)',
-    opacity: 0,
-  },
-  to: {
-    filter: 'blur(0)',
-    opacity: 1,
-  },
-})
 
 const styles = stylex.create({
   hero: {
@@ -135,22 +120,4 @@ const styles = stylex.create({
   tagline: {
     fontWeight: 400,
   },
-  factCopy: {
-    marginBlockStart: 24,
-  },
-  reveal: {
-    animationDuration: {
-      default: '700ms',
-      '@media (prefers-reduced-motion: reduce)': '0ms',
-    },
-    animationFillMode: 'backwards',
-    animationName: {
-      default: introReveal,
-      '@media (prefers-reduced-motion: reduce)': 'none',
-    },
-    // A gentle curve, not the site's expo-out: the blur reveal needs its
-    // motion spread across the whole duration to survive load-time frame drops.
-    animationTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-  },
-  revealDelay: (delay: string) => ({ animationDelay: delay }),
 })
