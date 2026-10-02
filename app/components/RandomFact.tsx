@@ -6,6 +6,7 @@ import * as stylex from '@stylexjs/stylex'
 import PinkSky from '@/app/components/PinkSky'
 import { PINK_GRADIENT_MAP } from '@/app/components/pinkGradientMap'
 import { resetPinkSky, revealPink } from '@/app/components/pinkReveal'
+import { burstSparks } from '@/app/components/pinkSparks'
 import { typography } from '@/app/styles/site'
 import { reveal } from '@/app/styles/introReveal'
 import { colors } from '@/app/styles/tokens.stylex'
@@ -56,8 +57,10 @@ export default function RandomFact({ facts, startMs, stepMs }: {
 
   const turnUp = (event: MouseEvent<HTMLButtonElement>) => {
     if (heat >= 3) return
-    if (heat < 2) return setHeat(heat + 1)
     const rect = event.currentTarget.getBoundingClientRect()
+    // The second click lights the glow and throws a few sparks off the word.
+    if (heat === 1) burstSparks(rect)
+    if (heat < 2) return setHeat(heat + 1)
     revealPink(
       { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
       () => flushSync(() => setHeat(3)),
