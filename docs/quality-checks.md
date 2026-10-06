@@ -28,8 +28,9 @@ pnpm verify
 `pnpm verify` runs `check`, a production build, a 200 MiB per-function trace
 budget, the full HTTP metadata/image audit,
 and Chromium smoke tests at desktop and mobile viewport sizes. It requires a
-populated content submodule and installs no browsers implicitly. The build uses
-the parent's pinned content revision, never `git submodule update --remote`.
+populated content submodule and installs no browsers implicitly. Local and CI builds use
+the parent's pinned content revision. Only Vercel (where `VERCEL` is set) builds with
+`git submodule update --remote`, deploying the latest content `main`.
 
 After a build, the browser suite alone is `pnpm smoke:test`. It starts its own
 production server on port 3103 (`SMOKE_TEST_PORT` overrides it), refuses to reuse an
@@ -95,7 +96,7 @@ with the branch up to date before integration (configured on 2026-09-07). This s
 the workflow file. The workflow must be pushed to a feature branch before GitHub can run it;
 integrate into `main` only after Quality gate passes.
 
-Vercel independently initializes the pinned submodule and runs `check`, `build`
+Vercel independently initializes the submodule at the latest content `main` and runs `check`, `build`
 and the metadata audit. A failed command fails the deployment build. The shared
 build command retains its content validation and asset/feed preparation in both
 environments. `pnpm verify` remains available locally for the complete gate. Browser
