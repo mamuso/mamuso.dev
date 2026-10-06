@@ -1,5 +1,5 @@
 export const projects = [
-  { title: 'UnicodeKit', description: 'Browsing characters as is 1988', href: 'https://unicodekit.com/' },
+  { title: 'UnicodeKit', description: 'Browsing characters like it\'s 1988', href: 'https://unicodekit.com/' },
   { title: 'Stray characters', description: 'Typography is everywhere', href: 'https://straycharacters.mamuso.net/' },
   { title: 'Papercups', description: 'My favorite compostable goods', href: 'https://papercups.mamuso.net/' },
   { title: 'Figma Orgchart', description: 'I promise I’m fun at parties', href: 'https://www.figma.com/community/plugin/1091247524080548244/Orgchart' },
