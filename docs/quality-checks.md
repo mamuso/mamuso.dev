@@ -106,15 +106,12 @@ path. Preview deployments can still be produced while the GitHub browser suite
 runs. Manual deployment overrides and changes to branch protection are separate
 administrative controls.
 
-## Next 16.3.x OG regression
+## Next OG regression coverage
 
-`patches/next@16.3.3.patch` keeps Next's Node OG renderer on its bundled Resvg
-fallback. The image optimizer globally blocks SVG loading in Sharp; Next's OG
-renderer otherwise picks that same Sharp instance and fails after an optimizer
-cache miss. The patch changes only OG renderer selection, preserves the optimizer's
-loader restrictions, and adds no renderer dependency. It is applied by pnpm's
-locked `patchedDependencies` configuration, including clean CI installs.
+Next.js 16.3.8 passes the cold-cache image optimization → OG rendering check
+without the version-specific Resvg workaround previously needed for 16.3.3.
+The old pnpm patch has been removed.
 
 The legacy/social smoke test requests an optimized image with a cold cache before
-requesting an OG PNG. Keep that regression test when upgrading Next; remove the
-version-specific patch once upstream rendering passes it without the workaround.
+requesting an OG PNG. Keep that regression test when upgrading Next to catch
+interactions between the optimizer's Sharp loader restrictions and OG rendering.
