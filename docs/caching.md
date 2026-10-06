@@ -33,7 +33,8 @@ explicit `cacheLife` policies instead of route-level `revalidate` or `dynamic`.
   8-second timeout and no stale fallback. Node.js remains the default runtime.
 
 Next includes the build ID in `use cache` keys. Publishing Markdown still requires
-a new deployment using the updated, pinned content submodule revision. Long-lived
+a new deployment. Vercel builds check out the latest content `main`; pushes to
+content `main` trigger one through the content repo's deploy hook. Long-lived
 content caches therefore do not carry the previous build's index into a new one.
 The `max` profile is finite (30-day background revalidation, one-year expiry), not
 an instruction to publish filesystem edits without rebuilding.

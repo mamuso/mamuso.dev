@@ -23,7 +23,7 @@ pnpm dev
 The dev server uses Turbopack at `http://localhost:3000`. No other service is needed.
 Standard commands are defined in `package.json`:
 
-- `pnpm build`: initialize/update the pinned content submodule, copy assets, generate the feed, then run `next build`.
+- `pnpm build`: initialize/update the content submodule (pinned locally and in CI; latest content `main` on Vercel), copy assets, generate the feed, then run `next build`.
 - `pnpm start`: serve an existing production build.
 - `pnpm lint`: run `eslint .`.
 - `pnpm run assets`: replace `public/assets` with a copy of `content/assets`.
@@ -43,7 +43,7 @@ build also runs the content pipeline and updates the submodule checkout.
 
 - Posts and photo assets live in the public `content/` git submodule (`github.com/mamuso/mamuso.dev.content.git`). App-specific images, models, and labels also live in `public/`.
 - Populate the submodule before rendering content pages: `lib/post-index.ts` reads `content/posts/`, which otherwise fails with `ENOENT`.
-- Builds use the parent repository's pinned content revision. Do not advance to the remote default branch during a build. After committing content changes, stage the updated `content` gitlink before building; push the content commit before the parent commit so deployments can fetch it.
+- Local and CI builds use the parent repository's pinned content revision; do not advance to the remote branch locally. Vercel builds (`VERCEL` set) run `git submodule update --init --remote` and deploy the latest content `main`, so pushing to content `main` publishes via its deploy hook without bumping the gitlink. Bump the gitlink when local/CI checks should cover newer content; push the content commit before the parent commit.
 - Markdown uses gray-matter frontmatter. `lib/post-index.ts` validates explicit slugs and rejects collisions with canonical URLs or filename aliases. `lib/api.tsx` uses Next.js `use cache` / `cacheLife('max')` for the index; its asynchronous readers select requested fields. See `docs/caching.md`.
 - Photo posts use `category: photo`, `basename`, image dimensions, and optional camera/EXIF, GPS, and palette fields. A non-photo note can also have a `basename` image; it will not appear in the photo gallery. Notes lists include all non-photo entries, including legacy `code` and uncategorized posts.
 - Editorial dates are calendar days in `YYYY-MM-DD` format. Use `lib/editorial-date.ts` for formatting, archive years, and conversion to feed timestamps; never format them in the server's local time zone.
