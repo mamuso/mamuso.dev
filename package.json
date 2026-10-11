@@ -64,7 +64,7 @@
     "marked": "^18.0.10",
     "postcss": "8.5.26",
     "quantize": "^1.0.2",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "ts-node": "^10.9.2",
     "typescript": "6.0.3"
   },
