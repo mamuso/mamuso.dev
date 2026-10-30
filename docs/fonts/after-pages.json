@@ -1,0 +1,1768 @@
+[
+  {
+    "path": "/note/markdown-specimen",
+    "width": 1280,
+    "fonts": [],
+    "preloads": [],
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/push-to-talk",
+    "width": 1280,
+    "fonts": [],
+    "preloads": [],
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/photo/2024-11-14-casa-batllo",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+        "bytes": 11884
+      },
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-bold-core-212ee544ee48.woff2",
+        "bytes": 12196
+      },
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-regular-extended-e0ee05524bf6.woff2",
+        "bytes": 16812
+      }
+    ],
+    "preloads": [
+      "/fonts/mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+      "/fonts/mamuso-mono-bold-core-212ee544ee48.woff2"
+    ],
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "loaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "loaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": [
+      {
+        "text": "Casa Batll\u00f3",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-----------",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/3.2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/52s",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 400",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "0 EV",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "41.391742, 2.165262",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Thursday, Nov 14, 2024",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      }
+    ]
+  },
+  {
+    "path": "/photo/2023-07-01-river-and-beach-3",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+        "bytes": 11884
+      },
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-bold-core-212ee544ee48.woff2",
+        "bytes": 12196
+      }
+    ],
+    "preloads": [
+      "/fonts/mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+      "/fonts/mamuso-mono-bold-core-212ee544ee48.woff2"
+    ],
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "loaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": [
+      {
+        "text": "River and beach \u2014 3",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-------------------",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Saturday, Jul 1, 2023",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      }
+    ]
+  },
+  {
+    "path": "/notes",
+    "width": 1280,
+    "fonts": [],
+    "preloads": [],
+    "faces": [],
+    "paper": []
+  },
+  {
+    "path": "/photos",
+    "width": 1280,
+    "fonts": [],
+    "preloads": [],
+    "faces": [],
+    "paper": []
+  },
+  {
+    "path": "/note/markdown-specimen",
+    "width": 390,
+    "fonts": [],
+    "preloads": [],
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/push-to-talk",
+    "width": 390,
+    "fonts": [],
+    "preloads": [],
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/photo/2024-11-14-casa-batllo",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+        "bytes": 11884
+      },
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-bold-core-212ee544ee48.woff2",
+        "bytes": 12196
+      },
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-regular-extended-e0ee05524bf6.woff2",
+        "bytes": 16812
+      }
+    ],
+    "preloads": [
+      "/fonts/mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+      "/fonts/mamuso-mono-bold-core-212ee544ee48.woff2"
+    ],
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "loaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "loaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "loaded"
+      }
+    ],
+    "paper": [
+      {
+        "text": "Casa Batll\u00f3",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-----------",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/3.2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/52s",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 400",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "0 EV",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "41.391742, 2.165262",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Thursday, Nov 14, 2024",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      }
+    ]
+  },
+  {
+    "path": "/photo/2023-07-01-river-and-beach-3",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+        "bytes": 11884
+      },
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-bold-core-212ee544ee48.woff2",
+        "bytes": 12196
+      }
+    ],
+    "preloads": [
+      "/fonts/mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+      "/fonts/mamuso-mono-bold-core-212ee544ee48.woff2"
+    ],
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "loaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": [
+      {
+        "text": "River and beach \u2014 3",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-------------------",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Saturday, Jul 1, 2023",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      }
+    ]
+  },
+  {
+    "path": "/notes",
+    "width": 390,
+    "fonts": [],
+    "preloads": [],
+    "faces": [],
+    "paper": []
+  },
+  {
+    "path": "/photos",
+    "width": 390,
+    "fonts": [],
+    "preloads": [],
+    "faces": [],
+    "paper": []
+  },
+  {
+    "path": "/",
+    "width": 1280,
+    "fonts": [],
+    "preloads": [],
+    "faces": [],
+    "paper": []
+  },
+  {
+    "path": "/photos/stack/soho-2026-09-18",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+        "bytes": 11884
+      },
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-bold-core-212ee544ee48.woff2",
+        "bytes": 12196
+      },
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-regular-extended-e0ee05524bf6.woff2",
+        "bytes": 16812
+      }
+    ],
+    "preloads": [
+      "/fonts/mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+      "/fonts/mamuso-mono-bold-core-212ee544ee48.woff2"
+    ],
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "loaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "loaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": [
+      {
+        "text": "R",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/5400s",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "0 EV",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.720781, -74.000425",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Sticker decay",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-------------",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/750s",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "0 EV",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.72025, -74.000044",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "More sticker decay",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "------------------",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/750s",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "-0.33 EV",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.720164, -74.000169",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Crosby St.",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "----------",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/800s",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "-0.33 EV",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.719906, -74.000181",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      }
+    ]
+  },
+  {
+    "path": "/",
+    "width": 390,
+    "fonts": [],
+    "preloads": [],
+    "faces": [],
+    "paper": []
+  },
+  {
+    "path": "/photos/stack/soho-2026-09-18",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+        "bytes": 11884
+      },
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-bold-core-212ee544ee48.woff2",
+        "bytes": 12196
+      },
+      {
+        "url": "http://localhost:3117/fonts/mamuso-mono-regular-extended-e0ee05524bf6.woff2",
+        "bytes": 16812
+      }
+    ],
+    "preloads": [
+      "/fonts/mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+      "/fonts/mamuso-mono-bold-core-212ee544ee48.woff2"
+    ],
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "loaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "loaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "loaded"
+      }
+    ],
+    "paper": [
+      {
+        "text": "R",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/5400s",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "0 EV",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.720781, -74.000425",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Sticker decay",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-------------",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/750s",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "0 EV",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.72025, -74.000044",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "More sticker decay",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "------------------",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/750s",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "-0.33 EV",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.720164, -74.000169",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Crosby St.",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "----------",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/800s",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "-0.33 EV",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.719906, -74.000181",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "\"Mamuso Mono\", \"Mamuso Mono Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      }
+    ]
+  }
+]

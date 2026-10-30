@@ -1,0 +1,1720 @@
+[
+  {
+    "path": "/note/markdown-specimen",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/push-to-talk",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/photo/2024-11-14-casa-batllo",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "loaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": [
+      {
+        "text": "Casa Batll\u00f3",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-----------",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/3.2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/52s",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 400",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "0 EV",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "41.391742, 2.165262",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Thursday, Nov 14, 2024",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      }
+    ]
+  },
+  {
+    "path": "/photo/2023-07-01-river-and-beach-3",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "loaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": [
+      {
+        "text": "River and beach \u2014 3",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-------------------",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Saturday, Jul 1, 2023",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      }
+    ]
+  },
+  {
+    "path": "/notes",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [],
+    "paper": []
+  },
+  {
+    "path": "/photos",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [],
+    "paper": []
+  },
+  {
+    "path": "/note/markdown-specimen",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/push-to-talk",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/photo/2024-11-14-casa-batllo",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "loaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": [
+      {
+        "text": "Casa Batll\u00f3",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-----------",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/3.2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/52s",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 400",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "0 EV",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "41.391742, 2.165262",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Thursday, Nov 14, 2024",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      }
+    ]
+  },
+  {
+    "path": "/photo/2023-07-01-river-and-beach-3",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "loaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": [
+      {
+        "text": "River and beach \u2014 3",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-------------------",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Saturday, Jul 1, 2023",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      }
+    ]
+  },
+  {
+    "path": "/notes",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [],
+    "paper": []
+  },
+  {
+    "path": "/photos",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [],
+    "paper": []
+  },
+  {
+    "path": "/",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [],
+    "paper": []
+  },
+  {
+    "path": "/photos/stack/soho-2026-09-18",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "loaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": [
+      {
+        "text": "R",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/5400s",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "0 EV",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.720781, -74.000425",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Sticker decay",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-------------",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/750s",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "0 EV",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.72025, -74.000044",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "More sticker decay",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "------------------",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/750s",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "-0.33 EV",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.720164, -74.000169",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Crosby St.",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "----------",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/800s",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "-0.33 EV",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.719906, -74.000181",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      }
+    ]
+  },
+  {
+    "path": "/",
+    "width": 390,
+    "fonts": [],
+    "preloads": [],
+    "faces": [],
+    "paper": []
+  },
+  {
+    "path": "/photos/stack/soho-2026-09-18",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "loaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": [
+      {
+        "text": "R",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/5400s",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "0 EV",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.720781, -74.000425",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Sticker decay",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "-------------",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/750s",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "0 EV",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.72025, -74.000044",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "More sticker decay",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "------------------",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/750s",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "-0.33 EV",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.720164, -74.000169",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Crosby St.",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "----------",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "Camera",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "FUJIFILM X-T5",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 1",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "\u0192/2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "1/800s",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Exposure 2",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "ISO 500",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "-0.33 EV",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Coordinates",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      },
+      {
+        "text": "40.719906, -74.000181",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Friday, Sep 18, 2026",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "tabular-nums"
+      },
+      {
+        "text": "Palette",
+        "font": "courierPrime, \"courierPrime Fallback\", \"Courier New\", Courier, monospace",
+        "weight": "400",
+        "style": "normal",
+        "features": "normal",
+        "numeric": "normal"
+      }
+    ]
+  }
+]
