@@ -1,0 +1,127 @@
+{
+  "pages": [
+    {
+      "image": "note_imperfection-1280.png",
+      "changedPixelsOutsideImages": 0,
+      "imageChanges": [
+        {
+          "src": "http://localhost:3117/assets/posts/imperfection-myfamicaseexhibition.png",
+          "bounds": [
+            160,
+            841,
+            1120,
+            1496
+          ],
+          "changedPixels": 180999
+        },
+        {
+          "src": "http://localhost:3117/assets/posts/imperfection-blender.png",
+          "bounds": [
+            160,
+            2602,
+            634,
+            2870
+          ],
+          "changedPixels": 12263
+        },
+        {
+          "src": "http://localhost:3117/assets/posts/imperfection-labels.png",
+          "bounds": [
+            646,
+            2602,
+            1120,
+            2870
+          ],
+          "changedPixels": 60107
+        },
+        {
+          "src": "http://localhost:3117/assets/posts/imperfection-xai.png",
+          "bounds": [
+            787,
+            5002,
+            1120,
+            5336
+          ],
+          "changedPixels": 49430
+        },
+        {
+          "src": "http://localhost:3117/assets/posts/imperfection-frosted.jpg",
+          "bounds": [
+            160,
+            5347,
+            1120,
+            5888
+          ],
+          "changedPixels": 40022
+        },
+        {
+          "src": "http://localhost:3117/assets/posts/imperfection-left-blank.png",
+          "bounds": [
+            308,
+            8726,
+            972,
+            8841
+          ],
+          "changedPixels": 1061
+        },
+        {
+          "src": "http://localhost:3117/assets/posts/imperfection-og-images.png",
+          "bounds": [
+            160,
+            9566,
+            1120,
+            10101
+          ],
+          "changedPixels": 158444
+        }
+      ]
+    },
+    {
+      "image": "note_push-to-talk-1280.png",
+      "changedPixelsOutsideImages": 0,
+      "imageChanges": []
+    },
+    {
+      "image": "note_2021-06-30-dark-mode-cssvars-1280.png",
+      "changedPixelsOutsideImages": 0,
+      "imageChanges": [
+        {
+          "src": "http://localhost:3117/_next/image?url=%2Fassets%2Ffeed%2F2021-06-30-dark-mode-cssvars.gif&w=1080&q=75",
+          "bounds": [
+            160,
+            256,
+            1120,
+            857
+          ],
+          "changedPixels": 191227
+        }
+      ]
+    },
+    {
+      "image": "note_2023-08-23-design-advice-from-bill-hader-1280.png",
+      "changedPixelsOutsideImages": 0,
+      "imageChanges": []
+    },
+    {
+      "image": "note_imperfection-390.png",
+      "changedPixelsOutsideImages": 0,
+      "imageChanges": []
+    },
+    {
+      "image": "note_push-to-talk-390.png",
+      "changedPixelsOutsideImages": 0,
+      "imageChanges": []
+    },
+    {
+      "image": "note_2021-06-30-dark-mode-cssvars-390.png",
+      "changedPixelsOutsideImages": 0,
+      "imageChanges": []
+    },
+    {
+      "image": "note_2023-08-23-design-advice-from-bill-hader-390.png",
+      "changedPixelsOutsideImages": 0,
+      "imageChanges": []
+    }
+  ],
+  "imperfectionSameBuildRepeatVersusBaselineChangedPixels": 0
+}

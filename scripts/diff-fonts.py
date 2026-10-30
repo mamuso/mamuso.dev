@@ -15,9 +15,9 @@ for original in sorted(before.glob('*.png')):
         results.append({'image': original.name, 'beforeSize': a.size, 'afterSize': b.size, 'regression': 'dimensions'})
         continue
     diff = ImageChops.difference(a, b)
-    pixels = list(diff.get_flattened_data())
-    changed = sum(pixel != (0, 0, 0) for pixel in pixels)
-    results.append({'image': original.name, 'size': a.size, 'pixels': len(pixels), 'changedPixels': changed, 'maxChannelDelta': max(max(pixel) for pixel in pixels), 'bounds': diff.getbbox()})
+    changed = sum(pixel != (0, 0, 0) for pixel in diff.get_flattened_data())
+    max_delta = max(max(pixel) for pixel in diff.get_flattened_data())
+    results.append({'image': original.name, 'size': a.size, 'pixels': a.width * a.height, 'changedPixels': changed, 'maxChannelDelta': max_delta, 'bounds': diff.getbbox()})
     diff.save(output / original.name)
 (output / 'pixels.json').write_text(json.dumps(results, indent=2) + '\n')
 print(json.dumps(results, indent=2))

@@ -212,3 +212,6 @@ manual scripts are deliberately outside the build pipeline.
 
 Tool behavior references: [fontTools subsetting](https://fonttools.readthedocs.io/en/stable/subset/)
 and the installed `node_modules/next/dist/docs/01-app/03-api-reference/02-components/font.md`.
+
+Additional full-page desktop/mobile comparisons of four published articles,
+including Imperfection, are recorded in [the long-article follow-up](fonts-long-articles.md).

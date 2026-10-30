@@ -1,0 +1,100 @@
+[
+  {
+    "image": "note_2021-06-30-dark-mode-cssvars-1280.png",
+    "size": [
+      1280,
+      2118
+    ],
+    "pixels": 2711040,
+    "changedPixels": 191227,
+    "maxChannelDelta": 236,
+    "bounds": [
+      160,
+      257,
+      1120,
+      857
+    ]
+  },
+  {
+    "image": "note_2021-06-30-dark-mode-cssvars-390.png",
+    "size": [
+      390,
+      2011
+    ],
+    "pixels": 784290,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "note_2023-08-23-design-advice-from-bill-hader-1280.png",
+    "size": [
+      1280,
+      1583
+    ],
+    "pixels": 2026240,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "note_2023-08-23-design-advice-from-bill-hader-390.png",
+    "size": [
+      390,
+      1457
+    ],
+    "pixels": 568230,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "note_imperfection-1280.png",
+    "size": [
+      1280,
+      10828
+    ],
+    "pixels": 13859840,
+    "changedPixels": 502326,
+    "maxChannelDelta": 51,
+    "bounds": [
+      160,
+      862,
+      1120,
+      10073
+    ]
+  },
+  {
+    "image": "note_imperfection-390.png",
+    "size": [
+      390,
+      13084
+    ],
+    "pixels": 5102760,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "note_push-to-talk-1280.png",
+    "size": [
+      1280,
+      4305
+    ],
+    "pixels": 5510400,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "note_push-to-talk-390.png",
+    "size": [
+      390,
+      4521
+    ],
+    "pixels": 1763190,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  }
+]
