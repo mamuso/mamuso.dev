@@ -5,17 +5,10 @@ import * as stylex from '@stylexjs/stylex'
 import PaperSurface from './PaperSurface'
 import PaletteDab from './PaletteDab'
 import { paletteVariants } from './palette-variants'
-import localFont from 'next/font/local'
+import { preload } from 'react-dom'
+import { photoFontPreloads } from '../fonts/courier-prime/preloads'
+import '../fonts/courier-prime/subsets.css'
 import { PAPER_SETTINGS, paperWearSeed } from './paper-settings'
-
-const courierPrime = localFont({
-  src: [
-    { path: '../fonts/courier-prime/CourierPrime-Regular.ttf', weight: '400', style: 'normal' },
-    { path: '../fonts/courier-prime/CourierPrime-Bold.ttf', weight: '700', style: 'normal' },
-  ],
-  display: 'swap',
-  fallback: ['Courier New', 'Courier', 'monospace'],
-})
 
 type Props = {
   post: PhotoMetadata & { title: string; slug: string; date: string }
@@ -23,6 +16,7 @@ type Props = {
 }
 
 export default function PhotoMeta({ post, orientation = 'portrait' }: Props) {
+  for (const href of photoFontPreloads) preload(href, { as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' })
   const slotProps = stylex.props(styles.slot)
   const rotation = (paperWearSeed(`card-rotation:${post.slug}`) / 0xffffffff) * 2 - 1
   const hasPalette = Boolean(post.colorPalette?.length)
@@ -34,7 +28,7 @@ export default function PhotoMeta({ post, orientation = 'portrait' }: Props) {
   const titleRule = '-'.repeat(Array.from(post.title).length)
 
   return (
-    <div {...slotProps} className={`${slotProps.className} ${courierPrime.className}`}>
+    <div {...slotProps}>
       <section aria-label={`Photo details: ${post.title}`} data-photo-paper data-paper-orientation={orientation} {...stylex.props(styles.paper, orientation === 'portrait' && styles.portraitPaper, orientation === 'landscape' && styles.landscape, styles.corners(PAPER_SETTINGS.cornerRadius), styles.rotation(rotation))}>
         <PaperSurface identity={post.slug} />
         <div data-paper-grid {...stylex.props(styles.grid, orientation === 'portrait' ? styles.portraitGrid : styles.landscapeGrid, hasPalette && styles.gridWithPalette)}>
@@ -87,7 +81,7 @@ export default function PhotoMeta({ post, orientation = 'portrait' }: Props) {
 }
 
 const styles = stylex.create({
-  slot: { display: 'grid', justifyItems: 'center', width: '100%', minWidth: 0 },
+  slot: { fontFamily: '"Mamuso Mono", "Mamuso Mono Fallback", "Courier New", Courier, monospace', display: 'grid', justifyItems: 'center', width: '100%', minWidth: 0 },
   // Full-bleed grid; width and content rhythm use complete 20px units.
   paper: {
     position: 'relative', isolation: 'isolate', boxSizing: 'border-box',

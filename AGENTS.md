@@ -79,6 +79,14 @@ have `generateStaticParams`, and published content changes need a rebuild. Rerun
 Use StyleX (`stylex.create` / `stylex.props`) for components. Do not add SCSS, CSS
 modules, Tailwind, or webfonts. The site uses the native system font stack.
 
+Courier Prime in photo metadata is the existing web-font exception; code blocks
+use device-installed monospace fonts. Font subsetting is deliberately manual:
+do not add it to install, dev, build, CI or deployment hooks. If asked about a
+missing or badly rendered character, follow `docs/fonts.md#character-rendering-problems`,
+run `scripts/subset-fonts.py` by hand when appropriate, verify against the original
+fonts with the same content, and commit its generated outputs. Preserve hinting,
+font-display and fallback fonts. See `docs/fonts.md` for setup and rerun triggers.
+
 - Shared styles and tokens live in `app/styles/site.ts` and `app/styles/tokens.stylex.ts`.
 - `babel.config.js` configures the StyleX Babel plugin; `postcss.config.cjs` configures its PostCSS plugin. `app/globals.css` starts with `@stylex;`.
 - Layout, page templates, and shared components already use StyleX. `Post.tsx` styles Markdown elements through `markdown-to-jsx` overrides; extend those when appropriate.
@@ -103,6 +111,10 @@ gitignored symlink to `.agents/skills/`. Add or edit skills only under `.agents/
 
 The application uses `tsconfig.json`. Content scripts under `lib/` use
 `node.tsconfig.json` through `ts-node`.
+`pnpm typecheck` runs TypeScript 7's native `tsc` from the `@typescript/native`
+alias. The `typescript` dependency aliases `@typescript/typescript6` to provide
+the compiler API required by ts-node, typescript-eslint and Next's configuration
+helpers. Keep these aliases distinct; see `docs/quality-checks.md`.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

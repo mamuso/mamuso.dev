@@ -5,6 +5,42 @@ workflow. The production build validates prerender/cache boundaries.
 
 Use Node 24 and the pnpm version pinned in `package.json`.
 
+## Dependency compatibility
+
+The project uses Next 16.4, React 19.3, Three 0.187, vgpu 0.6 and pnpm 10.34.
+Keep React and React DOM versions aligned, along with the StyleX packages,
+Next/eslint-config-next, and vgpu/@vgpu/wgsl. React type, PostCSS and Sharp
+versions also appear in `pnpm-workspace.yaml`; update those overrides together
+with the manifest so the lockfile does not silently retain older versions.
+
+TypeScript 7's native compiler is installed as `@typescript/native` and supplies
+the `tsc` executable used by `pnpm typecheck`. TypeScript 7 has no compiler API
+for the existing tools, so `typescript` aliases `@typescript/typescript6` as
+recommended by [Microsoft's migration guidance](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/).
+That package supplies the TypeScript 6 API for ts-node and typescript-eslint;
+Next's build also resolves this compatibility compiler. Do not replace the
+alias with TypeScript 7 without migrating those consumers. `pnpm exec tsc
+--version` reports 7; `pnpm exec tsc6 --version` reports the compatibility compiler.
+
+ESLint remains at the latest 9.x release because eslint-plugin-react,
+eslint-plugin-import and eslint-plugin-jsx-a11y do not declare ESLint 10 support.
+Do not force their peer ranges merely to remove `pnpm outdated` output.
+The scoped MCP/minimatch overrides address security advisories while preserving
+the APIs those consumers use; do not force minimatch 11 onto legacy consumers
+that call its old default export. Recheck `pnpm audit` when upgrading this stack.
+
+Next's `partialPrefetching: false` explicitly preserves the previous navigation
+behavior. Its file traces exclude static photo binaries and local verification
+artifacts, which must not be packaged into server functions. The function-size
+test checks both that boundary and the deployment size budget.
+
+R3F 9.8 mounts its scene synchronously inside Canvas's commit. CartridgeItem
+defers Drei's keyboard-control HTML roots until the outer commit has finished;
+without this, the first cartridge's accessible control is lost. Preserve the
+six-control and pointer/keyboard/resize browser assertions when upgrading it.
+
+## Running checks
+
 ```sh
 git submodule update --init
 pnpm install --frozen-lockfile
@@ -108,7 +144,7 @@ administrative controls.
 
 ## Next OG regression coverage
 
-Next.js 16.3.8 passes the cold-cache image optimization → OG rendering check
+Next.js 16.4.3 passes the cold-cache image optimization → OG rendering check
 without the version-specific Resvg workaround previously needed for 16.3.3.
 The old pnpm patch has been removed.
 

@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useMemo, useRef, type RefObject } from 'react'
+import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 import { useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
@@ -72,6 +72,14 @@ export default function CartridgeItem({
   isRackOpen?: boolean;
 }) {
   const { gl, invalidate } = useThree()
+  const [htmlReady, setHtmlReady] = useState(false)
+  useEffect(() => {
+    // R3F 9.8 mounts synchronously inside Canvas's commit. Drei creates another
+    // React DOM root, so mount its controls after that outer commit has finished.
+    let active = true
+    queueMicrotask(() => { if (active) setHtmlReady(true) })
+    return () => { active = false }
+  }, [])
   const [restingX, restingY, restingZ] = position
   const { pivotRef, entranceComplete, entranceFinished, settled } = useCartridgeMotion({
     position, restingPitch, restingYaw, restingRoll, openYaw, openRoll, isOpen,
@@ -135,7 +143,7 @@ export default function CartridgeItem({
       </group>
       </group>
       </CartridgePresentation>
-      {onToggleOpen && <Html center>
+      {onToggleOpen && htmlReady && <Html center>
         <button
           type="button"
           {...stylex.props(styles.keyboardControl)}

@@ -1,0 +1,370 @@
+{
+  "baselineCommit": "7466c48",
+  "contentCommit": "3bb568ae7a4b6bd081025c79146d03cb9f7da9f4",
+  "browser": "Chrome 156 on macOS, DPR 1",
+  "main": [
+    {
+      "image": "fixture-1280.png",
+      "size": [
+        1280,
+        1255
+      ],
+      "pixels": 1606400,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "fixture-390.png",
+      "size": [
+        390,
+        1194
+      ],
+      "pixels": 465660,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "home-1280.png",
+      "size": [
+        1280,
+        1244
+      ],
+      "pixels": 1592320,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "home-390.png",
+      "size": [
+        390,
+        1662
+      ],
+      "pixels": 648180,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "note_markdown-specimen-1280.png",
+      "size": [
+        1280,
+        11597
+      ],
+      "pixels": 14844160,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "note_markdown-specimen-390.png",
+      "size": [
+        390,
+        13290
+      ],
+      "pixels": 5183100,
+      "changedPixels": 7978,
+      "maxChannelDelta": 20,
+      "bounds": [
+        12,
+        866,
+        378,
+        12917
+      ]
+    },
+    {
+      "image": "note_push-to-talk-1280.png",
+      "size": [
+        1280,
+        4305
+      ],
+      "pixels": 5510400,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "note_push-to-talk-390.png",
+      "size": [
+        390,
+        4521
+      ],
+      "pixels": 1763190,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "notes-1280.png",
+      "size": [
+        1280,
+        1991
+      ],
+      "pixels": 2548480,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "notes-390.png",
+      "size": [
+        390,
+        1975
+      ],
+      "pixels": 770250,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "photo_2023-07-01-river-and-beach-3-1280.png",
+      "size": [
+        1280,
+        1185
+      ],
+      "pixels": 1516800,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "photo_2023-07-01-river-and-beach-3-390.png",
+      "size": [
+        390,
+        900
+      ],
+      "pixels": 351000,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "photo_2024-11-14-casa-batllo-1280.png",
+      "size": [
+        1280,
+        1255
+      ],
+      "pixels": 1606400,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "photo_2024-11-14-casa-batllo-390.png",
+      "size": [
+        390,
+        1174
+      ],
+      "pixels": 457860,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "photos-1280.png",
+      "size": [
+        1280,
+        2024
+      ],
+      "pixels": 2590720,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "photos-390.png",
+      "size": [
+        390,
+        2881
+      ],
+      "pixels": 1123590,
+      "changedPixels": 6126,
+      "maxChannelDelta": 10,
+      "bounds": [
+        66,
+        1619,
+        326,
+        1868
+      ]
+    },
+    {
+      "image": "photos_stack_soho-2026-09-18-1280.png",
+      "size": [
+        1280,
+        4154
+      ],
+      "pixels": 5317120,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "photos_stack_soho-2026-09-18-390.png",
+      "size": [
+        390,
+        3781
+      ],
+      "pixels": 1474590,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    }
+  ],
+  "longArticles": [
+    {
+      "image": "note_2021-06-30-dark-mode-cssvars-1280.png",
+      "size": [
+        1280,
+        2118
+      ],
+      "pixels": 2711040,
+      "changedPixels": 191227,
+      "maxChannelDelta": 236,
+      "bounds": [
+        160,
+        257,
+        1120,
+        857
+      ]
+    },
+    {
+      "image": "note_2021-06-30-dark-mode-cssvars-390.png",
+      "size": [
+        390,
+        2011
+      ],
+      "pixels": 784290,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "note_2023-08-23-design-advice-from-bill-hader-1280.png",
+      "size": [
+        1280,
+        1583
+      ],
+      "pixels": 2026240,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "note_2023-08-23-design-advice-from-bill-hader-390.png",
+      "size": [
+        390,
+        1457
+      ],
+      "pixels": 568230,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "note_imperfection-1280.png",
+      "size": [
+        1280,
+        10828
+      ],
+      "pixels": 13859840,
+      "changedPixels": 502326,
+      "maxChannelDelta": 51,
+      "bounds": [
+        160,
+        862,
+        1120,
+        10073
+      ]
+    },
+    {
+      "image": "note_imperfection-390.png",
+      "size": [
+        390,
+        13084
+      ],
+      "pixels": 5102760,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "note_push-to-talk-1280.png",
+      "size": [
+        1280,
+        4305
+      ],
+      "pixels": 5510400,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    },
+    {
+      "image": "note_push-to-talk-390.png",
+      "size": [
+        390,
+        4521
+      ],
+      "pixels": 1763190,
+      "changedPixels": 0,
+      "maxChannelDelta": 0,
+      "bounds": null
+    }
+  ],
+  "specimenRepeat": {
+    "initialChangedPixelsOutsideImages": 53,
+    "repeatChangedPixelsOutsideImagesVersusBaseline": 0,
+    "explanation": "Same optimized build, fresh context: text matches baseline exactly. Image rectangles are excluded only in this supplementary comparison; initial full-page counts remain above."
+  },
+  "audit": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 1,
+      "high": 0,
+      "critical": 0
+    },
+    "dependencies": 600,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 600
+  },
+  "remainingAdvisories": [
+    {
+      "module": "minimatch",
+      "severity": "moderate",
+      "title": "minimatch has potential denial of service via globparts amplification",
+      "findings": [
+        {
+          "version": "3.1.5",
+          "paths": [
+            ".>eslint>@eslint/eslintrc>minimatch"
+          ]
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "nodeTestsPassed": 87,
+    "browserTestsPassed": 56,
+    "metadataTestsPassed": 2,
+    "largestFunctionTraceMiB": 28.6,
+    "productionBuild": "passed",
+    "check": "passed",
+    "frozenLockfileInstall": "passed"
+  },
+  "productionAudit": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "dependencies": 242,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 242
+  }
+}

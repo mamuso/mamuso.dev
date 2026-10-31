@@ -1,0 +1,4 @@
+fonttools[woff]==4.68.0
+brotli==1.2.1
+zopfli==0.4.3
+pillow==13.0.0

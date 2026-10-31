@@ -1,0 +1,338 @@
+[
+  {
+    "path": "/note/imperfection",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/push-to-talk",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/2021-06-30-dark-mode-cssvars",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/2023-08-23-design-advice-from-bill-hader",
+    "width": 1280,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/imperfection",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/push-to-talk",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/2021-06-30-dark-mode-cssvars",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/2023-08-23-design-advice-from-bill-hader",
+    "width": 390,
+    "fonts": [
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+        "bytes": 72856
+      },
+      {
+        "url": "http://localhost:3117/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf",
+        "bytes": 71188
+      }
+    ],
+    "preloads": [
+      "/_next/static/media/CourierPrime_Bold-s.p.2qcj42ersp6fm.ttf",
+      "/_next/static/media/CourierPrime_Regular-s.p.1zs_x8d7zqijw.ttf"
+    ],
+    "faces": [
+      {
+        "family": "courierPrime",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      },
+      {
+        "family": "courierPrime Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  }
+]

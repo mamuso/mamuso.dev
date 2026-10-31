@@ -1,0 +1,205 @@
+[
+  {
+    "image": "fixture-1280.png",
+    "size": [
+      1280,
+      1255
+    ],
+    "pixels": 1606400,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "fixture-390.png",
+    "size": [
+      390,
+      1194
+    ],
+    "pixels": 465660,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "home-1280.png",
+    "size": [
+      1280,
+      1244
+    ],
+    "pixels": 1592320,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "home-390.png",
+    "size": [
+      390,
+      1662
+    ],
+    "pixels": 648180,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "note_markdown-specimen-1280.png",
+    "size": [
+      1280,
+      11597
+    ],
+    "pixels": 14844160,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "note_markdown-specimen-390.png",
+    "size": [
+      390,
+      13290
+    ],
+    "pixels": 5183100,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "note_push-to-talk-1280.png",
+    "size": [
+      1280,
+      4305
+    ],
+    "pixels": 5510400,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "note_push-to-talk-390.png",
+    "size": [
+      390,
+      4521
+    ],
+    "pixels": 1763190,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "notes-1280.png",
+    "size": [
+      1280,
+      1991
+    ],
+    "pixels": 2548480,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "notes-390.png",
+    "size": [
+      390,
+      1975
+    ],
+    "pixels": 770250,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "photo_2023-07-01-river-and-beach-3-1280.png",
+    "size": [
+      1280,
+      1185
+    ],
+    "pixels": 1516800,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "photo_2023-07-01-river-and-beach-3-390.png",
+    "size": [
+      390,
+      900
+    ],
+    "pixels": 351000,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "photo_2024-11-14-casa-batllo-1280.png",
+    "size": [
+      1280,
+      1255
+    ],
+    "pixels": 1606400,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "photo_2024-11-14-casa-batllo-390.png",
+    "size": [
+      390,
+      1174
+    ],
+    "pixels": 457860,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "photos-1280.png",
+    "size": [
+      1280,
+      2024
+    ],
+    "pixels": 2590720,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "photos-390.png",
+    "size": [
+      390,
+      2881
+    ],
+    "pixels": 1123590,
+    "changedPixels": 2,
+    "maxChannelDelta": 1,
+    "bounds": [
+      61,
+      199,
+      62,
+      203
+    ]
+  },
+  {
+    "image": "photos_stack_soho-2026-09-18-1280.png",
+    "size": [
+      1280,
+      4154
+    ],
+    "pixels": 5317120,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  },
+  {
+    "image": "photos_stack_soho-2026-09-18-390.png",
+    "size": [
+      390,
+      3781
+    ],
+    "pixels": 1474590,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "bounds": null
+  }
+]

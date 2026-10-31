@@ -1,0 +1,32 @@
+{
+  "Regular": {
+    "noHintingSampleChangedPixels": 1456,
+    "shipped": [
+      {
+        "file": "mamuso-mono-regular-core-33c5e1d5af4a.woff2",
+        "characters": 102,
+        "changedPixels": 0
+      },
+      {
+        "file": "mamuso-mono-regular-extended-e0ee05524bf6.woff2",
+        "characters": 223,
+        "changedPixels": 0
+      }
+    ]
+  },
+  "Bold": {
+    "noHintingSampleChangedPixels": 1403,
+    "shipped": [
+      {
+        "file": "mamuso-mono-bold-core-212ee544ee48.woff2",
+        "characters": 102,
+        "changedPixels": 0
+      },
+      {
+        "file": "mamuso-mono-bold-extended-40a9eff7a0b4.woff2",
+        "characters": 223,
+        "changedPixels": 0
+      }
+    ]
+  }
+}

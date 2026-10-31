@@ -1,0 +1,166 @@
+{
+  "hinting": true,
+  "sources": {
+    "CourierPrime-Regular.ttf": {
+      "cffPrivateHintFields": [],
+      "bytes": 71188,
+      "sha256": "72f793376f8e2841656bf21d77a5de010f2929bd6956a22ee848ad0c7eb978af",
+      "glyphs": 415,
+      "characters": 383,
+      "unicodeRange": "U+000D,U+0020-007E,U+00A0-0137,U+0139-0148,U+014A-017E,U+0192,U+0218-021B,U+0237,U+02C6-02C7,U+02D8-02DD,U+0326,U+0394,U+03A9,U+03BC,U+03C0,U+1E80-1E85,U+1EF2-1EF3,U+2011,U+2013-2014,U+2018-201A,U+201C-201E,U+2020-2022,U+2026,U+2030,U+2032-2033,U+2039-203A,U+2044,U+2074,U+20A3,U+20A9,U+20AC,U+2122,U+2202,U+220F,U+2211-2212,U+2215,U+221A,U+221E,U+222B,U+2248,U+2260,U+2264-2265,U+25CA,U+FB01-FB02",
+      "axes": [],
+      "features": {
+        "GSUB": [
+          "aalt",
+          "case",
+          "frac",
+          "locl",
+          "ordn",
+          "sups"
+        ]
+      },
+      "hintTables": [
+        "fpgm",
+        "prep",
+        "cvt ",
+        "gasp"
+      ],
+      "hintedGlyphs": 313
+    },
+    "CourierPrime-Bold.ttf": {
+      "cffPrivateHintFields": [],
+      "bytes": 72856,
+      "sha256": "ff1f38786c849d1c41fa8e447960abdb2bd75fdfb0cfcdeb524fad65a5af3638",
+      "glyphs": 415,
+      "characters": 383,
+      "unicodeRange": "U+000D,U+0020-007E,U+00A0-0137,U+0139-0148,U+014A-017E,U+0192,U+0218-021B,U+0237,U+02C6-02C7,U+02D8-02DD,U+0326,U+0394,U+03A9,U+03BC,U+03C0,U+1E80-1E85,U+1EF2-1EF3,U+2011,U+2013-2014,U+2018-201A,U+201C-201E,U+2020-2022,U+2026,U+2030,U+2032-2033,U+2039-203A,U+2044,U+2074,U+20A3,U+20A9,U+20AC,U+2122,U+2202,U+220F,U+2211-2212,U+2215,U+221A,U+221E,U+222B,U+2248,U+2260,U+2264-2265,U+25CA,U+FB01-FB02",
+      "axes": [],
+      "features": {
+        "GSUB": [
+          "aalt",
+          "case",
+          "frac",
+          "locl",
+          "ordn",
+          "sups"
+        ]
+      },
+      "hintTables": [
+        "fpgm",
+        "prep",
+        "cvt ",
+        "gasp"
+      ],
+      "hintedGlyphs": 313
+    }
+  },
+  "outputs": {
+    "mamuso-mono-regular-core-33c5e1d5af4a.woff2": {
+      "cffPrivateHintFields": [],
+      "bytes": 11884,
+      "sha256": "33c5e1d5af4a84893a649186150604746f615101e1d2ae7a3c1c59d52a27f174",
+      "glyphs": 106,
+      "characters": 102,
+      "unicodeRange": "U+0020-007E,U+2013-2014,U+2018-2019,U+201C-201D,U+2026",
+      "axes": [],
+      "features": {
+        "GSUB": []
+      },
+      "hintTables": [
+        "fpgm",
+        "prep",
+        "cvt ",
+        "gasp"
+      ],
+      "hintedGlyphs": 99
+    },
+    "mamuso-mono-regular-extended-e0ee05524bf6.woff2": {
+      "cffPrivateHintFields": [],
+      "bytes": 16812,
+      "sha256": "e0ee05524bf64c094fa6fc183cc6c03e72104ba102c84876a5dc00904c8af1a2",
+      "glyphs": 273,
+      "characters": 223,
+      "unicodeRange": "U+00A0-0137,U+0139-0148,U+014A-017E,U+0192,U+203A",
+      "axes": [],
+      "features": {
+        "GSUB": []
+      },
+      "hintTables": [
+        "fpgm",
+        "prep",
+        "cvt ",
+        "gasp"
+      ],
+      "hintedGlyphs": 196
+    },
+    "mamuso-mono-bold-core-212ee544ee48.woff2": {
+      "cffPrivateHintFields": [],
+      "bytes": 12196,
+      "sha256": "212ee544ee48febd9e6194fafca6ce0614e23b4e44d561c4e2f62458f01f2263",
+      "glyphs": 106,
+      "characters": 102,
+      "unicodeRange": "U+0020-007E,U+2013-2014,U+2018-2019,U+201C-201D,U+2026",
+      "axes": [],
+      "features": {
+        "GSUB": []
+      },
+      "hintTables": [
+        "fpgm",
+        "prep",
+        "cvt ",
+        "gasp"
+      ],
+      "hintedGlyphs": 99
+    },
+    "mamuso-mono-bold-extended-40a9eff7a0b4.woff2": {
+      "cffPrivateHintFields": [],
+      "bytes": 17404,
+      "sha256": "40a9eff7a0b4d99716db765fd6b7caf246e73ccc4d5475313e7a1129ec94f725",
+      "glyphs": 273,
+      "characters": 223,
+      "unicodeRange": "U+00A0-0137,U+0139-0148,U+014A-017E,U+0192,U+203A",
+      "axes": [],
+      "features": {
+        "GSUB": []
+      },
+      "hintTables": [
+        "fpgm",
+        "prep",
+        "cvt ",
+        "gasp"
+      ],
+      "hintedGlyphs": 196
+    }
+  },
+  "usedCharacters": "U+000A,U+0020-007E,U+00A0,U+00B2,U+00B7,U+00D7,U+00DF,U+00E1,U+00E9,U+00ED,U+00F1,U+00F3,U+014D,U+016B,U+0192,U+200D,U+2013-2014,U+2018-2019,U+201C-201D,U+2026,U+203A,U+2190,U+2192,U+2318,U+2605,U+2642,U+266A,U+FE0F,U+1F389,U+1F3FC,U+1F496,U+1F602,U+1F60F,U+1F633,U+1F914,U+1F937",
+  "missingRequestedCharacters": {
+    "Regular": "U+000A,U+007F-009F,U+0138,U+0149,U+017F,U+200D,U+2010,U+2190,U+2192,U+2318,U+2605,U+2642,U+266A,U+FE0F,U+1F389,U+1F3FC,U+1F496,U+1F602,U+1F60F,U+1F633,U+1F914,U+1F937",
+    "Bold": "U+000A,U+007F-009F,U+0138,U+0149,U+017F,U+200D,U+2010,U+2190,U+2192,U+2318,U+2605,U+2642,U+266A,U+FE0F,U+1F389,U+1F3FC,U+1F496,U+1F602,U+1F60F,U+1F633,U+1F914,U+1F937"
+  },
+  "serverOnly": {
+    "SF-Pro-Display-Medium-latin.otf": {
+      "cffPrivateHintFields": [
+        "BlueValues",
+        "OtherBlues",
+        "BlueScale",
+        "BlueShift",
+        "BlueFuzz",
+        "StdHW",
+        "StdVW"
+      ],
+      "bytes": 70704,
+      "sha256": "82022f08ce684513b11731869f51e7724c8a148a6b2744f289f6a0d025885d5b",
+      "glyphs": 499,
+      "characters": 505,
+      "unicodeRange": "U+0020-007E,U+00A0-00AC,U+00AE-0148,U+014A-017F,U+0181,U+018A,U+018E-0192,U+0194,U+0197-0199,U+019B,U+019F-01A1,U+01A9,U+01AF-01B0,U+01B3-01B4,U+01B7,U+01C0-01ED,U+01F0-01F5,U+01F8-021B,U+021E-021F,U+0226-0233,U+0237,U+023A-023C,U+0242,U+2000-200D,U+2010-2014,U+2016,U+2018-201A,U+201C-201E,U+2020-2023,U+2026,U+2028-2029,U+202F-2030,U+2032-2034,U+2038-203A,U+203D,U+203F,U+2041-2044,U+2053-2054,U+205F-2060,U+20AC,U+2122,U+2190-2193,U+2212",
+      "axes": [],
+      "features": {
+        "GPOS": [
+          "kern"
+        ]
+      },
+      "hintTables": [],
+      "hintedGlyphs": 0
+    }
+  }
+}
