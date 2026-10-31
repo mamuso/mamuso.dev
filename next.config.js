@@ -2,6 +2,16 @@
 const nextConfig = {
   reactStrictMode: true,
   cacheComponents: true,
+  // Keep the existing navigation/prefetch behavior during the Next 16.4 upgrade.
+  partialPrefetching: false,
+  // Static photos are deployed separately; verification artifacts are local only.
+  outputFileTracingExcludes: {
+    '/*': [
+      './content/assets/**/*', './public/assets/**/*', './output/**/*',
+      './test-results/**/*', './playwright-report/**/*', './.playwright-cli/**/*',
+      './.agents/**/artifacts/**/*',
+    ],
+  },
   turbopack: {
     rules: {
       '*.wgsl': {

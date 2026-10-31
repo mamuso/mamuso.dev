@@ -111,6 +111,10 @@ gitignored symlink to `.agents/skills/`. Add or edit skills only under `.agents/
 
 The application uses `tsconfig.json`. Content scripts under `lib/` use
 `node.tsconfig.json` through `ts-node`.
+`pnpm typecheck` runs TypeScript 7's native `tsc` from the `@typescript/native`
+alias. The `typescript` dependency aliases `@typescript/typescript6` to provide
+the compiler API required by ts-node, typescript-eslint and Next's configuration
+helpers. Keep these aliases distinct; see `docs/quality-checks.md`.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

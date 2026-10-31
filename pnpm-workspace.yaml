@@ -2,17 +2,22 @@ packages:
   - .
 
 overrides:
-  '@types/react': 19.2.18
-  '@types/react-dom': 19.2.4
-  '@babel/core': 7.29.6
+  '@types/react': 19.3.0
+  '@types/react-dom': 19.3.0
+  '@babel/core': 7.29.7
   immutable: 5.1.9
   source-map-js: 1.2.2
-  browserslist: 4.28.8
+  browserslist: 4.29.5
   'brace-expansion@1': 1.1.21
   'brace-expansion@5': 5.0.12
   js-yaml: 3.15.2
-  postcss: 8.5.26
-  sharp: 0.35.4
+  postcss: 8.5.32
+  sharp: 0.35.5
+  '@modelcontextprotocol/server': 2.4.0
+  # These consumers use APIs preserved by minimatch 11; older releases have a DoS advisory.
+  'eslint>minimatch': 11.0.3
+  '@eslint/config-array>minimatch': 11.0.3
+  '@typescript-eslint/typescript-estree>minimatch': 11.0.3
 
 allowBuilds:
   '@parcel/watcher': true

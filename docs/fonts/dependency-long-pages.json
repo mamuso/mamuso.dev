@@ -1,0 +1,640 @@
+[
+  {
+    "path": "/note/imperfection",
+    "width": 1280,
+    "fonts": [],
+    "preloads": [],
+    "images": [
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-myfamicaseexhibition.png",
+        "width": 2398,
+        "height": 1634,
+        "rect": [
+          160,
+          841.796875,
+          1120,
+          1495.9375
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-blender.png",
+        "width": 1920,
+        "height": 1080,
+        "rect": [
+          160,
+          2602.4375,
+          634,
+          2869.0625
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-labels.png",
+        "width": 1920,
+        "height": 1080,
+        "rect": [
+          646,
+          2602.4375,
+          1120,
+          2869.0625
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-analog.jpg",
+        "width": 1920,
+        "height": 1280,
+        "rect": [
+          160,
+          4251.1875,
+          704.59375,
+          4614.25
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-xai.png",
+        "width": 873,
+        "height": 873,
+        "rect": [
+          787.046875,
+          5002.75,
+          1120,
+          5335.703125
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-frosted.jpg",
+        "width": 1920,
+        "height": 1080,
+        "rect": [
+          160,
+          5347.703125,
+          1120,
+          5887.703125
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-left-blank.png",
+        "width": 2004,
+        "height": 344,
+        "rect": [
+          308,
+          8726.59375,
+          972,
+          8840.5625
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-og-images.png",
+        "width": 2396,
+        "height": 1332,
+        "rect": [
+          160,
+          9566.953125,
+          1120,
+          10100.640625
+        ]
+      }
+    ],
+    "pageHeight": 10828,
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/push-to-talk",
+    "width": 1280,
+    "fonts": [],
+    "preloads": [],
+    "images": [
+      {
+        "src": "http://localhost:3117/assets/posts/push-to-talk-01.png",
+        "width": 3048,
+        "height": 1852,
+        "rect": [
+          160,
+          1312.796875,
+          1120,
+          1896.09375
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/push-to-talk-02.png",
+        "width": 3056,
+        "height": 1916,
+        "rect": [
+          160,
+          2673.8125,
+          1120,
+          3275.6875
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/push-to-talk-03.png",
+        "width": 2716,
+        "height": 1936,
+        "rect": [
+          160,
+          3528.6875,
+          578.125,
+          3826.71875
+        ]
+      }
+    ],
+    "pageHeight": 4305,
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/2021-06-30-dark-mode-cssvars",
+    "width": 1280,
+    "fonts": [],
+    "preloads": [],
+    "images": [
+      {
+        "src": "http://localhost:3117/_next/image?url=%2Fassets%2Ffeed%2F2021-06-30-dark-mode-cssvars.gif&w=1080&q=75",
+        "width": 1280,
+        "height": 800,
+        "rect": [
+          160,
+          256.796875,
+          1120,
+          856.796875
+        ]
+      }
+    ],
+    "pageHeight": 2118,
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/2023-08-23-design-advice-from-bill-hader",
+    "width": 1280,
+    "fonts": [],
+    "preloads": [],
+    "images": [],
+    "pageHeight": 1583,
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/imperfection",
+    "width": 390,
+    "fonts": [],
+    "preloads": [],
+    "images": [
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-myfamicaseexhibition.png",
+        "width": 2398,
+        "height": 1634,
+        "rect": [
+          12,
+          1169.796875,
+          378,
+          1419.1875
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-blender.png",
+        "width": 1920,
+        "height": 1080,
+        "rect": [
+          12,
+          3029.6875,
+          378,
+          3235.5625
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-labels.png",
+        "width": 1920,
+        "height": 1080,
+        "rect": [
+          12,
+          3247.5625,
+          378,
+          3453.4375
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-analog.jpg",
+        "width": 1920,
+        "height": 1280,
+        "rect": [
+          12,
+          5091.5625,
+          378,
+          5335.5625
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-xai.png",
+        "width": 873,
+        "height": 873,
+        "rect": [
+          12,
+          6471.578125,
+          378,
+          6837.578125
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-frosted.jpg",
+        "width": 1920,
+        "height": 1080,
+        "rect": [
+          12,
+          6849.578125,
+          378,
+          7055.453125
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-left-blank.png",
+        "width": 2004,
+        "height": 344,
+        "rect": [
+          24,
+          11345.03125,
+          366,
+          11403.734375
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/imperfection-og-images.png",
+        "width": 2396,
+        "height": 1332,
+        "rect": [
+          12,
+          12076.921875,
+          378,
+          12280.390625
+        ]
+      }
+    ],
+    "pageHeight": 13084,
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/push-to-talk",
+    "width": 390,
+    "fonts": [],
+    "preloads": [],
+    "images": [
+      {
+        "src": "http://localhost:3117/assets/posts/push-to-talk-01.png",
+        "width": 3048,
+        "height": 1852,
+        "rect": [
+          12,
+          1892.796875,
+          378,
+          2115.171875
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/push-to-talk-02.png",
+        "width": 3056,
+        "height": 1916,
+        "rect": [
+          12,
+          2948.890625,
+          378,
+          3178.34375
+        ]
+      },
+      {
+        "src": "http://localhost:3117/assets/posts/push-to-talk-03.png",
+        "width": 2716,
+        "height": 1936,
+        "rect": [
+          12,
+          3543.34375,
+          378,
+          3804.21875
+        ]
+      }
+    ],
+    "pageHeight": 4521,
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/2021-06-30-dark-mode-cssvars",
+    "width": 390,
+    "fonts": [],
+    "preloads": [],
+    "images": [
+      {
+        "src": "http://localhost:3117/_next/image?url=%2Fassets%2Ffeed%2F2021-06-30-dark-mode-cssvars.gif&w=384&q=75",
+        "width": 1372,
+        "height": 857,
+        "rect": [
+          12,
+          277.59375,
+          378,
+          506.34375
+        ]
+      }
+    ],
+    "pageHeight": 2011,
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  },
+  {
+    "path": "/note/2023-08-23-design-advice-from-bill-hader",
+    "width": 390,
+    "fonts": [],
+    "preloads": [],
+    "images": [],
+    "pageHeight": 1457,
+    "faces": [
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "400",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+20-7E, U+2013-2014, U+2018-2019, U+201C-201D, U+2026",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono",
+        "weight": "700",
+        "style": "normal",
+        "range": "U+A0-137, U+139-148, U+14A-17E, U+192, U+203A",
+        "status": "unloaded"
+      },
+      {
+        "family": "Mamuso Mono Fallback",
+        "weight": "normal",
+        "style": "normal",
+        "range": "U+0-10FFFF",
+        "status": "unloaded"
+      }
+    ],
+    "paper": []
+  }
+]

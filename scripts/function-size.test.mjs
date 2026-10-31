@@ -10,6 +10,11 @@ test('server traces stay within the deployment size budget', t => {
   for (const trace of traces) {
     const files = new Set(JSON.parse(readFileSync(trace, 'utf8')).files.map(file => resolve(dirname(trace), file)))
     files.add(resolve(trace.replace(/\.nft\.json$/, '')))
+    for (const file of files) {
+      for (const directory of ['content/assets', 'public/assets', 'output', 'test-results', 'playwright-report', '.playwright-cli']) {
+        assert.ok(!file.startsWith(`${resolve(directory)}/`), `${trace}: includes non-runtime asset ${file}`)
+      }
+    }
     const bytes = [...files].reduce((total, file) => total + statSync(file).size, 0)
     largest = Math.max(largest, bytes)
     // Leave headroom for platform wrappers below Vercel's 250 MB limit.
