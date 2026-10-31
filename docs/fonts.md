@@ -4,6 +4,42 @@ The browser downloads Courier Prime only for photo metadata. The rest of the
 site uses system fonts. Generated WOFF2 files, CSS, preload URLs and the inventory
 are committed; font processing is **not** part of install, dev, build or CI.
 
+## Manual-only decision
+
+Confirmed with the site owner on 2026-10-30: keep font generation manual, even
+though running it during builds is technically possible. Do not add processing
+to package lifecycle scripts, CI, Vercel builds or content deployment hooks.
+Deploy the reviewed, committed outputs so production fonts remain reproducible.
+Revisit this policy only if the owner explicitly changes the decision.
+
+## Character rendering problems
+
+When a character looks wrong, start with the page URL and the exact character
+or word. Identify which family actually renders it before changing fonts:
+Courier Prime is used only for photo metadata; body text and code blocks use
+fonts installed on the reader's device. Regenerating Courier Prime cannot fix
+a device's system-font rendering.
+
+For Courier Prime:
+
+1. Ensure the local content checkout includes the affected post, following the
+   repository's submodule-pinning rules. Content-only deployments do not
+   regenerate the font assets.
+2. Check the original TTF's cmap and the generated coverage in
+   `docs/fonts/inventory.json`. If the original supports the character but the
+   subset omits it, run the manual command below and review the generated diff.
+3. Build and inspect the affected page. Compare against the original fonts with
+   the same content at desktop and mobile widths; preserve hinting, font-display
+   and the fallback stack. Commit the generated fonts, CSS, preload URLs and
+   inventory together with the fix.
+4. If the original font lacks the character, regenerating cannot add it. Inspect
+   the fallback instead. CJK intentionally uses system fallback; missing glyphs
+   are not permission to replace the family or change rendering by default.
+
+Latin-1 and Latin Extended-A characters already supported by the original fonts
+are retained proactively. New supported characters outside that coverage can
+require a manual rerun. Never use `--drop-hinting` as a character-rendering fix.
+
 ## Rerun
 
 From the repository root, with the pinned content submodule populated:
